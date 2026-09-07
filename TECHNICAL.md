@@ -24,6 +24,16 @@ Contraintes obligatoires :
 
 Le lien entre un utilisateur et une identité numérique ne doit pas être déduit d'un identifiant fourni par un provider externe. Il doit être représenté explicitement dans la source de vérité Pixs.
 
+L'assurance est portée par des événements et contextes d'authentification, pas par le seul type de l'identité. Pixs distingue au minimum :
+
+```text
+identity_assurance       CLAIMED | VERIFIED | PROOFED
+authentication_assurance SINGLE_FACTOR | MULTI_FACTOR | PHISHING_RESISTANT
+federation_trust         UNTRUSTED | TRUSTED | STRONGLY_BOUND
+```
+
+Ces niveaux sont des sémantiques internes et peuvent être mappés par un provider depuis OIDC, SAML, WebAuthn, mTLS ou un mécanisme local. Un mapping doit déclarer les preuves acceptées, son niveau maximal et ses conditions de validité ; un claim absent, ambigu, expiré ou non vérifiable ne peut pas augmenter l'assurance.
+
 ## 2. Types d'identité numérique
 
 Les types prévus sont :
@@ -69,6 +79,8 @@ Un provider OIDC, SAML, LDAP ou local peut authentifier une identité numérique
 
 Le backend Django reste l'autorité pour les règles métier, les transactions et l'autorisation. PostgreSQL reste la source de vérité applicative.
 
+Le provider ne peut établir qu'un niveau d'assurance couvert par sa configuration de confiance. L'identifiant externe canonique est le triplet `(provider_id, issuer, subject)` ; une adresse e-mail, un nom affiché ou une claim non vérifiée ne constitue pas une clé de rapprochement. La liaison avec une identité existante est une opération explicite, vérifiée, idempotente et auditée.
+
 ## 4. Exigences techniques à spécifier
 
 Les futures spécifications OpenSpec devront notamment définir :
@@ -77,14 +89,111 @@ Les futures spécifications OpenSpec devront notamment définir :
 * les contraintes d'unicité du lien utilisateur-identité ;
 * la représentation des comptes de service ;
 * les sessions, tokens et méthodes d'authentification ;
+* le modèle d'`AuthenticationContext`, des preuves et des niveaux d'assurance ;
 * la révocation immédiate ou différée ;
+* le step-up, la fraîcheur maximale et les exigences d'assurance par action ;
 * le provisionnement et le déprovisionnement fédérés ;
 * le mapping des identifiants externes ;
+* la confiance des issuers, audiences, algorithmes, clés et claims des providers ;
 * l'audit des authentifications et changements d'état ;
+* la liaison explicite de comptes et la récupération sans élévation implicite ;
 * les règles d'autorisation applicables aux identités sans utilisateur ;
+* le schéma des politiques, selectors, conditions, obligations et versions ;
+* les contrats `authorize` et `filter_authorized` ainsi que les décisions groupées ;
+* les règles de priorité `DENY`/`ALLOW`, de cohérence, de cache et d'invalidation ;
+* la résolution bornée des groupes imbriqués et la traçabilité acteur/délégation ;
 * les règles de migration depuis une éventuelle représentation utilisateur historique.
+* les états métier, de persistance, de rétention et de projection des données ;
+* le schéma des politiques de cycle de vie, de suppression logique, de purge, de restauration et de legal hold ;
+* les tombstones, le journal d'effacement et leur propagation aux caches, index, projections et synchronisations ;
+* les garanties de cascade inter-modules, d'historique, de concurrence et de sauvegarde ;
+* le schéma versionné du `DataGovernanceProfile`, les propriétaires techniques et les sources de vérité ;
+* la taxonomie de confidentialité, de données personnelles et de secrets, ainsi que le comportement des données non classifiées ;
+* les finalités, la lignée, les consommateurs, processeurs, contraintes de résidence ou de transfert et politiques d'export ;
+* le contrat générique de `DataSubjectRequest`, son autorisation, son traitement asynchrone, son audit et sa propagation aux dérivés ;
+* les obligations de confidentialité applicables aux APIs, événements, webhooks, observabilité, recherches, caches, fichiers, sauvegardes et exports ;
+* le descripteur de capacité, le registre de résolution et les états distincts de disponibilité ;
+* le schéma des feature flags, des affectations et des décisions d'évaluation ;
+* les dimensions de ciblage, la cohorte déterministe, la priorité, le repli, l'expiration et l'invalidation des flags ;
+* les règles d'application des flags aux APIs, événements, Jobs, frontend, permissions, données, migrations et providers ;
+* le contrat versionné de `BulkOperation`, ses états, ses variantes `IMPORT` et `EXPORT` et son rattachement aux `operation_id` et Jobs persistants ;
+* les formats de référence, les mappings versionnés, le staging privé, les checksums, les modes de commit et les stratégies de conflit des imports ;
+* les projections autorisées, les snapshots ou watermarks, les manifestes, la rétention et les références temporaires des exports ;
+* les quotas, seuils d'asynchronisme, checkpoints, annulation, retries, dead-letter, audit et propagation du tenant, du scope et de la gouvernance ;
+* le périmètre des SDK TypeScript et Python, leurs transports, façades, mécanismes d'authentification et support des opérations synchrones, asynchrones et bulk ;
+* la génération déterministe depuis OpenAPI, les contrats événementiels compatibles avec AsyncAPI et JSON Schema, la séparation entre code généré et façades maintenues et la matrice de compatibilité des SDK ;
+* le Developer Kit, la CLI, le scaffolding, les validateurs de manifests et les suites de conformité pour les Components, modules, providers et extensions ;
+* les règles de propagation du tenant, du scope, de la corrélation, de l'idempotence, des erreurs et des limites dans les clients SDK ;
+* la gestion injectable des credentials, l'absence de persistance locale des tokens navigateur, la vérification des webhooks et les canaux de distribution des packages ;
+* le modèle des entitlements, de leur contexte, de leurs décisions, de leurs états, de leurs portées, de leurs expirations et de leurs révocations ;
+* le modèle des politiques de quota, buckets, unités, périodes, agrégations, consommations et réservations ;
+* les contrats `EntitlementProvider` et `QuotaProvider`, la source de vérité, les garanties atomiques, la cohérence des caches et le comportement en indisponibilité ;
+* l'ordre de résolution entre capacité, entitlement, autorisation, feature flag et quota, ainsi que les réponses d'erreur et diagnostics associés ;
+* les règles de réservation, réconciliation et libération pour les APIs, Jobs, Commands asynchrones, imports, exports et opérations bulk ;
+* la rétention, la confidentialité, l'agrégation et l'audit des décisions et données de consommation, sans introduire de facturation dans le Kernel ;
+* le contrat `OfflineSyncCapability`, les ressources et Commands éligibles, les états locaux et les limites de fraîcheur ;
+* les modèles `LocalReplica`, `OfflineCommand` et, lorsque nécessaire, `OfflineAccessLease`, leurs versions, checkpoints, idempotence et rétention ;
+* le provider de stockage local, l'isolation appareil/utilisateur/tenant/scope, le chiffrement, l'effacement et l'absence de secrets ou tokens locaux ;
+* le protocole de reconnexion, de réévaluation serveur, de réconciliation avec PostgreSQL, l'outbox et les Jobs, ainsi que les stratégies de conflit et de révocation ;
+* les règles de compatibilité des schémas locaux et protocoles de synchronisation entre releases, sans imposer Electric, une base navigateur ou un service worker ;
+* le contrat `TenantPlacementPolicy`, le `ResidencyContext`, les régions logiques, les versions, les epochs et les états de placement ;
+* les règles d'héritage entre tenant, scopes enfants, ressources et classes de données, ainsi que la séparation des ressources platform-scoped ;
+* les contrats de placement, réplication, chiffrement, clés, sauvegarde, restauration, suppression et révocation des providers régionaux ;
+* le routage après résolution de l'identité, du tenant et du scope, les transferts inter-régions et les erreurs de région ou de résidence ;
+* les garanties de primaire unique, fencing, bascule active-passive, split-brain, cohérence, quotas et idempotence entre régions ;
+* les migrations de tenant, restaurations inter-régions et changements de politique, y compris les logs, traces, caches, index, événements, webhooks et copies offline ;
+* les conditions d'une éventuelle topologie active-active ou multi-primary, qui ne fait pas partie de la référence du Kernel ;
 
 Ces exigences ne doivent pas introduire de relation plusieurs-à-plusieurs entre utilisateurs et identités numériques sans décision architecturale explicite.
+
+### 4.1 Modèle d'assurance d'authentification
+
+Une authentification réussie produit un `AuthenticationContext` vérifié et limité dans le temps. Il est distinct de la `DigitalIdentity`, de la session et du credential utilisés pour l'établir.
+
+```text
+AuthenticationContext
+├── digital_identity_id
+├── provider_id
+├── issuer
+├── external_subject
+├── authentication_time
+├── expires_at
+├── authentication_methods
+├── identity_assurance
+├── authentication_assurance
+├── federation_trust
+├── session_id éventuel
+├── credential_id éventuel
+└── ScopeContext
+```
+
+Les trois dimensions d'assurance sont évaluées séparément :
+
+```text
+identity_assurance       CLAIMED | VERIFIED | PROOFED
+authentication_assurance SINGLE_FACTOR | MULTI_FACTOR | PHISHING_RESISTANT
+federation_trust         UNTRUSTED | TRUSTED | STRONGLY_BOUND
+```
+
+Ces niveaux sont des sémantiques internes. Un provider doit déclarer le mapping de ses méthodes, claims, preuves et contextes vers ces niveaux, ainsi que le niveau maximal qu'il est autorisé à produire. `amr`, `acr`, le contexte SAML, la possession d'une clé ou une attestation ne sont jamais interprétés sans cette politique.
+
+Le contexte est immuable pendant une opération et associé au `ScopeContext` résolu. Une autorisation sensible doit vérifier l'identité, l'expiration, la fraîcheur, la révocation, le niveau d'assurance requis et le périmètre de scope avant d'exécuter la Command. Si le niveau est insuffisant, le backend refuse l'opération ou déclenche un step-up explicite ; le frontend ne peut pas simuler cette élévation.
+
+### 4.2 Confiance des providers et identifiants externes
+
+La confiance d'un provider est configurée explicitement par installation, plateforme ou tenant selon le besoin. Elle doit au minimum contrôler `provider_id`, `issuer`, `audience`, algorithmes acceptés, clés de signature, fenêtre temporelle, mapping des identifiants, claims obligatoires, niveau d'assurance maximal et conditions de révocation. La découverte, la présence dans un package ou la seule validité cryptographique d'un token ne suffit pas à établir la confiance applicative.
+
+L'identifiant externe canonique est le triplet `(provider_id, issuer, subject)`. Le mapping vers une `DigitalIdentity` est déterministe et auditable. Une adresse e-mail, un nom affiché ou une claim non vérifiée ne constitue pas une clé de rapprochement. Une liaison de comptes exige la preuve des deux côtés, une confirmation explicite, une vérification d'unicité et un audit.
+
+### 4.3 Sessions, facteurs et récupération
+
+Une session représente une période d'accès et conserve une référence vers le contexte d'authentification, son expiration, son état, sa dernière authentification, sa fraîcheur et son périmètre. Le contrat accepte une session opaque côté serveur ou un artefact autonome validé par le backend, sans imposer une topologie de session aux providers.
+
+Les tokens d'accès sont bornés par la politique du provider. Les mécanismes de renouvellement doivent supporter la rotation, la détection de réutilisation et la révocation. Une révocation d'identité, de credential, de session, de provider ou de politique de confiance doit invalider les contextes concernés sans supprimer l'identité de référence ni les données métier. Les événements de révocation, expiration, verrouillage, step-up, liaison et récupération sont auditables et ne journalisent jamais les secrets.
+
+Le framework ne rend pas un mot de passe obligatoire. Un provider local peut fournir des credentials, tandis que des providers OIDC, SAML, WebAuthn, mTLS, device ou workload identity peuvent fournir d'autres méthodes. Les identités `SERVICE` et `DEVICE` déclarent une méthode adaptée, une durée de validité, des limites de périmètre et des règles de rotation. Une API key seule produit au plus une assurance de base, sauf politique explicite contraire.
+
+La récupération révoque les sessions concernées, remplace ou invalide le credential compromis et ne restaure pas automatiquement `VERIFIED`, `PROOFED`, `MULTI_FACTOR` ou `PHISHING_RESISTANT` sans nouvelle preuve ou intervention administrative autorisée.
 
 ## 5. Modèle commun de composant
 
@@ -104,6 +213,8 @@ THEME
 Les contrats, capacités et services ne sont pas des types de composants. Un composant peut fournir une capacité, implémenter un contrat ou enregistrer un service.
 
 Chaque composant doit disposer d'un identifiant canonique stable, d'un type, d'une version, d'un manifest, de dépendances déclarées et d'un état de lifecycle inspectable.
+
+`Component` décrit une frontière de composition et de gouvernance, pas une entité métier. Le modèle commun est appliqué aux modules, sous-modules, providers, extensions et thèmes sans imposer à ces composants une persistance, une structure de données ou une implémentation d'exécution identique. Les propriétés communes concernent uniquement l'identification, la composition, les contrats, les capacités, la configuration, la sécurité, le lifecycle et le diagnostic.
 
 ## 6. Identifiants et manifests
 
@@ -132,6 +243,10 @@ Le manifest doit pouvoir décrire au minimum :
 * la configuration et son schéma ;
 * la compatibilité déclarée ;
 * les contributions publiques du composant.
+
+Lorsqu'ils sont pertinents, le manifest doit également référencer le propriétaire des données, les migrations, le profil de sécurité, les permissions techniques, les frontières réseau, les points d'entrée autorisés, les contributions frontend et les définitions de capacités ou de feature flags fournies par le composant. Le manifest est déclaratif, non exécutable et unique par composant. Il ne peut contenir ni secret, ni logique métier, ni expression à évaluer.
+
+Les points d'entrée sont résolus uniquement après validation du manifest et doivent rester dans le périmètre déclaré du composant. Une simple présence sur le filesystem, une importabilité Python ou une dépendance transitive ne suffit pas à enregistrer un composant ou une contribution.
 
 Exemple conceptuel :
 
@@ -173,6 +288,84 @@ La sélection ne doit jamais dépendre de l'ordre du filesystem, des imports ou 
 
 Les composants, contrats et capacités publiques utilisent SemVer 2.0.0. Les contraintes de compatibilité sont vérifiées avant activation. Les versions de composant, de contrat, de capacité et de schéma de manifest sont conceptuellement distinctes.
 
+### 7.1 Descripteur et disponibilité d'une capacité
+
+Les capacités fournies et requises sont résolues au niveau de la composition, avant l'activation du composant qui les consomme. Le registre de capacités ne dépend ni du chemin physique, ni de l'ordre de découverte, ni d'un flag runtime.
+
+```text
+CapabilityDescriptor
+├── capability_id
+├── capability_version
+├── owner_component
+├── contract_refs
+├── provider_ref éventuel
+├── requiredness       REQUIRED | OPTIONAL
+├── configuration_ref éventuelle
+└── fallback_policy éventuelle
+```
+
+La disponibilité d'une capacité est une dimension distincte du lifecycle du composant :
+
+```text
+DECLARED → RESOLVED → AVAILABLE
+                         ├── DEGRADED
+                         ├── DISABLED
+                         └── BLOCKED
+```
+
+`RESOLVED` signifie que le contrat, le provider et les dépendances sont déterminés ; `AVAILABLE` signifie que la capacité peut être utilisée ; `DEGRADED`, `DISABLED` et `BLOCKED` exposent respectivement une garantie réduite, une désactivation explicite ou une impossibilité bloquante. Une capacité obligatoire qui n'est pas `AVAILABLE` empêche l'activation ou le passage à `ready`. Une capacité optionnelle doit déclarer le comportement attendu dans les autres états.
+
+### 7.2 Feature flags runtime
+
+Un feature flag est une politique de sélection d'un comportement déjà présent dans l'artefact et compatible avec les contrats déclarés. Il ne constitue ni une permission, ni une dépendance, ni un mécanisme de migration, ni une sélection implicite de provider.
+
+```text
+FeatureFlagDefinition
+├── flag_id
+├── flag_version
+├── owner_component
+├── purpose
+├── value_schema       BOOLEAN | VARIANT
+├── default_value
+├── targeting_dimensions
+├── cohort_key éventuelle
+├── prerequisites
+├── fallback_policy
+├── expires_at
+└── audit_policy
+```
+
+Les affectations runtime sont séparées de la définition :
+
+```text
+FeatureFlagAssignment
+├── flag_id
+├── selector             INSTALLATION | ENVIRONMENT | TENANT | SCOPE
+├── selector_value
+├── value ou variant
+├── valid_from / valid_until
+├── configuration_version
+└── updated_by
+```
+
+Le contexte d'évaluation comprend uniquement les dimensions déclarées par le flag. Le socle P2 prend en charge l'installation ou l'environnement, le tenant et le scope enfant ; le ciblage individuel et l'expérimentation statistique ne sont pas des primitives natives. La priorité d'une affectation est déterministe, du périmètre général vers le périmètre le plus spécifique, et aucune relation de scope ou de tenant n'est élargie implicitement.
+
+Un déploiement progressif utilise une `cohort_key` déclarée et un calcul stable. Il ne doit pas tirer un résultat aléatoire à chaque requête. Les règles sont déclaratives, bornées et sans expression ou code arbitraire à exécuter.
+
+La source de vérité des affectations est persistante et versionnée. Les processus peuvent conserver un cache local borné, mais doivent vérifier sa durée de validité et son numéro de configuration ; une invalidation ou une mise à jour ne peut pas être masquée par un cache périmé. Les changements de flags sont des opérations administratives authentifiées, autorisées, corrélées et auditables, sans être embarqués dans un paquet Debian, une image Docker ou un bundle frontend.
+
+Une valeur absente, invalide ou périmée applique la politique de repli déclarée. L'échec est fermé pour une permission, une mutation, une donnée protégée ou un contrat ; un repli différent n'est autorisé que pour une fonctionnalité non sensible. Le frontend peut adapter son affichage, mais le backend réévalue toujours le flag avant toute mutation ou exposition protégée.
+
+Les Commands évaluent le flag au point où le comportement est exécuté. Un Job ou un handler d'événement réévalue la configuration au moment de son exécution ; lorsqu'une opération exige de conserver la sémantique choisie à sa création, sa version de flag et sa valeur sont persistées dans son contrat d'opération. Une évolution de schéma ou de contrat doit rester compatible indépendamment de l'état du flag.
+
+Le lifecycle d'un flag est distinct du lifecycle d'un composant :
+
+```text
+DRAFT → ACTIVE → PAUSED → EXPIRED → RETIRED
+```
+
+L'expiration bloque les nouvelles affectations et produit un diagnostic ; elle ne supprime pas implicitement le code, les données ou les contrats. La retraite d'un flag exige une décision de nettoyage ou de migration explicitement validée.
+
 ## 8. Contrats publics
 
 Les contrats publics sont des interfaces stables entre composants Pixs. Ils sont enregistrés séparément des composants qui les implémentent.
@@ -193,18 +386,46 @@ Chaque contrat public doit disposer d'un identifiant canonique stable, d'une cat
 
 Les catégories ne sont pas interchangeables : un `EVENT` ne remplace pas un `COMMAND`, un `HOOK` ne constitue pas une garantie transactionnelle et un `SCHEMA` ne définit pas à lui seul une règle d'autorisation.
 
+### 8.1 Contrat d'extension
+
+Une extension est une contribution à un point d'extension public d'un composant cible. Le point d'extension possède un identifiant namespacé, une catégorie, une version, un schéma de contribution, un propriétaire et des garanties documentées. Les catégories d'extension peuvent notamment être `SERVICE`, `COMMAND`, `QUERY`, `EVENT`, `HOOK`, `ROUTE`, `NAVIGATION`, `UI_SLOT`, `VALIDATION` ou `CONFIGURATION`.
+
+Une contribution doit déclarer au minimum son identifiant stable, son composant cible, le point d'extension utilisé, la version du contrat, son point d'entrée, ses dépendances, ses permissions, son niveau de confiance et ses conditions d'activation. Les collisions sont refusées par défaut ; lorsqu'une composition autorise plusieurs contributions, sa politique de fusion, de priorité et d'ordre doit être explicitement déclarée et déterministe.
+
+Une extension ne peut pas importer une implémentation privée, modifier directement les données d'un autre composant ou transformer un événement, un hook ou une contribution d'interface en autorisation métier. Les mutations sensibles restent des Commands évaluées par Django.
+
+Les extensions backend chargées dans le processus sont considérées comme du code de confiance après validation de l'artefact et de la composition. Les extensions frontend de référence sont composées au build et utilisent les APIs publiques du shell. Le chargement distant, l'installation runtime et l'évaluation dynamique de code sont interdits par défaut. Une extension non pleinement fiable doit utiliser un adapter d'isolation, tel qu'un sandbox ou un iframe, avec une API explicitement limitée.
+
 ## 9. Versionnement des contrats
 
 Les contrats publics utilisent SemVer 2.0.0 indépendamment de la version du composant qui les implémente.
 
 ```text
+release_version
 component_version
 contract_version
 capability_version
 manifest_schema_version
+schema_version
+migration_version
+event_version
+api_version
+configuration_schema_version
+data_governance_version
+feature_flag_version
+bulk_operation_version
+sdk_version
+entitlement_version
+quota_policy_version
+offline_capability_version
+local_schema_version
+sync_protocol_version
+residency_policy_version
+placement_policy_version
+region_topology_version
 ```
 
-Ces versions peuvent évoluer séparément. Une correction interne compatible peut modifier la version du composant sans modifier la version du contrat.
+Ces versions peuvent évoluer séparément. Une correction interne compatible peut modifier la version du composant sans modifier la version du contrat. Une release est corrélée à une composition précise de ces versions, mais ne les remplace pas.
 
 Une évolution est considérée comme majeure lorsqu'elle modifie de manière incompatible, notamment :
 
@@ -232,9 +453,73 @@ Un contrat peut prolonger volontairement sa période de dépréciation. La duré
 
 Les composants implémentant un contrat peuvent être soumis à une suite de tests de conformité commune. La compatibilité déclarative et la conformité comportementale sont complémentaires et ne doivent pas être confondues.
 
+La compatibilité globale est représentée par une matrice calculée avant activation ou mise à niveau :
+
+```text
+CompatibilityMatrix
+├── release / runtime
+├── composants et capacités
+├── contrats et APIs
+├── schémas et migrations de données
+├── événements
+├── providers
+├── configuration
+└── clients frontend
+
+état : COMPATIBLE | REQUIRES_MIGRATION | DEPRECATED | BLOCKED
+```
+
+Une version plus récente n'est compatible que si ses garanties sont démontrées pour le consommateur concerné. La release courante doit être compatible avec la release immédiatement précédente ; un chemin depuis une release plus ancienne passe par les migrations intermédiaires déclarées. Un saut de version non déclaré, une dépendance non résolue ou une période de coexistence non démontrée bloque l'activation.
+
+### 10.1 Contrat et exécution des migrations
+
+Les migrations sont définies et possédées par le module qui possède les données. Une migration expose conceptuellement :
+
+```text
+migration_id
+module_id
+version_source
+version_cible
+dependencies
+preconditions
+postconditions
+idempotent
+destructive
+execution_mode      ONLINE | MAINTENANCE | OFFLINE
+compensation_policy
+```
+
+Les migrations d'un module forment une chaîne versionnée. Le planificateur global résout les dépendances entre modules dans un graphe déterministe, sans écriture directe dans les données privées d'un autre module. Un saut n'est accepté que si une migration de compatibilité explicite le permet.
+
+Le plan de mise à niveau suit, lorsque nécessaire, les phases suivantes :
+
+```text
+PRECHECK
+    ↓
+EXPAND
+    ↓
+MIGRATE / BACKFILL reprenable
+    ↓
+SWITCH compatible
+    ↓
+fenêtre de coexistence N / N+1
+    ↓
+CONTRACT différée et destructive
+```
+
+Les opérations de backfill doivent être reprenables, idempotentes, bornées et observables. Une étape destructive ne peut être exécutée qu'après vérification des consommateurs actifs, de la période de dépréciation et des sauvegardes ou procédures de restauration applicables.
+
+L'exécution est déclenchée par une commande d'exploitation autorisée et conserve un état persistant, au minimum `PLANNED`, `PRECHECKED`, `RUNNING`, `PAUSED`, `SUCCEEDED`, `FAILED` ou `BLOCKED`. Un échec ne doit pas laisser croire que la composition est activée. Le démarrage peut effectuer le `PRECHECK`, mais ne doit pas exécuter une migration en attente ni déclarer `ready` une instance dont la migration bloquante n'est pas terminée.
+
+Les migrations de schéma sont forward-only par défaut. Un rollback applicatif n'est autorisé que si la matrice de compatibilité prouve que le code précédent accepte le schéma et les données actuels ; sinon, Pixs applique une correction vers l'avant ou une restauration vérifiée. Aucun downgrade automatique de la base ne doit être lancé pour masquer un échec de release.
+
 ## 11. Multi-tenancy
 
 `Tenant` est la frontière technique d'isolation des données et du contexte d'autorisation. `Organization` peut représenter une entité métier, mais ne constitue pas nécessairement une frontière technique.
+
+Le modèle commun expose un type logique `Scope` et un `ScopeContext`. `Tenant` est le scope racine obligatoire ; un scope enfant possède un parent unique, appartient au même tenant et ne peut former de cycle. Les types `Organization`, `Workspace`, `Project` ou équivalents sont des types namespacés fournis par les modules qui en possèdent le modèle métier. Le Core ne doit pas transformer un type métier en frontière d'isolation sans déclaration explicite.
+
+Une ressource a une propriété canonique unique. Pour une ressource tenant-scoped, `tenant_id` identifie le tenant racine et `scope_id`, lorsqu'il est renseigné, identifie le scope enfant propriétaire. `scope_id` ne peut jamais référencer un scope d'un autre tenant. Une ressource platform-scoped est explicitement hors tenant et hors scope ; elle ne doit pas être rendue accessible dans un contexte tenant par défaut. Le partage, la délégation et l'héritage entre scopes passent par des ACL, rôles ou relations déclarés et ne changent pas la propriété canonique.
 
 Le modèle doit supporter :
 
@@ -249,6 +534,8 @@ Pixs doit supporter le mode mono-tenant et le mode multi-tenant. Le mode mono-te
 
 Les groupes sont tenant-scoped par défaut. Les groupes globaux sont réservés aux besoins de plateforme et leur utilisation dans un tenant doit être explicitement déclarée.
 
+L'implémentation de référence initiale utilise une base PostgreSQL partagée avec un schéma commun et des références explicites `tenant_id`/`scope_id`. Django applique les contrôles d'isolation et d'autorisation ; la Row-Level Security PostgreSQL peut fournir une défense en profondeur lorsque le provider et la topologie la supportent. Une évolution vers un schéma par tenant, une base par tenant ou une isolation régionale doit conserver les mêmes contrats fonctionnels et ne peut pas être codée dans les modules métiers.
+
 ## 12. Autorisation et contexte
 
 L'évaluation d'une autorisation utilise les éléments suivants :
@@ -257,7 +544,7 @@ L'évaluation d'une autorisation utilise les éléments suivants :
 Subject  → identité numérique, utilisateur ou groupe
 Resource → ressource protégée
 Action   → opération demandée
-Context  → tenant courant et autres contraintes applicables
+    Context  → ScopeContext courant et autres contraintes applicables
 ```
 
 Les rôles regroupent des permissions. Les ACL permettent des règles fines sur une ressource ou un périmètre. Les modules déclarent leurs ressources et actions sans déplacer la logique métier dans le Kernel.
@@ -272,9 +559,63 @@ ALLOW explicite
 deny by default
 ```
 
-Toute ressource tenant-scoped doit être évaluée avec un contexte tenant valide. Les accès plateforme et inter-tenants nécessitent une permission explicite, un contexte d'accès explicite et un événement d'audit. Ils ne constituent jamais un bypass silencieux des ACL.
+Toute ressource tenant-scoped doit être évaluée avec un `ScopeContext` valide : `tenant_id` est obligatoire et `scope_id` est fourni lorsque le contrat de la ressource le requiert. Le contexte est résolu avant l'autorisation, immuable pendant l'opération et propagé aux Commands, Queries, Events, Jobs, projections, caches, fichiers, recherches, workflows, synchronisations et audits. Les accès plateforme et inter-tenants nécessitent une permission explicite, un contexte d'accès explicite et un événement d'audit. Ils ne constituent jamais un bypass silencieux des ACL. Un accès à un scope parent ou descendant n'est pas implicite.
 
 Le backend Django est l'autorité d'évaluation. Le frontend, les caches, les projections et Electric peuvent refléter une décision mais ne peuvent pas l'autoriser à la place du backend.
+
+### 12.1 Modèle de politique
+
+Le moteur de référence de `pixs.core` est un PDP déclaratif. Django joue le rôle de PEP à la frontière des API, Commands, Queries, Jobs, fichiers, recherches et opérations d'exploitation. Une interface d'administration des politiques joue le rôle de PAP ; ses propres opérations sont soumises à l'autorisation, au step-up lorsque requis et à l'audit. Un PDP externe peut être utilisé comme adapter, mais il doit respecter le même contrat de décision et ne peut pas devenir obligatoire pour le Kernel.
+
+Une politique doit pouvoir exprimer au minimum :
+
+```text
+policy_id
+policy_version
+owner_component
+effect                 DENY | ALLOW
+subject_selector
+resource_selector
+action_selector
+scope_selector
+conditions typées
+obligations éventuelles
+valid_from / valid_until éventuels
+```
+
+Les selectors, conditions et obligations sont déclaratifs, versionnés, bornés et validables. Ils ne doivent ni exécuter de code arbitraire, ni charger une expression distante, ni accéder directement à une table privée d'un module. Les modules restent propriétaires de leurs ressources, actions, relations et politiques fonctionnelles.
+
+L'évaluation suit strictement `DENY explicite`, puis `ALLOW explicite`, puis `deny by default`. Un `DENY` correspondant à un sujet, une ressource, une action et un périmètre valide prévaut sur tout `ALLOW`. La propriété d'une ressource, l'appartenance à un groupe, un rôle administrateur ou la présence dans un scope parent ne sont que des attributs ou relations évaluables ; ils ne créent pas d'autorisation implicite.
+
+### 12.2 Contrat de décision et filtrage
+
+Le contrat `authorize` retourne conceptuellement :
+
+```text
+decision_id
+effect                   ALLOW | DENY
+reason_code
+policy_version
+obligations éventuelles
+evaluated_at
+expires_at éventuel
+```
+
+Le motif détaillé et la trace d'évaluation sont réservés aux diagnostics autorisés. La frontière publique expose une erreur stable et minimale, sans révéler les politiques privées, les attributs sensibles ou les raisons exploitables d'un refus.
+
+Le contrat `filter_authorized` traduit la même décision en contrainte appliquée à la source de données avant pagination, projection, recherche ou export. Il est obligatoire pour les collections et ne peut pas être remplacé par un filtrage frontend. Une opération groupée doit pouvoir retourner des décisions par ressource ou échouer en bloc selon le contrat de la capacité.
+
+### 12.3 Cohérence, cache et invalidation
+
+Une mutation et toute action sensible réévaluent la politique courante, l'`AuthenticationContext`, le `ScopeContext`, la révocation et la fraîcheur requise. Une décision `ALLOW` périmée ne doit jamais autoriser l'opération. Les caches de lecture, lorsqu'ils sont permis, sont indexés par sujet, ressource, action, tenant, scope, assurance et version ou epoch de politique ; ils sont invalidés après modification d'une politique, ACL, rôle, membership, scope, révocation ou assurance.
+
+Une indisponibilité du PDP produit un refus fermé pour les mutations, les actions sensibles et les données protégées. Un mode dégradé pour des lectures publiques ou explicitement non sensibles doit être déclaré par la capacité et ne peut pas être généralisé par le runtime.
+
+### 12.4 Groupes, délégation et élévation
+
+La résolution des groupes imbriqués doit utiliser un graphe acyclique, borné et détectable avant activation. Un cycle, une profondeur excessive ou une relation ambiguë produit un refus ou une composition invalide selon le moment de détection.
+
+Le contexte de décision peut distinguer l'acteur effectif, le sujet représenté et l'éventuel délégant afin de préserver la traçabilité. Une délégation, une impersonation ou une élévation break-glass doit être explicitement accordée, limitée dans le temps, liée à un périmètre, soumise au niveau d'assurance requis et auditée. Aucun rôle permanent de contournement ne doit être créé par défaut.
 
 ## 13. Identifiants des données
 
@@ -302,14 +643,175 @@ id          UUIDv7 interne et stable
 created_at  horodatage UTC immuable
 updated_at  horodatage UTC modifiable
 version     compteur de concurrence optimiste
-tenant_id   UUIDv7 du tenant propriétaire si la ressource est tenant-scoped
+    tenant_id   UUIDv7 du tenant racine si la ressource est tenant-scoped
+    scope_id    UUIDv7 du scope enfant propriétaire lorsque la ressource n'est pas portée directement par le tenant
 ```
 
 Les horodatages doivent être générés et interprétés en UTC. Le champ `version` permet de détecter les mises à jour concurrentes sans faire de la dernière écriture une résolution implicite.
 
 Le `soft delete` n'est pas une obligation globale du framework. Le module propriétaire doit déclarer la stratégie applicable : suppression physique, marqueur de suppression, archivage ou conservation définitive. Toute suppression doit respecter les références inter-modules, les obligations d'audit et les règles de rétention.
 
-Une entité tenant-scoped doit posséder une référence explicite vers son tenant propriétaire. Le contexte tenant d'une requête ne doit pas être déduit uniquement d'un identifiant fourni par le client.
+Une entité tenant-scoped doit posséder une référence explicite vers son tenant racine. Lorsqu'elle est rattachée à un scope enfant, elle doit conserver un `scope_id` cohérent avec ce tenant. Une entité platform-scoped doit être déclarée comme telle et ne doit pas recevoir de scope par défaut. Le contexte tenant ou scope d'une requête ne doit pas être déduit uniquement d'un identifiant fourni par le client.
+
+### 14.1 Dimensions du cycle de vie
+
+Le cycle de vie d'une donnée comporte plusieurs dimensions qui ne doivent pas être confondues :
+
+```text
+état métier       défini par le module propriétaire
+persistance       ACTIVE | ARCHIVED | SOFT_DELETED | PURGE_PENDING
+rétention         RETAINED | LEGAL_HOLD | ELIGIBLE_FOR_PURGE
+projection        état dérivé, reconstruisible ou synchronisé
+```
+
+Le module reste propriétaire de l'état métier, de ses invariants et de la politique déclarée. Pixs fournit les mécanismes communs de marquage, filtrage, rétention, tombstone, purge, restauration, historique et propagation. `PURGED` n'est pas nécessairement conservé comme une ligne métier : un tombstone ou un journal d'effacement durable doit toutefois être conservé lorsque cela est requis pour empêcher une résurrection ou démontrer l'effacement.
+
+Une politique de cycle de vie expose conceptuellement :
+
+```text
+retention_period
+deletion_strategy       SOFT_DELETE | PHYSICAL_DELETE | ARCHIVE | IMMUTABLE
+restore_allowed
+purge_conditions
+legal_hold_supported
+cascade_policy          RESTRICT par défaut
+history_policy
+```
+
+Le schéma exact est défini par la capacité concernée et peut ajouter une politique de synchronisation ou de classification. Une ressource métier utilise `SOFT_DELETE` par défaut. Les requêtes normales excluent les états `SOFT_DELETED` et `PURGE_PENDING` ; une restauration est une Command explicite, autorisée, auditée et soumise à la version de concurrence. Les données éphémères ou soumises à une obligation d'effacement immédiat doivent déclarer leurs garanties spécifiques.
+
+### 14.2 Suppression, rétention et purge
+
+La suppression logique met à jour la ressource et ses métadonnées de cycle de vie dans une frontière transactionnelle. Les références nécessaires à l'audit, à la synchronisation et au tombstone ne doivent pas être supprimées prématurément. La décision de purge vérifie au minimum la fin de la rétention, l'absence de legal hold, les références bloquantes, la politique du module propriétaire et l'état des projections ou synchronisations concernées.
+
+La purge physique est exécutée par un Job explicitement autorisé. Elle est idempotente, rejouable et observable ; une reprise ne doit ni réintroduire une donnée ni contourner une condition de rétention. Les suppressions inter-modules suivent `RESTRICT` par défaut. Une cascade doit être un contrat public ou une Command du module propriétaire, avec une politique, une corrélation et un audit propres ; une cascade SQL implicite entre propriétaires de modules est interdite.
+
+### 14.3 Tombstones, projections et restauration
+
+Un tombstone doit identifier sans payload sensible la ressource effacée, sa version de suppression, son instant, son tenant et son scope lorsque ces dimensions s'appliquent, ainsi que les informations nécessaires à la rétention, à la synchronisation et à la déduplication. Il est propagé par l'outbox ou le mécanisme de synchronisation déclaré vers les caches, index, projections, providers externes et consommateurs concernés. Une reconstruction doit consulter ces tombstones avant de republier une ressource.
+
+Les sauvegardes ont une rétention indépendante de celle des données en ligne. Une restauration doit rejouer ou réconcilier le journal d'effacement et les tombstones applicables avant de rendre les données disponibles ; elle ne doit pas restaurer silencieusement une ressource supprimée. La purge physique d'une sauvegarde suit la politique de sauvegarde et les obligations de legal hold, sans faire de la sauvegarde une source de vérité applicative.
+
+Les octets conservés par un `ObjectStorageProvider` suivent la décision portée par la métadonnée Pixs, mais peuvent avoir une durée de vie technique distincte. La suppression ou la purge doit donc coordonner la métadonnée, le tombstone et le provider, sans accès direct aux stockages privés d'un référentiel documentaire externe.
+
+### 14.4 Concurrence et historique
+
+Les mutations de cycle de vie utilisent `version` ou un mécanisme équivalent de concurrence optimiste lorsque la ressource est mutable. L'historique des transitions, décisions de rétention et purges est activé selon la `history_policy` et doit rester distinct des logs techniques. L'event sourcing est une capacité spécialisée optionnelle ; il n'est pas requis pour les ressources ordinaires et ne doit pas devenir une seconde source de vérité par défaut.
+
+### 14.5 Gouvernance des données et confidentialité
+
+Le cycle de vie décrit ce qui arrive à une donnée ; la gouvernance décrit ce qu'elle est, pourquoi elle est traitée, qui peut la recevoir et quelles obligations suivent ses copies. Chaque composant qui introduit, dérive ou transfère une donnée doit publier un profil de gouvernance versionné et possédé par le composant.
+
+```text
+DataGovernanceProfile
+├── profile_version
+├── data_asset_id
+├── owner_component
+├── source_of_truth
+├── data_classes
+├── confidentiality
+├── personal_data
+├── purpose_refs
+├── retention_policy
+├── deletion_policy
+├── residency_constraints éventuelles
+├── authorized_consumers
+├── processor_refs éventuelles
+├── export_policy
+└── lineage
+```
+
+`source_of_truth` identifie le composant et le contrat autoritatifs ; `lineage` décrit les projections, index, caches, fichiers, sauvegardes, événements et synchronisations dérivés. Un dérivé ne devient pas une nouvelle source de vérité par copie. Le profil doit être attaché à la donnée ou à l'opération lorsque le format le permet et doit être conservé lors d'un changement de provider.
+
+Les classifications sont orthogonales :
+
+```text
+confidentiality  PUBLIC | INTERNAL | CONFIDENTIAL | RESTRICTED
+personal_data    NONE | PERSONAL | SENSITIVE_PERSONAL
+secret           hors données métier, toujours référencé extérieurement
+```
+
+L'absence de classification n'est pas une permission implicite : elle applique la politique la plus restrictive. Une donnée non classifiée peut être persistée pour permettre une activation contrôlée, mais tout export, événement d'intégration, webhook, transfert à un provider ou exposition externe doit être refusé tant que la déclaration nécessaire n'est pas validée. Les classes métier et les finalités restent déclarées par le composant propriétaire ; Pixs ne leur impose pas de taxonomie de domaine.
+
+La classification et les obligations associées doivent être prises en compte dans les APIs, événements, webhooks, logs, traces, audits, recherches, projections, caches, fichiers, sauvegardes et exports. Le moteur d'autorisation peut compléter sa décision par des obligations de masquage, de minimisation, d'interdiction d'export ou de rétention réduite ; ces obligations doivent être exécutées par le point d'application concerné et rester auditables.
+
+Les providers externes ne sont pas propriétaires des données Pixs. Leur contrat doit déclarer, lorsque applicable, les garanties de transport, de chiffrement au repos, de localisation, de rétention, de suppression, de restitution, de versionnement et de révocation. Les clés et credentials sont fournis par références externes et ne figurent ni dans le profil, ni dans les manifests, ni dans les artefacts ou signaux techniques.
+
+Les contraintes de résidence et de transfert sont optionnelles et déclaratives. Lorsqu'une contrainte existe, un flux sortant doit identifier son consommateur ou processeur, son but, sa classe de données, sa destination logique, ses garanties de transport et son mécanisme de suppression ou de révocation. Le contrat ne fixe ni région, ni fournisseur, ni topologie de déploiement ; la composition est refusée si une garantie déclarée n'est pas satisfaite.
+
+### 14.6 Demandes relatives aux données
+
+`DataSubjectRequest` est un contrat générique permettant à un module d'exposer, selon sa politique, les opérations `ACCESS`, `EXPORT`, `RECTIFY`, `ERASE` et `RESTRICT`.
+
+```text
+DataSubjectRequest
+├── request_id
+├── operation
+├── subject_reference
+├── tenant_id / scope_id éventuels
+├── requested_by
+├── status
+├── policy_version
+├── operation_id éventuel
+├── legal_hold_decision éventuelle
+└── result_reference éventuelle
+```
+
+La demande est une Command : elle vérifie l'identité, le `ScopeContext`, l'autorisation, la politique du module et la concurrence avant toute mutation. Elle peut être asynchrone et doit exposer un `operation_id` lorsque son traitement dépasse la requête. Son exécution est idempotente, auditée et ne modifie jamais directement les tables privées d'un autre module.
+
+Le traitement doit coordonner la source de vérité, les projections, caches, index, fichiers, sauvegardes et providers déclarés. Il doit distinguer une restriction ou un effacement logique d'une purge physique, respecter la rétention et les legal holds et propager les tombstones ou décisions d'effacement sans exposer de payload sensible. Le framework ne déduit pas une obligation juridique ou un mécanisme de consentement à partir du seul nom de l'opération ; le module déclare les règles qui lui sont applicables.
+
+### 14.7 Multi-région et résidence par tenant conditionnelles
+
+La multi-région et la résidence sont des capacités optionnelles de gouvernance et d'exploitation. La référence Pixs reste mono-région : un tenant possède une région principale logique et aucune réplication, sauvegarde, transformation, bascule ou copie inter-région n'est activée implicitement. Les contraintes existantes de `DataGovernanceProfile` sont complétées par une politique de placement opérationnelle, sans imposer une région, un pays, une juridiction, un cloud ou une topologie au Kernel.
+
+La résidence décrit les emplacements admissibles pour une classe de données et ses dérivés ; le placement décrit l'emplacement effectif du primaire, des réplicas, des traitements, des sauvegardes et des clés. Les identifiants de région sont logiques et leur correspondance avec un provider, une zone ou un emplacement physique est fournie par la configuration de déploiement validée.
+
+Le contrat logique de placement est le suivant :
+
+```text
+TenantPlacementPolicy
+├── tenant_id
+├── placement_policy_version
+├── home_region
+├── allowed_replica_regions
+├── allowed_processing_regions
+├── allowed_backup_regions
+├── allowed_key_regions
+├── allowed_offline_copy_policy éventuelle
+├── failover_mode        SINGLE_REGION | ACTIVE_PASSIVE
+├── region_epoch
+├── transfer_policy
+├── status               ACTIVE | PENDING | MIGRATING | DEGRADED | BLOCKED
+└── revision
+```
+
+La politique s'applique au tenant, à ses scopes enfants et aux ressources qui en dépendent. Un scope enfant ou un `DataGovernanceProfile` peut renforcer la contrainte, mais ne peut pas autoriser une région interdite par le tenant. Les ressources platform-scoped ont une politique séparée. Une ressource tenant-scoped possède une seule région d'autorité à un instant donné ; les réplicas distants, caches, index et projections restent non autoritatifs.
+
+Le contexte régional est distinct du `ScopeContext` mais doit lui être corrélé :
+
+```text
+ResidencyContext
+├── request_region éventuelle
+├── tenant_home_region
+├── data_region
+├── residency_policy_version
+├── placement_policy_version
+├── region_epoch
+├── data_class
+├── transfer_allowed
+└── processor_reference éventuelle
+```
+
+Le routage résout d'abord l'identité, le tenant et le scope, puis le `ResidencyContext` et le placement. Une région fournie par le client ne peut pas remplacer le contexte canonique. Les écritures sont dirigées vers la région primaire ; les lectures d'un replica indiquent leur fraîcheur et ne peuvent pas être utilisées pour confirmer une mutation, une autorisation ou un entitlement. Les quotas, idempotences, événements et audits conservent leur portée métier et ne sont pas réinitialisés par la région d'exécution.
+
+Un `RegionalPlacementProvider` doit déclarer ses capacités et garanties de placement, de réplication, de chiffrement au repos et en transit, de gestion des clés, de suppression, de restauration, de révocation, de rétention et de transfert. La sélection est déterministe et la composition est bloquée lorsqu'une politique de résidence ne peut pas être démontrée. Les données et dérivés concernés incluent PostgreSQL, les objets, WAL et sauvegardes, réplicas, recherches, caches, fichiers temporaires, logs, traces, audits, événements, webhooks et copies offline.
+
+La réplication active-passive peut être proposée par une capacité conforme. Une bascule exige une région de secours autorisée, une compatibilité de schéma et de contrats, un checkpoint vérifiable, un epoch ou fencing persistant empêchant l'ancien primaire d'écrire, ainsi qu'un audit. Une perte de contact, un désaccord d'epoch ou un risque de split-brain doit bloquer la bascule. L'actif-actif, le multi-primary et les transactions distribuées ne sont pas des garanties du socle et nécessitent une capacité spécialisée.
+
+Une région indisponible ou un transfert non autorisé produit un état contrôlé, par exemple `REGION_UNAVAILABLE`, `PLACEMENT_UNSATISFIED`, `TRANSFER_FORBIDDEN` ou `FAILOVER_REQUIRED`, et ne doit pas déclencher un repli vers une région interdite. Une migration de tenant, une restauration inter-région ou une modification de politique est une opération explicite, versionnée, idempotente lorsque possible, reprenable et auditée. Les sauvegardes et restaurations doivent conserver les tombstones, rétentions, legal holds, clés, mappings, événements, Jobs, idempotences et obligations de gouvernance.
+
+Les copies offline sont traitées comme des copies supplémentaires : leur présence doit être autorisée par la politique du tenant et le `DataGovernanceProfile`. Une copie locale ne doit pas permettre de contourner la résidence, la révocation, la suppression, le changement de scope ou l'expiration d'un accès. Les services de support, télémétrie et diagnostic appliquent les mêmes règles de minimisation et de transfert.
 
 ## 15. Exécution des Commands
 
@@ -322,18 +824,124 @@ command_id
 command_type
 command_version
 subject
+authentication_context éventuel
 tenant_context
 payload
 correlation_id
 causation_id
 idempotency_key éventuelle
+expected_version éventuelle
+operation_id éventuel
 ```
 
-Le dispatcher doit valider le type, la version, l'identité appelante, le contexte tenant, le payload et l'autorisation avant d'appeler le handler métier. Le handler exécute la mutation dans la frontière transactionnelle définie par le module propriétaire.
+Le dispatcher doit valider le type, la version, l'identité appelante, le contexte d'authentification, le contexte tenant, le payload, la version attendue et l'autorisation avant d'appeler le handler métier. Le handler exécute la mutation dans la frontière transactionnelle définie par le module propriétaire.
 
-Une Command synchrone retourne un résultat ou une erreur métier après décision de la transaction. Une Command asynchrone retourne un identifiant de suivi et ne doit pas présenter la mutation comme acquise avant l'exécution et la validation correspondantes.
+Une Command synchrone retourne un résultat ou une erreur métier après décision de la transaction. Une Command asynchrone persiste son opération et le ou les Jobs nécessaires dans la même frontière transactionnelle lorsque cela est possible, retourne un `operation_id` distinct du `job_id` et ne doit pas présenter la mutation comme acquise avant l'exécution et la validation correspondantes.
 
 Les identifiants de corrélation et de causalité servent au suivi technique et fonctionnel. Ils ne remplacent pas l'identité numérique, le contexte tenant ou la clé d'idempotence.
+
+### 15.1 Import, export et opérations en masse
+
+`BulkOperation` est le contrat commun des traitements d'import et d'export. Il fournit un suivi persistant et ne devient jamais une autorité métier parallèle : les imports mutateurs utilisent les Commands du module propriétaire et les exports lisent des projections autorisées de la source de vérité.
+
+```text
+BulkOperation
+├── operation_id
+├── bulk_type             IMPORT | EXPORT
+├── bulk_version
+├── requested_by
+├── tenant_context
+├── scope_context éventuel
+├── input_reference / output_reference
+├── format
+├── mapping_version éventuelle
+├── commit_mode éventuel
+├── source_snapshot ou watermark éventuel
+├── idempotency_key éventuelle
+├── progress
+├── checkpoint éventuel
+├── result_reference éventuelle
+├── status
+└── expires_at éventuel
+```
+
+Les états communs sont :
+
+```text
+REQUESTED
+STAGED
+VALIDATING
+READY
+RUNNING
+COMPLETED
+COMPLETED_WITH_ERRORS
+FAILED
+CANCELLED
+EXPIRED
+```
+
+Les opérations qui dépassent le seuil d'exécution synchrone déclaré par la configuration sont asynchrones, exécutées par un ou plusieurs Jobs et suivies par `operation_id`. Le seuil n'est pas fixé par le Kernel. Une opération courte peut rester synchrone uniquement si le contrat garantit le même contrôle d'autorisation, d'idempotence et de gouvernance.
+
+Les formats de référence du socle sont `CSV` et `NDJSON`. Le contrat reste extensible par des adapters pour XLSX, Parquet ou un format fournisseur ; un format supplémentaire doit déclarer son schéma, ses limites, son encodage, son mapping et ses garanties de validation. Un fichier important est stocké dans un `ObjectStorageProvider` privé et non conservé dans la mémoire d'un processus ou dans le filesystem local.
+
+#### Import
+
+Un import suit une phase de staging avant toute mutation :
+
+```text
+upload privé
+    ↓
+checksum, taille et type
+    ↓
+validation du schéma et du mapping
+    ↓
+prévisualisation ou VALIDATE_ONLY éventuel
+    ↓
+Commands du module propriétaire
+    ↓
+résultats, rejets et audit
+```
+
+Le fichier source est privé, soumis aux contrôles de taille, type, checksum, classification et éventuelle quarantaine. Le mapping est versionné ; les champs inconnus, ambigus ou non autorisés sont rejetés par défaut. Le tenant et le scope cible proviennent du contexte autorisé et ne peuvent pas être élargis par une valeur de payload. Une ressource d'un autre module est modifiée uniquement par son contrat public.
+
+Le contrat doit distinguer les modes suivants :
+
+```text
+VALIDATE_ONLY       aucune mutation
+ATOMIC              tout ou rien lorsque le module et la taille le permettent
+ATOMIC_PER_CHUNK    validation et commit par unité de reprise
+BEST_EFFORT         succès et rejets par élément, explicitement autorisé
+```
+
+`ATOMIC_PER_CHUNK` est le mode pratique par défaut pour les gros imports. `BEST_EFFORT` n'est accepté que si le module déclare les invariants préservés et fournit un rapport de rejets. Les conflits utilisent `REJECT` par défaut ; `CREATE_ONLY`, `UPDATE_ONLY` ou `UPSERT` doivent être explicitement autorisés par le module et le contrat d'import.
+
+Chaque élément ou unité de reprise doit disposer d'une clé de déduplication lorsque la capacité le permet. Une même opération ou clé d'idempotence avec le même contenu restitue l'état ou le résultat persistant ; un contenu différent produit un conflit. Les checkpoints sont persistants, bornés et repris sans promettre `exactly-once`. L'annulation est coopérative et ne prétend pas annuler les chunks déjà validés.
+
+#### Export
+
+Un export est une lecture autorisée et contrôlée :
+
+```text
+demande autorisée
+    ↓
+projection et champs déclarés
+    ↓
+filter_authorized à la source
+    ↓
+snapshot logique ou watermark
+    ↓
+génération asynchrone
+    ↓
+fichier privé temporaire + manifeste
+```
+
+L'export n'utilise pas un index ou un cache comme source d'autorité. Les champs, relations, filtres, tris et périmètres sont déclarés par le module ; une sélection arbitraire de colonnes ou un `SELECT *` ne constitue pas un contrat d'export. Le snapshot logique ou le watermark doit permettre de diagnostiquer la cohérence du résultat sans maintenir une transaction longue lorsque cela n'est pas viable.
+
+Le manifeste de résultat peut porter le format, la version du mapping, le périmètre tenant/scope, le snapshot ou watermark, le nombre d'éléments, le checksum, la classification, l'expiration et une référence de téléchargement. Le fichier est privé par défaut, accessible uniquement après nouvelle vérification des permissions et au moyen d'une référence ou URL temporaire contrôlée. La rétention du fichier, sa révocation et sa purge suivent la politique de gouvernance et de cycle de vie.
+
+Les imports et exports doivent appliquer les profils de gouvernance des données. Une donnée non classifiée, une donnée protégée sans obligation résolue ou un flux sortant non déclaré doit être refusé. Les secrets ne peuvent jamais être importés depuis un fichier utilisateur ni inclus dans un export, un rapport de rejets, un événement ou un log. Les opérations relatives aux données personnelles peuvent réutiliser ce contrat, mais restent soumises aux règles propres à `DataSubjectRequest`.
+
+Les événements de progression, de complétion, d'échec et de rejet sont versionnés et minimisés. Une mutation importée produit les événements métier requis par le module au travers de l'outbox ; l'opération de masse ne doit pas remplacer un événement par un payload agrégé ambigu. Les résultats, erreurs, checkpoints et références de fichiers sont persistants, corrélés, auditables et supprimés ou anonymisés selon les politiques applicables.
 
 ## 16. Outbox transactionnelle
 
@@ -355,6 +963,10 @@ L'outbox est une capacité générique du runtime et non une responsabilité du 
 
 PostgreSQL est l'implémentation de référence initiale, mais le contrat ne doit pas empêcher un provider compatible lorsque les mêmes garanties sont conservées.
 
+Les mutations de cycle de vie qui doivent être propagées écrivent dans la même frontière transactionnelle le changement de ressource, le tombstone éventuel et l'événement d'effacement. Un consommateur ne doit pas reconstruire une projection ou republier une ressource supprimée à partir d'un événement antérieur sans vérifier la version de suppression et le journal d'effacement.
+
+Les événements de domaine internes et les événements d'intégration publics sont des contrats distincts. Ils peuvent partager l'outbox et le mécanisme de livraison, mais leur audience, leur schéma, leur politique de compatibilité et leur contenu sont déclarés séparément. Un événement d'intégration ne doit pas exposer un modèle privé ou un payload plus large que nécessaire.
+
 ## 17. Livraison des événements
 
 La garantie de livraison des événements est `at-least-once`.
@@ -373,6 +985,23 @@ Après une erreur temporaire, la publication peut être retentée selon une stra
 
 Les consommateurs doivent être conçus pour supporter la réception multiple d'un même événement. Pixs ne promet pas `exactly-once` de bout en bout, notamment lorsqu'un événement est transmis à un système externe.
 
+Une enveloppe d'événement doit pouvoir porter au minimum :
+
+```text
+event_id
+event_type
+event_version
+producer_component
+occurred_at
+subject
+tenant_context éventuel
+correlation_id
+causation_id éventuel
+payload
+```
+
+L'ordre n'est garanti que selon le périmètre déclaré, par exemple un `aggregate_id` ou une partition. Une inbox ou une déduplication persistante, indexée au minimum par consommateur et `event_id`, doit protéger les effets secondaires. Un événement ne doit être considéré comme consommé qu'après l'enregistrement de cet état et de ses effets selon la frontière transactionnelle déclarée.
+
 ## 18. Idempotence des Commands
 
 Toute Command susceptible d'être rejouée doit déclarer ou accepter une `idempotency_key`.
@@ -390,6 +1019,8 @@ Lorsque cette clé a déjà été traitée, le système doit retourner le résul
 
 La conservation des clés, empreintes de payload, résultats et états de traitement doit être suffisamment durable pour couvrir la fenêtre de rejeu définie par la capacité concernée. La déduplication ne doit pas dépendre uniquement d'un cache mémoire.
 
+Pour les événements, l'inbox ou le mécanisme équivalent conserve au minimum le consommateur, `event_id`, la version traitée, l'état de consommation, l'empreinte utile et les références de corrélation. Lorsque l'événement déclenche un Job dans la même source persistante, l'enregistrement de consommation et la création du Job doivent appartenir à une frontière transactionnelle commune. Un effet externe doit utiliser une clé d'idempotence ou une stratégie de déduplication propre au provider.
+
 ## 19. Queries
 
 Une Query est une opération de lecture autorisée. Elle doit vérifier l'identité ou le sujet appelant, le contexte tenant et les permissions applicables avant de retourner une projection ou un résultat.
@@ -397,6 +1028,10 @@ Une Query est une opération de lecture autorisée. Elle doit vérifier l'identi
 Une Query ne doit pas modifier l'état métier, publier un événement métier, créer implicitement une ressource, modifier un compteur fonctionnel, déclencher une migration ou contourner une ACL. Les caches, métriques et traces sont des effets techniques autorisés lorsqu'ils ne deviennent pas une source de vérité métier.
 
 Une Query peut retourner des données projetées ou issues d'un index, mais la projection doit respecter les permissions et le contexte tenant du demandeur. Une donnée mise en cache ne doit jamais être servie à un sujet ou tenant non autorisé.
+
+Les collections et recherches doivent utiliser `filter_authorized` ou un contrat équivalent afin que l'autorisation soit appliquée avant pagination et sérialisation. Une projection ou un index ne peut pas reconstituer une permission à partir d'un résultat déjà filtré ni servir une décision positive périmée.
+
+Les requêtes normales excluent les ressources `SOFT_DELETED` et `PURGE_PENDING`, y compris lorsqu'elles utilisent un cache, un index ou une projection. Les lectures d'administration des données supprimées doivent être explicites, autorisées et auditées ; elles ne doivent pas exposer un payload effacé lorsque la politique l'interdit.
 
 ## 20. Configuration
 
@@ -420,6 +1055,8 @@ La source la plus prioritaire remplace la source la moins prioritaire. Une valeu
 
 Les adaptateurs Debian, Docker et développement local peuvent avoir des formats d'entrée différents, mais doivent produire le même modèle de configuration validé. La valeur effective peut être diagnostiquée par sa source et son statut sans exposer sa valeur lorsqu'elle est secrète.
 
+Les feature flags sont une configuration runtime spécialisée, versionnée séparément de la configuration statique de composition. Les affectations peuvent varier entre installations, environnements, tenants et scopes sans reconstruire l'artefact. Elles doivent être modifiées par un contrat d'administration autorisé et audité ; leur source, leur version, leur durée de validité et leur statut doivent rester inspectables sans exposer de donnée sensible.
+
 ## 21. Secrets
 
 Un secret est représenté par une référence et non par sa valeur dans la configuration fonctionnelle.
@@ -441,14 +1078,38 @@ Le runtime doit éviter de conserver les secrets plus longtemps que nécessaire 
 
 ## 22. Lifecycle des composants
 
-Les états de lifecycle sont des dimensions distinctes :
+Les états de lifecycle sont des dimensions distinctes et ne doivent pas être réduits à un enum unique. Les phases de composition de référence sont :
 
 ```text
-installed
-enabled
-configured
-ready
-healthy
+DISCOVERED
+    ↓
+VALIDATED
+    ↓
+RESOLVED
+    ↓
+LOADED
+    ↓
+ACTIVE
+```
+
+`DISCOVERED` signifie que le composant est identifié, `VALIDATED` que son manifest et ses préconditions sont valides, `RESOLVED` que ses dépendances et contrats sont satisfaits, `LOADED` que ses artefacts déclarés sont disponibles et `ACTIVE` qu'il est exposé par la composition.
+
+Les états d'installation et d'exploitation sont indépendants :
+
+```text
+INSTALLED
+ENABLED
+CONFIGURED
+READY
+```
+
+L'état de santé et de disponibilité est également indépendant :
+
+```text
+HEALTHY
+DEGRADED
+FAILED
+DISABLED
 ```
 
 Les opérations supportées sont explicitement représentées :
@@ -464,7 +1125,7 @@ uninstall
 purge explicite
 ```
 
-Une configuration, dépendance ou contrainte de compatibilité invalide doit empêcher l'activation ou le passage à `ready`. Une défaillance doit rester observable et ne doit pas supprimer implicitement les données.
+Une configuration, dépendance, contrat, contribution, point d'entrée ou contrainte de compatibilité invalide doit empêcher l'activation ou le passage à `ready`. Une défaillance doit rester observable et ne doit pas supprimer implicitement les données. Une extension optionnelle peut être isolée en `DEGRADED`, `FAILED` ou `DISABLED` ; une extension obligatoire non résolue ou incompatible bloque le périmètre concerné.
 
 Une mise à niveau valide la composition, les contrats et les migrations avant activation de la nouvelle version. La purge est distincte de la désinstallation et nécessite une autorisation explicite. Le hot reload n'est permis que lorsqu'une capacité le déclare et en définit les garanties.
 
@@ -484,10 +1145,18 @@ tenant_context
 correlation_id
 causation_id
 idempotency_key éventuelle
+operation_id éventuel
 scheduled_at éventuel
+available_at éventuel
 attempt_count
+max_attempts éventuel
 timeout éventuel
 priority éventuelle
+lease_owner éventuel
+lease_expires_at éventuel
+executor_identity éventuelle
+last_error éventuelle
+result_reference éventuelle
 ```
 
 Ses états sont :
@@ -499,13 +1168,18 @@ RUNNING
 SUCCEEDED
 RETRYING
 FAILED
+PAUSED
 CANCELLED
 DEAD_LETTER
 ```
 
-Un Job n'est pas une autorité métier. Toute mutation déclenchée par un Job passe par une Command, avec validation, autorisation et transaction Django. Les handlers doivent être idempotents ou déclarer explicitement leurs limites. Les Jobs périodiques doivent être déclarés et versionnés.
+Un Job n'est pas une autorité métier. Toute mutation déclenchée par un Job passe par une Command, avec validation, autorisation et transaction Django. Les handlers doivent être idempotents ou déclarer explicitement leurs limites. Les Jobs périodiques doivent être déclarés et versionnés. `operation_id` reste distinct de `job_id` : une opération peut produire plusieurs Jobs, et un Job peut être repris sans créer une nouvelle opération.
 
-Les données nécessaires à la reprise — état, tentatives, échéances, résultats et erreurs diagnostiquables — doivent être persistantes et compatibles avec la garantie `at-least-once`.
+Les données nécessaires à la reprise — état, tentatives, échéances, résultats, leases et erreurs diagnostiquables — doivent être persistantes et compatibles avec la garantie `at-least-once`. Un worker acquiert un lease avec expiration et renouvellement bornés ; la perte du lease rend le Job reprenable après vérification de son état. Le scheduler utilise lui aussi un lease persistant et ne doit pas dépendre de la mémoire ou du filesystem local.
+
+L'autorisation est évaluée à la mise en file puis réévaluée à l'exécution. Le Job conserve l'acteur initial, le `DigitalIdentity`, l'`AuthenticationContext` utile à l'audit et le `ScopeContext`, mais ne réutilise pas un contexte d'authentification expiré. Le worker ou le compte de service est l'exécuteur technique et ne peut pas élargir le périmètre de l'acteur initial.
+
+Les erreurs métier non rejouables sont orientées vers `FAILED`, `CANCELLED` ou `DEAD_LETTER` selon le contrat. Les erreurs techniques temporaires peuvent utiliser un backoff et un nombre maximal de tentatives. Une reprise manuelle ou une replanification doit être explicitement autorisée, corrélée et auditée.
 
 ## 24. Notifications
 
@@ -554,7 +1228,11 @@ La livraison suit `at-least-once`, avec retries, backoff et déduplication. Une 
 
 HTTP/REST est le protocole API principal de Pixs. Les contrats d'API sont décrits par OpenAPI et versionnés indépendamment des implémentations Django ou TanStack.
 
-Les Commands sont exposées comme opérations de mutation et les Queries comme opérations de lecture. Chaque route doit déclarer son contrat, son schéma d'entrée, son schéma de sortie, ses erreurs, ses exigences d'authentification, son contexte tenant et ses permissions.
+Les routes tenant-scoped conservent le tenant dans leur chemin canonique, par exemple `/api/v1/tenants/{tenant_id}/resources`. Lorsqu'une ressource est portée par un scope enfant, le contrat doit déclarer comment le scope est résolu et, lorsque cela améliore la lisibilité ou l'unicité de la ressource, exposer un chemin explicitement scope-scoped. Un header, un champ de payload ou un paramètre non déclaré ne peut pas remplacer le `ScopeContext` canonique. Les routes platform-scoped restent distinctes.
+
+Chaque route ou action sensible doit déclarer le niveau minimal d'`authentication_assurance`, d'`identity_assurance` et de `federation_trust`, ainsi que la fraîcheur maximale du contexte. Une exigence supérieure déclenche un step-up ou un refus explicite ; une permission d'affichage frontend ne peut pas satisfaire cette exigence.
+
+Les Commands sont exposées comme opérations de mutation et les Queries comme opérations de lecture. Chaque route doit déclarer son contrat, son schéma d'entrée, son schéma de sortie, ses erreurs, ses exigences d'authentification, son `ScopeContext` et ses permissions.
 
 Les erreurs publiques utilisent une enveloppe stable inspirée de Problem Details :
 
@@ -574,9 +1252,9 @@ Une réponse d'erreur ne doit contenir ni secret, ni stack trace, ni identifiant
 
 La version majeure d'une API est portée par son chemin public (`/api/v1/...`). Une évolution mineure ou corrective compatible ne change pas ce chemin et doit rester compatible avec le contrat de la version majeure. Une modification incompatible publie une nouvelle version majeure et son propre document OpenAPI. Les versions majeures peuvent coexister pendant une période de dépréciation explicitement documentée ; le retrait doit préciser la version cible, l'échéance et le remplacement éventuel.
 
-L'authentification HTTP standard est portée par l'en-tête `Authorization: Bearer`. Un provider peut valider un token OAuth2/OIDC JWT ou opaque et doit produire un contexte rattaché à une `DigitalIdentity`. Les API keys sont réservées aux mécanismes explicitement déclarés pour les comptes de service. Le mTLS peut être utilisé pour les identités `DEVICE` ou les comptes de service lorsque le provider le prend en charge.
+L'authentification HTTP standard est portée par l'en-tête `Authorization: Bearer`. Un provider peut valider un token OAuth2/OIDC JWT ou opaque et doit produire un `AuthenticationContext` rattaché à une `DigitalIdentity`, avec ses niveaux d'assurance, sa validité et sa révocabilité. Les API keys sont réservées aux mécanismes explicitement déclarés pour les comptes de service et produisent au plus une assurance de base. Le mTLS peut être utilisé pour les identités `DEVICE` ou les comptes de service lorsque le provider le prend en charge.
 
-L'autorisation ne doit être évaluée qu'après résolution de l'identité numérique, du contexte tenant et du contexte de requête. Un identifiant d'utilisateur présent dans le payload ou les paramètres ne modifie jamais le sujet authentifié. Une route sans authentification doit déclarer explicitement son caractère public dans son contrat API et appliquer malgré tout ses règles de validation et de limitation.
+L'autorisation ne doit être évaluée qu'après résolution de l'identité numérique, de l'`AuthenticationContext`, du `ScopeContext` et du contexte de requête. Un identifiant d'utilisateur présent dans le payload ou les paramètres ne modifie jamais le sujet authentifié. Une route sans authentification doit déclarer explicitement son caractère public dans son contrat API et appliquer malgré tout ses règles de validation et de limitation.
 
 Pour une ressource tenant-scoped, le contexte canonique est porté par le chemin, par exemple `/api/v1/tenants/{tenant_id}/resources`. La frontière API résout ce tenant, vérifie la `TenantMembership` de la `DigitalIdentity` et transmet un contexte tenant immuable aux Commands, Queries, Events, Jobs et écritures d'audit. Un header tenant ou une valeur fournie dans le payload peut être rejeté ou traité comme une incohérence ; il ne remplace jamais le chemin canonique. Les routes platform-scoped ne doivent pas être implicitement rattachées à un tenant.
 
@@ -612,13 +1290,220 @@ Le format par défaut des échanges est `application/json; charset=utf-8`. La fr
 
 OpenAPI constitue la source de vérité des contrats API publics. Un test de contrat doit vérifier au minimum les routes, méthodes, paramètres, schémas d'entrée et de sortie, statuts HTTP, enveloppes de succès et d'erreur, exigences d'authentification, contexte tenant et limites déclarées. Les exemples de requêtes et réponses sont versionnés avec le contrat. Un contrôle de compatibilité compare toute évolution à la version majeure publiée et bloque les ruptures qui ne sont pas accompagnées d'une nouvelle version majeure. Les SDK, clients typés et documentations générés sont des artefacts dérivés et ne doivent pas être modifiés pour masquer une divergence du contrat.
 
+Les contrats d'événements sont versionnés séparément des contrats HTTP. Une représentation compatible avec AsyncAPI peut décrire les types, versions, schémas, producteurs, consommateurs, canaux, ordre, garanties de livraison et politiques de rejeu sans imposer de broker ni de transport au Kernel. Les événements d'intégration publics sont dérivés de contrats explicites et ne doivent pas exposer les modèles privés, secrets ou données non nécessaires à leurs consommateurs. Les webhooks sortants sont des adapters de ces événements ; les webhooks entrants passent par une frontière d'ingestion qui vérifie signature, fraîcheur, identifiant externe et rejeu avant de produire une Command ou un événement interne.
+
 WebSocket et SSE sont des transports optionnels réservés aux capacités réactives. GraphQL et RPC peuvent être ajoutés comme adapters compatibles, mais ne sont pas requis par le Kernel ni par le contrat API principal.
 
 Une API ne doit jamais exposer directement les modèles privés, repositories ou détails de persistance d'un module. Elle utilise les interfaces publiques, Commands, Queries, services et schémas déclarés.
 
+### 25.1 SDK et Developer Kit
+
+Les SDK officiels initiaux sont TypeScript et Python. Ils sont des clients des contrats publics et non des projections des modèles Django. La génération s'appuie sur les documents OpenAPI, les contrats événementiels compatibles avec AsyncAPI et les JSON Schemas publics ; les types, clients bas niveau, exemples et métadonnées de contrat sont produits de manière déterministe. Une façade ergonomique peut être maintenue au-dessus du code généré, mais elle ne peut pas modifier la sémantique, les garanties ou les versions du contrat source.
+
+```text
+contrats OpenAPI / AsyncAPI / JSON Schema
+                    ↓
+        validation et compatibilité
+                    ↓
+          génération déterministe
+                    ↓
+        client typé bas niveau
+                    ↓
+       façade ergonomique optionnelle
+```
+
+Le client partagé doit fournir, lorsque le contrat le prévoit, le transport HTTP ou événementiel, les erreurs typées, les enveloppes `data`/`meta`/`links`, la pagination par curseur, le `TenantContext`, le `ScopeContext`, la corrélation, les `Idempotency-Key`, le suivi des `operation_id` et des `BulkOperation`, ainsi que les limites et budgets déclarés. Le contexte de tenant et de scope est fourni explicitement, immuable pendant la requête et ne peut pas être remplacé par un champ de payload ou une valeur globale cachée.
+
+L'authentification est injectée par un provider ou une fonction de résolution de credential. Le SDK ne devient pas une autorité d'identité et ne doit pas imposer un mécanisme de stockage des tokens. Dans le navigateur, les tokens et credentials ne sont pas persistés localement par défaut ; une application qui choisit une persistance doit l'assumer explicitement et respecter les règles de sécurité du projet. Les SDK serveur peuvent utiliser des credentials de service ou des flux OAuth selon les contrats et providers déclarés, sans afficher les secrets.
+
+Une mutation n'est automatiquement rejouée que si une clé d'idempotence et le contrat l'autorisent. Les retries sont bornés, soumis à un backoff déclaré et distinguent les erreurs techniques rejouables des erreurs métier. Un traitement asynchrone reste dans un état en cours tant que le suivi persistant ne confirme pas son résultat ; le SDK ne transforme pas un `202` en succès métier. Les webhooks entrants et sortants disposent d'un utilitaire de signature, de vérification de fraîcheur et de détection du rejeu lorsque le contrat le prévoit.
+
+Le Developer Kit est distinct des clients runtime. Il fournit le scaffolding, la validation du `component.toml`, la génération des contrats et clients, la vérification des capacités et dépendances, le contrôle des imports publics, la compatibilité SemVer et les tests de conformité. La CLI officielle réutilise ces bibliothèques pour les commandes de création, inspection, validation, génération, test, compatibilité et diagnostic ; ses sorties et codes d'erreur sont stables et ne contiennent pas de secret.
+
+Les packages SDK et outils sont versionnés par `sdk_version`, avec des contraintes de compatibilité explicites envers les versions d'API, de contrats, de composants et de schémas. La publication vers npm, PyPI ou un autre registry est un adapter ; elle ne doit pas être nécessaire pour construire ou exécuter Pixs, et une installation runtime de code distant est interdite par défaut. Les fixtures, exemples et rapports de conformité sont synthétiques, reproductibles et dépourvus de données de production.
+
+### 25.2 Quotas et entitlements
+
+Un entitlement exprime la disponibilité contractuelle d'une capacité ou d'une limite pour un sujet de déploiement. Un quota exprime une consommation quantitative autorisée. Ils sont distincts de la capacité composée, de l'autorisation, de l'authentification et du feature flag : un entitlement ne prouve pas l'identité, un quota ne donne pas de permission et un flag ne peut pas créer un entitlement.
+
+Le Kernel ne porte pas la facturation, les abonnements ou les plans commerciaux. Il définit les contrats de résolution et d'application. Un `EntitlementProvider` peut fournir un snapshot ou une décision issue d'une licence, d'un abonnement, d'une politique d'installation ou d'un système externe ; il doit être versionné, corrélé, révocable et ne peut pas écrire directement dans les modèles métier Pixs.
+
+Le modèle logique d'un entitlement est le suivant :
+
+```text
+Entitlement
+├── entitlement_id
+├── entitlement_key
+├── subject_type       INSTALLATION | PLATFORM | TENANT | SCOPE
+├── subject_id
+├── tenant_id éventuel
+├── scope_id éventuel
+├── value ou limite contractuelle
+├── status              SCHEDULED | ACTIVE | EXPIRED | SUSPENDED | REVOKED
+├── source_reference
+├── entitlement_version
+├── valid_from
+├── expires_at éventuel
+└── revision
+```
+
+Les entitlements sont rattachés par défaut à l'installation, à la plateforme ou au tenant. Un rattachement à un scope enfant est possible uniquement si le contrat le prévoit explicitement et ne peut pas élargir les capacités du tenant. Les entitlements utilisateurs ne sont pas une dimension implicite. La décision expose conceptuellement `allowed`, la cause, la version, la portée et la période de validité, sans révéler la politique commerciale ou des données confidentielles à un appelant non autorisé.
+
+Une politique de quota doit déclarer au minimum :
+
+```text
+QuotaPolicy
+├── quota_id
+├── quota_policy_version
+├── dimension          REQUESTS | RATE | CONCURRENCY | BYTES | OBJECTS | ROWS | JOBS | OPERATION_COST
+├── unit
+├── subject_scope      INSTALLATION | PLATFORM | TENANT | SCOPE | IDENTITY | IP | OPERATION
+├── limit
+├── period ou lifetime
+├── aggregation        COUNTER | WINDOW | CONCURRENCY | RESERVATION
+├── reset_at éventuel
+└── status
+```
+
+Les unités sont explicites et doivent éviter les flottants ambigus pour les compteurs et coûts. Les limites de débit ou de concurrence courte sont distinguées des quotas cumulés sur une fenêtre ou une durée de vie. Plusieurs politiques peuvent s'appliquer à une même opération ; elles sont évaluées simultanément et l'opération est refusée dès qu'une limite applicable n'est pas disponible.
+
+Le `QuotaProvider` expose conceptuellement les opérations suivantes :
+
+```text
+check(context, request)       → décision sans réservation
+reserve(context, request)     → réservation atomique
+commit(reservation, actual)   → consommation effective
+release(reservation, unused)  → libération contrôlée
+```
+
+Une réservation possède un identifiant stable, une clé d'idempotence, une opération, un contexte tenant/scope, une estimation, un état, une échéance et une référence de politique. `reserve`, `commit` et `release` doivent être persistants et idempotents. Une même clé avec une demande différente produit un conflit explicite. Un retry, une reprise ou une annulation ne doit pas doubler la consommation ; la différence entre estimation et usage réel est réconciliée selon la politique.
+
+PostgreSQL constitue le provider de référence pour les compteurs durables, décisions et réservations. Un provider spécialisé de haute fréquence est autorisé s'il garantit l'atomicité, la persistance, la déduplication, l'expiration, la reprise et la cohérence tenant/scope nécessaires. Un cache local peut accélérer une lecture d'entitlement ou de politique avec une durée et une invalidation bornées, mais il ne constitue jamais l'autorité et ne peut pas maintenir une décision après expiration, suspension ou révocation.
+
+La résolution d'une opération suit conceptuellement :
+
+```text
+capacité composée et disponible
+              ↓
+entitlement valide
+              ↓
+autorisation de l'identité sur la ressource
+              ↓
+feature flag compatible, s'il s'applique
+              ↓
+réservation des quotas nécessaires
+              ↓
+exécution et réconciliation
+```
+
+Une indisponibilité, incohérence ou expiration échoue fermé pour les mutations, actions sensibles, opérations coûteuses, données protégées, Jobs et opérations bulk. Un dépassement récupérable peut répondre `429 Too Many Requests` avec un `Retry-After` lorsque le renouvellement est connu ; un entitlement absent ou révoqué utilise un code d'erreur distinct. Les réponses et SDK ne doivent exposer que la décision et les limites nécessaires au consommateur autorisé.
+
+Les APIs, Commands asynchrones, Jobs, imports et exports vérifient les entitlements et quotas à la création puis au point d'exécution lorsque la durée ou la consommation le justifie. Une opération bulk réserve notamment les octets, lignes, concurrence et Jobs nécessaires ; elle libère les réservations non consommées et conserve l'audit des unités effectivement engagées. Les compteurs, décisions et références de réservation portent le `ScopeContext`, l'acteur, la corrélation et la causalité applicables sans conserver le payload sensible.
+
+### 25.3 Offline-first et synchronisation locale conditionnelles
+
+L'offline-first est une capacité optionnelle exposée par un contrat `OfflineSyncCapability`. Elle est déclarée et résolue par composant, ressource, tenant et scope ; elle ne constitue pas un mode global du runtime et son absence ne modifie pas le comportement connecté. Le contrat ne doit pas imposer Electric, une base navigateur, IndexedDB, un service worker ou un provider local particulier.
+
+Une capacité offline-first déclare au minimum :
+
+```text
+OfflineSyncCapability
+├── capability_id
+├── capability_version
+├── resource_types
+├── read_projections
+├── command_types éventuels
+├── allowed_tenant_scopes
+├── allowed_confidentiality
+├── local_retention
+├── encryption_policy
+├── offline_access_lease_policy éventuelle
+├── max_staleness
+├── local_schema_version
+├── sync_protocol_version
+├── conflict_policy
+└── revocation_invalidation_policy
+```
+
+Les projections locales sont des répliques non autoritatives. Elles sont liées au contexte déclaré et peuvent porter les états `ONLINE`, `OFFLINE`, `CATCHING_UP`, `STALE`, `CONFLICT`, `REVOKED` et `PURGED`. Elles doivent conserver un curseur ou watermark serveur, une version de projection, une date de dernière synchronisation et une échéance de fraîcheur lorsque ces informations sont nécessaires à la décision d'affichage. La connectivité détectée par le client n'est qu'un signal de transport.
+
+Le modèle logique d'une réplique locale est le suivant :
+
+```text
+LocalReplica
+├── replica_id
+├── subject_reference
+├── device_reference éventuelle
+├── TenantContext
+├── ScopeContext
+├── projection_version
+├── local_schema_version
+├── server_cursor éventuel
+├── last_sync_at éventuel
+├── stale_at éventuel
+├── status
+└── revision
+```
+
+Le modèle logique d'une Command créée hors ligne est le suivant :
+
+```text
+OfflineCommand
+├── offline_command_id
+├── command_type
+├── command_version
+├── operation_id éventuel
+├── idempotency_key
+├── actor_reference
+├── TenantContext
+├── ScopeContext
+├── payload_reference ou payload chiffré selon la politique
+├── payload_digest
+├── created_at
+├── expires_at éventuel
+├── state              PENDING | SUBMITTED | APPLIED | REJECTED | CONFLICT | EXPIRED | REVOKED
+└── last_sync_error éventuel
+```
+
+Une `OfflineCommand` est une intention et non une mutation confirmée. Le client peut afficher un état provisoire, mais seul le backend peut produire l'effet métier, l'Event de domaine et l'entrée d'outbox correspondants. À la reconnexion, le serveur authentifie à nouveau l'appel, résout le `ScopeContext`, réévalue l'autorisation, l'entitlement, les quotas, la concurrence et la gouvernance, puis appelle la Command Django du module propriétaire. Un `AuthenticationContext` ou une permission expiré ne peut pas être réutilisé comme preuve.
+
+La soumission utilise une clé d'idempotence et un identifiant stables. Les retries, replays, redémarrages et pertes de connexion suivent `at-least-once` ; ils ne doivent pas produire deux effets métier confirmés. Une opération ne peut être marquée `APPLIED` qu'après confirmation serveur. Les Events locaux restent limités à l'interface, au suivi de synchronisation et aux états provisoires ; ils ne remplacent ni l'Event Bus, ni l'inbox/outbox, ni les garanties transactionnelles.
+
+La synchronisation locale suit conceptuellement :
+
+```text
+snapshot / changements autorisés du serveur
+                ↓
+        LocalReplica versionnée
+                ↓
+     lecture éventuellement STALE
+                ↓
+OfflineCommand PENDING éventuelle
+                ↓ reconnexion
+authentification + ScopeContext + autorisation
+                ↓
+entitlement + quota + concurrence + gouvernance
+                ↓
+       Command Django / PostgreSQL
+                ↓
+     Event / outbox / projection
+                ↓
+      checkpoint et réconciliation
+```
+
+Les conflits sont déclarés par ressource et ne sont jamais résolus silencieusement. Les stratégies permises sont `REJECT`, `MANUAL_REVIEW`, `DOMAIN_MERGE` et, lorsque la perte est acceptable et documentée, `LAST_WRITE_WINS`. Une résolution locale ne peut pas publier un Event de domaine, élargir un scope, prolonger un entitlement ou confirmer une réservation de quota.
+
+La persistance locale respecte le `DataGovernanceProfile`. `PUBLIC` et `INTERNAL` peuvent être autorisés par défaut lorsque la capacité le déclare ; `CONFIDENTIAL` exige une politique de stockage sécurisée et explicite ; `RESTRICTED` et `SENSITIVE_PERSONAL` sont refusés par défaut. Les secrets, tokens, credentials et preuves d'authentification brutes ne sont jamais stockés localement. Une projection non publique peut exiger un `OfflineAccessLease` borné, lié au sujet, à l'appareil, au tenant et au scope, sans remplacer la réévaluation serveur.
+
+Un changement de tenant ou de scope, une déconnexion, une expiration, une révocation, un tombstone, une demande d'effacement ou une expiration de rétention doit invalider ou purger les répliques et Commands concernées. Les caches locaux ne doivent pas masquer une révocation ou une version dépassée. Les quotas et entitlements sont résolus côté serveur à la soumission ; les imports, exports, opérations bulk, purges et actions sensibles sont refusés hors ligne par défaut.
+
+La synchronisation locale est distincte d'une synchronisation externe. Elle ne crée pas de mode `EXTERNAL` ou `EXPLICIT_BIDIRECTIONAL` et ne confère pas au client local une autorité concurrente. Electric peut fournir un transport de changements pour une capacité compatible, mais les mêmes contrats de source de vérité, d'autorisation, de cycle de vie, de gouvernance et de conflit restent applicables.
+
 ## 26. Extension frontend
 
 Le frontend de référence utilise TanStack, mais les frontières d'extension sont définies par des contrats frontend publics et versionnés plutôt que par les imports ou l'arborescence interne du shell.
+
+Le shell expose également un `ScopeContext` en lecture seule, comprenant le tenant racine et le scope enfant éventuel. Les clés de cache, projections et états locaux doivent intégrer ce contexte lorsqu'il est applicable. Un changement de tenant ou de scope annule ou invalide les données dépendantes avant d'exposer le nouveau contexte ; une extension ne peut pas le modifier ni élargir son périmètre.
 
 Un composant peut déclarer dans son manifest des contributions de types suivants :
 
@@ -648,6 +1533,8 @@ QueryClient    lecture via Query et API publiques
 CommandClient  mutation via Command et API publiques
 ```
 
+Toute clé de cache frontend doit intégrer le scope lorsqu'il est applicable, en plus du tenant, de l'identité, de la ressource et des paramètres validés.
+
 Un adapter peut générer les clients typés à partir d'OpenAPI. TanStack Query peut implémenter la gestion de l'état serveur, du cache, de l'invalidation et des retries, mais ne devient pas la source de vérité métier. Une clé de cache doit être déterminée par la version d'API, le tenant, l'identité lorsque pertinente, la ressource, les filtres, le tri et les autres paramètres validés. Une réponse ou projection Electric ne peut être utilisée que si la capacité déclare la réactivité et ne peut jamais remplacer la vérification d'autorisation backend. Les mutations optimistes représentent un état d'interface provisoire et doivent être réconciliées avec le résultat de la Command.
 
 Le shell expose un contexte de session en lecture seule aux extensions :
@@ -656,11 +1543,13 @@ Le shell expose un contexte de session en lecture seule aux extensions :
 DigitalIdentity   identité authentifiée ou absence d'identité
 User              utilisateur associé éventuellement
 Tenant            tenant courant ou contexte plateforme
+ScopeContext      tenant racine et scope enfant éventuel
+Authentication    niveaux d'assurance et fraîcheur exposables
 UIPermissions     permissions utiles à l'affichage
 SessionState      initialisation, active, expirée, révoquée, erreur
 ```
 
-Une extension ne doit pas accéder aux tokens bruts, les décoder ou les persister. Le token d'accès peut rester en mémoire pendant la session ; le renouvellement navigateur utilise, lorsque nécessaire, une session de renouvellement portée par un cookie `HttpOnly`, `Secure` et `SameSite` compatible avec la politique CSRF. `localStorage` et `sessionStorage` ne doivent pas contenir de token d'accès ou de renouvellement. Les guards de route et permissions UI sont des optimisations d'expérience, jamais des décisions d'autorisation. Lorsqu'un tenant courant change, le shell doit annuler ou invalider les requêtes, caches, projections et états locaux liés à l'ancien contexte avant d'exposer le nouveau.
+Une extension ne doit pas accéder aux tokens bruts, les décoder ou les persister. Le token d'accès peut rester en mémoire pendant la session ; le renouvellement navigateur utilise, lorsque nécessaire, une session de renouvellement portée par un cookie `HttpOnly`, `Secure` et `SameSite` compatible avec la politique CSRF. `localStorage` et `sessionStorage` ne doivent pas contenir de token d'accès ou de renouvellement. Les guards de route et permissions UI sont des optimisations d'expérience, jamais des décisions d'autorisation. Lorsqu'un tenant ou un scope courant change, le shell doit annuler ou invalider les requêtes, caches, projections et états locaux liés à l'ancien contexte avant d'exposer le nouveau. Le niveau d'assurance peut être affiché ou utilisé pour guider un step-up, mais ne constitue jamais une décision d'autorisation côté frontend.
 
 Le registre et le shell suivent le lifecycle propre à chaque extension :
 
@@ -873,6 +1762,10 @@ Le socle de build couvre le scan de secrets, l'analyse statique, la vérificatio
 
 Les contrôles de sécurité utilisent une politique fail-closed pour les décisions d'identité, d'autorisation, de signature, de secret, de contexte tenant, d'intégrité d'artefact et de validation de provider. Une information absente, expirée, incohérente ou indémontrable ne doit pas être interprétée comme un accord. Une capacité optionnelle peut passer à `DEGRADED` ou `DISABLED` si son isolement ne permet aucun accès ou traitement non autorisé. Le runtime doit pouvoir révoquer un composant, un provider, un token, une clé de webhook ou un endpoint sans supprimer implicitement les données métier. Les transitions de blocage, révocation, dérogation et réactivation portent une cause, une corrélation, un acteur autorisé et un événement d'audit ; le diagnostic expose l'état et la référence sans publier le secret ou le détail exploitable.
 
+La politique fail-closed s'applique également à un niveau d'assurance absent, expiré, non mappé ou inférieur au niveau requis. Un échec de vérification ou de step-up ne doit jamais être converti en assurance inférieure acceptée pour une action sensible. Les diagnostics peuvent exposer le niveau et la cause du refus, mais jamais le token, la preuve ou le credential.
+
+Les décisions d'autorisation sensibles, les changements de politiques, de rôles, d'ACL, de memberships, de scopes, les révocations, les step-up et les élévations contrôlées doivent produire un audit corrélable. Les autorisations courantes ne doivent pas nécessairement journaliser chaque succès ; les refus et événements de sécurité doivent rester observables sans exposer les attributs, payloads ou politiques confidentiels.
+
 Un avis de sécurité public ou interne doit identifier le composant, la version ou plage de versions affectée, la sévérité, la surface concernée, l'impact, la correction, la mitigation, le statut de révocation et les conditions de retour à un état sûr. Les avis et décisions de sécurité sont eux-mêmes versionnés et auditables. L'installation, le démarrage et la mise à niveau doivent vérifier les révocations et pouvoir refuser un artefact ou une composition compromise. Une procédure d'urgence peut suspendre, désactiver ou remplacer un composant sans attendre une évolution fonctionnelle ordinaire, mais elle ne doit pas contourner l'audit, l'autorisation ni les migrations nécessaires.
 
 Un `SecurityIncident` doit pouvoir relier un avis, une timeline, les composants et versions impliqués, les signaux corrélés, les décisions, les mesures de confinement, les notifications et la récupération. Les preuves techniques sont minimisées, protégées et rétentées selon la politique applicable. La récupération doit privilégier l'isolement, la révocation, la restauration vérifiée et la reprise progressive ; elle ne doit pas purger automatiquement les données métier. Les tests de reprise doivent pouvoir être exécutés sans reproduire un secret ou exposer une donnée de production.
@@ -915,6 +1808,8 @@ EXPIRED
 ```
 
 Un objet finalisé est immuable par défaut. Un remplacement crée une nouvelle version ou un nouvel objet relié explicitement à la ressource métier. La suppression logique, l'expiration, la purge physique et la récupération sont distinctes, soumises aux permissions, à la rétention, aux éventuels legal holds et à l'audit. Les objets orphelins et les divergences entre métadonnées et provider doivent être détectables et réparables par une opération explicite.
+
+La métadonnée Pixs est l'autorité de l'état de cycle de vie de l'objet. Un tombstone doit être conservé et propagé avant une reconstruction ou une reprise qui pourrait republier l'objet. La durée de rétention des octets peut différer de celle de la métadonnée, mais cette différence doit être déclarée et ne doit pas permettre la résurrection d'une référence supprimée.
 
 Les fichiers sont privés par défaut. L'accès passe par une API autorisée ou par une URL temporaire générée après résolution de l'identité numérique, du tenant et des permissions. Les secrets du provider sont référencés par le système de secrets et ne doivent apparaître ni dans les métadonnées, ni les logs, ni les traces, ni les URLs générées. Une opération longue ou externe passe par un `Command` ou un `Job` et ne rend pas le fichier disponible avant la finalisation et les validations nécessaires.
 
@@ -1055,6 +1950,8 @@ Les credentials, scopes, endpoints, certificats, clés de signature et limites d
 
 Les contrats `ObjectStorageProvider`, `DocumentRepositoryProvider`, `SearchProvider` et `SynchronizationProvider` doivent disposer d'une suite de conformité versionnée. Cette suite vérifie les garanties du contrat, indépendamment de la technologie du provider. Le runtime ne doit pas déclarer compatible un provider dont la conformité obligatoire est absente, expirée ou échouée.
 
+Les providers de persistance, stockage, recherche, synchronisation et référentiels documentaires doivent préserver les invariants de scope : propagation du `ScopeContext`, propriété canonique, cohérence `tenant_id`/`scope_id`, absence de fuite entre tenants ou scopes et refus des accès hors périmètre. Les tests doivent être exécutables avec la topologie PostgreSQL de référence et avec toute topologie isolée déclarée compatible. Une différence de topologie ne peut pas modifier silencieusement les règles d'autorisation, de partage, de projection ou de suppression.
+
 La conformité couvre au minimum :
 
 ```text
@@ -1073,6 +1970,31 @@ secrets et scopes
 Les tests doivent distinguer les garanties obligatoires des capacités optionnelles. Une capacité optionnelle absente ou indisponible peut produire `DEGRADED` ou `DISABLED` si elle reste isolée et si aucune mutation, autorisation ou donnée n'est implicitement perdue. Une incompatibilité de contrat, une ambiguïté de provider, un défaut d'isolation tenant ou une violation de sécurité bloque l'activation.
 
 ## 36. Packaging, upgrade et exploitation
+
+### 36.1 Topologie de référence
+
+La topologie d'exploitation de référence repose sur un même artefact et des profils d'exécution distincts :
+
+```text
+entrée publique / reverse proxy
+              │
+          web × 1..N
+              │
+        PostgreSQL persistant
+          │       │
+       worker   scheduler
+        × 0..N   1 actif + secours
+```
+
+Le rôle `web` sert l'API et le trafic utilisateur. Le rôle `worker` consomme les Jobs, événements, notifications et synchronisations persistants. Le rôle `scheduler` déclenche les traitements périodiques ; il n'est pas une autorité métier et ne reçoit pas de trafic public. Un même artefact peut fournir ces rôles par une configuration d'exécution explicite, sans branche fonctionnelle cachée. Le développement peut regrouper les rôles, mais la production doit pouvoir les exécuter comme unités séparées.
+
+Seul `web` est exposé à l'entrée publique par défaut. Les workers, schedulers, files, stores de coordination et endpoints de management restent sur un réseau privé ou derrière une frontière d'accès explicitement authentifiée, autorisée et auditée. Un reverse proxy, un gestionnaire de services ou un orchestrateur peut fournir cette frontière, mais aucun de ces adapters ne devient une autorité métier.
+
+Le runtime des processus est stateless. PostgreSQL constitue la persistance de référence des données métier, des outbox, des inbox, des Jobs, des idempotences, des checkpoints et des états de coordination lorsque la capacité les utilise. Un provider de file ou de coordination est autorisé s'il expose des garanties persistantes équivalentes ; aucun broker, orchestrateur ou mécanisme de consensus particulier n'est requis par le Kernel.
+
+Le scheduler acquiert un lease persistant borné par une durée, renouvelable et expirant. Le contrat doit empêcher un ancien détenteur de continuer après expiration, au moyen d'un jeton de clôture monotone ou d'un mécanisme équivalent vérifiable. Un provider qui ne peut pas empêcher un détenteur périmé d'agir ne peut pas être utilisé comme coordination autoritative du scheduler. Les workers peuvent être répliqués, mais leurs effets restent soumis à l'idempotence, à la déduplication et aux limites de concurrence déclarées.
+
+Une installation mono-instance et une exécution multi-instance doivent conserver les mêmes contrats, frontières d'autorisation, garanties d'idempotence et règles de données. La réplication des processus ne fournit pas à elle seule la haute disponibilité de PostgreSQL, des stockages objet, des files ou des sauvegardes ; ces garanties et les objectifs `RPO`/`RTO` sont déclarés par le déploiement.
 
 Une release Pixs est définie par sa version fonctionnelle, sa source, sa composition de composants, ses manifests, ses contrats et ses dépendances. Le paquet Debian et l'image OCI/Docker d'une même release doivent être corrélables et conserver les mêmes garanties fonctionnelles. Les artefacts publiés sont immuables ; une correction produit une nouvelle version ou un nouvel artefact explicitement corrélé.
 
@@ -1112,7 +2034,7 @@ worker    Jobs, événements, notifications et synchronisations
 scheduler planification périodique et déclenchement des Jobs
 ```
 
-Le mode de développement peut regrouper plusieurs profils, mais un déploiement de production doit rendre leur activation, leurs capacités et leurs limites inspectables. Le scheduler acquiert un lease persistant avec durée, renouvellement et expiration contrôlés ; la perte du lease arrête ou suspend le déclenchement. Les workers consomment des Jobs persistants et s'appuient sur l'idempotence, la déduplication et les limites de concurrence pour supporter la réplication.
+Le mode de développement peut regrouper plusieurs profils, mais un déploiement de production doit rendre leur activation, leurs capacités et leurs limites inspectables. Le scheduler acquiert un lease persistant avec durée, renouvellement et expiration contrôlés ; la perte du lease arrête ou suspend le déclenchement et ne doit pas laisser l'ancien détenteur continuer comme autorité. Les workers consomment des Jobs persistants et s'appuient sur l'idempotence, la déduplication et les limites de concurrence pour supporter la réplication.
 
 ## 37. Sauvegarde et reprise après sinistre
 
@@ -1133,6 +2055,8 @@ configuration et secrets
 ```
 
 Une sauvegarde ne devient pas une nouvelle source d'autorité. Une restauration doit vérifier la cohérence entre les métadonnées PostgreSQL, les objets binaires, les événements non publiés, les Jobs, les checkpoints, les mappings externes et les versions de composants. Les identités, tenants, ACL, secrets, fichiers et données métier ne doivent pas être réinitialisés ou supprimés implicitement pour rendre la restauration possible.
+
+La sauvegarde possède une politique de rétention distincte de celle des données en ligne. Une restauration doit réappliquer les tombstones, le journal d'effacement, les legal holds et les états de rétention applicables avant exposition aux utilisateurs ou aux synchronisations. Les objets restaurés ne doivent pas annuler silencieusement une suppression validée ; une divergence doit être bloquée ou rendue explicite et auditable.
 
 Les restaurations doivent être exécutables dans un environnement isolé et testées régulièrement. Après restauration, Pixs doit pouvoir démarrer en état contrôlé, détecter les écarts de composition ou de version, reprendre les traitements idempotents et maintenir les événements ou synchronisations non confirmés dans un état diagnostiquable. Une restauration destructive ou un retour à un point antérieur nécessite une opération explicitement autorisée et auditée.
 
@@ -1167,7 +2091,7 @@ L'autorité de signature des canaux `stable` et `security` doit être distincte 
 
 ## 38. Interface d'exploitation
 
-L'exploitation repose sur une interface de management distincte de l'API métier. Elle peut être consommée par une CLI officielle, une interface HTTP d'administration ou un adapter d'orchestrateur, mais ces façades utilisent les mêmes contrats et la même autorité.
+L'exploitation repose sur une interface de management distincte de l'API métier. Elle peut être consommée par une CLI officielle, une interface HTTP d'administration ou un adapter d'orchestrateur, mais ces façades utilisent les mêmes contrats et la même autorité. En production, cette interface n'est pas exposée au trafic public par défaut ; son exposition éventuelle passe par une frontière réseau et des contrôles d'identité, d'autorisation, de scope et d'audit explicites.
 
 Les opérations doivent pouvoir couvrir :
 
