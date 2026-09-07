@@ -107,13 +107,57 @@ Un cache peut accélérer une construction mais ne doit pas en définir le résu
 
 Les composants distribués doivent embarquer leur manifest `component.toml` et les métadonnées nécessaires à leur résolution. Le build doit valider les identifiants, types, versions SemVer, dépendances et capacités déclarées avant de produire un artefact.
 
+Le modèle commun `Component` constitue une entrée obligatoire de la composition de build. Le build doit vérifier l'unicité des identifiants, le schéma du manifest, les versions de composants, contrats et capacités, les dépendances obligatoires et optionnelles, l'absence de cycles, les propriétaires de données et migrations déclarés, ainsi que les permissions, points d'entrée et profils de sécurité nécessaires. Une composition invalide ne doit pas produire un artefact activable.
+
+Les contrats d'extension doivent être validés au même titre que les autres contrats publics. Le build vérifie pour chaque contribution son identifiant namespacé, son composant cible, son point d'extension, sa version, son point d'entrée, ses dépendances, ses collisions, ses conditions d'activation et sa compatibilité avec l'API consommée. Une contribution non déclarée, ambiguë, incompatible ou extérieure au périmètre du composant doit bloquer la composition concernée.
+
+Le build doit résoudre les capacités fournies et requises dans le graphe de composition, avec leur version, leur contrat, leur provider, leur caractère obligatoire ou optionnel et leur politique de repli. Il doit refuser une capacité obligatoire absente, incompatible ou bloquée ; une capacité optionnelle indisponible doit rester isolée et être diagnostiquée. Un feature flag ne peut pas modifier ce graphe ni remplacer la résolution d'une capacité.
+
+Le build doit valider les définitions de feature flags déclarées par les composants : identifiant namespacé, version, propriétaire, finalité, type de valeur, défaut, dimensions de ciblage, prérequis, repli, expiration et audit. Les règles doivent être déclaratives, bornées et déterministes. Les affectations d'installation, d'environnement, de tenant et de scope sont fournies au runtime ; elles ne doivent pas être embarquées dans un paquet, une image ou un bundle, et ne doivent contenir ni secret ni donnée de production non déclarée.
+
+Le build doit également valider le modèle de scopes déclaré par les composants : unicité des types et identifiants de scopes, `Tenant` comme racine, parent unique pour chaque scope enfant, absence de cycle, règles d'appartenance explicites et compatibilité des ressources avec leur périmètre. Il doit rejeter toute ressource déclarée avec un `scope_id` sans `tenant_id` cohérent, toute ressource possédant plusieurs propriétaires canoniques et toute extension qui élargit implicitement son contexte d'accès.
+
+Les providers d'authentification doivent déclarer leurs capacités, protocoles, issuers, audiences, méthodes, algorithmes, clés, claims obligatoires, mappings d'identifiants et niveaux d'assurance maximaux. Le build doit vérifier la cohérence de ces déclarations, l'unicité du triplet `(provider_id, issuer, subject)`, l'absence de confiance implicite et l'absence de credentials, tokens ou assertions brutes dans les manifests et artefacts.
+
+Le build doit valider les déclarations du moteur d'autorisation : identifiants et versions de politiques, composants propriétaires, selectors de sujets, ressources, actions et scopes, effets `DENY` ou `ALLOW`, conditions typées, obligations et périodes de validité. Il doit refuser toute politique ambiguë, non namespacée, cyclique, non bornée ou contenant du code exécutable. Les dépendances vers des implémentations privées et les PDP externes non déclarés doivent bloquer la composition.
+
+Le build doit valider les politiques de cycle de vie déclarées par les modules : séparation de l'état métier et des états de persistance, de rétention et de projection ; stratégie de suppression ; durée de rétention ; restauration ; conditions de purge ; legal holds ; cascade ; historique et synchronisation. Il doit vérifier que `RESTRICT` est la règle inter-modules par défaut, qu'une purge dispose d'un contrat de Job idempotent et qu'un tombstone ou journal d'effacement est prévu lorsque des projections, caches, synchronisations ou restaurations pourraient résurrectionner une donnée. Une politique ambiguë, incompatible avec les migrations ou permettant une cascade SQL implicite doit bloquer la composition.
+
+Le build doit également valider le `DataGovernanceProfile` de chaque composant qui introduit, dérive ou transfère des données : version, propriétaire, source de vérité, classes de données, confidentialité, données personnelles, finalités, rétention, suppression, consommateurs, processeurs, contraintes de résidence ou de transfert, politique d'export et lignée. Il doit refuser une classification inconnue, une source de vérité ambiguë, un flux sortant sans consommateur déclaré ou une contrainte de transfert sans garantie compatible. Les valeurs de secret, credentials et données personnelles réelles sont interdites dans les profils, exemples, manifests et artefacts.
+
+Les contrôles de gouvernance doivent vérifier que les données non classifiées restent soumises à une politique restrictive et ne sont pas exposées, exportées, publiées dans un événement d'intégration ou transférées à un provider. Le build doit aussi vérifier la compatibilité entre gouvernance, cycle de vie, migrations, projections, caches, fichiers, sauvegardes et synchronisations, ainsi que la présence d'un contrat générique pour les demandes d'accès, d'export, de rectification, d'effacement ou de restriction lorsque le composant déclare cette capacité.
+
+Le build doit valider les contrats `BulkOperation` déclarés par les composants : version, variantes `IMPORT`/`EXPORT`, états, rattachement à `operation_id`, Jobs, tenant et scope. Il doit vérifier les formats `CSV` et `NDJSON`, les adapters optionnels, les mappings versionnés, les limites de taille et de lignes, les contrôles de type et de checksum, le staging privé, les champs autorisés, les modes `VALIDATE_ONLY`, `ATOMIC`, `ATOMIC_PER_CHUNK` et `BEST_EFFORT`, ainsi que les stratégies de conflit et d'idempotence.
+
+Pour les exports, il doit contrôler la déclaration des projections, champs, filtres et tris autorisés, l'usage de `filter_authorized`, le snapshot ou watermark, le manifeste, la classification, la rétention et la référence de fichier temporaire. Les profils de build ne doivent contenir ni données utilisateur réelles, ni secret, ni fichier de production ; le build ne doit ni créer de tenant ou scope, ni produire un mapping qui élargit l'autorisation.
+
+Le build doit valider les contrats de Commands, Events et Jobs : identifiants et versions, schémas de payload, contexte d'identité et de scope, corrélation, causalité, idempotence, garanties transactionnelles, modes synchrones ou asynchrones, ordre déclaré, politique de retry, lease, délai, dead-letter et limites de reprise. Il doit distinguer les événements de domaine internes des événements d'intégration publics et refuser tout handler, consommateur ou Job qui introduit une mutation ou une dépendance privée non déclarée.
+
+La composition de référence des extensions frontend est réalisée au build à partir des sources ou artefacts versionnés du composant. Le runtime ne télécharge ni n'installe de code pour activer une extension et ne doit pas évaluer de code distant. Un adapter distant ultérieur doit être explicitement sélectionné et vérifier provenance, intégrité, signature, permissions, isolation et compatibilité avant tout chargement. Le marketplace et le registre de publication ne font pas partie du P0, mais leurs futurs composants devront respecter ces contrats.
+
 Les contrats OpenAPI des API distribuées doivent être présents ou générés de manière reproductible à partir des sources versionnées. Chaque version majeure publiée doit disposer de son contrat OpenAPI identifiable. Le build doit vérifier la cohérence entre les versions déclarées, les préfixes de routes, les schémas publics et les contrats générés, sans intégrer de secret ou de configuration de production.
+
+Le build doit également traiter les contrats d'événements comme des artefacts versionnés séparés des contrats HTTP. Une représentation compatible avec AsyncAPI peut décrire les types, schémas, producteurs, consommateurs, canaux, garanties, ordre et replays sans imposer de broker. Le build doit vérifier la compatibilité des producteurs et consommateurs, l'enveloppe versionnée, l'absence de modèles privés ou de secrets et la cohérence des événements d'intégration exposés par les webhooks.
 
 Les contributions frontend des composants doivent être déclarées dans les manifests ou sources contractuelles versionnées et résolues de manière reproductible. Le build frontend doit vérifier les identifiants, types, versions, dépendances, collisions de routes ou de slots, ressources de traduction, exigences de permissions d'affichage et compatibilité avec le shell. Une contribution non résolue, ambiguë ou incompatible doit bloquer le build ou l'activation selon le moment de détection.
 
 Le build doit intégrer les sources ou artefacts frontend des modules dans une composition déterministe et produire les bundles ou chunks distribuables. Il ne doit pas dépendre d'un téléchargement de code ou d'une installation de paquet au runtime. Les artefacts Debian, Docker et développement doivent embarquer ou référencer une composition équivalente, avec les métadonnées nécessaires au diagnostic des composants frontend chargés. Une extension distante éventuelle doit être explicitement sélectionnée comme adapter et ne peut pas être introduite implicitement par le build.
 
 Le build frontend doit vérifier que les extensions utilisent les clients et contrats API publics, que les clients générés correspondent aux versions OpenAPI publiées et qu'aucun accès direct à une base, un modèle privé ou une route non documentée n'est embarqué. Les tests doivent couvrir les clés de cache tenant-aware, l'invalidation après Command, les états provisoires et confirmés des mutations, ainsi que le comportement déclaré des capacités Electric.
+
+Le build doit produire les SDK TypeScript et Python à partir des contrats OpenAPI, des contrats événementiels compatibles avec AsyncAPI et des JSON Schemas publics, avec une génération déterministe, des dépendances verrouillées et des métadonnées `sdk_version` et de compatibilité. Il doit vérifier que le code généré, les façades éventuelles, les types, les exemples et la documentation correspondent aux contrats publiés ; une divergence ou une génération non reproductible doit faire échouer le build.
+
+Le Developer Kit et la CLI doivent être construits à partir des mêmes validateurs que le build de Pixs. Le build doit vérifier les commandes de scaffolding, de validation des manifests, de contrôle des imports publics, de génération, de compatibilité et de conformité, sans inclure de credential, token, donnée de production ou dépendance d'installation runtime.
+
+Le build doit valider les déclarations d'entitlements et de quotas des composants : clés, versions, propriétaires, portées, dimensions, unités, limites, périodes, agrégations, dépendances, comportements de repli et exigences de conformité. Il ne doit embarquer ni entitlement actif, ni compteur, ni réservation, ni plan commercial ou donnée de consommation de production dans un paquet, une image, un bundle ou un exemple.
+
+Le build doit valider les déclarations `OfflineSyncCapability` : ressources et projections éligibles, Commands différées, tenants et scopes autorisés, classifications de données, rétention locale, politique de chiffrement ou de stockage sécurisé, fraîcheur maximale, révocation, invalidation, stratégie de conflit, `local_schema_version` et `sync_protocol_version`. Une capacité offline-first non déclarée, ambiguë ou incompatible doit bloquer le composant concerné ; elle ne doit pas être activée par la seule présence d'Electric, d'un cache ou d'un service worker.
+
+Les schémas de réplique locale et de file de Commands doivent être construits et migrés de manière déterministe. Le build doit vérifier la compatibilité entre versions de projection, protocoles, contrats API, événements, Commands, gouvernance, cycle de vie et releases `N`/`N+1`. Aucun état local de production, snapshot utilisateur, entitlement offline, réservation, credential, token ou preuve d'authentification ne doit figurer dans un artefact, une fixture ou un exemple.
+
+Le build doit valider les politiques `TenantPlacementPolicy` et les contraintes de résidence déclarées : identifiants de régions logiques, région principale, régions de réplication, de traitement, de sauvegarde et de clés, classes de données, mode de bascule, epoch, transfert, rétention, suppression et révocation. Il doit vérifier la compatibilité entre ces politiques, le `DataGovernanceProfile`, les tenants, les scopes, les providers, les schémas, les migrations et les artefacts ; aucune région concrète ne doit être déduite de l'ordre des packages ou de la configuration accidentelle de la machine de build.
+
+Les providers régionaux doivent déclarer leurs garanties de placement, réplication, chiffrement, gestion des clés, sauvegarde, restauration, suppression, révocation et transfert. Le build doit refuser un provider ou une topologie qui ne démontre pas la résidence demandée, la primaire unique, le fencing, la compatibilité inter-release ou la conservation des obligations sur les copies. Les configurations et fixtures ne doivent contenir ni donnée de production, ni secret, ni affectation régionale réelle non nécessaire au test.
 
 Le build frontend doit publier ou générer de manière reproductible les tokens, primitives et adapters du Design System. Il doit vérifier les versions de contrat, l'absence de valeurs visuelles interdites dans les modules, la compatibilité des thèmes, l'accessibilité déclarée des primitives et l'absence d'import vers des implémentations privées. Les artefacts Debian, Docker et développement doivent utiliser le même contrat de Design System.
 
@@ -147,7 +191,7 @@ Le build doit lire la section frontend du `component.toml`, valider son schéma 
 
 Lorsque l'artefact fournit ou consomme des contrats publics, le build doit également préserver leurs identifiants, catégories, versions et contraintes de compatibilité. Une implémentation privée ne doit pas être publiée comme contrat simplement parce qu'elle est présente dans l'artefact.
 
-Le build ne doit pas préinitialiser de tenant, d'appartenance, de rôle, d'ACL ou de donnée métier dans un artefact destiné à un environnement de production. Ces éléments relèvent du runtime, des migrations ou d'une opération d'administration explicitement définie.
+Le build ne doit pas préinitialiser de tenant, d'appartenance, de rôle, d'ACL, de politique d'autorisation, d'identité, de session, de credential, de trust policy ou de donnée métier dans un artefact destiné à un environnement de production. Ces éléments relèvent du runtime, des migrations ou d'une opération d'administration explicitement définie.
 
 ---
 
@@ -208,11 +252,39 @@ En particulier, les secrets de production ne doivent jamais être intégrés au 
 
 La sélection runtime d'un provider doit utiliser les manifests et la configuration déclarative validés. Le build ne doit pas figer un provider concret lorsque celui-ci relève d'une configuration de déploiement, mais il doit vérifier que les composants distribués exposent des contrats et capacités compatibles.
 
-Le runtime doit pouvoir recevoir explicitement le contexte tenant nécessaire à l'exécution. Une configuration de déploiement ne doit pas désactiver silencieusement l'isolation tenant ou transformer un accès inter-tenant en accès implicite.
+Le build doit produire un même artefact fonctionnel pour les profils d'exécution `web`, `worker` et `scheduler`. Le rôle actif, ses capacités et ses limites sont fournis par la configuration runtime validée ; ils ne doivent pas générer de variante fonctionnelle cachée. Le build ne doit pas imposer de broker, d'orchestrateur ou de provider de coordination particulier, mais doit vérifier la présence d'un contrat persistant compatible lorsque la reprise ou la coordination est requise.
 
-Le runtime doit préserver les métadonnées de Command nécessaires à l'exécution et au diagnostic, notamment l'identité appelante, le contexte tenant, les identifiants de corrélation et de causalité. Une Command asynchrone doit pouvoir être suivie après redémarrage ou recréation du processus lorsque sa capacité le prévoit.
+Le runtime doit pouvoir recevoir explicitement le `ScopeContext` nécessaire à l'exécution, comprenant le tenant racine et le scope enfant éventuel. Une configuration de déploiement ne doit pas désactiver silencieusement l'isolation tenant, changer de topologie sans conserver les garanties déclarées ou transformer un accès parent, descendant ou inter-tenant en accès implicite.
 
-Les caches et projections utilisés par les Queries peuvent être reconstruits ou invalidés sans devenir la source de vérité applicative. Leur déploiement ne doit pas permettre de servir une donnée hors du contexte tenant ou des permissions applicables.
+Le runtime doit également recevoir un `AuthenticationContext` vérifié avant toute autorisation. Il doit contrôler sa validité temporelle, sa révocation, sa fraîcheur, son provider de confiance, ses niveaux d'assurance et sa correspondance avec la `DigitalIdentity` et le `ScopeContext`. Une action sensible dont le niveau requis n'est pas satisfait doit être refusée ou soumise à un step-up explicite ; le build et le packaging ne doivent jamais préinitialiser une identité, une session, un credential ou une assurance de production.
+
+Le runtime doit exécuter les transitions de cycle de vie uniquement via les Commands et Jobs autorisés du module propriétaire. Il doit vérifier la rétention, les legal holds, les références bloquantes, la version de concurrence et l'état des projections avant une purge ou une restauration. Les tombstones et journaux d'effacement doivent rester persistants et être pris en compte par les caches, index, synchronisations et restaurations ; un redémarrage ou une reprise ne doit pas réintroduire une ressource supprimée.
+
+Le runtime doit appliquer le profil de gouvernance aux flux et dérivés concernés. Toute API, événement, webhook, recherche, projection, cache, fichier, sauvegarde ou export doit conserver la classification et les obligations de confidentialité applicables. Une demande relative aux données doit réévaluer l'autorisation, respecter les legal holds et la rétention, puis propager sa décision à la source de vérité et aux providers déclarés sans accès direct aux implémentations privées.
+
+Le runtime doit charger les affectations de feature flags depuis une source persistante et versionnée. Les rôles `web`, `worker` et `scheduler` doivent converger vers une configuration cohérente ou signaler un état de version incompatible. Un cache local est autorisé pour les lectures, avec durée et invalidation contrôlées ; il ne doit pas maintenir une activation après expiration, révocation ou mise en pause déclarée. Les décisions de flag doivent rester secondaires aux permissions, au `ScopeContext`, aux contrats et aux garanties de données.
+
+Le runtime doit exécuter les imports et exports au travers de `BulkOperation` et des providers de stockage objet déclarés. Un traitement dépassant le seuil synchrone doit utiliser des Jobs persistants ; les états, progrès, checkpoints, retries, annulation, expiration et résultats doivent survivre au redémarrage et rester corrélés à l'opération. Le staging, les rejets et les exports sont privés, ne dépendent pas du filesystem local et sont soumis aux quotas, au tenant, au scope, à la gouvernance et à la révocation.
+
+Un import doit revalider le checksum, le mapping et le contexte d'autorisation avant les mutations, puis appeler les Commands du module propriétaire. Un export doit revalider les permissions, filtrer à la source, utiliser les projections et champs déclarés et produire un manifeste traçable. Une reprise ou un rejeu ne doit pas promettre `exactly-once` et doit appliquer la stratégie d'idempotence et de conflit déclarée.
+
+La génération des SDK, du Developer Kit, de la CLI, des types et des exemples est une responsabilité du build. Le runtime utilise les packages produits et les contrats versionnés ; il ne télécharge ni ne génère de code pour découvrir ou activer un composant. Une application peut fournir ses propres credentials et sa configuration au runtime, mais ceux-ci ne doivent pas être incorporés dans les SDK, bundles, images ou paquets.
+
+La configuration effective des entitlements, politiques de quota, compteurs et réservations est fournie au runtime. Le build ne choisit pas de plan commercial, n'active pas d'entitlement de production et ne préinitialise aucune consommation. Les rôles `web`, `worker` et `scheduler` doivent utiliser les mêmes contrats et la même source persistante ou des providers explicitement compatibles ; un provider indisponible ne peut pas produire une décision positive implicite pour une opération protégée.
+
+La configuration effective offline-first est fournie au runtime et au client par une source validée. Le build ne précharge pas de réplique, de file de Commands, de bail d'accès offline ou de décision d'autorisation. La persistance locale du client peut survivre à un redémarrage lorsqu'elle est déclarée, mais elle reste distincte de la persistance autoritative de PostgreSQL ; aucun état nécessaire à l'autorité métier, à l'idempotence serveur ou à la reprise des Jobs ne doit dépendre du filesystem local d'un processus Pixs.
+
+À la reconnexion, le runtime doit soumettre les Commands locales au backend et réévaluer l'identité, le `ScopeContext`, l'autorisation, l'entitlement, les quotas, la concurrence et la gouvernance. Le client peut signaler `OFFLINE` ou `STALE`, mais ne peut pas transformer une intention locale en succès métier. Les rôles `web`, `worker` et `scheduler` utilisent les mêmes contrats de synchronisation ; une perte de provider, une révocation ou un conflit doit produire un état contrôlé plutôt qu'une activation permissive.
+
+Le runtime doit résoudre le placement après l'identité, le tenant et le scope, puis diriger les lectures et écritures selon le `ResidencyContext`. Un routage régional fourni par le client ne peut pas remplacer le contexte canonique. Les rôles `web`, `worker` et `scheduler`, les providers de stockage, les recherches, les caches, les événements, les sauvegardes et les copies offline doivent appliquer la même politique ; une région interdite ou indisponible ne doit pas être utilisée comme repli implicite.
+
+Une bascule active-passive ne peut être activée qu'avec une région de secours autorisée, un epoch ou fencing persistant, un checkpoint vérifiable, une compatibilité de version et un audit. Le runtime doit empêcher l'ancien primaire d'écrire après la bascule et doit produire un état contrôlé en cas de split-brain, d'epoch divergent ou de transfert non autorisé. Une migration de tenant ou une restauration inter-région doit être exécutée par une opération d'exploitation explicite et reprendre les obligations de résidence, de rétention, de suppression et de gouvernance.
+
+Le runtime doit configurer explicitement le PEP Django, le PDP de référence ou un adapter PDP compatible, la version ou l'epoch de politique et les règles de cache. Une indisponibilité du PDP ne doit pas produire d'autorisation positive pour une mutation, une action sensible ou une donnée protégée. Toute politique, relation de groupe, ACL, membership ou scope modifié doit invalider les décisions positives concernées.
+
+Le runtime doit préserver les métadonnées de Command nécessaires à l'exécution et au diagnostic, notamment l'identité appelante, le `ScopeContext`, les identifiants de corrélation et de causalité. Une Command asynchrone doit pouvoir être suivie après redémarrage ou recréation du processus lorsque sa capacité le prévoit.
+
+Les caches et projections utilisés par les Queries peuvent être reconstruits ou invalidés sans devenir la source de vérité applicative. Leur déploiement ne doit pas permettre de servir une donnée hors du `ScopeContext` ou des permissions applicables ; leurs clés et partitions doivent intégrer le scope lorsqu'il est applicable.
 
 Lorsque l'outbox est activée, ses données persistantes doivent être stockées dans la source de vérité ou le provider explicitement prévu. Le build, l'installation et le redémarrage d'un service ne doivent pas supprimer les événements non publiés ni contourner leur relation transactionnelle avec la mutation métier.
 
@@ -351,9 +423,13 @@ Les migrations et scripts de maintenance ne doivent pas créer automatiquement d
 
 Les opérations de build, d'installation et de migration ne doivent pas remplacer les identifiants internes UUIDv7 par des entiers locaux ou des identifiants externes de provider. Les identifiants externes nécessaires au runtime doivent rester fournis par la configuration ou les systèmes d'intégration concernés.
 
-Le packaging et les migrations doivent préserver les champs communs déclarés par les modules, notamment les identifiants UUIDv7, les horodatages UTC, les versions de concurrence et les références tenant. Une mise à niveau ne doit pas réinitialiser ces valeurs ni convertir silencieusement une ressource tenant-scoped en ressource globale.
+Le packaging et les migrations doivent préserver les champs communs déclarés par les modules, notamment les identifiants UUIDv7, les horodatages UTC, les versions de concurrence, les références tenant et les références de scope. Une mise à niveau ne doit pas réinitialiser ces valeurs, changer le propriétaire canonique ni convertir silencieusement une ressource tenant-scoped ou scope-scoped en ressource globale.
+
+Les migrations et mises à niveau doivent également préserver les identités, mappings `(provider_id, issuer, subject)`, états de révocation, sessions et références de credentials selon les contrats applicables. Elles ne doivent jamais exporter, réinitialiser ou intégrer un token, un secret, une preuve d'authentification ou un niveau d'assurance de production.
 
 Une suppression ou une mise à niveau du paquet ne doit pas entraîner implicitement la destruction des données applicatives.
+
+Les migrations et mises à niveau doivent préserver les états métier et de persistance, les échéances de rétention, les legal holds, les tombstones, les journaux d'effacement, les historiques et les références `tenant_id`/`scope_id`. Les scripts de maintenance ne doivent pas purger automatiquement une donnée ni contourner la politique déclarée du module ; toute purge doit être une opération explicitement déclenchée et traçable.
 
 ---
 
@@ -403,6 +479,8 @@ Lorsque Pixs est intégré à un gestionnaire de services système, celui-ci doi
 * gestion correcte des codes de sortie.
 
 Il ne doit pas absorber les responsabilités fonctionnelles du runtime Pixs.
+
+Le packaging Debian doit pouvoir déclarer séparément les unités de service correspondant aux profils `web`, `worker` et `scheduler`, sans imposer leurs noms définitifs. Chaque unité doit utiliser le même contenu applicatif, recevoir une configuration de rôle explicite, propager les signaux et exposer des codes de sortie exploitables. Les workers et schedulers ne doivent pas être publiés comme services réseau publics par défaut.
 
 ---
 
@@ -550,6 +628,8 @@ Les règles métier restent sous l'autorité de Django.
 
 L'entrypoint doit propager correctement les signaux et permettre au processus applicatif d'être supervisé correctement par Docker.
 
+L'entrypoint doit sélectionner un seul profil d'exécution explicitement configuré ou refuser une configuration ambiguë. Il ne doit pas lancer implicitement plusieurs rôles de production dans un même conteneur ni exécuter une migration destructive au démarrage. Un regroupement de rôles peut être utilisé par l'environnement de développement lorsqu'il est déclaré comme tel.
+
 ---
 
 ## 20. Configuration Docker
@@ -567,7 +647,9 @@ La configuration Docker doit alimenter le modèle de configuration commun de Pix
 
 Elle ne doit pas créer une configuration fonctionnelle parallèle propre à Docker.
 
-Le contexte tenant, le mode mono-tenant ou multi-tenant et les accès d'administration plateforme doivent être fournis par une configuration runtime validée. L'image ne doit pas embarquer un tenant ou une autorisation inter-tenant implicite.
+Le `ScopeContext`, le mode mono-tenant ou multi-tenant, la topologie de persistance et les accès d'administration plateforme doivent être fournis par une configuration runtime validée. L'image ne doit pas embarquer un tenant, un scope, une appartenance ou une autorisation inter-tenant implicite.
+
+Les politiques de confiance des providers, les niveaux d'assurance requis, les paramètres de step-up, les sessions et les credentials doivent également rester configurables au runtime. L'image ne doit pas contenir d'issuer de production approuvé par défaut, de clé privée, de token, de session ou de credential.
 
 Les variables d'environnement, fichiers montés et mécanismes de secrets Docker doivent être convertis vers le modèle de configuration commun de Pixs. Ils ne doivent pas introduire une priorité ou une clé fonctionnelle inconnue du schéma déclaré.
 
@@ -606,11 +688,17 @@ PostgreSQL reste la source de vérité applicative.
 
 Les données persistantes relatives aux utilisateurs, identités numériques, comptes de service, méthodes d'authentification et révocations doivent rester dans les mécanismes de persistance prévus par Pixs. Elles ne doivent pas être stockées uniquement dans le système de fichiers éphémère du conteneur.
 
-Les données tenant-scoped, memberships, rôles, ACL et journaux d'accès doivent également rester dans les mécanismes persistants prévus par Pixs. La recréation d'un conteneur ne doit pas modifier la frontière d'isolation ni accorder un accès supplémentaire.
+Les données tenant-scoped, les scopes, memberships, rôles, ACL et journaux d'accès doivent également rester dans les mécanismes persistants prévus par Pixs. La recréation d'un conteneur ne doit pas modifier la hiérarchie, la frontière d'isolation ou le propriétaire canonique, ni accorder un accès supplémentaire.
+
+Les politiques d'autorisation, leurs versions ou epochs, les relations de groupes et les états nécessaires à la révocation doivent bénéficier des mêmes garanties de persistance. Une recréation ou une mise à niveau de conteneur ne doit pas restaurer une ancienne décision positive ni perdre une révocation.
+
+Les états de cycle de vie des ressources, les tombstones, les journaux d'effacement, les échéances de rétention, les legal holds et les résultats de Jobs de purge doivent bénéficier des mêmes garanties de persistance. Une recréation, une mise à niveau ou une restauration de conteneur ne doit pas rendre visible une ressource `SOFT_DELETED` ou `PURGE_PENDING`, ni effacer la preuve nécessaire à l'empêchement d'une résurrection.
 
 Les états et résultats persistants nécessaires au suivi des Commands asynchrones ne doivent pas dépendre uniquement du système de fichiers éphémère du conteneur.
 
 Les entrées d'outbox et leur état de publication ne doivent pas dépendre uniquement du système de fichiers éphémère du conteneur. Une recréation du conteneur doit permettre leur reprise selon les garanties du provider.
+
+Les états d'inbox et de déduplication des consommateurs doivent bénéficier des mêmes garanties de persistance. Une recréation ou une mise à niveau ne doit pas faire perdre la preuve qu'un `event_id` a déjà été consommé ni provoquer un nouvel effet secondaire confirmé.
 
 Les compteurs de tentatives, échéances de backoff et états `DEAD_LETTER` doivent rester observables et persistants lorsque la capacité de publication les utilise.
 
@@ -636,6 +724,8 @@ La publication d'un port sur l'hôte relève du déploiement du conteneur et ne 
 
 Les dépendances externes, notamment PostgreSQL, doivent être accessibles au travers d'une configuration réseau explicite et non au moyen d'adresses codées en dur dans l'image.
 
+Les tests de packaging doivent confirmer que seul le profil `web` est exposable publiquement par défaut, que les ports ou endpoints des workers, schedulers et stores de coordination restent privés et que l'interface de management dispose d'une frontière d'accès distincte. Une modification de l'exposition réseau ne doit pas accorder de permission métier ni contourner l'authentification ou l'autorisation.
+
 ---
 
 ## 24. Health checks
@@ -649,6 +739,8 @@ Le packaging et les tests runtime doivent distinguer les probes `liveness`, `sta
 Les niveaux exacts de santé seront coordonnés avec les capacités `runtime`, `observability` et `resilience`.
 
 Le mécanisme devra éviter qu'une dépendance optionnelle indisponible rende automatiquement Pixs `unhealthy` lorsqu'un fonctionnement dégradé conforme est explicitement supporté.
+
+Les probes doivent être vérifiées pour chaque profil : `web` doit indiquer sa capacité à recevoir du trafic, `worker` sa capacité à consommer ou reprendre les unités persistantes et `scheduler` sa capacité à acquérir ou renouveler son lease. Une perte de lease ne doit pas être masquée par un état de santé positif du scheduler, et un détenteur périmé doit être empêché de déclencher un traitement autoritatif.
 
 ---
 
@@ -711,6 +803,10 @@ version source
       └── image Docker
 ```
 
+La release doit également référencer les versions de composants, contrats, capacités, manifest, schéma, migrations, événements, APIs, configuration, gouvernance des données, feature flags, opérations de masse, SDK, entitlements, politiques de quota, capacités offline-first et politiques régionales qui composent l'artefact. Ces dimensions restent distinctes, notamment `feature_flag_version`, `bulk_operation_version`, `sdk_version`, `entitlement_version`, `quota_policy_version`, `offline_capability_version`, `local_schema_version`, `sync_protocol_version`, `residency_policy_version`, `placement_policy_version` et `region_topology_version`, et doivent être vérifiables dans les métadonnées sans embarquer de secret. Les affectations runtime des flags et entitlements, les compteurs et réservations, les répliques et Commands locales, les placements et régions effectifs, les opérations de masse en cours et les credentials des SDK restent hors de l'artefact.
+
+Le build doit produire ou vérifier une matrice de compatibilité entre l'artefact, les composants, les providers, les contrats, les schémas, les migrations et les clients déclarés. Chaque relation est marquée `COMPATIBLE`, `REQUIRES_MIGRATION`, `DEPRECATED` ou `BLOCKED`. Une version plus récente, un tag mutable ou la simple présence d'un paquet ne constituent pas une preuve de compatibilité.
+
 Le schéma exact de versionnement, de tags Docker et de versions Debian sera défini par la capacité OpenSpec de packaging correspondante.
 
 Le build ne doit pas produire silencieusement deux artefacts portant la même version alors qu'ils correspondent à des sources fonctionnellement différentes.
@@ -763,9 +859,59 @@ La validation des artefacts doit également vérifier que la composition de comp
 
 Elle doit aussi vérifier la cohérence des contrats publics déclarés, la compatibilité de leurs versions et, lorsque disponible, les tests de conformité associés aux providers et services.
 
+Pour le modèle `Component` et les extensions, elle doit en outre vérifier la séparation des états `DISCOVERED`, `VALIDATED`, `RESOLVED`, `LOADED` et `ACTIVE`, l'indépendance des états `INSTALLED`, `ENABLED`, `CONFIGURED`, `READY` et des états de santé `HEALTHY`, `DEGRADED`, `FAILED`, `DISABLED`. Elle doit confirmer qu'une extension obligatoire non résolue bloque l'activation, qu'une extension optionnelle défaillante reste isolée et que les transitions, raisons, versions et corrélations sont diagnostiquables sans exposer de secret.
+
+Les tests doivent démontrer qu'un composant consommateur utilise les contrats et façades publiques sans importer l'implémentation privée d'un autre composant, qu'une contribution ne peut pas contourner le backend ou les permissions, et que deux compositions identiques produisent le même graphe et le même ordre de chargement. Les artefacts Debian, Docker et développement doivent conserver cette composition et ces métadonnées de manière équivalente.
+
+Pour la gestion des capacités et des feature flags, les tests doivent vérifier la résolution déterministe des capacités obligatoires et optionnelles, la cohérence des providers, les états `AVAILABLE`, `DEGRADED`, `DISABLED` et `BLOCKED`, ainsi que l'isolement d'une capacité optionnelle indisponible. Ils doivent vérifier les définitions, versions, propriétaires, valeurs par défaut, prérequis, expirations et affectations de flags, la priorité entre installation, environnement, tenant et scope, la cohorte stable, l'absence d'expressions exécutables et le refus d'une configuration ambiguë.
+
+Ils doivent également confirmer qu'un flag ne contourne ni permissions, ni scopes, ni gouvernance des données, ni migrations, ni contrats, qu'un frontend ne peut pas autoriser une action en modifiant son affichage, et qu'une valeur absente, invalide, périmée ou une source indisponible applique le repli déclaré. Les tests doivent couvrir la persistance, l'audit, l'invalidation et l'expiration, la convergence des rôles `web`, `worker` et `scheduler`, la promotion du même artefact entre environnements et la réévaluation des Commands, Events et Jobs selon leur contrat.
+
+Pour les opérations en masse, les tests doivent vérifier le contrat `BulkOperation`, les états persistants, la distinction entre `operation_id` et `job_id`, les seuils de bascule asynchrone, les quotas, les limites de taille, de lignes et de concurrence et les formats `CSV`/`NDJSON`. Ils doivent couvrir le staging privé, le checksum, les mappings versionnés, les champs autorisés, `VALIDATE_ONLY`, les modes `ATOMIC`, `ATOMIC_PER_CHUNK` et `BEST_EFFORT`, les conflits, l'idempotence, les checkpoints, les retries, l'annulation, l'expiration et la dead-letter.
+
+Ils doivent aussi démontrer qu'un import passe par les Commands du module propriétaire, qu'un export applique `filter_authorized` à la source et utilise une projection déclarée, qu'un snapshot ou watermark est traçable, que les manifestes et fichiers restent privés et temporaires et que la classification, le tenant, le scope, la rétention, la révocation et les obligations de gouvernance sont conservés. Aucun secret, fichier de production ou payload personnel réel ne doit être utilisé par les fixtures ou les artefacts de build.
+
+Pour les SDK et l'écosystème développeur, les tests doivent vérifier la reproductibilité de la génération TypeScript et Python, la correspondance avec les contrats OpenAPI/AsyncAPI/JSON Schema, les versions `sdk_version`, les contraintes de compatibilité, les dépendances verrouillées, la compilation des exemples et les façades au-dessus du code généré. Ils doivent couvrir les clients d'authentification injectable, la propagation du tenant et du scope, les erreurs typées, la pagination, l'idempotence, les retries bornés, le suivi asynchrone, les opérations bulk et la vérification des webhooks.
+
+Ils doivent également vérifier le Developer Kit et la CLI : scaffolding déterministe, validation du manifest, contrôle des imports publics, génération, diagnostic, codes de sortie et tests de conformité. Le build doit échouer en cas de divergence contractuelle, de code distant implicite ou de secret dans les packages, exemples, fixtures, bundles, logs ou rapports. Les artefacts Debian, Docker et de développement doivent conserver les mêmes contrats et versions de SDK.
+
+Pour les quotas et entitlements, les tests doivent distinguer une capacité indisponible, un entitlement absent, expiré ou révoqué, une permission refusée et un quota dépassé. Ils doivent vérifier les portées installation, plateforme, tenant et scope, l'absence d'entitlement utilisateur implicite, la résolution cumulative des limites et l'absence d'élargissement par un scope enfant.
+
+Ils doivent couvrir les dimensions de débit, concurrence, requêtes, octets, objets, lignes, Jobs et coût d'opération, les unités et périodes déclarées, les réponses d'erreur stables, `429` et `Retry-After` lorsque possible, ainsi que les états de provider `DEGRADED`, `FAILED` et `REVOKED`. Ils doivent démontrer l'atomicité et l'idempotence de `check`, `reserve`, `commit` et `release`, l'absence de double consommation après retry ou reprise, la réconciliation de la consommation réelle et la libération après annulation.
+
+Les tests doivent vérifier que les API, SDK, Commands asynchrones, Jobs et opérations bulk réévaluent les entitlements et quotas au moment approprié, que les compteurs et décisions survivent aux redémarrages et que les rôles `web`, `worker` et `scheduler` convergent. Aucun entitlement, compteur, réservation, plan commercial, secret ou donnée de consommation de production ne doit apparaître dans les fixtures, bundles, images, paquets, logs ou rapports.
+
+Pour l'offline-first conditionnel, les tests doivent vérifier que l'activation est opt-in par composant et par ressource, que l'absence d'Electric, de service worker ou de provider local ne produit aucune activation implicite et que les versions `offline_capability_version`, `local_schema_version` et `sync_protocol_version` sont compatibles avec la release et les contrats publics.
+
+Ils doivent simuler les pertes de connexion, la reconnexion, les redémarrages du client, les projections `STALE`, les checkpoints, les messages dupliqués ou désordonnés, les migrations de schéma local et la reconstruction complète d'une réplique. Ils doivent confirmer qu'une projection locale ne devient jamais une source de vérité et qu'une Command locale reste provisoire jusqu'à sa validation serveur.
+
+Les scénarios de reconnexion doivent démontrer la réévaluation de l'identité, du `ScopeContext`, de l'autorisation, de l'entitlement, du quota, de la concurrence et de la gouvernance. Ils doivent couvrir l'idempotence, les retries, les expirations, les révocations, les changements de tenant ou de scope, les tombstones, les suppressions et les conflits `REJECT`, `MANUAL_REVIEW`, `DOMAIN_MERGE` et `LAST_WRITE_WINS` lorsqu'il est déclaré. Aucun Event de domaine ne doit être publié localement avant confirmation serveur.
+
+La conformité doit vérifier l'isolation des répliques et files entre utilisateurs, appareils, tenants et scopes, la rétention, l'effacement, le chiffrement ou stockage sécurisé déclaré et l'absence de secrets, tokens, credentials ou preuves d'authentification brutes. `RESTRICTED` et `SENSITIVE_PERSONAL` doivent être refusés par défaut, `CONFIDENTIAL` doit exiger une politique explicite, et les imports, exports, opérations bulk, purges et actions sensibles doivent être refusés hors ligne par défaut.
+
+Pour la multi-région et la résidence par tenant, les tests doivent vérifier le mode par défaut mono-région, la résolution d'une `TenantPlacementPolicy`, la version du placement, l'epoch régional et l'absence de réplication, transfert, sauvegarde ou bascule inter-région implicite. Ils doivent couvrir la région principale, les régions de traitement, de réplication, de sauvegarde et de clés, ainsi que l'héritage vers les scopes enfants et la possibilité de renforcer une contrainte sans l'élargir.
+
+Les tests doivent valider les régions logiques indépendamment des providers et vérifier la conformité de PostgreSQL, des objets, réplicas, index, caches, fichiers temporaires, sauvegardes, logs, traces, audits, événements, webhooks et copies offline. Aucun dérivé ne doit sortir du périmètre autorisé ; une politique absente, ambiguë ou impossible à satisfaire doit produire un blocage ou un état contrôlé.
+
+Les scénarios de routage doivent démontrer que l'identité, le tenant et le scope sont résolus avant le `ResidencyContext`, qu'une région fournie par le client ne peut pas modifier le placement canonique et qu'un cache, index ou provider ne peut pas contourner la résidence. Les tests doivent aussi confirmer que les quotas, entitlements, idempotences, événements et audits conservent leur portée lors d'un changement de région.
+
+Les scénarios active-passive doivent couvrir la compatibilité de schéma et de contrat, les checkpoints, les tombstones, les rétentions, les clés, le fencing ou epoch persistant, l'arrêt d'écriture de l'ancien primaire, la détection du split-brain et l'audit de la bascule. Une région de secours non autorisée, un transfert sans garanties ou une restauration hors périmètre doit bloquer l'opération. L'actif-actif et le multi-primary restent hors de la suite de conformité de base.
+
+Pour les scopes, la validation des artefacts doit vérifier la résolution explicite du `ScopeContext`, la cohérence de la hiérarchie, l'unicité du propriétaire canonique, le refus des références croisées entre tenants, l'absence de fuite dans les caches et projections et l'équivalence des garanties entre la topologie PostgreSQL partagée de référence et toute topologie isolée déclarée compatible. Le build ne doit pas choisir implicitement une topologie ni créer de tenant, scope, appartenance ou permission de production.
+
+Pour l'identité et l'assurance d'authentification, les tests doivent vérifier la résolution vers une `DigitalIdentity`, la confiance explicite du provider, la validation de l'issuer et de l'audience, les mappings d'assurance, l'expiration, la fraîcheur, la rotation, la révocation, la détection du rejeu et le refus d'une action lorsque l'assurance est insuffisante. Ils doivent couvrir le step-up, l'invalidation des sessions après récupération, la liaison explicite sans rapprochement automatique par e-mail et l'absence de tokens, credentials ou preuves brutes dans les artefacts, journaux et diagnostics.
+
+Pour le moteur d'autorisation, les tests doivent vérifier la priorité des `DENY`, le `deny by default`, l'absence de permission implicite par propriété, rôle administrateur ou scope parent, la résolution bornée des groupes imbriqués, le filtrage à la source des collections, les décisions groupées, l'invalidation après modification de politique et le refus fermé lorsque le PDP est indisponible. Ils doivent confirmer que les obligations de step-up, d'audit ou de confirmation non satisfaites empêchent l'autorisation.
+
+Pour le cycle de vie des données, les tests doivent vérifier la séparation des états métier, de persistance, de rétention et de projection, la stratégie `SOFT_DELETE` par défaut, les transitions autorisées, la restauration contrôlée, l'idempotence et l'autorisation des Jobs de purge, les legal holds, les références bloquantes et la règle `RESTRICT` inter-modules. Ils doivent vérifier la création et la propagation des tombstones vers les caches, index, projections et synchronisations, l'absence de résurrection après reprise ou reconstruction, la conservation de `tenant_id`/`scope_id` et la réapplication des effacements lors d'une restauration de sauvegarde.
+
+Pour la gouvernance des données et la confidentialité, les tests doivent vérifier la validation du `DataGovernanceProfile`, l'unicité du propriétaire et de la source de vérité, les classifications `PUBLIC`, `INTERNAL`, `CONFIDENTIAL` et `RESTRICTED`, les niveaux `NONE`, `PERSONAL` et `SENSITIVE_PERSONAL`, ainsi que la séparation stricte des secrets. Ils doivent confirmer que les données non classifiées sont traitées restrictivement et ne peuvent pas sortir par une API, un événement, un webhook, un export ou un provider avant déclaration.
+
+Ils doivent également couvrir la propagation de la classification et des obligations vers les recherches, projections, caches, fichiers, sauvegardes et synchronisations, la lignée des données, les consommateurs et processeurs autorisés, les contraintes de résidence ou de transfert, le chiffrement déclaré, la suppression et la révocation côté provider. Les scénarios de `DataSubjectRequest` doivent couvrir l'accès, l'export, la rectification, l'effacement et la restriction, avec autorisation, idempotence, traitement asynchrone, audit, respect des legal holds et absence de fuite de payload sensible.
+
 Pour les API, la validation doit également couvrir la présence ou la génération du contrat OpenAPI, les tests de contrat, les exemples versionnés, le contrôle automatique de compatibilité et l'échec du build en cas de rupture non déclarée, la cohérence des schémas et des préfixes `/api/vN`, l'absence de rupture non déclarée dans une version majeure, les versions publiées, la déclaration des exigences d'authentification et des routes publiques, la résolution vers une `DigitalIdentity`, la déclaration des routes tenant-scoped et platform-scoped, la vérification du contexte tenant, l'enveloppe de succès (`data`, `meta`, `links`), la pagination par curseur, les filtres et tris autorisés, les plafonds de taille de page, les règles `ETag`, `If-None-Match`, `If-Match` et `Cache-Control`, la déclaration et la persistance des `Idempotency-Key`, la déclaration des limites de débit et de leurs dimensions, la représentation correcte des réponses `429`, des Commands asynchrones en `202`, les enveloppes et signatures des webhooks sortants et entrants, les mécanismes de protection contre le rejeu, les règles CORS et CSRF par environnement, les limites de taille JSON/multipart/upload, les budgets de durée et les réponses `413`, `408` et `504`, les formats `Content-Type`/`Accept`, les erreurs `415` et `406`, la sérialisation RFC 3339 UTC et la stabilité des codes et structures non localisés, les références de secrets, les politiques de retries et de dead-letter, l'enveloppe d'erreur standard (`error_code`, `message`, `details`, `field_errors` optionnel et `correlation_id`) et l'absence d'exposition involontaire de détails privés, de secrets ou de traces d'exécution.
 
-Les tests frontend doivent également vérifier la résolution déterministe des contributions, le chargement des extensions, les collisions, les contrats de routes et de slots, les traductions, les permissions d'affichage et le respect des APIs publiques du shell. Ils doivent confirmer qu'une extension frontend ne peut pas remplacer une décision d'autorisation backend.
+Les tests frontend doivent également vérifier la résolution déterministe des contributions, le chargement des extensions, les collisions, les contrats de routes et de slots, les traductions, les permissions d'affichage et le respect des APIs publiques du shell. Ils doivent confirmer qu'une extension frontend ne peut pas remplacer une décision d'autorisation backend, qu'elle reçoit le `ScopeContext` en lecture seule et que les changements de tenant ou de scope invalident les états et caches associés.
 
 Pour le paquet Debian, les validations devront notamment permettre de vérifier :
 
@@ -843,6 +989,10 @@ Le build doit produire un SBOM couvrant les dépendances applicatives, frontend,
 Les vérifications doivent être exécutables pour les chemins Debian, Docker et développement avec des garanties équivalentes, même si les outils d'analyse sont fournis par des adapters différents. Les rapports doivent être exportables et ne doivent pas inclure de secret, token, contenu utilisateur ou détail sensible non nécessaire.
 
 Les validations doivent vérifier les scénarios fail-closed : secret absent ou expiré, signature invalide, provenance non vérifiable, permission manquante, contexte tenant ambigu, provider révoqué et artefact altéré. Elles doivent confirmer qu'aucun de ces cas n'accorde un accès ou ne déclenche une mutation, qu'une capacité optionnelle peut être isolée sans contourner la sécurité et que chaque blocage ou réactivation produit le diagnostic et l'audit attendus.
+
+Ces scénarios doivent également couvrir un `AuthenticationContext` absent, expiré, révoqué, non mappé ou d'un niveau inférieur à l'exigence de l'action. Le build doit confirmer qu'un échec de step-up ou de récupération ne provoque aucune élévation implicite et que les sessions et credentials invalidés ne sont plus acceptés.
+
+Ils doivent aussi couvrir une politique d'autorisation absente, ambiguë, périmée ou non compatible, un conflit `DENY`/`ALLOW`, un cache positif obsolète, une relation de groupe cyclique ou hors limite et une indisponibilité du PDP. Aucun de ces cas ne doit accorder un accès, exposer une collection ou déclencher une mutation.
 
 Le build et les tests d'exploitation doivent vérifier le traitement des avis de sécurité, la vérification de révocation aux étapes d'installation, démarrage et mise à niveau, le blocage d'un artefact compromis, la procédure de désactivation d'urgence, la production de la timeline d'incident, la notification prévue et la restauration sans purge implicite des données. Les tests de reprise utilisent des fixtures ou données synthétiques et ne doivent pas nécessiter de secret de production.
 
@@ -922,6 +1072,8 @@ Une mise à niveau ne doit pas supprimer ou modifier silencieusement un contrat 
 
 Une mise à niveau ne doit pas élargir implicitement le périmètre d'accès d'une identité, d'un groupe, d'un rôle ou d'un tenant. Toute modification de memberships, rôles ou ACL doit être portée par une migration ou une opération d'administration explicite, traçable et réversible lorsque cela est possible.
 
+Le build doit refuser un saut de version non déclaré et signaler les migrations intermédiaires nécessaires. Il doit valider la coexistence de la release courante et de la release immédiatement précédente pendant la fenêtre supportée, ainsi que la compatibilité transitoire des APIs, événements, schémas, configurations, providers et clients. Une migration destructive doit être séparée du chemin d'activation initial et bloquée tant qu'un consommateur compatible peut encore utiliser la structure concernée.
+
 ---
 
 ## 35. Déterminisme
@@ -952,6 +1104,10 @@ Le présent document ne fixe volontairement pas encore :
 * l'arborescence Debian définitive ;
 * le format précis des scripts de maintenance Debian ;
 * le serveur applicatif Django de production ;
+* les unités de service et la stratégie d'exécution définitives des profils `web`, `worker` et `scheduler` ;
+* le contrat concret des files, de la coordination persistante et des leases ;
+* les nombres minimaux et maximaux d'instances par rôle ;
+* la frontière réseau et les règles d'exposition de l'interface de management ;
 * le mécanisme de gestion du frontend dans le paquet ;
 * l'image Docker de base exacte ;
 * son éventuel digest ;
@@ -972,6 +1128,42 @@ Le présent document ne fixe volontairement pas encore :
 * la stratégie de signature des artefacts ;
 * la stratégie CI/CD de publication.
 
+Les choix suivants restent également à préciser dans les spécifications OpenSpec :
+
+* le schéma concret du `DataGovernanceProfile`, sa version et son rattachement aux manifests ;
+* la taxonomie définitive de confidentialité et de données personnelles, ainsi que les contrôles sur les données non classifiées ;
+* le contrat des demandes génériques relatives aux données et les validations d'accès, d'export, de rectification, d'effacement et de restriction ;
+* les contrôles concrets de lignée, de résidence, de transfert, de suppression, de révocation et de conformité des providers.
+* le contrat du registre de capacités et les règles de disponibilité des capacités obligatoires ou optionnelles ;
+* le schéma des feature flags, des affectations runtime, des priorités de ciblage et des cohortes déterministes ;
+* les politiques de repli, d'échec fermé, d'expiration, d'invalidation et de convergence entre les profils d'exécution ;
+* les contrôles de compatibilité des flags avec les permissions, scopes, données, migrations, API, événements et Jobs.
+* le contrat `BulkOperation`, ses versions, états, variantes, limites et son rattachement aux Jobs persistants ;
+* les formats, mappings, staging, contrôles d'import, modes de commit, stratégies de conflit et rapports de rejets ;
+* les projections d'export, le filtrage à la source, les snapshots ou watermarks, les manifestes, la rétention, la révocation et la purge ;
+* les quotas, seuils d'asynchronisme, checkpoints, annulation, retries, dead-letter et tests de conformité des adapters de stockage ;
+* le périmètre exact des SDK TypeScript et Python, le client bas niveau, les façades éventuelles, l'authentification injectable et la propagation du tenant et du scope ;
+* la stratégie de génération depuis OpenAPI, les contrats événementiels compatibles avec AsyncAPI et JSON Schema, la reproductibilité, les dépendances verrouillées et la séparation entre code généré et code maintenu ;
+* les commandes de la CLI, le scaffolding du Developer Kit, les validateurs partagés, les exemples et les suites de conformité ;
+* le versionnement `sdk_version`, la matrice de compatibilité avec les APIs, contrats, composants et schémas, ainsi que les packages et canaux de distribution ;
+* les politiques de credentials, de stockage navigateur, de retries, d'idempotence, d'erreurs, de suivi asynchrone et de vérification des webhooks dans les SDK ;
+* le modèle des entitlements, de leurs portées, priorités, héritages, états, expirations, révocations et sources ;
+* le modèle des politiques de quota, dimensions, unités, périodes, agrégations, compteurs, consommations et réservations ;
+* les contrats `EntitlementProvider` et `QuotaProvider`, la référence PostgreSQL, les providers spécialisés, les caches et le comportement en indisponibilité ;
+* l'ordre de décision entre capacité, entitlement, autorisation, feature flag et quota, ainsi que les codes d'erreur, réponses `429`, `Retry-After` et diagnostics ;
+* les règles de réservation, réconciliation et libération pour les API, Jobs, Commands asynchrones, imports, exports et opérations bulk, sans facturation dans le Kernel ;
+* le contrat `OfflineSyncCapability`, les ressources, projections et Commands éligibles, les états locaux et la politique de fraîcheur ;
+* les modèles `LocalReplica`, `OfflineCommand` et `OfflineAccessLease` éventuel, leur stockage, isolation, chiffrement, rétention et effacement ;
+* le protocole de reconnexion, de réévaluation serveur, de soumission idempotente, de checkpoint et de réconciliation avec PostgreSQL, l'outbox et les Jobs ;
+* les stratégies de conflit, de révocation, de tombstone et de purge, ainsi que la compatibilité des schémas locaux et protocoles entre releases ;
+* le contrat `TenantPlacementPolicy`, le `ResidencyContext`, les régions logiques, les versions, les epochs et les états de placement ;
+* les règles d'héritage de résidence du tenant vers les scopes enfants, les ressources platform-scoped et les classes de données ;
+* les capacités des providers régionaux pour le placement, la réplication, le chiffrement, les clés, les sauvegardes, la suppression, la restauration et la révocation ;
+* le routage régional après résolution de l'identité, du tenant et du scope, ainsi que les refus de transfert ou de région non autorisée ;
+* les garanties de primaire unique, de fencing, de bascule active-passive, de split-brain, de quotas, d'idempotence et d'agrégation inter-régions ;
+* les migrations de tenant, restaurations inter-régions, changements de politique et le périmètre des copies offline, logs, traces, caches, index, événements et webhooks ;
+* les conditions exactes d'une éventuelle topologie active-active ou multi-primary, qui restent hors du socle de référence ;
+
 Ces décisions doivent être prises dans les spécifications OpenSpec appropriées avant que leur implémentation ne soit considérée comme normative.
 
 ---
@@ -988,6 +1180,30 @@ openspec/specs/
 ├── deb-package/
 │   └── spec.md
 ├── docker-image/
+│   └── spec.md
+├── capabilities/
+│   └── spec.md
+├── feature-flags/
+│   └── spec.md
+├── identity-assurance/
+│   └── spec.md
+├── authorization-engine/
+│   └── spec.md
+├── migrations/
+│   └── spec.md
+├── data-lifecycle/
+│   └── spec.md
+├── data-governance/
+│   └── spec.md
+├── bulk-operations/
+│   └── spec.md
+├── quotas-entitlements/
+│   └── spec.md
+├── offline-first/
+│   └── spec.md
+├── regional-residency/
+│   └── spec.md
+├── sdk-ecosystem/
 │   └── spec.md
 └── runtime/
     └── spec.md
@@ -1079,6 +1295,8 @@ Les artefacts de build ne doivent contenir aucun fichier utilisateur, credential
 
 Les providers de stockage objet doivent être soumis à une suite de conformité commune. Les tests peuvent utiliser un filesystem temporaire, un service S3-compatible de test ou une instance dédiée, mais ne doivent jamais accéder au répertoire interne d'une instance Nextcloud ni au bucket primaire qu'elle gère exclusivement.
 
+Les tests de conformité des providers doivent également vérifier la propagation du `ScopeContext`, la propriété canonique des ressources, la cohérence entre tenant et scope enfant, l'absence de fuite entre scopes ou tenants et l'équivalence des garanties dans les topologies partagée et isolée déclarées compatibles.
+
 Pour un `ObjectStorageProvider`, le build et les tests runtime doivent vérifier :
 
 * la configuration externe de l'endpoint, du bucket et des credentials ;
@@ -1106,6 +1324,12 @@ Les tests de workflow doivent vérifier la persistance des définitions et insta
 
 Les tests de synchronisation doivent couvrir les modes `IMPORT`, `EXPORT`, `BIDIRECTIONAL` et `PROJECTION`, les modes d'autorité `PIXS`, `EXTERNAL` et `EXPLICIT_BIDIRECTIONAL`, les mappings d'identifiants, les cursors, checkpoints, webhooks, polling, replays, backoff, quotas, dead-letters, pertes de connexion, divergences, suppressions et conflits. Ils doivent confirmer que la source d'autorité, la stratégie de conflit et la politique de suppression sont déclarées, qu'une valeur absente ou ambiguë bloque l'activation, et qu'aucune modification externe ne contourne une Command, l'autorisation ou l'audit Pixs.
 
+Les tests du `RegionalPlacementProvider` doivent couvrir la résolution des régions logiques, le placement primaire, les réplicas, les régions de traitement, les sauvegardes, les clés, les transferts, les tombstones, la suppression, la restauration, la révocation et les limites de provider. Ils doivent vérifier la compatibilité de la `TenantPlacementPolicy`, l'absence de fuite entre tenants ou régions, la primaire unique, le fencing, l'epoch régional, la détection du split-brain et le refus d'une région non autorisée.
+
+Les tests de Commands, Events et Jobs doivent vérifier la validation avant mutation, l'autorisation et la transaction Django, la création atomique d'une outbox, la séparation entre `operation_id`, `command_id`, `event_id` et `job_id`, la déduplication Inbox, les replays, l'ordre par agrégat ou partition, les retries bornés, les erreurs non rejouables, les leases, la reprise après perte d'un worker ou du scheduler et l'absence de promesse `exactly-once`. Ils doivent également confirmer la propagation du `ScopeContext`, la réévaluation de l'autorisation à l'exécution, la conservation de l'acteur initial et l'absence de secrets ou de payloads privés dans les événements et diagnostics.
+
+Les tests de contrats API doivent vérifier les artefacts OpenAPI, les évolutions additives, le refus des ruptures dans une version majeure, les erreurs et réponses asynchrones, les exigences d'authentification, de tenant, de scope et d'idempotence. Les tests de contrats événementiels doivent vérifier les versions, l'enveloppe (`event_id`, type, version, producteur, sujet, contexte, corrélation, causalité et payload), la compatibilité des consommateurs, la distinction entre domaine et intégration, les replays et la transformation contrôlée des webhooks entrants et sortants.
+
 Ils doivent également vérifier la sélection déterministe du provider, les états `PENDING`, `RUNNING`, `PAUSED`, `DEGRADED`, `FAILED`, `CONVERGED` et `QUARANTINED`, la suspension et la reprise autorisées, la réinitialisation contrôlée des checkpoints, la validation des signatures et fenêtres de rejeu, la rotation des secrets, les scopes minimaux, la propagation des corrélations et l'absence de secret ou de payload sensible dans les diagnostics. Les tests de rejeu et de reprise doivent confirmer l'idempotence et l'absence de suppression ou duplication non déclarée.
 
 Les environnements Debian, Docker et développement doivent exposer la même configuration conceptuelle de ces providers. Une dépendance optionnelle indisponible peut produire un état `DEGRADED` lorsqu'un fonctionnement cohérent est déclaré ; elle ne doit pas provoquer une sélection implicite d'un provider différent ni une perte silencieuse de données.
@@ -1116,13 +1340,15 @@ Les artefacts et images doivent pouvoir démarrer les rôles `web`, `worker` et 
 
 Les scénarios de redémarrage, recréation de conteneur, remplacement de paquet et montée en charge doivent vérifier la reprise des Jobs, de l'outbox, des synchronisations et des workflows sans perte ni double traitement non déclaré. Les verrous et leases locaux ne peuvent être acceptés que s'ils sont explicitement non autoritatifs. Les adapters systemd, runtime conteneur et orchestrateur doivent conserver les mêmes comportements applicatifs.
 
-Les validations d'exploitation doivent vérifier la stratégie de sauvegarde et de restauration déclarée par déploiement : objectifs `RPO` et `RTO`, sauvegarde PostgreSQL, conservation ou versionnement des objets, protection de la configuration et des secrets, contrôle d'accès, rétention et journaux d'opération. Les tests de restauration doivent utiliser un environnement isolé et confirmer la cohérence des modèles, migrations, outbox, Jobs, idempotences, workflows, audits, fichiers, checksums, mappings, checkpoints, identités, tenants et ACL.
+Les validations d'exploitation doivent vérifier la stratégie de sauvegarde et de restauration déclarée par déploiement : objectifs `RPO` et `RTO`, sauvegarde PostgreSQL, conservation ou versionnement des objets, protection de la configuration et des secrets, contrôle d'accès, rétention, résidence et journaux d'opération. Les tests de restauration doivent utiliser un environnement isolé et confirmer la cohérence des modèles, migrations, outbox, Jobs, idempotences, workflows, audits, fichiers, checksums, mappings, checkpoints, identités, tenants, ACL et politiques de placement.
 
-Une restauration doit également vérifier le démarrage contrôlé, les health checks, la reprise idempotente, la détection des versions incompatibles, le traitement des événements non publiés et l'état des synchronisations externes. Le build ou le runtime ne doit jamais lancer automatiquement une purge, un downgrade de schéma, une réinitialisation des identités ou une suppression de fichiers pour masquer un écart de restauration.
+Une restauration doit également vérifier le démarrage contrôlé, les health checks, la reprise idempotente, la détection des versions incompatibles, le traitement des événements non publiés, l'état des synchronisations externes et la région cible autorisée. Le build ou le runtime ne doit jamais lancer automatiquement une purge, un downgrade de schéma, une réinitialisation des identités, un transfert inter-région ou une suppression de fichiers pour masquer un écart de restauration.
 
 Les validations doivent couvrir un déploiement avec interruption courte ainsi que, lorsque les adapters correspondants existent, les stratégies rolling, blue/green et canary. Les scénarios progressifs doivent vérifier la coexistence temporaire des versions `N` et `N+1`, la compatibilité des API, événements, schémas et données partagés, l'arrêt du trafic vers une instance non prête et le retrait de l'ancienne version seulement après validation de la nouvelle.
 
 Les migrations destructives doivent être testées comme une étape séparée et bloquées tant qu'une ancienne version ou un consommateur compatible peut encore utiliser la structure concernée. Le build doit vérifier la séquence expansion, compatibilité, migration des usages, retrait puis contraction, ainsi que la possibilité de revenir à une version compatible sans downgrade automatique de la base.
+
+Les migrations doivent former une chaîne versionnée et déterministe par module. Le build doit vérifier les identifiants, versions source et cible, dépendances, préconditions, postconditions, idempotence, mode d'exécution et stratégie de compensation. Les backfills doivent être testés comme des opérations reprenables, bornées et observables ; un saut de version ou une dépendance circulaire non déclaré doit bloquer la release.
 
 Les validations doivent confirmer qu'une mise à jour applicative ne s'exécute que sur déclenchement explicite ou via un mécanisme d'exploitation autorisé et traçable. Elles doivent vérifier l'existence d'un plan d'upgrade, la validation de la provenance et de la signature, les préconditions, les migrations, les contrats affectés, les health checks, le résultat, les diagnostics et le rollback autorisé. Une tentative automatique non autorisée, une migration destructive non approuvée ou une activation partielle doit être refusée.
 
@@ -1166,7 +1392,13 @@ tests fonctionnels et arrêt contrôlé
 
 Les tests doivent confirmer qu'une migration échouée, une incompatibilité ou un health check bloquant empêche l'activation de la nouvelle version. Ils doivent vérifier qu'un downgrade de base de données n'est jamais lancé automatiquement et qu'un rollback applicatif est refusé lorsque la compatibilité avec le schéma courant n'est pas démontrée.
 
+Le build doit vérifier que toute migration dispose d'un plan inspectable avec ses versions source et cible, dépendances, préconditions, postconditions, mode `ONLINE`, `MAINTENANCE` ou `OFFLINE`, caractère destructif, stratégie de reprise et résultats attendus. Le démarrage ne doit effectuer qu'un contrôle préalable ; une migration en attente doit être exécutée par une commande d'exploitation autorisée avant que l'instance puisse devenir `ready`.
+
+La validation de la topologie doit vérifier qu'un même artefact peut démarrer en mono-instance puis en plusieurs instances `web` et `worker`, que le scheduler est limité par un lease persistant et que les traitements reprennent après redémarrage, recréation ou perte de lease. Elle doit confirmer qu'aucun état d'autorité ne dépend du filesystem local, de la mémoire d'un processus ou d'un conteneur particulier.
+
 Le paquet Debian doit être testé avec son adapter systemd ou équivalent de service ; l'image OCI/Docker doit être testée avec un runtime de conteneurs. Les deux chemins doivent vérifier les mêmes migrations, configurations, secrets externes, health checks, signaux d'arrêt, préservation des données et diagnostics. Les tests Kubernetes, Nomad ou autres orchestrateurs sont optionnels et ne doivent pas être requis pour valider le Kernel ou la release de base.
+
+Les tests doivent couvrir le drainage et l'arrêt contrôlé des trois profils, le refus de trafic public vers les workers et schedulers, le redémarrage d'un worker sans perte ni double effet non déclaré, l'expiration et le renouvellement du lease du scheduler, le refus d'action d'un détenteur de lease périmé, ainsi que la conservation des Jobs, outbox, inbox, files, checkpoints, sessions et idempotences. Ils doivent également vérifier qu'un orchestrateur externe ne devient pas une source d'autorité métier et que la haute disponibilité des dépendances persistantes reste déclarée par le déploiement.
 
 Les suites de conformité des providers sont versionnées avec leurs contrats et exécutées dans une matrice de validation :
 
@@ -1185,6 +1417,9 @@ Workflow runtime
 
 SynchronizationProvider
     import / export / bidirectionnel / projection
+
+RegionalPlacementProvider
+    placement / réplication / transfert / bascule / restauration
 ```
 
 Pour chaque entrée, le build doit distinguer les tests de contrat, d'intégration, de sécurité, de reprise et de packaging. Les tests utilisent des données synthétiques, des fixtures et des instances dédiées. Ils ne doivent pas exiger de secret de production, intégrer de credential dans un artefact ou accéder au volume interne de Nextcloud.
@@ -1197,5 +1432,7 @@ Le build doit traiter séparément les composants `CORE`, `OFFICIAL`, `EXTERNAL`
 Les providers officiels doivent être testés comme des implémentations de référence sans devenir des dépendances implicites du Kernel. Les providers externes et privés doivent être vérifiés par les mêmes suites de contrat lorsqu'ils déclarent une compatibilité. Une incompatibilité, une ambiguïté de résolution, une capacité obligatoire absente ou une signature non conforme bloque la composition.
 
 Le build des modules métier doit vérifier la propriété des modèles et migrations, l'identification des permissions et ressources, la présence des contrats publics, l'absence d'écriture directe dans les modules voisins et la séparation entre code métier et providers d'intégration. Les modules ou providers non sélectionnés ne doivent pas modifier les artefacts, les migrations ou la configuration effective d'une installation.
+
+Chaque module doit embarquer ou référencer les métadonnées de ses migrations sans les confondre avec les migrations d'un autre propriétaire. Le build doit vérifier que les migrations préservent les données tenant-scoped, les scopes, les ACL, les tombstones, les états de rétention, les événements et les configurations versionnées. Une migration partiellement appliquée doit rester identifiable et ne doit pas rendre l'artefact activable comme si elle avait réussi.
 
 La sélection du provider doit être reproductible entre Debian, Docker et développement. Le build doit refuser qu'un ordre d'import, un chemin de filesystem, une dépendance transitive ou la simple présence d'un paquet choisisse implicitement l'implémentation active.
