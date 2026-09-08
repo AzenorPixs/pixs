@@ -2483,6 +2483,8 @@ openspec/specs/
 │   └── spec.md
 ├── extension-contracts/
 │   └── spec.md
+├── providers/
+│   └── spec.md
 ├── modules/
 │   └── spec.md
 ├── capabilities/
@@ -2503,7 +2505,11 @@ openspec/specs/
 │   └── spec.md
 ├── jobs/
 │   └── spec.md
+├── notifications/
+│   └── spec.md
 ├── configuration/
+│   └── spec.md
+├── security/
 │   └── spec.md
 ├── core/
 │   └── spec.md
@@ -2512,6 +2518,16 @@ openspec/specs/
 ├── data-lifecycle/
 │   └── spec.md
 ├── data-governance/
+│   └── spec.md
+├── object-storage/
+│   └── spec.md
+├── document-repositories/
+│   └── spec.md
+├── search/
+│   └── spec.md
+├── workflows/
+│   └── spec.md
+├── external-synchronization/
 │   └── spec.md
 ├── bulk-operations/
 │   └── spec.md
@@ -2557,7 +2573,19 @@ openspec/specs/
 │   └── spec.md
 ├── performance/
 │   └── spec.md
-└── runtime/
+├── runtime/
+│   └── spec.md
+├── operations/
+│   └── spec.md
+├── backup-disaster-recovery/
+│   └── spec.md
+├── deb-package/
+│   └── spec.md
+├── docker-image/
+│   └── spec.md
+├── artifact-publication/
+│   └── spec.md
+└── release-management/
     └── spec.md
 ```
 
@@ -2590,6 +2618,12 @@ extension-contracts
 ├── versions et dépendances
 ├── collisions et résolution
 └── confiance, isolation et lifecycle
+
+providers
+├── déclarations et sélection explicite
+├── niveau de confiance et provenance
+├── conformité contractuelle versionnée
+└── activation, dégradation et diagnostic
 
 modules
 ├── manifest
@@ -2650,12 +2684,24 @@ jobs
 ├── retries et dead-letters
 └── reprise et idempotence
 
+notifications
+├── contrats de notification
+├── préférences, canaux et destinataires
+├── asynchronisme, retries et déduplication
+└── audit et confidentialité
+
 configuration
 ├── configuration globale
 ├── configuration par composant
 ├── schémas typés et validation
 ├── défauts
 └── secrets
+
+security
+├── références et rotation des secrets
+├── frontières de confiance et durcissement
+├── signature, provenance et SBOM des artefacts
+└── diagnostics sans exposition de données sensibles
 
 core
 └── capacités communes obligatoires
@@ -2678,6 +2724,36 @@ data-governance
 ├── finalités, lignée, rétention et transferts
 ├── demandes d'accès, d'export, de rectification, d'effacement et de restriction
 └── propagation des obligations aux dérivés et providers
+
+object-storage
+├── contrat ObjectStorageProvider
+├── métadonnées, versions et checksums
+├── isolation tenant, rétention et suppression
+└── conformité des adapters
+
+document-repositories
+├── contrat DocumentRepositoryProvider
+├── modes piloté par Pixs et externe
+├── mappings, conflits et checkpoints
+└── conformité des adapters, dont Nextcloud
+
+search
+├── contrat SearchProvider et projections dérivées
+├── indexation, reconstruction et suppression
+├── filtrage autorisé, requêtes et pagination
+└── conformité des adapters
+
+workflows
+├── définitions et instances versionnées
+├── transitions, gardes et autorisation
+├── délais, reprise et intervention manuelle
+└── migrations et compatibilité des instances actives
+
+external-synchronization
+├── contrat SynchronizationProvider
+├── import, export, bidirectionnel et projection
+├── autorité, mappings, checkpoints et conflits
+└── webhooks, replays, reprise et conformité des adapters
 
 bulk-operations
 ├── contrat BulkOperation, variantes et états
@@ -2806,6 +2882,39 @@ runtime
 ├── composition et démarrage de l'application
 ├── coordination persistante et leases
 └── exposition, arrêt et reprise contrôlés
+
+operations
+├── interface de management et opérations persistantes
+├── planification, confirmation et idempotence
+├── maintenance, lecture seule et drainage
+└── health, diagnostic et audit opérateur
+
+backup-disaster-recovery
+├── politiques RPO/RTO et périmètres de sauvegarde
+├── restauration isolée, réconciliation et reprise
+├── réapplication des rétentions et tombstones
+└── preuves de restauration et audit
+
+deb-package
+├── composition et installation Debian
+├── configuration, services et lifecycle
+└── validation et mise à niveau du paquet
+
+docker-image
+├── composition OCI/Docker reproductible
+├── image de base, exécution et configuration
+└── health checks, persistance et validation
+
+artifact-publication
+├── canaux, immutabilité et métadonnées
+├── signature, provenance et SBOM
+└── validation de l'installation hors ligne
+
+release-management
+├── versions, compatibilité et support
+├── plans d'upgrade et de rollback autorisé
+├── coexistence N/N+1 et migrations
+└── validation, activation et retrait de release
 ```
 
 Les spécifications OpenSpec validées constitueront la référence détaillée des comportements implémentables.
@@ -2835,7 +2944,7 @@ migrations
     ↓
 modules
     ↓
-extensions
+providers
     ↓
 services
     ↓
@@ -2845,7 +2954,11 @@ events
     ↓
 jobs
     ↓
+notifications
+    ↓
 configuration
+    ↓
+security
     ↓
 core
     ↓
@@ -2854,6 +2967,16 @@ scope-context
 data-lifecycle
     ↓
 data-governance
+    ↓
+object-storage
+    ↓
+document-repositories
+    ↓
+search
+    ↓
+workflows
+    ↓
+external-synchronization
     ↓
 regional-residency
     ↓
@@ -2899,6 +3022,18 @@ testing
 performance
     ↓
 runtime
+    ↓
+operations
+    ↓
+backup-disaster-recovery
+    ↓
+deb-package
+    ↓
+docker-image
+    ↓
+artifact-publication
+    ↓
+release-management
 ```
 
 Cet ordre exprime des dépendances de conception.

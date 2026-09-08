@@ -3,14 +3,34 @@
 	"share": "disabled",
 	"snapshot": false,
 	"autoupdate": false,
+	"mcp": {
+		"cgpt-validation": {
+			"type": "remote",
+			"url": "http://127.0.0.1:8787/mcp",
+			"enabled": true,
+			"oauth": false,
+			"timeout": 30000
+		}
+	},
+	"agent": {
+		"plan": {
+			"model": "opencode-go/qwen3.8-flash",
+			"reasoningEffort": "low"
+		},
+		"build": {
+			"model": "opencode-go/qwen3.8-flash",
+			"reasoningEffort": "low"
+		}
+	},
 	"permission": {
 		"*": "ask",
+		"cgpt-validation_request_validation": "allow",
 		"skill": {
 			"*": "ask",
 			"openspec-*": "allow"
 		},
 		"bash": {
-			"*": "deny",
+			"*": "ask",
 			"awk": "ask",
 			"awk *": "ask",
 			"bash /tmp/opencode/*": "ask",
@@ -27,8 +47,8 @@
 			"cp *": "allow",
 			"diff": "allow",
 			"diff *": "allow",
-			"docker": "allow",
-			"docker *": "allow",
+			"docker": "ask",
+			"docker *": "ask",
 			"docker-compose": "ask",
 			"docker-compose *": "ask",
 			"echo *": "ask",
@@ -108,7 +128,10 @@
 			"openspec view *": "allow",
 			"openspec validate": "allow",
 			"openspec validate *": "allow",
+			"/opt/devops/npm/bin/openspec validate *": "allow",
 			"pwd": "allow",
+			"python3": "ask",
+			"python3 *": "ask",
 			"rm": "ask",
 			"rm *": "ask",
 			"sed": "ask",
@@ -128,6 +151,23 @@
 		},
 		"edit": {
 			"*": "ask",
+			"openspec/changes/define-pixs-specifications/specs/providers/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/modules/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/migrations/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/audit/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/accessibility/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/design-system/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/compatibility/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/testing/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/performance/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/runtime/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/operations/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/backup-disaster-recovery/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/deb-package/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/docker-image/spec.md": "allow",
+			"openspec/changes/define-pixs-specifications/specs/artifact-publication/spec.md": "allow",
+    "openspec/changes/define-pixs-specifications/specs/release-management/spec.md": "allow",
+    "openspec/changes/define-pixs-specifications/design.md": "allow",
 			"__pycache__/**": "deny",
 			"**/__pycache__/**": "deny",
 			"**/*.crt": "deny",
@@ -180,7 +220,7 @@
 			"venv/**": "deny"
 		},
 		"external_directory": {
-			"*": "deny",
+			"*": "ask",
 			"/tmp/opencode/**": "allow"
 		},
 		"glob": "allow",

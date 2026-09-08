@@ -1,0 +1,11 @@
+{
+  "mcp": {
+    "cgpt-validation": {
+      "type": "remote",
+      "url": "http://172.17.0.1:8787/mcp",
+      "enabled": true,
+      "oauth": false,
+      "timeout": 30000
+    }
+  }
+}
