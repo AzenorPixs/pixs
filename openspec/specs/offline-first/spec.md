@@ -7,7 +7,7 @@ La capacité hors ligne, opt-in et déclarée par ressource, conserve des projec
 
 ### Requirement: Éligibilité déclarée et projections non autoritatives
 
-Seules les ressources et commandes explicitement déclarées sont utilisables hors ligne ; toute projection locale reste non autoritative, versionnée avec points de reprise, et NE DOIT jamais autoriser ni confirmer un effet métier.
+Seules les ressources et commandes explicitement déclarées sont utilisables hors ligne ; toute projection locale reste non autoritative, versionnée avec points de reprise, et MUST NOT autoriser ni confirmer un effet métier.
 
 #### Scenario: Ressource non éligible indisponible
 
@@ -15,6 +15,8 @@ Seules les ressources et commandes explicitement déclarées sont utilisables ho
 - **THEN** elle reste indisponible avec un état explicite au lieu d'une réplication implicite
 
 ### Requirement: Intentions provisoires réévaluées au serveur
+
+Le système MUST respecter les garanties suivantes.
 
 Toute commande créée hors ligne reste provisoire avec identifiant d'idempotence ; à la reconnexion, identité, périmètre, autorisation, droits, quotas, concurrence et gouvernance sont réévalués côté serveur avant confirmation.
 
@@ -25,7 +27,7 @@ Toute commande créée hors ligne reste provisoire avec identifiant d'idempotenc
 
 ### Requirement: Conflits, révocation et purge locale
 
-Les stratégies de conflit sont explicites par ressource sans résolution silencieuse ; révocations, suppressions, marqueurs, expirations et changements de périmètre invalident ou purgent les données et intentions locales selon le cycle déclaré ; secrets, jetons et données restreintes NE DOIVENT jamais être stockés localement.
+Les stratégies de conflit sont explicites par ressource sans résolution silencieuse ; révocations, suppressions, marqueurs, expirations et changements de périmètre invalident ou purgent les données et intentions locales selon le cycle déclaré ; secrets, jetons et données restreintes MUST NOT être stockés localement.
 
 #### Scenario: Révocation purgeant le local
 

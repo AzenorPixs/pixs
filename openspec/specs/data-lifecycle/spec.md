@@ -7,7 +7,7 @@ Le cycle de vie des données distingue état métier, persistance, rétention et
 
 ### Requirement: Dimensions et états distincts
 
-Les dimensions métier, persistance (ACTIVE, ARCHIVED, SOFT_DELETED, PURGE_PENDING), rétention et projection NE DOIVENT pas être confondues ; la suppression logique est la stratégie par défaut des ressources métier.
+Les dimensions métier, persistance (ACTIVE, ARCHIVED, SOFT_DELETED, PURGE_PENDING), rétention et projection MUST NOT être confondues ; la suppression logique est la stratégie par défaut des ressources métier.
 
 #### Scenario: Suppression logique tracée
 
@@ -16,7 +16,7 @@ Les dimensions métier, persistance (ACTIVE, ARCHIVED, SOFT_DELETED, PURGE_PENDI
 
 ### Requirement: Purge autorisée, auditée et idempotente
 
-Toute purge physique DOIT être explicitement autorisée, vérifier rétention, holds légaux, références et projections, puis s'exécuter via un travail idempotent et rejouable avec audit.
+Toute purge physique MUST être explicitement autorisée, vérifier rétention, holds légaux, références et projections, puis s'exécuter via un travail idempotent et rejouable avec audit.
 
 #### Scenario: Purge prématurée refusée
 
@@ -25,7 +25,7 @@ Toute purge physique DOIT être explicitement autorisée, vérifier rétention, 
 
 ### Requirement: Tombstones contre la résurrection
 
-Un marqueur ou journal d'effacement DOIT empêcher la republication d'une ressource purgée dans caches, index, projections, synchronisations, sauvegardes et restaurations ; toute restauration rejoue les effacements applicables.
+Un marqueur ou journal d'effacement MUST empêcher la republication d'une ressource purgée dans caches, index, projections, synchronisations, sauvegardes et restaurations ; toute restauration rejoue les effacements applicables.
 
 #### Scenario: Restauration sans résurrection
 

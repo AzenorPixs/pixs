@@ -7,7 +7,7 @@ L'autorisation évalue sujets, ressources, actions et contexte avec rôles, ACL 
 
 ### Requirement: Modèle Subject Resource Action Context
 
-Chaque décision DOIT évaluer sujet (identité numérique, utilisateur, groupe), ressource et action déclarées par le module, plus contexte incluant le ScopeContext valide ; la propriété, l'appartenance ou un rôle administrateur NE DOIT jamais valoir autorisation implicite.
+Chaque décision MUST évaluer sujet (identité numérique, utilisateur, groupe), ressource et action déclarées par le module, plus contexte incluant le ScopeContext valide ; la propriété, l'appartenance ou un rôle administrateur MUST NOT valoir autorisation implicite.
 
 #### Scenario: Propriété sans politique refusée
 
@@ -15,6 +15,8 @@ Chaque décision DOIT évaluer sujet (identité numérique, utilisateur, groupe)
 - **THEN** l'accès est refusé par défaut
 
 ### Requirement: Priorité DENY puis ALLOW puis refus
+
+Le système MUST respecter les garanties suivantes.
 
 L'évaluation SUIT le refus explicite prioritaire, puis l'autorisation explicite, puis le refus par défaut ; tout accès plateforme ou inter-tenant exige permission, contexte et audit explicites.
 
@@ -25,7 +27,7 @@ L'évaluation SUIT le refus explicite prioritaire, puis l'autorisation explicite
 
 ### Requirement: Évaluation applicative avant exposition
 
-Django reste l'autorité d'évaluation ; frontal, caches, projections et synchronisation NE DOIVENT que refléter la décision ; les listes appliquent le filtrage autorisé à la source.
+Django reste l'autorité d'évaluation ; frontal, caches, projections et synchronisation MUST uniquement refléter la décision ; les listes appliquent le filtrage autorisé à la source.
 
 #### Scenario: Liste filtrée à la source
 

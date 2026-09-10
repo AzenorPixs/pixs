@@ -7,7 +7,7 @@ L'observabilité native corrèle journaux, métriques, traces et diagnostics par
 
 ### Requirement: Signaux structurés et corrélés
 
-Chaque composant DOIT émettre journaux structurés, métriques, traces et contrôles de santé avec identifiants de corrélation et de trace ; les signaux restent compatibles OpenTelemetry avec propagation W3C lorsque le transport le permet.
+Chaque composant MUST émettre journaux structurés, métriques, traces et contrôles de santé avec identifiants de corrélation et de trace ; les signaux restent compatibles OpenTelemetry avec propagation W3C lorsque le transport le permet.
 
 #### Scenario: Corrélation bout en bout
 
@@ -16,7 +16,7 @@ Chaque composant DOIT émettre journaux structurés, métriques, traces et contr
 
 ### Requirement: Santé distinguée et sondes bornées
 
-Les contrôles DOIVENT distinguer vivacité, disponibilité, démarrage et diagnostic ; les dépendances obligatoires déterminent la disponibilité, une optionnelle indisponible pouvant donner DEGRADED ; les sondes sont rapides, bornées, sans mutation ni secret.
+Les contrôles MUST distinguer vivacité, disponibilité, démarrage et diagnostic ; les dépendances obligatoires déterminent la disponibilité, une optionnelle indisponible pouvant donner DEGRADED ; les sondes sont rapides, bornées, sans mutation ni secret.
 
 #### Scenario: Dépendance optionnelle dégradée
 
@@ -24,6 +24,8 @@ Les contrôles DOIVENT distinguer vivacité, disponibilité, démarrage et diagn
 - **THEN** l'état DEGRADED est exposé au lieu d'une panne globale
 
 ### Requirement: Rétention et minimisation séparées
+
+Le système MUST respecter les garanties suivantes.
 
 Les rétentions des journaux, métriques, traces, audits et diagnostics sont configurables séparément avec minimisation, pseudonymisation et expiration ; l'accès inter-tenant exige permission explicite et audit.
 

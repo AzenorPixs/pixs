@@ -7,6 +7,8 @@ Le stockage objet conserve les octets via des fournisseurs interchangeables, tan
 
 ### Requirement: Contrat fournisseur objet et métadonnées Pixs
 
+Le système MUST respecter les garanties suivantes.
+
 Le contenu binaire est confié à un ObjectStorageProvider compatible ; identité, tenant, permissions, audit et cycle de vie restent gérés par Pixs via la métadonnée, indépendamment de la durée technique des octets.
 
 #### Scenario: Suppression propagée au fournisseur
@@ -16,7 +18,7 @@ Le contenu binaire est confié à un ObjectStorageProvider compatible ; identit�
 
 ### Requirement: Isolation tenant et périmètre
 
-Chaque objet DOIT porter le tenant racine et le scope applicable ; aucun partage direct avec un espace exclusif tiers ; toute suppression respecte rétention, holds et révocation.
+Chaque objet MUST porter le tenant racine et le scope applicable ; aucun partage direct avec un espace exclusif tiers ; toute suppression respecte rétention, holds et révocation.
 
 #### Scenario: Accès inter-tenant refusé
 
@@ -25,7 +27,7 @@ Chaque objet DOIT porter le tenant racine et le scope applicable ; aucun partage
 
 ### Requirement: Conformité des adaptateurs
 
-Chaque adaptateur DOIT déclarer transport, chiffrement, localisation, rétention, suppression, restitution et révocation ; les clés et identifiants restent fournis par référence externe.
+Chaque adaptateur MUST déclarer transport, chiffrement, localisation, rétention, suppression, restitution et révocation ; les clés et identifiants restent fournis par référence externe.
 
 #### Scenario: Adaptateur non conforme bloqué
 

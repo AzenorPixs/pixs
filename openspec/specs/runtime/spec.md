@@ -7,7 +7,7 @@ Le runtime exécute un même artefact selon des profils distincts web, worker et
 
 ### Requirement: Profils distincts d'un même artefact
 
-Les rôles web, worker et scheduler DOIVENT être des profils d'un même artefact activés par configuration explicite, sans branche fonctionnelle cachée ; le développement peut les regrouper, la production DOIT pouvoir les exécuter séparément.
+Les rôles web, worker et scheduler MUST être des profils d'un même artefact activés par configuration explicite, sans branche fonctionnelle cachée ; le développement peut les regrouper, la production MUST pouvoir les exécuter séparément.
 
 #### Scenario: Profil activé par configuration
 
@@ -16,7 +16,7 @@ Les rôles web, worker et scheduler DOIVENT être des profils d'un même artefac
 
 ### Requirement: Exposition minimale par défaut
 
-Seul le profil web DOIT être exposé à l'entrée publique par défaut ; workers, schedulers, files, stores de coordination et endpoints de management DOIVENT rester sur un réseau privé ou derrière une frontière authentifiée, autorisée et auditée.
+Seul le profil web MUST être exposé à l'entrée publique par défaut ; workers, schedulers, files, stores de coordination et endpoints de management MUST rester sur un réseau privé ou derrière une frontière authentifiée, autorisée et auditée.
 
 #### Scenario: Endpoint de management publiquement joignable
 
@@ -25,7 +25,7 @@ Seul le profil web DOIT être exposé à l'entrée publique par défaut ; worker
 
 ### Requirement: Processus stateless et coordination persistante
 
-Les processus NE DOIVENT PAS conserver en mémoire ou sur disque local un état nécessaire à l'autorité métier, à l'idempotence, à la reprise ou aux sessions ; la coordination DOIT reposer sur la persistance de référence, un verrou mémoire n'étant qu'une optimisation sans garantie.
+Les processus MUST NOT conserver en mémoire ou sur disque local un état nécessaire à l'autorité métier, à l'idempotence, à la reprise ou aux sessions ; la coordination MUST reposer sur la persistance de référence, un verrou mémoire n'étant qu'une optimisation sans garantie.
 
 #### Scenario: Redémarrage d'un worker
 
@@ -34,7 +34,7 @@ Les processus NE DOIVENT PAS conserver en mémoire ou sur disque local un état 
 
 ### Requirement: Lease du scheduler avec clôture de péremption
 
-Le scheduler DOIT acquérir un lease persistant borné, renouvelable et expirant, avec un mécanisme vérifiable empêchant un ancien détenteur d'agir après expiration.
+Le scheduler MUST acquérir un lease persistant borné, renouvelable et expirant, avec un mécanisme vérifiable empêchant un ancien détenteur d'agir après expiration.
 
 #### Scenario: Ancien détenteur toujours actif
 
@@ -43,7 +43,7 @@ Le scheduler DOIT acquérir un lease persistant borné, renouvelable et expirant
 
 ### Requirement: Arrêt, drain et reprise contrôlés
 
-L'arrêt DOIT être contrôlé : cesser l'exposition, drainer les traitements en cours dans une durée bornée puis s'éteindre sur un état explicite ; une instance défaillante NE DOIT PAS recevoir de trafic.
+L'arrêt MUST être contrôlé : cesser l'exposition, drainer les traitements en cours dans une durée bornée puis s'éteindre sur un état explicite ; une instance défaillante MUST NOT recevoir de trafic.
 
 #### Scenario: Arrêt pendant traitement
 

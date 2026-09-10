@@ -7,7 +7,7 @@ La synchronisation réactive propage les états validés vers les clients via un
 
 ### Requirement: Mécanisme réactif optionnel sous autorité applicative
 
-Toute mutation DOIT être validée et transactionnée par l'applicatif avant propagation réactive ; un module sans besoin réactif NE DOIT pas dépendre du mécanisme de synchronisation.
+Toute mutation MUST être validée et transactionnée par l'applicatif avant propagation réactive ; un module sans besoin réactif MUST NOT dépendre du mécanisme de synchronisation.
 
 #### Scenario: Mutation non validée non propagée
 
@@ -16,7 +16,7 @@ Toute mutation DOIT être validée et transactionnée par l'applicatif avant pro
 
 ### Requirement: Périmètre et autorisation propagés aux projections
 
-Chaque projection synchronisée DOIT porter tenant, scope, version et corrélation, respecter le filtrage autorisé et invalider les données révoquées, supprimées ou purgées via marqueurs.
+Chaque projection synchronisée MUST porter tenant, scope, version et corrélation, respecter le filtrage autorisé et invalider les données révoquées, supprimées ou purgées via marqueurs.
 
 #### Scenario: Donnée révoquée invalidée
 
@@ -24,6 +24,8 @@ Chaque projection synchronisée DOIT porter tenant, scope, version et corrélati
 - **THEN** les projections clientes concernées sont invalidées avant tout nouvel affichage
 
 ### Requirement: Cohérence déclarée et échec contrôlé
+
+Le système MUST respecter les garanties suivantes.
 
 Cohérence éventuelle, fraîcheur maximale et dégradation sont déclarées par capacité et ressource ; toute incohérence ou perte de fournisseur produit un état contrôlé au lieu d'un succès implicite.
 

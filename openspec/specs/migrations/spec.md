@@ -7,7 +7,7 @@ Les migrations sont des changements de données contractuels, planifiés, ordonn
 
 ### Requirement: Contrat de migration
 
-Toute migration DOIT déclarer son périmètre (module propriétaire, version d'origine, version de cible), son effet et son mode de retour ou de compensation ; une migration sans contrat NE DOIT PAS être exécutée.
+Toute migration MUST déclarer son périmètre (module propriétaire, version d'origine, version de cible), son effet et son mode de retour ou de compensation ; une migration sans contrat MUST NOT être exécutée.
 
 #### Scenario: Migration sans version cible
 
@@ -16,7 +16,7 @@ Toute migration DOIT déclarer son périmètre (module propriétaire, version d'
 
 ### Requirement: Planification et ordre déterministes
 
-Le plan d'exécution DOIT être déterministe à partir du graphe de dépendances et de l'état versionné ; les exécutions concurrentes ou désordonnées des migrations d'un même périmètre DOIVENT être empêchées.
+Le plan d'exécution MUST être déterministe à partir du graphe de dépendances et de l'état versionné ; les exécutions concurrentes ou désordonnées des migrations d'un même périmètre MUST être empêchées.
 
 #### Scenario: Deux migrations concurrentes
 
@@ -25,7 +25,7 @@ Le plan d'exécution DOIT être déterministe à partir du graphe de dépendance
 
 ### Requirement: Compatibilité pendant l'application
 
-Les migrations DOIVENT préserver la compatibilité avec les versions supportées pendant leur application ; toute rupture DOIT être reportée à une phase de contraction séparée.
+Les migrations MUST préserver la compatibilité avec les versions supportées pendant leur application ; toute rupture MUST être reportée à une phase de contraction séparée.
 
 #### Scenario: Coexistence pendant migration
 
@@ -34,7 +34,7 @@ Les migrations DOIVENT préserver la compatibilité avec les versions supportée
 
 ### Requirement: Reprise idempotente
 
-Une migration interrompue DOIT être reprenable sans duplication ni perte, l'état d'avancement étant persisté et consultable.
+Une migration interrompue MUST être reprenable sans duplication ni perte, l'état d'avancement étant persisté et consultable.
 
 #### Scenario: Interruption puis reprise
 
@@ -43,7 +43,7 @@ Une migration interrompue DOIT être reprenable sans duplication ni perte, l'ét
 
 ### Requirement: Contraction contrôlée
 
-La contraction (suppression d'éléments devenus inutiles) DOIT être planifiée séparément, conditionnée à la fin de compatibilité déclarée et tracée par audit.
+La contraction (suppression d'éléments devenus inutiles) MUST être planifiée séparément, conditionnée à la fin de compatibilité déclarée et tracée par audit.
 
 #### Scenario: Contraction prématurée
 

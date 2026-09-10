@@ -7,7 +7,7 @@ Les droits contractuels et les quotas contrôlent disponibilité et consommation
 
 ### Requirement: Droits rattachés sans élargissement
 
-Chaque droit DOIT déclarer clé, version, propriétaire, portée (installation, plateforme, tenant, scope enfant explicite), expiration et révocation ; un scope enfant NE DOIT jamais élargir le droit du tenant ; aucun droit utilisateur implicite.
+Chaque droit MUST déclarer clé, version, propriétaire, portée (installation, plateforme, tenant, scope enfant explicite), expiration et révocation ; un scope enfant MUST NOT élargir le droit du tenant ; aucun droit utilisateur implicite.
 
 #### Scenario: Élargissement par scope refusé
 
@@ -15,6 +15,8 @@ Chaque droit DOIT déclarer clé, version, propriétaire, portée (installation,
 - **THEN** l'accès est refusé même si le scope le déclare
 
 ### Requirement: Quotas cumulatifs et réservations atomiques
+
+Le système MUST respecter les garanties suivantes.
 
 Chaque quota déclare dimension, unité, portée, limite, période et agrégation ; les limites multi-portées s'évaluent simultanément ; check, reserve, commit et release sont persistants, atomiques et idempotents, avec réconciliation et libération contrôlée après annulation.
 
@@ -24,6 +26,8 @@ Chaque quota déclare dimension, unité, portée, limite, période et agrégatio
 - **THEN** aucune double consommation n'est imputée et l'état reste réconcilié
 
 ### Requirement: Application applicative et échec fermé
+
+Le système MUST respecter les garanties suivantes.
 
 Droits et quotas sont évalués côté applicatif avant exécution et réévalués pour travaux, commandes asynchrones, imports et exports ; toute indisponibilité ou incohérence échoue fermé pour opérations protégées, avec réponses stables et audit minimisé.
 

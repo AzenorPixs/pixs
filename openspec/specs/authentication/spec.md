@@ -7,7 +7,7 @@ L'authentification vérifie les identités via des fournisseurs déclarés et ap
 
 ### Requirement: Fournisseurs déclarés et confiance explicite
 
-Chaque fournisseur (local, OIDC, SAML) DOIT déclarer protocole, émetteurs, audiences, algorithmes, clés, claims obligatoires et mappings ; la seule validité cryptographique NE DOIT jamais suffire sans confiance applicative configurée.
+Chaque fournisseur (local, OIDC, SAML) MUST déclarer protocole, émetteurs, audiences, algorithmes, clés, claims obligatoires et mappings ; la seule validité cryptographique MUST NOT suffire sans confiance applicative configurée.
 
 #### Scenario: Émetteur non approuvé refusé
 
@@ -15,6 +15,8 @@ Chaque fournisseur (local, OIDC, SAML) DOIT déclarer protocole, émetteurs, aud
 - **THEN** l'authentification est refusée avec une erreur stable et un audit
 
 ### Requirement: Identifiant externe canonique et liaison explicite
+
+Le système MUST respecter les garanties suivantes.
 
 L'identifiant externe canonique est le triplet fournisseur, émetteur, sujet ; toute liaison à une identité existante est explicite, vérifiée des deux côtés, idempotente et auditée ; aucun rapprochement par courriel seul.
 
@@ -24,6 +26,8 @@ L'identifiant externe canonique est le triplet fournisseur, émetteur, sujet ; t
 - **THEN** aucune fusion n'a lieu et une liaison explicite reste exigée
 
 ### Requirement: Sessions bornées et révocation propagée
+
+Le système MUST respecter les garanties suivantes.
 
 Sessions, jetons et renouvellements sont bornés, rotatifs avec détection de réutilisation ; toute révocation d'identité, de justificatif, de session ou de confiance invalide les contextes concernés sans supprimer les données métier, avec audit sans secret.
 

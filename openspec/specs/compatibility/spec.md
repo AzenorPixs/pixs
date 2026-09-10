@@ -7,7 +7,7 @@ La compatibilité vérifie les contraintes de version entre composants, contrats
 
 ### Requirement: Contraintes de version déclarées et vérifiées
 
-Chaque consommateur DOIT déclarer les contraintes de version des contrats dont il dépend ; le noyau DOIT vérifier ces contraintes avant activation et lors de toute mise à niveau.
+Chaque consommateur MUST déclarer les contraintes de version des contrats dont il dépend ; le noyau MUST vérifier ces contraintes avant activation et lors de toute mise à niveau.
 
 #### Scenario: Contrainte insatisfaite à l'activation
 
@@ -16,7 +16,7 @@ Chaque consommateur DOIT déclarer les contraintes de version des contrats dont 
 
 ### Requirement: Aucune compatibilité présumée
 
-Une incompatibilité connue DOIT produire un échec explicite ; le système NE DOIT PAS présumer une implémentation compatible au seul motif d'un nom proche ou d'une version plus récente.
+Une incompatibilité connue MUST produire un échec explicite ; le système MUST NOT présumer une implémentation compatible au seul motif d'un nom proche ou d'une version plus récente.
 
 #### Scenario: Version supérieure non testée
 
@@ -25,7 +25,7 @@ Une incompatibilité connue DOIT produire un échec explicite ; le système NE D
 
 ### Requirement: Matrice de compatibilité globale
 
-La compatibilité DOIT être représentée par une matrice calculée avant activation ou mise à niveau, couvrant exécution, composants et capacités, contrats et API, schémas et migrations, événements, providers, configuration et clients, avec des états distincts dont au minimum compatible, migration requise, déprécié et bloqué.
+La compatibilité MUST être représentée par une matrice calculée avant activation ou mise à niveau, couvrant exécution, composants et capacités, contrats et API, schémas et migrations, événements, providers, configuration et clients, avec des états distincts dont au minimum compatible, migration requise, déprécié et bloqué.
 
 #### Scenario: État bloqué déterministe
 
@@ -34,7 +34,7 @@ La compatibilité DOIT être représentée par une matrice calculée avant activ
 
 ### Requirement: Compatibilité déclarative distincte de la conformité comportementale
 
-La compatibilité déclarative par contraintes de version et la conformité comportementale par suites de tests DOIVENT être évaluées séparément et toutes deux satisfaites avant de déclarer une composition valide.
+La compatibilité déclarative par contraintes de version et la conformité comportementale par suites de tests MUST être évaluées séparément et toutes deux satisfaites avant de déclarer une composition valide.
 
 #### Scenario: Déclaration sans conformité
 
@@ -43,7 +43,7 @@ La compatibilité déclarative par contraintes de version et la conformité comp
 
 ### Requirement: Coexistence pendant les montées de version
 
-Les évolutions DOIVENT préserver la coexistence des versions supportées ; les ruptures ne sont autorisées qu'au changement de version majeure accompagné, et les suppressions d'éléments consommés restent différées jusqu'à la fin de la fenêtre de compatibilité.
+Les évolutions MUST préserver la coexistence des versions supportées ; les ruptures ne sont autorisées qu'au changement de version majeure accompagné, et les suppressions d'éléments consommés restent différées jusqu'à la fin de la fenêtre de compatibilité.
 
 #### Scenario: Suppression prématurée
 

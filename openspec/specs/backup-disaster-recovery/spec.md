@@ -7,7 +7,7 @@ La sauvegarde et la reprise après sinistre sont une stratégie déclarée par d
 
 ### Requirement: Stratégie déclarée par déploiement
 
-Le déploiement DOIT définir ses objectifs de perte et de délai de reprise acceptables, son périmètre, ses durées de conservation, ses contrôles d'accès, ses procédures de restauration et la preuve attendue après restauration ; le socle n'impose aucun outil particulier.
+Le déploiement MUST définir ses objectifs de perte et de délai de reprise acceptables, son périmètre, ses durées de conservation, ses contrôles d'accès, ses procédures de restauration et la preuve attendue après restauration ; le socle n'impose aucun outil particulier.
 
 #### Scenario: Procédure sans objectifs déclarés
 
@@ -16,7 +16,7 @@ Le déploiement DOIT définir ses objectifs de perte et de délai de reprise acc
 
 ### Requirement: Périmètres de sauvegarde distincts
 
-La stratégie DOIT couvrir séparément les données persistantes avec leurs états de traitement, les objets et fichiers avec versions, rétentions et sommes de contrôle, et la configuration avec les références de secrets et leurs mécanismes de rotation ; une sauvegarde NE DOIT PAS devenir une nouvelle source d'autorité.
+La stratégie MUST couvrir séparément les données persistantes avec leurs états de traitement, les objets et fichiers avec versions, rétentions et sommes de contrôle, et la configuration avec les références de secrets et leurs mécanismes de rotation ; une sauvegarde MUST NOT devenir une nouvelle source d'autorité.
 
 #### Scenario: Sauvegarde partielle
 
@@ -25,7 +25,7 @@ La stratégie DOIT couvrir séparément les données persistantes avec leurs ét
 
 ### Requirement: Restauration cohérente et réapplication des gouvernances
 
-Une restauration DOIT vérifier la cohérence entre métadonnées, objets, événements non publiés, travaux, points de contrôle, mappings externes et versions de composants, et réappliquer les marqueurs de suppression, le journal d'effacement, les restrictions légales et les états de rétention avant toute exposition aux utilisateurs ou aux synchronisations.
+Une restauration MUST vérifier la cohérence entre métadonnées, objets, événements non publiés, travaux, points de contrôle, mappings externes et versions de composants, et réappliquer les marqueurs de suppression, le journal d'effacement, les restrictions légales et les états de rétention avant toute exposition aux utilisateurs ou aux synchronisations.
 
 #### Scenario: Objet restauré après suppression validée
 
@@ -34,7 +34,7 @@ Une restauration DOIT vérifier la cohérence entre métadonnées, objets, évé
 
 ### Requirement: Tests de restauration isolés et preuves
 
-Les restaurations DOIVENT être exécutables dans un environnement isolé, testées régulièrement, et produire une preuve conservée ; après restauration le système DOIT démarrer en état contrôlé, détecter les écarts de composition ou de version et reprendre les traitements idempotents.
+Les restaurations MUST être exécutables dans un environnement isolé, testées régulièrement, et produire une preuve conservée ; après restauration le système MUST démarrer en état contrôlé, détecter les écarts de composition ou de version et reprendre les traitements idempotents.
 
 #### Scenario: Démarrage après restauration
 
@@ -43,7 +43,7 @@ Les restaurations DOIVENT être exécutables dans un environnement isolé, test�
 
 ### Requirement: Restauration destructive autorisée et auditée
 
-Une restauration destructive ou un retour à un point antérieur DOIT être une opération explicitement autorisée, confirmée et auditée ; aucune purge implicite d'identités, tenants, autorisations, secrets ou données métier NE DOIT être tolérée pour rendre la restauration possible.
+Une restauration destructive ou un retour à un point antérieur MUST être une opération explicitement autorisée, confirmée et auditée ; aucune purge implicite d'identités, tenants, autorisations, secrets ou données métier MUST NOT être tolérée pour rendre la restauration possible.
 
 #### Scenario: Suppression implicite refusée
 

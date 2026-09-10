@@ -7,7 +7,7 @@ Les événements notifient des faits déjà survenus, versionnés et immuables, 
 
 ### Requirement: Événements immuables versionnés
 
-Chaque événement DOIT porter type, version, producteur, schéma et périmètre d'ordre déclaré ; les événements de domaine internes et d'intégration publics restent des contrats distincts.
+Chaque événement MUST porter type, version, producteur, schéma et périmètre d'ordre déclaré ; les événements de domaine internes et d'intégration publics restent des contrats distincts.
 
 #### Scenario: Contrat d'intégration séparé
 
@@ -16,7 +16,7 @@ Chaque événement DOIT porter type, version, producteur, schéma et périmètre
 
 ### Requirement: Publication après validation transactionnelle
 
-Un événement issu d'une mutation NE DOIT être publié qu'après validation de la transaction ; en cas d'échec, il reste absent du mécanisme de diffusion.
+Un événement issu d'une mutation MUST NOT être publié qu'après validation de la transaction ; en cas d'échec, il reste absent du mécanisme de diffusion.
 
 #### Scenario: Transaction échouée sans événement
 
@@ -25,7 +25,7 @@ Un événement issu d'une mutation NE DOIT être publié qu'après validation de
 
 ### Requirement: Consommateurs idempotents et ordonnés
 
-La garantie générale est au-moins-une-fois ; l'ordre n'est garanti que par agrégat ou partition déclaré ; les consommateurs DOIVENT supporter les rejou sans double effet métier.
+La garantie générale est au-moins-une-fois ; l'ordre n'est garanti que par agrégat ou partition déclaré ; les consommateurs MUST supporter les rejou sans double effet métier.
 
 #### Scenario: Rejou sans double effet
 

@@ -7,7 +7,7 @@ Le registre de services expose les opérations synchrones des composants via des
 
 ### Requirement: Enregistrement contractuel des services
 
-Chaque service DOIT être enregistré avec identifiant canonique, version de contrat, composant propriétaire et garanties ; aucune implémentation privée NE DOIT être exposée comme contrat.
+Chaque service MUST être enregistré avec identifiant canonique, version de contrat, composant propriétaire et garanties ; une implémentation privée MUST NOT être exposée comme contrat.
 
 #### Scenario: Service privé non exposé
 
@@ -15,6 +15,8 @@ Chaque service DOIT être enregistré avec identifiant canonique, version de con
 - **THEN** elle reste inaccessible aux autres composants avec une erreur explicite
 
 ### Requirement: Résolution déterministe du fournisseur
+
+Le système MUST respecter les garanties suivantes.
 
 La sélection du fournisseur SUIT le fournisseur configuré, sinon le candidat compatible unique, sinon la composition invalide, sans dépendance à l'ordre de découverte.
 
@@ -25,7 +27,7 @@ La sélection du fournisseur SUIT le fournisseur configuré, sinon le candidat c
 
 ### Requirement: Traçabilité et sécurité des appels
 
-Chaque appel DOIT propager identité, contexte de périmètre et corrélation, et échouer fermé en cas d'autorisation ou de contexte non vérifiable, sans exposer de secret.
+Chaque appel MUST propager identité, contexte de périmètre et corrélation, et échouer fermé en cas d'autorisation ou de contexte non vérifiable, sans exposer de secret.
 
 #### Scenario: Contexte non vérifiable
 

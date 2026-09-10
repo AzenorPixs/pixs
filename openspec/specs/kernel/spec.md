@@ -7,7 +7,7 @@ Le noyau fournit uniquement les mécanismes génériques du cadriciel et ne conn
 
 ### Requirement: Noyau sans logique métier
 
-Le noyau NE DOIT contenir aucun concept Utilisateur, Groupe, ACL, Organisation, Annuaire, OIDC, SAML, Document ou Flux de travail.
+Le noyau MUST NOT contenir de concept Utilisateur, Groupe, ACL, Organisation, Annuaire, OIDC, SAML, Document ou Flux de travail.
 
 #### Scenario: Démarrage minimal sans modèle métier
 
@@ -16,7 +16,7 @@ Le noyau NE DOIT contenir aucun concept Utilisateur, Groupe, ACL, Organisation, 
 
 ### Requirement: Noyau fournit des registres génériques
 
-Le noyau DOIT fournir le registre de modules, le résolveur de dépendances, le gestionnaire de cycle de vie, le registre de services, le bus d'événements, le registre de configuration et le registre d'extensions comme mécanismes génériques.
+Le noyau MUST fournir le registre de modules, le résolveur de dépendances, le gestionnaire de cycle de vie, le registre de services, le bus d'événements, le registre de configuration et le registre d'extensions comme mécanismes génériques.
 
 #### Scenario: Résolution déterministe
 
@@ -25,7 +25,7 @@ Le noyau DOIT fournir le registre de modules, le résolveur de dépendances, le 
 
 ### Requirement: Noyau agnostique aux fournisseurs
 
-Le noyau NE DOIT dépendre d'aucune implémentation concrète d'annuaire, d'authentification, de stockage, de recherche, de transport ou d'interface utilisateur.
+Le noyau MUST NOT dépendre d.une implémentation concrète d'annuaire, d'authentification, de stockage, de recherche, de transport ou d'interface utilisateur.
 
 #### Scenario: Module ajouté sans modification du noyau
 
@@ -34,7 +34,7 @@ Le noyau NE DOIT dépendre d'aucune implémentation concrète d'annuaire, d'auth
 
 ### Requirement: Composition ambiguë refusée explicitement
 
-Le noyau DOIT refuser une composition ambiguë ou invalide avec une erreur explicite et diagnostiquable au lieu d'un choix implicite.
+Le noyau MUST refuser une composition ambiguë ou invalide avec une erreur explicite et diagnostiquable au lieu d'un choix implicite.
 
 #### Scenario: Deux fournisseurs sans sélection
 

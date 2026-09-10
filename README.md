@@ -1,1 +1,135 @@
 # Pixs
+
+> Un socle applicatif modulaire, sécurisé et API-first pour construire des applications et services métiers durables.
+
+Pixs est un framework applicatif conçu pour composer plusieurs applications et services métiers à partir de composants indépendants. Il sépare strictement le mécanisme du framework des fonctionnalités de domaine, afin de pouvoir faire évoluer une installation par ajout de modules, providers, extensions ou thèmes, sans modifier son noyau.
+
+## État du projet
+
+Le dépôt formalise actuellement l'architecture, les règles techniques et les spécifications fonctionnelles de Pixs. Il ne publie pas encore de release, de paquet Debian ni d'image Docker utilisable : les noms de commandes, variables d'environnement, ports, chemins d'installation et fournisseurs concrets ne sont donc pas figés.
+
+Cette documentation présente le périmètre cible du projet sans anticiper ces choix d'implémentation.
+
+## En bref
+
+| Domaine | Choix d'architecture |
+| --- | --- |
+| Backend | Django porte les règles métier, transactions, commandes et API. |
+| Données | PostgreSQL est la source de vérité applicative. |
+| Frontend | TanStack est la base de l'interface web. |
+| Réactivité | Electric est optionnel et intervient seulement lorsque la synchronisation est nécessaire. |
+| Identité et droits | `pixs.core` apporte utilisateurs, groupes, appartenances, ACL et permissions. |
+| Authentification | Des providers indépendants peuvent fournir OIDC, SAML ou d'autres mécanismes. |
+| API | HTTP/REST et contrats OpenAPI versionnés sont l'interface publique principale. |
+
+## Architecture
+
+```text
+Clients web et intégrations
+            │
+            ▼
+     API publiques versionnées
+            │
+            ▼
+       Django / Pixs
+            │
+   ┌────────┼─────────────────────────────────────┐
+   │        │                                     │
+   ▼        ▼                                     ▼
+Kernel   pixs.core                       Modules et sous-modules
+   │        │                                     │
+   │        └── identité, groupes, ACL            ├── règles métier
+   │                                              ├── données et migrations
+   ├── composition, lifecycle, contrats           ├── API et événements
+   └── configuration, services, extensions        └── interface et traductions
+            │
+            ▼
+      PostgreSQL — source de vérité
+```
+
+Le Kernel reste minimal et agnostique : il fournit les mécanismes de composition, de dépendances, de cycle de vie, de services, d'événements, de configuration et d'extensions. Les comportements fonctionnels, y compris ceux de `pixs.core`, sont apportés par des modules.
+
+Un composant déclare son identité, sa version, ses dépendances, ses capacités et ses contrats dans un manifest `component.toml`. Les composants communiquent de préférence par des contrats publics versionnés, plutôt que par des dépendances vers leurs implémentations internes.
+
+## Capacités visées
+
+- Applications modulaires et sous-modules composables récursivement.
+- Multi-tenancy explicite : tenant racine, scopes enfants et autorisations propagés à chaque opération.
+- Authentification par providers et autorisation côté backend, selon le principe *deny by default*.
+- APIs REST versionnées, documentées par OpenAPI, avec commandes, requêtes, erreurs stables et idempotence lorsque nécessaire.
+- Interface internationale, responsive, accessible (objectif WCAG 2.2 AA) et thémable en clair comme en sombre.
+- Synchronisation réactive et capacités offline-first uniquement lorsqu'elles sont déclarées par un composant.
+- Observabilité native : logs structurés, métriques, traces, contrôles de santé et diagnostic opérateur.
+- Gouvernance des données, audit, rétention, suppression contrôlée, résidence régionale et reprise après sinistre.
+
+## Principes essentiels
+
+**Modularité.** Les modules possèdent leurs données, invariants et migrations. Ils ne modifient pas directement les données internes d'un autre composant.
+
+**Sécurité.** Les secrets ne sont jamais présents dans un manifest, un artefact, une image, un paquet ou un journal. Toute authentification, autorisation ou configuration non vérifiable échoue de manière fermée.
+
+**Déterminisme.** À composants, versions et configuration identiques, la composition, l'ordre de chargement et les diagnostics doivent être reproductibles.
+
+**Évolutivité maîtrisée.** Les versions, contrats, migrations et compatibilités sont validés avant activation ou mise à niveau. Une migration ne devient pas un retour arrière implicite.
+
+**Réactivité sous contrôle.** PostgreSQL et Django restent les autorités métier ; le client local et les mécanismes de synchronisation ne deviennent jamais une source de vérité.
+
+## Exécution et déploiement cibles
+
+Pixs prévoit trois formes d'utilisation : l'exécution directe pour le développement, un paquet Debian (`.deb`) pour l'installation native, et une image Docker pour l'exécution conteneurisée. À version identique, les distributions Debian et Docker doivent fournir les mêmes garanties fonctionnelles.
+
+Un même artefact peut être lancé selon un profil explicitement configuré :
+
+- `web` reçoit le trafic applicatif ;
+- `worker` exécute les travaux asynchrones ;
+- `scheduler` planifie les traitements avec une coordination persistante.
+
+En production, ces profils peuvent être exécutés séparément. Seul `web` est destiné à une exposition publique par défaut ; les workers, schedulers, systèmes de coordination et interfaces de gestion restent privés ou protégés.
+
+### Image Docker
+
+L'image cible est reproductible, sans état et sans secret. Elle contiendra le runtime nécessaire, Pixs, ses dépendances et le frontend construit ; PostgreSQL, la configuration effective, les secrets et les données persistantes restent externes.
+
+Le conteneur reçoit un unique profil d'exécution. Son système de fichiers inscriptible est éphémère, ses sondes distinguent démarrage, vivacité et disponibilité, et son arrêt draine les traitements en cours de façon contrôlée.
+
+### Paquet Debian
+
+Le paquet cible installe l'artefact et ses profils d'exécution dans le respect des conventions Debian. La configuration administrée reste séparée du code immuable et une mise à niveau ne l'écrase pas silencieusement.
+
+Les services système ne sont que des adaptateurs d'exploitation : ils démarrent, arrêtent et supervisent les profils Pixs, sans porter de logique métier. Une installation, une mise à niveau, une désinstallation et une purge explicite restent des opérations distinctes ; aucune ne doit supprimer les données métier implicitement.
+
+## Configuration de déploiement
+
+Les noms définitifs des options ne sont pas encore spécifiés. Les déploiements Docker et Debian configureront néanmoins les mêmes domaines, validés par les schémas déclarés des composants.
+
+| Domaine | Configuration attendue |
+| --- | --- |
+| Profil runtime | Rôle `web`, `worker` ou `scheduler`, avec ses limites et son exposition réseau. |
+| Composition | Modules, sous-modules, extensions, versions, capacités requises et providers sélectionnés. |
+| Persistance | Connexion PostgreSQL, migrations planifiées et stockage persistant nécessaire aux capacités activées. |
+| Périmètre | Mode mono-tenant ou multi-tenant, topologie de scopes et accès d'administration plateforme. |
+| Identité | Providers approuvés, politiques de confiance, niveaux d'assurance, sessions et règles de step-up. |
+| Autorisation | Politiques, rôles, ACL, permissions techniques et frontières réseau déclarées. |
+| Réactivité | Capacités de synchronisation, fraîcheur, cohérence et mode dégradé lorsqu'elles sont activées. |
+| Services externes | Stockage, recherche, notifications, webhooks et autres providers explicitement sélectionnés. |
+| Interface | Thème, langues, contributions frontend et feature flags déclarés. |
+| Exploitation | Santé, diagnostic autorisé, logs, métriques, traces, rétention et alertes. |
+| Sécurité | Références de secrets, certificats ou identifiants fournis par un mécanisme runtime contrôlé. |
+
+La résolution suit une hiérarchie déterministe : schéma du composant, valeurs par défaut, configuration statique, configuration runtime, puis références de secrets. Une valeur invalide ou ambiguë empêche l'activation au lieu de démarrer en mode dégradé silencieux.
+
+Dans Docker, ces options pourront être apportées par des variables d'environnement, des fichiers montés, une configuration externe ou le mécanisme de secrets de l'orchestrateur. Dans Debian, elles seront fournies par la configuration système et les mécanismes runtime correspondants. Dans les deux cas, les secrets restent hors des artefacts et sont fournis uniquement par référence ou accès contrôlé.
+
+## Documentation de référence
+
+Les documents suivants font foi pour la conception et les exigences détaillées :
+
+- [PROJECT.md](PROJECT.md) — objectif, architecture et invariants de Pixs ;
+- [TECHNICAL.md](TECHNICAL.md) — cadrage technique, contrats et modèles transverses ;
+- [BUILD.md](BUILD.md) — construction, packaging et exploitation ;
+- [OpenSpec](openspec/specs/) — exigences fonctionnelles et techniques vérifiables ;
+- [AGENTS.md](AGENTS.md) — règles de contribution au dépôt.
+
+## Licence
+
+Pixs est distribué sous la [WTFPL v2](LICENSE).

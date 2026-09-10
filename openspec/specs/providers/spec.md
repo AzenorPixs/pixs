@@ -7,7 +7,7 @@ Un fournisseur est une implémentation concrète d'un contrat, déclarée, séle
 
 ### Requirement: Déclaration lisible des fournisseurs
 
-Chaque fournisseur DOIT déclarer par manifest lisible les contrats qu'il implémente, leurs versions, ses capacités et ses contraintes ; une implémentation non déclarée NE DOIT PAS pouvoir être sélectionnée.
+Chaque fournisseur MUST déclarer par manifest lisible les contrats qu'il implémente, leurs versions, ses capacités et ses contraintes ; une implémentation non déclarée MUST NOT pouvoir être sélectionnée.
 
 #### Scenario: Implémentation non déclarée
 
@@ -16,7 +16,7 @@ Chaque fournisseur DOIT déclarer par manifest lisible les contrats qu'il implé
 
 ### Requirement: Sélection explicite sans choix implicite
 
-La sélection d'un fournisseur DOIT suivre le fournisseur configuré, sinon le candidat compatible unique, sinon refuser la composition ; aucune sélection NE DOIT dépendre de l'ordre de découverte.
+La sélection d'un fournisseur MUST suivre le fournisseur configuré, sinon le candidat compatible unique, sinon refuser la composition ; la sélection MUST NOT dépendre de l'ordre de découverte.
 
 #### Scenario: Deux candidats sans configuration
 
@@ -25,7 +25,7 @@ La sélection d'un fournisseur DOIT suivre le fournisseur configuré, sinon le c
 
 ### Requirement: Conformité contractuelle vérifiable
 
-Un fournisseur DOIT satisfaire le contrat déclaré à sa version revendiquée ; toute violation constatée DOIT entraîner l'isolement du fournisseur et un échec fermé des appels concernés.
+Un fournisseur MUST satisfaire le contrat déclaré à sa version revendiquée ; toute violation constatée MUST entraîner l'isolement du fournisseur et un échec fermé des appels concernés.
 
 #### Scenario: Fournisseur non conforme activé
 
@@ -34,7 +34,7 @@ Un fournisseur DOIT satisfaire le contrat déclaré à sa version revendiquée ;
 
 ### Requirement: Dégradation contrôlée et diagnostic
 
-Le système DOIT offrir un mode dégradé explicite quand un fournisseur devient indisponible, avec diagnostic utile, sans exposer de secret ni masquer l'échec.
+Le système MUST offrir un mode dégradé explicite quand un fournisseur devient indisponible, avec diagnostic utile, sans exposer de secret ni masquer l'échec.
 
 #### Scenario: Indisponibilité d'un fournisseur
 

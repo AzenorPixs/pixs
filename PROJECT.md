@@ -811,10 +811,18 @@ Pixs couvre notamment :
 * les états distincts `installed / enabled / configured / ready / healthy` ;
 * les intégrations externes apportées par modules et providers ;
 * les contrats de stockage objet et de référentiel documentaire ;
+* un registre et marketplace optionnel de composants signés ;
 * les projections de recherche et leurs providers ;
 * les workflows génériques et leur orchestration ;
+* les règles métier déclaratives, versionnées et testables ;
 * les synchronisations externes, mappings et stratégies de conflit ;
+* les fournisseurs de modèles, agents et outils d'intelligence artificielle ;
+* les contrats de cache distribué et d'invalidation ;
+* la collaboration temps réel et l'édition concurrente déclarées ;
+* les projections de reporting et d'analytique gouvernées ;
+* les fournisseurs de secrets, leur rotation et leur révocation ;
 * l'authentification par providers, notamment OIDC et SAML ;
+* le provisionnement SCIM optionnel des identités et groupes ;
 * le backend Django ;
 * PostgreSQL comme source de vérité applicative ;
 * le frontend TanStack ;
@@ -827,6 +835,9 @@ Pixs couvre notamment :
 * le responsive ;
 * le Design System ;
 * le versionnement et la compatibilité ;
+* les clients mobiles et desktop fondés sur des contrats publics ;
+* le déploiement progressif et l'activation graduelle contrôlée ;
+* l'intégrité cryptographique optionnelle des événements d'audit ;
 * la testabilité et le déterminisme ;
 * l'optimisation transverse.
 
@@ -997,6 +1008,10 @@ Les routes frontend possèdent un identifiant namespacé par composant et un che
 Les dépendances frontend suivent le graphe de composants et de contrats publics. Une extension peut dépendre du shell, du Design System et de façades publiques déclarées, mais ne peut pas importer l'implémentation privée d'une autre extension. Les dépendances inter-extensions sont déclarées dans les manifests, versionnées selon SemVer et doivent former un graphe acyclique. Une dépendance optionnelle indisponible isole la capacité concernée ; une dépendance obligatoire implicite, cyclique ou incompatible bloque la composition.
 
 Le manifest commun `component.toml` porte également les contributions frontend au moyen d'une section `[frontend]` optionnelle. Chaque contribution y déclare son type, son identifiant, sa version, son point d'entrée et ses dépendances éventuelles. La compatibilité requise avec l'API du shell est déclarée dans ce même manifest. Il n'existe pas de mécanisme de découverte frontend concurrent fondé sur un scan implicite du filesystem.
+
+La modularité frontend est une facette déclarée des `MODULE` et `SUBMODULE` existants ; elle ne crée pas un type de composant, un registre ou un lifecycle parallèle. Un module ou sous-module peut déclarer ses propres contributions frontend, leurs contrats publics, leurs traductions et leurs dépendances. Le shell résout un graphe unique de composants et de contributions, y compris lorsqu'un sous-module possède des contributions frontend, sans déduire une contribution de l'arborescence des sources ou de celle du parent.
+
+Un sous-module frontend reste un composant autonome soumis aux mêmes garanties qu'un module : manifest, versions, dépendances, compatibilité, lifecycle, sécurité, accessibilité et internationalisation. Il ne peut consommer que les façades frontend publiques du shell, du Design System, de son parent ou d'autres composants explicitement déclarés. Un parent ne donne accès à son état privé ni ne rend actives les contributions de ses enfants par effet de bord ; les points d'extension, routes, identifiants et politiques de fusion restent des contrats publics, namespacés et versionnés.
 
 Le frontend ne doit pas contenir de règle métier autoritative qui contournerait le backend Django.
 
@@ -1259,6 +1274,8 @@ users
 
 Un sous-module est soumis, autant que possible, aux mêmes mécanismes qu'un module : manifest, dépendances, lifecycle, configuration, permissions, services, traductions, frontend et extensions.
 
+Cette récursivité s'applique également au frontend : un sous-module peut fournir ses routes, pages, navigation, composants, formulaires, traductions et contributions aux points d'extension publics. Ces contributions ne sont pas absorbées implicitement par le parent : elles restent déclarées, versionnées, validées et composées par le shell au même titre que celles d'un module. La sous-modularité frontend ne crée ni arborescence de chargement distincte, ni accès aux implémentations privées du parent ou des frères.
+
 La profondeur maximale et les règles d'identification seront définies ultérieurement, sans introduire de second moteur spécifique aux sous-modules.
 
 ## 14. Providers
@@ -1489,6 +1506,17 @@ External Provider
 Toute projection ou synchronisation vers un système externe doit préciser explicitement le sens des flux, les données autoritaires, les transformations, les conflits, les erreurs, l'idempotence et les opérations destructives éventuelles.
 
 Aucune synchronisation bidirectionnelle implicite ne doit être supposée.
+
+Une projection LDAP peut être sélectionnée comme capacité optionnelle de
+consultation des seules `DigitalIdentity`, `Group` et `Membership` de
+`pixs.core`. PostgreSQL demeure leur source de vérité : toutes les écritures
+passent par Django et une Command autorisée, puis sont projetées vers LDAP de
+manière sortante, idempotente et traçable. La consultation passe par le
+contrat Core, préfère LDAP lorsqu'il est disponible et suffisamment frais, et
+revient à PostgreSQL lorsqu'il est indisponible ou non convergé ; cet état est
+explicitement `DEGRADED` et diagnostiquable. LDAP ne porte ni ACL, ni
+permission, ni décision d'autorisation, ni mécanisme de révocation, ni
+authentification par cette capacité.
 
 ## 20. Authentification
 
@@ -2219,6 +2247,10 @@ L'ajout d'un module valide doit pouvoir être réalisé sans modification du Ker
 
 Un sous-module valide doit pouvoir être découvert, validé et chargé par les mécanismes communs de composants sans moteur parallèle spécifique.
 
+### Module frontend et sous-module frontend
+
+Un module ou sous-module qui déclare des contributions frontend doit être composé par le shell à partir du même manifest et du même graphe de dépendances que le composant correspondant. Ses routes, identifiants de navigation, traductions, points d'extension et dépendances doivent être namespacés, versionnés et vérifiés avant exposition. Une contribution optionnelle défaillante doit être isolée ; une dépendance frontend obligatoire absente, cyclique, incompatible ou en collision doit bloquer uniquement le périmètre de composition concerné, sans sélection implicite ni chargement de code distant.
+
 ### Propriété des données
 
 Un module consommateur doit pouvoir utiliser la capacité d'un autre module par contrat/service/API sans dépendre directement de ses tables internes lorsque le contrat existe.
@@ -2471,6 +2503,12 @@ Une modification incompatible d’un contrat, d’une interface publique ou d’
 
 Pixs sera spécifié par capacités.
 
+### Convention normative RFC 2119
+
+Les exigences normatives vérifiables de Pixs sont écrites en français et utilisent exclusivement les mots-clés RFC 2119 en majuscules : `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT` et `MAY`. `MUST` et `MUST NOT` expriment une obligation ou une interdiction ; `SHOULD` et `SHOULD NOT` une recommandation dont tout écart doit être justifié ; `MAY` une possibilité explicitement optionnelle. Une interdiction s'écrit exclusivement `MUST NOT` ou `SHOULD NOT` : les formes hybrides telles que `NE MUST` et `NE SHOULD` ne sont pas valides. Les variantes françaises ou en minuscules dans un texte explicatif ne constituent pas des mots-clés RFC 2119.
+
+Les spécifications OpenSpec portent les exigences comportementales testables et font foi pour leur formulation normative. `PROJECT.md` fixe les invariants architecturaux ; lorsqu'il formule une nouvelle exigence vérifiable, celle-ci doit être reprise dans OpenSpec avec les mots-clés RFC 2119 avant toute implémentation.
+
 Une première décomposition OpenSpec envisagée est :
 
 ```text
@@ -2509,6 +2547,8 @@ openspec/specs/
 │   └── spec.md
 ├── configuration/
 │   └── spec.md
+├── secrets-providers/
+│   └── spec.md
 ├── security/
 │   └── spec.md
 ├── core/
@@ -2525,9 +2565,19 @@ openspec/specs/
 │   └── spec.md
 ├── search/
 │   └── spec.md
+├── distributed-cache/
+│   └── spec.md
+├── reporting-analytics/
+│   └── spec.md
 ├── workflows/
 │   └── spec.md
+├── business-rules/
+│   └── spec.md
 ├── external-synchronization/
+│   └── spec.md
+├── directory-projections/
+│   └── spec.md
+├── scim-provisioning/
 │   └── spec.md
 ├── bulk-operations/
 │   └── spec.md
@@ -2549,6 +2599,8 @@ openspec/specs/
 │   └── spec.md
 ├── synchronization/
 │   └── spec.md
+├── realtime-collaboration/
+│   └── spec.md
 ├── offline-first/
 │   └── spec.md
 ├── regional-residency/
@@ -2557,11 +2609,17 @@ openspec/specs/
 │   └── spec.md
 ├── sdk-ecosystem/
 │   └── spec.md
+├── native-clients/
+│   └── spec.md
+├── ai-agents/
+│   └── spec.md
 ├── observability/
 │   └── spec.md
 ├── resilience/
 │   └── spec.md
 ├── audit/
+│   └── spec.md
+├── audit-integrity/
 │   └── spec.md
 ├── accessibility/
 │   └── spec.md
@@ -2584,6 +2642,10 @@ openspec/specs/
 ├── docker-image/
 │   └── spec.md
 ├── artifact-publication/
+│   └── spec.md
+├── component-registry/
+│   └── spec.md
+├── progressive-deployment/
 │   └── spec.md
 └── release-management/
     └── spec.md
@@ -2697,6 +2759,11 @@ configuration
 ├── défauts
 └── secrets
 
+secrets-providers
+├── références externes et identité de workload
+├── contrôle d'accès, rotation et révocation
+└── audit minimisé et échec fermé
+
 security
 ├── références et rotation des secrets
 ├── frontières de confiance et durcissement
@@ -2743,17 +2810,43 @@ search
 ├── filtrage autorisé, requêtes et pagination
 └── conformité des adapters
 
+distributed-cache
+├── CacheProvider et données dérivées reconstruisibles
+├── clés tenant/scope-aware, fraîcheur et invalidation
+└── dégradation et protection contre l'avalanche
+
+reporting-analytics
+├── projections et couche sémantique versionnée
+├── rapports, tableaux de bord et exports asynchrones
+└── autorisation, gouvernance, résidence et lignée
+
 workflows
 ├── définitions et instances versionnées
 ├── transitions, gardes et autorisation
 ├── délais, reprise et intervention manuelle
 └── migrations et compatibilité des instances actives
 
+business-rules
+├── décisions métier déclaratives et versionnées
+├── tests, explications et audit
+└── frontière avec autorisation, workflows et Commands propriétaires
+
 external-synchronization
 ├── contrat SynchronizationProvider
 ├── import, export, bidirectionnel et projection
 ├── autorité, mappings, checkpoints et conflits
 └── webhooks, replays, reprise et conformité des adapters
+
+directory-projections
+├── projection d'annuaire LDAP optionnelle depuis pixs.core
+├── autorité PostgreSQL, mapping et convergence sortante
+├── consultation fraîche avec repli PostgreSQL
+└── isolement des ACL, autorisations et authentification
+
+scim-provisioning
+├── provider SCIM optionnel et mapping versionné
+├── ingestion authentifiée vers les Commands de pixs.core
+└── idempotence, déprovisionnement et confidentialité
 
 bulk-operations
 ├── contrat BulkOperation, variantes et états
@@ -2813,6 +2906,11 @@ synchronization
 ├── réactivité
 └── synchronisation frontend
 
+realtime-collaboration
+├── sessions, présence et participants autorisés
+├── convergence CRDT ou OT par adapter déclaré
+└── reconnexion, révocation et audit
+
 offline-first
 ├── capacité opt-in et ressources éligibles
 ├── projections locales et schéma versionné
@@ -2837,6 +2935,16 @@ sdk-ecosystem
 ├── Developer Kit, CLI et scaffolding
 └── tests de conformité, exemples et distribution
 
+native-clients
+├── SDK et contrats publics pour mobile et desktop
+├── stockage sécurisé, notifications et liens profonds
+└── offline-first, révocation et intégrations de plateforme
+
+ai-agents
+├── providers de modèles, agents et outils autorisés
+├── prompts, évaluations, budgets et audit
+└── récupération gouvernée et Commands médiées
+
 observability
 ├── logs structurés
 ├── métriques / traces
@@ -2851,6 +2959,11 @@ audit
 ├── événements métier
 ├── acteur / action / cible
 └── traçabilité fonctionnelle
+
+audit-integrity
+├── chaînage, scellement, signature ou WORM optionnels
+├── preuves et exports vérifiables
+└── compatibilité avec confidentialité, rétention et effacement
 
 accessibility
 ├── clavier / focus
@@ -2910,6 +3023,16 @@ artifact-publication
 ├── signature, provenance et SBOM
 └── validation de l'installation hors ligne
 
+component-registry
+├── catalogue, recherche et sources privées ou hors ligne
+├── installation vérifiée et révocation contrôlée
+└── résolution déterministe sans activation implicite
+
+progressive-deployment
+├── révisions et stratégies canary ou blue/green déclarées
+├── health gates, routage progressif et arrêt de promotion
+└── retour arrière compatible, orchestré et audité
+
 release-management
 ├── versions, compatibilité et support
 ├── plans d'upgrade et de rollback autorisé
@@ -2958,6 +3081,8 @@ notifications
     ↓
 configuration
     ↓
+secrets-providers
+    ↓
 security
     ↓
 core
@@ -2974,9 +3099,19 @@ document-repositories
     ↓
 search
     ↓
+distributed-cache
+    ↓
+reporting-analytics
+    ↓
 workflows
     ↓
+business-rules
+    ↓
 external-synchronization
+    ↓
+directory-projections
+    ↓
+scim-provisioning
     ↓
 regional-residency
     ↓
@@ -3000,17 +3135,26 @@ frontend
     ↓
 synchronization
     ↓
+realtime-collaboration
+    ↓
 offline-first
     ↓
 api
     ↓
 sdk-ecosystem
     ↓
+native-clients
+    ↓
+ai-agents
+    ↓
 observability
     ↓
 resilience
     ↓
 audit
+    ↓
+audit-integrity
+    ↓
 accessibility
     ↓
 design-system
@@ -3032,6 +3176,10 @@ deb-package
 docker-image
     ↓
 artifact-publication
+    ↓
+component-registry
+    ↓
+progressive-deployment
     ↓
 release-management
 ```
@@ -3229,52 +3377,13 @@ Aucun provider concret d'annuaire ou d'intégration externe n'appartient au socl
 
 ## 38. Chaîne de développement
 
-Pixs suit la chaîne de développement commune des projets Pixs.
-
-Outils envisagés :
+Outils :
 
 * OpenSpec : spécifications ;
 * OpenCode : agent de codage ;
-* Hermes : orchestration optionnelle ;
+* Codex    : orchestrateur ;
 * Git local et distant : versionnement ;
 * VS Code / Geany : développement ;
-* ChatGPT : pilotage, revue et validation.
-
-Architecture :
-
-```text
-                    Développeur
-                        │
-              interaction / validation
-                        │
-             ┌──────────┴──────────┐
-             ▼                     ▼
-         OpenCode               Hermes
-      Agent de codage        Orchestrateur
-             ▲                     │
-             └────── API ──────────┘
-                                   │
-                                   ▼
-                               ChatGPT
-                     Analyse / Revue / Validation
-```
-
-Hermes est optionnel et ne remplace pas OpenCode.
-
-OpenCode reste l'agent de codage du projet.
-
-## 38. Chaîne de développement
-
-Pixs suit la chaîne de développement commune des projets Pixs.
-
-Outils envisagés :
-
-* OpenSpec : spécifications ;
-* OpenCode : agent de codage ;
-* Hermes : orchestration optionnelle ;
-* Git local et distant : versionnement ;
-* VS Code / Geany : développement ;
-* ChatGPT : pilotage, revue et validation.
 
 Architecture :
 
@@ -3287,7 +3396,6 @@ Architecture :
              ▼                     ▼
          OpenCode               Codex
       Agent de codage        Orchestrateur
-     Deepseek V4 Flash        GPT 5.6 Sol
              ▲                     │
              └────── API ──────────┘
                                    │
@@ -3296,10 +3404,9 @@ Architecture :
                      Analyse / Revue / Validation
 ```
 
-Hermes est optionnel et ne remplace pas OpenCode.
-
 OpenCode reste l'agent de codage du projet.
 
+Codex intervient en analyse, en revue de code, et en validateur.
 
 ## 39. Environnement de développement et exécution locale
 
@@ -3487,3 +3594,56 @@ d'une même application, et non deux variantes fonctionnelles de Pixs.
 Les détails de construction, installation, exécution, mise à niveau et
 publication de ces artefacts seront définis par les spécifications
 OpenSpec dédiées.
+
+## 41. Capacités optionnelles d'extension de plateforme
+
+Les capacités suivantes étendent Pixs sans modifier la frontière du Kernel ni
+imposer un fournisseur concret. Elles utilisent les manifests, contrats,
+providers, scopes, autorisations, gouvernances et cycles de vie communs.
+
+### 41.1 Écosystème de composants
+
+Un registre de composants peut cataloguer, rechercher, distribuer, installer,
+révoquer et retirer des modules, providers et extensions signés. Il complète
+la publication d'artefacts : une installation commence avec des sources privées
+ou hors ligne signées ; un marketplace public reste un adapter ultérieur et
+n'est jamais obligatoire.
+
+### 41.2 Règles, intelligence artificielle et collaboration
+
+Un moteur de règles métier fournit un DSL déclaratif restreint, versionné et
+testable, sans évaluation de code arbitraire au runtime. Il est distinct de
+l'autorisation et des workflows. Les capacités d'intelligence artificielle et
+d'agents sont désactivées par défaut et reposent, après activation explicite,
+sur des providers déclarés, des outils médiés par Commands, des prompts
+versionnés et une politique stricte de sortie des données. La collaboration
+temps réel est une capacité déclarée séparée de la synchronisation réactive :
+CRDT et OT restent des adapters sans référence imposée, jusqu'à l'identification
+des premières ressources collaboratives.
+
+### 41.3 Données dérivées et analytique
+
+Le cache distribué et les projections de reporting ou d'analytique sont des
+dérivés reconstruisibles. Ils doivent être partitionnés par tenant et scope,
+autorisés, gouvernés et invalidés de manière déterministe ; PostgreSQL demeure
+la source de vérité. Les tableaux de bord, rapports et exports utilisent des
+contrats publics, des vues de lecture et des politiques de confidentialité.
+
+### 41.4 Sécurité, identité et livraison
+
+Les secrets sont obtenus par des providers externes référencés, audités et liés
+à une identité de workload ; les credentials courts sont préférés aux secrets
+statiques et aucun secret n'est placé dans un artefact ou un manifest. SCIM est
+un provider optionnel de provisionnement d'identités et de groupes, distinct de
+la projection LDAP. Le déploiement progressif peut orchestrer canary,
+blue/green, activation graduelle, health gates et retour arrière compatible.
+L'audit commence par un chaînage vérifiable avec scellement externe optionnel ;
+une conservation WORM n'est activée que lorsqu'un déploiement la requiert, sans
+confondre intégrité et autorisation.
+
+### 41.5 Clients natifs
+
+Les clients mobiles et desktop consomment les mêmes contrats publics que le
+frontend web. Ils peuvent fournir stockage local chiffré, notifications push,
+liens profonds et intégrations système, mais ne contournent ni l'autorisation
+backend, ni les règles de synchronisation offline-first, ni la gouvernance.

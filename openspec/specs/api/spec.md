@@ -7,7 +7,7 @@ L'interface applicative expose les capacités via des contrats HTTP versionnés,
 
 ### Requirement: Contrats OpenAPI versionnés par majeure
 
-Chaque capacité exposée DOIT disposer d'un contrat OpenAPI publié et versionné ; la majeure figure dans le chemin, les évolutions compatibles conservent l'URL, toute rupture impose une nouvelle majeure avec coexistence déclarée.
+Chaque capacité exposée MUST disposer d'un contrat OpenAPI publié et versionné ; la majeure figure dans le chemin, les évolutions compatibles conservent l'URL, toute rupture impose une nouvelle majeure avec coexistence déclarée.
 
 #### Scenario: Rupture sans nouvelle majeure bloquée
 
@@ -15,6 +15,8 @@ Chaque capacité exposée DOIT disposer d'un contrat OpenAPI publié et versionn
 - **THEN** le build refuse la publication du contrat
 
 ### Requirement: Enveloppes stables et erreurs typées
+
+Le système MUST respecter les garanties suivantes.
 
 Les succès utilisent données, métadonnées et liens avec pagination par curseur ; les erreurs suivent un code métier versionné, un message, des détails et un identifiant de corrélation, sans secret ni trace interne ; les commandes rejouables portent une clé d'idempotence.
 
@@ -24,6 +26,8 @@ Les succès utilisent données, métadonnées et liens avec pagination par curse
 - **THEN** le résultat enregistré est restitué au lieu d'un double effet
 
 ### Requirement: Périmètre canonique et autorisation à la frontière
+
+Le système MUST respecter les garanties suivantes.
 
 Les ressources de périmètre exposent le tenant dans le chemin et vérifient l'appartenance avant lecture ou mutation ; l'authentification Bearer reste le mode privilégié et tout accès anonyme est explicitement déclaré public.
 
