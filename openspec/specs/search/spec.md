@@ -7,7 +7,7 @@ La recherche repose sur des projections reconstruisibles et remplaçables, filtr
 
 ### Requirement: Projections dérivées reconstruisibles
 
-Les index DOIVENT dériver de la source de vérité via des projections versionnées, reconstruisibles et invalidées lors des changements de permissions, suppressions ou expirations.
+Les index MUST dériver de la source de vérité via des projections versionnées, reconstruisibles et invalidées lors des changements de permissions, suppressions ou expirations.
 
 #### Scenario: Permission révoquée propagée
 
@@ -16,7 +16,7 @@ Les index DOIVENT dériver de la source de vérité via des projections versionn
 
 ### Requirement: Filtrage autorisé à la source
 
-Toute requête DOIT appliquer le tenant, l'identité et les ACL à la source avant pagination, facettes ou autocomplétion ; aucun filtrage frontal ne remplace ce contrôle.
+Toute requête MUST appliquer le tenant, l'identité et les ACL à la source avant pagination, facettes ou autocomplétion ; aucun filtrage frontal ne remplace ce contrôle.
 
 #### Scenario: Résultat hors périmètre exclu
 
@@ -24,6 +24,8 @@ Toute requête DOIT appliquer le tenant, l'identité et les ACL à la source ava
 - **THEN** ils sont exclus avant pagination sans être chargés côté client
 
 ### Requirement: Cohérence et dégradation déclarées
+
+Le système MUST respecter les garanties suivantes.
 
 Cohérence éventuelle, disponibilité dégradée et limites de pertinence sont déclarées par capacité ; le moteur concret reste remplaçable sous contrat stable.
 

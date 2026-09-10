@@ -7,7 +7,7 @@ Les notifications acheminent les informations aux destinataires via des canaux d
 
 ### Requirement: Contrats et préférences déclarés
 
-Chaque notification DOIT suivre un contrat versionné avec destinataires, canaux, préférences et périmètre ; aucun canal implicite ni destinataire élargi sans règle déclarée.
+Chaque notification MUST suivre un contrat versionné avec destinataires, canaux, préférences et périmètre ; aucun canal implicite ni destinataire élargi sans règle déclarée.
 
 #### Scenario: Canal non déclaré refusé
 
@@ -15,6 +15,8 @@ Chaque notification DOIT suivre un contrat versionné avec destinataires, canaux
 - **THEN** l'envoi est refusé avec une erreur explicite
 
 ### Requirement: Asynchronisme avec réessais bornés
+
+Le système MUST respecter les garanties suivantes.
 
 Les envois utilisent des travaux persistants avec réessais bornés, déduplication et lettres mortes ; l'épuisement produit un état diagnostiquable sans perte silencieuse.
 
@@ -25,7 +27,7 @@ Les envois utilisent des travaux persistants avec réessais bornés, déduplicat
 
 ### Requirement: Confidentialité et audit
 
-Les notifications DOIVENT respecter la classification et la gouvernance, minimiser le contenu, ne jamais exposer de secret, et tracer acteur, action et cible sans journaliser les données sensibles.
+Les notifications MUST respecter la classification et la gouvernance, minimiser le contenu, ne jamais exposer de secret, et tracer acteur, action et cible sans journaliser les données sensibles.
 
 #### Scenario: Donnée protégée minimisée
 

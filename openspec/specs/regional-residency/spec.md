@@ -7,7 +7,7 @@ La résidence régionale optionnelle place les données et dérivés selon la po
 
 ### Requirement: Politique de placement versionnée par tenant
 
-Chaque politique DOIT déclarer régions logiques autorisées pour primaire, réplicas, traitement, sauvegardes et clés, mode de bascule et époque ; un enfant NE DOIT que restreindre la politique du tenant, jamais l'élargir.
+Chaque politique MUST déclarer régions logiques autorisées pour primaire, réplicas, traitement, sauvegardes et clés, mode de bascule et époque ; un enfant MUST uniquement restreindre la politique du tenant, jamais l'élargir.
 
 #### Scenario: Élargissement par enfant refusé
 
@@ -16,7 +16,7 @@ Chaque politique DOIT déclarer régions logiques autorisées pour primaire, ré
 
 ### Requirement: Routage après identité et périmètre
 
-Le placement est résolu après identité, tenant et scope ; toute région fournie par le client NE DOIT ni modifier le contexte canonique ni contourner l'autorisation ; chaque dérivé (réplica, index, cache, sauvegarde, journal, événement, copie hors ligne) respecte la même politique.
+Le placement est résolu après identité, tenant et scope ; toute région fournie par le client MUST NOT modifier le contexte canonique ni contourner l'autorisation ; chaque dérivé (réplica, index, cache, sauvegarde, journal, événement, copie hors ligne) respecte la même politique.
 
 #### Scenario: Dérivé hors région interdit
 
@@ -25,7 +25,7 @@ Le placement est résolu après identité, tenant et scope ; toute région fourn
 
 ### Requirement: Bascule contrôlée sans cerveau partagé
 
-Toute bascule exige région de secours autorisée, barrière ou époque persistante, compatibilité des contrats et schémas, et audit ; l'ancien primaire NE DOIT plus écrire après bascule ; toute région indisponible ou contrainte insatisfaite produit un état contrôlé.
+Toute bascule exige région de secours autorisée, barrière ou époque persistante, compatibilité des contrats et schémas, et audit ; l'ancien primaire MUST NOT écrire après bascule ; toute région indisponible ou contrainte insatisfaite produit un état contrôlé.
 
 #### Scenario: Bascule sans barrière refusée
 

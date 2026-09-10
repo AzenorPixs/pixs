@@ -7,7 +7,7 @@ Les fanions pilotent des comportements runtime déjà présents et compatibles, 
 
 ### Requirement: Définition versionnée et bornée
 
-Chaque fanion DOIT déclarer identifiant, version, propriétaire, finalité, type BOOLEAN ou VARIANT, défaut, dimensions, cohorte éventuelle, prérequis, repli, expiration et audit ; les règles sont déclaratives, bornées et déterministes, sans code arbitraire.
+Chaque fanion MUST déclarer identifiant, version, propriétaire, finalité, type BOOLEAN ou VARIANT, défaut, dimensions, cohorte éventuelle, prérequis, repli, expiration et audit ; les règles sont déclaratives, bornées et déterministes, sans code arbitraire.
 
 #### Scenario: Règle à expression rejetée
 
@@ -15,6 +15,8 @@ Chaque fanion DOIT déclarer identifiant, version, propriétaire, finalité, typ
 - **THEN** la définition est refusée avant activation
 
 ### Requirement: Ciblage et cohorte déterministes
+
+Le système MUST respecter les garanties suivantes.
 
 L'évaluation utilise uniquement les dimensions déclarées (installation, environnement, tenant, scope enfant) avec priorité du général au spécifique et cohorte stable sans tirage par requête.
 
@@ -25,6 +27,8 @@ L'évaluation utilise uniquement les dimensions déclarées (installation, envir
 
 ### Requirement: Échec fermé pour le sensible
 
+Le système MUST respecter les garanties suivantes.
+
 Une valeur absente, invalide ou périmée applique le repli ; l'échec est fermé pour permission, mutation, donnée protégée ou contrat ; le frontal réévalue toujours côté applicatif avant exposition protégée.
 
 #### Scenario: Fanion d'autorisation indisponible
@@ -33,6 +37,8 @@ Une valeur absente, invalide ou périmée applique le repli ; l'échec est ferm�
 - **THEN** l'opération est refusée au lieu d'un repli permissif
 
 ### Requirement: Affectations hors artefacts
+
+Le système MUST respecter les garanties suivantes.
 
 Les affectations runtime proviennent d'une source persistante versionnée ; aucun paquet, image ni bundle n'embarque d'affectation ; les changements sont administrés, corrélés et audités.
 

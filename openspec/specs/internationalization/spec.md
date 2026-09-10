@@ -7,7 +7,7 @@ Le multilinguisme natif externalise les textes par composant avec catalogues ver
 
 ### Requirement: Catalogues par composant et langue canonique
 
-Chaque texte utilisateur DOIT être externalisé dans le catalogue du composant propriétaire avec langue canonique anglaise complète ; doublons, clés manquantes et paramètres incohérents sont refusés au build.
+Chaque texte utilisateur MUST être externalisé dans le catalogue du composant propriétaire avec langue canonique anglaise complète ; doublons, clés manquantes et paramètres incohérents sont refusés au build.
 
 #### Scenario: Clé manquante bloquée
 
@@ -15,6 +15,8 @@ Chaque texte utilisateur DOIT être externalisé dans le catalogue du composant 
 - **THEN** le build refuse la composition ou produit un diagnostic de repli autorisé
 
 ### Requirement: Résolution déterministe et formats localisés
+
+Le système MUST respecter les garanties suivantes.
 
 La résolution SUIT préférence utilisateur, périmètre applicable, puis défaut d'installation ; dates en UTC sérialisé, précision conservée, affichage localisé sans altérer la valeur métier.
 

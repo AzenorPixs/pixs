@@ -7,7 +7,7 @@ Le moteur d'autorisation décide de façon déclarative, déterministe et borné
 
 ### Requirement: Politiques déclaratives versionnées
 
-Chaque politique DOIT déclarer identifiant, version, propriétaire, effet DENY ou ALLOW, sélecteurs de sujets, ressources, actions et périmètres, conditions typées, obligations et validité, sans code arbitraire ni expression distante.
+Chaque politique MUST déclarer identifiant, version, propriétaire, effet DENY ou ALLOW, sélecteurs de sujets, ressources, actions et périmètres, conditions typées, obligations et validité, sans code arbitraire ni expression distante.
 
 #### Scenario: Politique à code rejetée
 
@@ -15,6 +15,8 @@ Chaque politique DOIT déclarer identifiant, version, propriétaire, effet DENY 
 - **THEN** elle est refusée avant activation
 
 ### Requirement: Décisions et filtrage tracés
+
+Le système MUST respecter les garanties suivantes.
 
 Le contrat de décision retourne effet, motif fonctionnel, version de politique et échéance ; le filtrage autorisé traduit la décision en contrainte source avant pagination ou export ; les décisions positives expirent et sont invalidées après tout changement de politique, ACL, rôle, appartenance, périmètre, révocation ou assurance.
 
@@ -24,6 +26,8 @@ Le contrat de décision retourne effet, motif fonctionnel, version de politique 
 - **THEN** la politique courante est réévaluée avant toute exécution
 
 ### Requirement: Groupes bornés et délégation auditée
+
+Le système MUST respecter les garanties suivantes.
 
 Les groupes imbriqués restent acycliques et bornés ; toute délégation, usurpation ou élévation est explicitement accordée, limitée en temps et périmètre, soumise à l'assurance requise et auditée ; l'indisponibilité du moteur échoue fermé pour mutations et données protégées.
 

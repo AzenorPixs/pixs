@@ -7,7 +7,7 @@ Les kits de développement et interfaces en ligne consomment exclusivement les c
 
 ### Requirement: Génération déterministe depuis les contrats
 
-Les kits TypeScript et Python DOIVENT être générés depuis OpenAPI, contrats événementiels et schémas publics avec dépendances verrouillées et matrice de compatibilité ; toute divergence bloque la génération.
+Les kits TypeScript et Python MUST être générés depuis OpenAPI, contrats événementiels et schémas publics avec dépendances verrouillées et matrice de compatibilité ; toute divergence bloque la génération.
 
 #### Scenario: Divergence contrat-kit bloquée
 
@@ -16,7 +16,7 @@ Les kits TypeScript et Python DOIVENT être générés depuis OpenAPI, contrats 
 
 ### Requirement: Propagation du contexte et erreurs typées
 
-Les clients DOIVENT propager identité fournie, contextes de tenant et de périmètre, corrélation et idempotence, et exposer pagination, opérations asynchrones, opérations en masse et erreurs typées sans transformer un traitement en cours en succès acquis.
+Les clients MUST propager identité fournie, contextes de tenant et de périmètre, corrélation et idempotence, et exposer pagination, opérations asynchrones, opérations en masse et erreurs typées sans transformer un traitement en cours en succès acquis.
 
 #### Scenario: Périmètre non élargi par le client
 
@@ -25,7 +25,7 @@ Les clients DOIVENT propager identité fournie, contextes de tenant et de périm
 
 ### Requirement: Outillage validé sans secret
 
-Le kit, l'interface en ligne, les exemples et les tests de conformité réutilisent les validateurs de manifests et de compatibilité, sans créer implicitement identité, donnée ou secret de production ; le navigateur NE DOIT pas persister jetons ou justificatifs par défaut.
+Le kit, l'interface en ligne, les exemples et les tests de conformité réutilisent les validateurs de manifests et de compatibilité, sans créer implicitement identité, donnée ou secret de production ; le navigateur MUST NOT persister jetons ou justificatifs par défaut.
 
 #### Scenario: Exemple sans secret
 

@@ -7,7 +7,7 @@ La résilience isole les défaillances optionnelles et expose des états de sant
 
 ### Requirement: Isolation des défaillances optionnelles
 
-La défaillance d'un fournisseur ou d'une intégration optionnelle NE DOIT pas rendre Pixs indisponible lorsqu'un fonctionnement dégradé cohérent reste possible ; chaque composant expose HEALTHY, DEGRADED, FAILED ou DISABLED.
+La défaillance d'un fournisseur ou d'une intégration optionnelle MUST NOT rendre Pixs indisponible lorsqu'un fonctionnement dégradé cohérent reste possible ; chaque composant expose HEALTHY, DEGRADED, FAILED ou DISABLED.
 
 #### Scenario: Fournisseur optionnel en panne isolé
 
@@ -16,7 +16,7 @@ La défaillance d'un fournisseur ou d'une intégration optionnelle NE DOIT pas r
 
 ### Requirement: Dégradation sans affaiblissement sécurité
 
-Aucun mode dégradé NE DOIT affaiblir une frontière de sécurité ; toute autorisation, signature ou contexte non vérifiable échoue fermé même en mode dégradé.
+Un mode dégradé MUST NOT affaiblir une frontière de sécurité ; toute autorisation, signature ou contexte non vérifiable échoue fermé même en mode dégradé.
 
 #### Scenario: Dégradé sans permissivité
 
@@ -25,7 +25,7 @@ Aucun mode dégradé NE DOIT affaiblir une frontière de sécurité ; toute auto
 
 ### Requirement: Révocation et diagnostic des compromissions
 
-Composants, fournisseurs, jetons et points d'accès compromis DOIVENT pouvoir être révoqués explicitement ; blocages, révocations et réactivations sont diagnostiquables et auditables sans exposer de secret.
+Composants, fournisseurs, jetons et points d'accès compromis MUST pouvoir être révoqués explicitement ; blocages, révocations et réactivations sont diagnostiquables et auditables sans exposer de secret.
 
 #### Scenario: Composant compromis bloqué
 

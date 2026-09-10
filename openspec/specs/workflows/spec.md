@@ -7,7 +7,7 @@ Les flux orchestrent définitions et instances versionnées avec transitions gar
 
 ### Requirement: Définitions et instances versionnées
 
-Chaque définition et instance DOIT porter version, propriétaire et état persistant ; toute migration d'instance active suit une compatibilité déclarée.
+Chaque définition et instance MUST porter version, propriétaire et état persistant ; toute migration d'instance active suit une compatibilité déclarée.
 
 #### Scenario: Instance incompatible non migrée
 
@@ -16,7 +16,7 @@ Chaque définition et instance DOIT porter version, propriétaire et état persi
 
 ### Requirement: Transitions gardées et autorisées
 
-Chaque transition DOIT vérifier gardes, autorisation, périmètre et assurance requise ; toute intervention manuelle, délai ou reprise est explicite, bornée et auditée.
+Chaque transition MUST vérifier gardes, autorisation, périmètre et assurance requise ; toute intervention manuelle, délai ou reprise est explicite, bornée et auditée.
 
 #### Scenario: Transition non autorisée refusée
 
@@ -25,7 +25,7 @@ Chaque transition DOIT vérifier gardes, autorisation, périmètre et assurance 
 
 ### Requirement: Reprise persistante sans perte
 
-Délais, points de reprise et états survivent au redémarrage via persistance déclarée ; aucune donnée nécessaire à la reprise NE DOIT dépendre de la mémoire locale.
+Délais, points de reprise et états survivent au redémarrage via persistance déclarée ; aucune donnée nécessaire à la reprise MUST NOT dépendre de la mémoire locale.
 
 #### Scenario: Redémarrage avec reprise
 

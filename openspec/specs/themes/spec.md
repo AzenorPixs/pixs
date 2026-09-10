@@ -7,7 +7,7 @@ Les thèmes fournissent des valeurs de présentation sur tokens sémantiques, av
 
 ### Requirement: Modes clair et sombre obligatoires
 
-Tout thème valide DOIT fournir une présentation fonctionnelle en modes clair et sombre, avec résolution explicite préférence utilisateur, système, puis défaut, sans rechargement de page.
+Tout thème valide MUST fournir une présentation fonctionnelle en modes clair et sombre, avec résolution explicite préférence utilisateur, système, puis défaut, sans rechargement de page.
 
 #### Scenario: Bascule sans rechargement
 
@@ -16,7 +16,7 @@ Tout thème valide DOIT fournir une présentation fonctionnelle en modes clair e
 
 ### Requirement: Tokens sémantiques sans valeurs codées
 
-Les modules DOIVENT utiliser les tokens et primitives publiques ; aucune valeur visuelle codée en dur ni logique métier dans le thème ; les surcharges restent déclarées et bornées.
+Les modules MUST utiliser les tokens et primitives publiques ; aucune valeur visuelle codée en dur ni logique métier dans le thème ; les surcharges restent déclarées et bornées.
 
 #### Scenario: Valeur codée rejetée
 

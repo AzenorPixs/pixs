@@ -7,7 +7,7 @@ Le paquet Debian est un mode de livraison d'une release Pixs : il installe l'art
 
 ### Requirement: Paquet corrélé à la release
 
-Le paquet DOIT livrer une release identifiable et corrélable aux autres artefacts de cette release, avec mêmes compositions de composants, manifests, contrats et garanties fonctionnelles ; le contenu concret du paquet reste un détail d'implémentation.
+Le paquet MUST livrer une release identifiable et corrélable aux autres artefacts de cette release, avec mêmes compositions de composants, manifests, contrats et garanties fonctionnelles ; le contenu concret du paquet reste un détail d'implémentation.
 
 #### Scenario: Version de paquet incohérente
 
@@ -16,7 +16,7 @@ Le paquet DOIT livrer une release identifiable et corrélable aux autres artefac
 
 ### Requirement: Configuration et secrets hors paquet
 
-Le paquet NE DOIT PAS embarquer de configuration effective, de référence de secret, de base de données, de volumes persistants ni de fichiers utilisateur ; l'installation DOIT consommer une configuration validée et ne rien déduire de l'état accidentel du système de fichiers.
+Le paquet MUST NOT embarquer de configuration effective, de référence de secret, de base de données, de volumes persistants ni de fichiers utilisateur ; l'installation MUST consommer une configuration validée et ne rien déduire de l'état accidentel du système de fichiers.
 
 #### Scenario: Secret trouvé dans le paquet
 
@@ -25,7 +25,7 @@ Le paquet NE DOIT PAS embarquer de configuration effective, de référence de se
 
 ### Requirement: Services alignés sur le lifecycle Pixs
 
-Les unités de service installées DOIVENT alimenter le même lifecycle, les mêmes contrôles de santé et les mêmes signaux d'arrêt que les autres modes de déploiement ; le gestionnaire de services reste un adapter sans autorité métier.
+Les unités de service installées MUST alimenter le même lifecycle, les mêmes contrôles de santé et les mêmes signaux d'arrêt que les autres modes de déploiement ; le gestionnaire de services reste un adapter sans autorité métier.
 
 #### Scenario: Redémarrage par le gestionnaire de services
 
@@ -34,7 +34,7 @@ Les unités de service installées DOIVENT alimenter le même lifecycle, les mê
 
 ### Requirement: Mise à niveau du paquet sous validation
 
-Toute mise à niveau par paquet DOIT être une opération explicite soumise à vérification d'identité de distribution, aux contrôles de compatibilité et au plan de migration ; un échec ou un abandon DOIT laisser l'ancienne composition ou un état explicitement sûr, sans purge ni activation partielle non diagnostiquée.
+Toute mise à niveau par paquet MUST être une opération explicite soumise à vérification d'identité de distribution, aux contrôles de compatibilité et au plan de migration ; un échec ou un abandon MUST laisser l'ancienne composition ou un état explicitement sûr, sans purge ni activation partielle non diagnostiquée.
 
 #### Scenario: Mise à niveau interrompue
 
@@ -43,7 +43,7 @@ Toute mise à niveau par paquet DOIT être une opération explicite soumise à v
 
 ### Requirement: Aucune installation de code distant implicite
 
-Le paquet NE DOIT PAS, par défaut, télécharger, installer ou activer du code distant pendant l'installation ou l'exécution ; un mécanisme de mise à jour de sécurité peut automatiser le déclenchement sans supprimer les validations requises.
+Le paquet MUST NOT, par défaut, télécharger, installer ou activer du code distant pendant l'installation ou l'exécution ; un mécanisme de mise à jour de sécurité peut automatiser le déclenchement sans supprimer les validations requises.
 
 #### Scenario: Téléchargement proposé à l'installation
 

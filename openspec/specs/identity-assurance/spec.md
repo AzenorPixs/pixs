@@ -7,6 +7,8 @@ L'assurance normalise la force de l'identification, de l'authentification et de 
 
 ### Requirement: Contexte vérifié et dimensions distinctes
 
+Le système MUST respecter les garanties suivantes.
+
 Toute authentification réussie produit un contexte vérifié, limité dans le temps, rattaché à une identité numérique et au périmètre applicable, avec assurance d'identité, assurance d'authentification et confiance fédérée évaluées séparément selon le mapping déclaré du fournisseur.
 
 #### Scenario: Claim absent sans surclassement
@@ -16,7 +18,7 @@ Toute authentification réussie produit un contexte vérifié, limité dans le t
 
 ### Requirement: Seuil sensible et élévation explicite
 
-Toute opération sensible exige le niveau requis, au minimum l'authentification multifacteur le cas échéant ; à défaut, l'opération est refusée ou soumise à une élévation explicite que le frontal NE DOIT pas simuler.
+Toute opération sensible exige le niveau requis, au minimum l'authentification multifacteur le cas échéant ; à défaut, l'opération est refusée ou soumise à une élévation explicite que le frontal MUST NOT simuler.
 
 #### Scenario: Élévation exigée
 
@@ -24,6 +26,8 @@ Toute opération sensible exige le niveau requis, au minimum l'authentification 
 - **THEN** le système refuse ou déclenche une élévation explicite auditée
 
 ### Requirement: Fraîcheur, révocation et récupération sans élévation implicite
+
+Le système MUST respecter les garanties suivantes.
 
 Expiration, fraîcheur maximale, rotation et révocation sont vérifiées avant toute décision sensible ; une récupération invalide les sessions concernées sans restaurer implicitement un niveau élevé.
 

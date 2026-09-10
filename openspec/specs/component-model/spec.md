@@ -7,16 +7,21 @@ Le modèle de composant unifie l'identification, le versionnement et la composit
 
 ### Requirement: Types de composants unifiés
 
-Le système DOIT prendre en charge les types KERNEL, MODULE, SUBMODULE, PROVIDER, EXTENSION et THEME avec les mêmes mécanismes de manifest et de cycle de vie.
+Le système MUST prendre en charge les types KERNEL, MODULE, SUBMODULE, PROVIDER, EXTENSION et THEME avec les mêmes mécanismes de manifest et de cycle de vie. Les contributions frontend sont une facette déclarée des composants MODULE et SUBMODULE ; elles MUST NOT créer de type, registre ou lifecycle frontend parallèle.
 
 #### Scenario: Sous-module validé comme module
 
 - **WHEN** un sous-module valide est déclaré
 - **THEN** il est découvert, validé et chargé par le système commun sans moteur parallèle
 
+#### Scenario: Facette frontend d'un sous-module
+
+- **WHEN** un sous-module déclare des contributions frontend dans son manifest
+- **THEN** elles sont rattachées au même composant, à sa version et à son lifecycle sans créer un composant frontend distinct
+
 ### Requirement: Manifest déclaratif unique
 
-Chaque composant DOIT fournir un `component.toml` avec identifiant, type, version SemVer, dépendances, capacités et contrats, sans secret ni logique exécutable.
+Chaque composant MUST fournir un `component.toml` avec identifiant, type, version SemVer, dépendances, capacités et contrats, sans secret ni logique exécutable.
 
 #### Scenario: Secret dans le manifest rejeté
 
@@ -24,6 +29,8 @@ Chaque composant DOIT fournir un `component.toml` avec identifiant, type, versio
 - **THEN** la composition est refusée avec un diagnostic explicite
 
 ### Requirement: Identifiants stables namespacés
+
+Le système MUST respecter les garanties suivantes.
 
 Les identifiants `pixs.*` sont réservés ; les composants externes utilisent un espace de noms fournisseur ; tout renommage vaut évolution incompatible.
 
@@ -34,7 +41,7 @@ Les identifiants `pixs.*` sont réservés ; les composants externes utilisent un
 
 ### Requirement: États de composition, installation et santé distincts
 
-Le système DOIT distinguer les états de composition, d'installation et de santé ; un composant installé-désactivé, activé-non configuré ou configuré-non sain ne DOIT pas être confondu avec un composant prêt.
+Le système MUST distinguer les états de composition, d'installation et de santé ; un composant installé-désactivé, activé-non configuré ou configuré-non sain MUST NOT être confondu avec un composant prêt.
 
 #### Scenario: États non assimilés
 

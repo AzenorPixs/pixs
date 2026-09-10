@@ -7,7 +7,7 @@ Le testing organise les niveaux de vérification — unitaire, intégration et c
 
 ### Requirement: Trois niveaux de vérification distincts
 
-Le projet DOIT distinguer les tests unitaires des comportements internes, les tests d'intégration des compositions et des dépendances réelles de référence, et les tests de conformité des contrats publiés ; le succès d'un niveau NE DOIT PAS tenir lieu de preuve pour un autre.
+Le projet MUST distinguer les tests unitaires des comportements internes, les tests d'intégration des compositions et des dépendances réelles de référence, et les tests de conformité des contrats publiés ; le succès d'un niveau MUST NOT tenir lieu de preuve pour un autre.
 
 #### Scenario: Unitaires verts, intégration rouge
 
@@ -16,7 +16,7 @@ Le projet DOIT distinguer les tests unitaires des comportements internes, les te
 
 ### Requirement: Suites de conformité versionnées par contrat
 
-Chaque contrat de fournisseur DOIT disposer d'une suite de conformité versionnée, indépendante de la technologie implémentée ; le runtime NE DOIT PAS déclarer compatible un provider dont la conformité obligatoire est absente, expirée ou échouée.
+Chaque contrat de fournisseur MUST disposer d'une suite de conformité versionnée, indépendante de la technologie implémentée ; le runtime MUST NOT déclarer compatible un provider dont la conformité obligatoire est absente, expirée ou échouée.
 
 #### Scenario: Certification expirée
 
@@ -25,7 +25,7 @@ Chaque contrat de fournisseur DOIT disposer d'une suite de conformité versionn�
 
 ### Requirement: Garanties obligatoires séparées des capacités optionnelles
 
-Les tests DOIVENT distinguer les garanties obligatoires des capacités optionnelles : une capacité optionnelle absente ou indisponible peut produire un état dégradé ou désactivé si elle reste isolée ; une incompatibilité de contrat, une ambiguïté de fournisseur, un défaut d'isolation de tenant ou une violation de sécurité DOIT bloquer l'activation.
+Les tests MUST distinguer les garanties obligatoires des capacités optionnelles : une capacité optionnelle absente ou indisponible peut produire un état dégradé ou désactivé si elle reste isolée ; une incompatibilité de contrat, une ambiguïté de fournisseur, un défaut d'isolation de tenant ou une violation de sécurité MUST bloquer l'activation.
 
 #### Scenario: Isolement acceptable
 
@@ -34,7 +34,7 @@ Les tests DOIVENT distinguer les garanties obligatoires des capacités optionnel
 
 ### Requirement: Reproductibilité sur la topologie de référence
 
-Les tests DOIVENT être exécutables sur la topologie de référence du projet et sur toute topologie isolée déclarée compatible ; une différence de topologie NE DOIT PAS modifier silencieusement les règles d'autorisation, de partage, de projection ou de suppression.
+Les tests MUST être exécutables sur la topologie de référence du projet et sur toute topologie isolée déclarée compatible ; une différence de topologie MUST NOT modifier silencieusement les règles d'autorisation, de partage, de projection ou de suppression.
 
 #### Scenario: Divergence de topologie
 
@@ -43,9 +43,32 @@ Les tests DOIVENT être exécutables sur la topologie de référence du projet e
 
 ### Requirement: Preuves sans secret ni donnée de production
 
-Les fixtures, exemples et rapports produits par les tests DOIVENT être synthétiques et reproductibles, sans secret, sans token et sans donnée de production ; les rapports ne DOIVENT PAS exposer de détail exploitable.
+Les fixtures, exemples et rapports produits par les tests MUST être synthétiques et reproductibles, sans secret, sans token et sans donnée de production ; les rapports MUST NOT exposer de détail exploitable.
 
 #### Scenario: Secret détecté dans un rapport
 
 - **WHEN** un artefact de test contient une valeur sensible réelle ou apparentée
 - **THEN** le rapport est invalidé, la fuite est signalée et l'exécution est bloquante pour la publication
+
+### Requirement: Conformité de la composition frontend récursive
+
+Les suites de conformité MUST vérifier la résolution récursive des modules et sous-modules frontend, la propriété des contributions, les dépendances publiques, les contraintes SemVer, les collisions, les modes obligatoire et optionnel, ainsi que l'équivalence de composition entre développement et artefacts distribués. Une résolution frontend MUST NOT dépendre de l'ordre des imports, du filesystem ou d'un code distant runtime.
+
+#### Scenario: Composition reproductible avec sous-module
+
+- **WHEN** la même composition incluant un module et un sous-module frontend est construite deux fois
+- **THEN** les contributions actives, l'ordre de chargement et les diagnostics produits sont identiques
+
+### Requirement: Conformité des projections d'annuaire optionnelles
+
+Les suites de conformité MUST vérifier le mapping versionné, la projection
+sortante idempotente, la reprise, les suppressions propagées, l'isolation de
+tenant et de scope, la fraîcheur après mutation, le repli PostgreSQL et l'état
+DEGRADED d'un provider LDAP indisponible. Elles MUST vérifier que LDAP ne peut
+ni écrire dans Pixs, ni fournir une ACL, une décision d'autorisation, une
+révocation ou une authentification par cette capacité.
+
+#### Scenario: Repli conforme sans élargissement de droits
+
+- **WHEN** LDAP devient indisponible pendant une consultation autorisée
+- **THEN** la suite confirme la réponse PostgreSQL, l'état DEGRADED et l'absence de divulgation ou de droit supplémentaire

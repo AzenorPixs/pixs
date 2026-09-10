@@ -7,7 +7,7 @@ L'accessibilité garantit que le shell, les primitives et les interfaces des mod
 
 ### Requirement: Niveau cible WCAG 2.2 AA
 
-Le shell et les primitives du design system DOIVENT satisfaire WCAG 2.2 AA ; les interfaces des modules DOIVENT rester conformes au niveau cible sans régression introduite par une contribution.
+Le shell et les primitives du design system MUST satisfaire WCAG 2.2 AA ; les interfaces des modules MUST rester conformes au niveau cible sans régression introduite par une contribution.
 
 #### Scenario: Contribution non conforme
 
@@ -16,7 +16,7 @@ Le shell et les primitives du design system DOIVENT satisfaire WCAG 2.2 AA ; les
 
 ### Requirement: Fonctionnement clavier et technologies d'assistance
 
-Tous les éléments interactifs DOIVENT fonctionner au clavier avec ordre de tabulation et gestion du focus cohérents, et rester utilisables avec les technologies d'assistance.
+Tous les éléments interactifs MUST fonctionner au clavier avec ordre de tabulation et gestion du focus cohérents, et rester utilisables avec les technologies d'assistance.
 
 #### Scenario: Parcours clavier complet
 
@@ -25,7 +25,7 @@ Tous les éléments interactifs DOIVENT fonctionner au clavier avec ordre de tab
 
 ### Requirement: Sémantique native préservée
 
-Les éléments HTML natifs DOIVENT être préférés ; ARIA NE DOIT PAS recréer ni contredire une sémantique native, et chaque composant DOIT exposer un nom accessible, des rôles et des états documentés.
+Les éléments HTML natifs MUST être préférés ; ARIA MUST NOT recréer ni contredire une sémantique native, et chaque composant MUST exposer un nom accessible, des rôles et des états documentés.
 
 #### Scenario: Rôle ARIA redondant
 
@@ -34,7 +34,7 @@ Les éléments HTML natifs DOIVENT être préférés ; ARIA NE DOIT PAS recréer
 
 ### Requirement: Validation outillée et manuelle combinées
 
-L'automatisation DOIT détecter une partie des défauts, mais la validation DOIT inclure des parcours manuels au clavier et avec des technologies d'assistance ; les messages d'erreur, contrastes, comportement au zoom et réduction des mouvements DOIVENT être vérifiés.
+L'automatisation MUST détecter une partie des défauts, mais la validation MUST inclure des parcours manuels au clavier et avec des technologies d'assistance ; les messages d'erreur, contrastes, comportement au zoom et réduction des mouvements MUST être vérifiés.
 
 #### Scenario: Défaut non détectable automatiquement
 

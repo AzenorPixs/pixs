@@ -7,7 +7,7 @@ Le cycle de vie distingue installation, activation, configuration, disponibilit�
 
 ### Requirement: États de cycle de vie distincts
 
-Le système DOIT distinguer les états installed, enabled, configured, ready et healthy ; un composant installé-désactivé, activé-non configuré ou configuré-non sain NE DOIT pas être assimilé à un composant prêt.
+Le système MUST distinguer les états installed, enabled, configured, ready et healthy ; un composant installé-désactivé, activé-non configuré ou configuré-non sain MUST NOT être assimilé à un composant prêt.
 
 #### Scenario: États non confondus
 
@@ -16,7 +16,7 @@ Le système DOIT distinguer les états installed, enabled, configured, ready et 
 
 ### Requirement: Transitions autorisées et refusées
 
-Le système DOIT appliquer les opérations discover, validate, install, enable, configure, start, disable, migrate, upgrade, uninstall et purge dans un ordre autorisé ; la désactivation n'entraîne jamais implicitement la suppression des données et seule la purge explicite est destructive.
+Le système MUST appliquer les opérations discover, validate, install, enable, configure, start, disable, migrate, upgrade, uninstall et purge dans un ordre autorisé ; la désactivation n'entraîne jamais implicitement la suppression des données et seule la purge explicite est destructive.
 
 #### Scenario: Désactivation sans perte et purge explicite
 
@@ -25,7 +25,7 @@ Le système DOIT appliquer les opérations discover, validate, install, enable, 
 
 ### Requirement: Ordre déterministe des hooks
 
-Les hooks de cycle de vie DOIVENT s'exécuter dans un ordre déterministe à composants, versions et configuration identiques, sans dépendre du système de fichiers ni des imports.
+Les hooks de cycle de vie MUST s'exécuter dans un ordre déterministe à composants, versions et configuration identiques, sans dépendre du système de fichiers ni des imports.
 
 #### Scenario: Double résolution identique
 
@@ -34,7 +34,7 @@ Les hooks de cycle de vie DOIVENT s'exécuter dans un ordre déterministe à com
 
 ### Requirement: Idempotence des opérations
 
-Chaque opération de cycle de vie, y compris la purge, DOIT être idempotente et rejouable sans effet de bord inattendu ; une reprise après interruption NE DOIT ni réintroduire une donnée purgée ni contourner une condition de validité.
+Chaque opération de cycle de vie, y compris la purge, MUST être idempotente et rejouable sans effet de bord inattendu ; une reprise après interruption MUST NOT réintroduire une donnée purgée ni contourner une condition de validité.
 
 #### Scenario: Rejeu sans double effet
 
@@ -43,7 +43,7 @@ Chaque opération de cycle de vie, y compris la purge, DOIT être idempotente et
 
 ### Requirement: Diagnostic des échecs
 
-Toute transition refusée (configuration, dépendance ou compatibilité invalide) DOIT produire un échec explicite avant le démarrage de la nouvelle composition, avec le périmètre et la cause diagnostiqués ; une incompatibilité détectée NE DOIT pas être masquée.
+Toute transition refusée (configuration, dépendance ou compatibilité invalide) MUST produire un échec explicite avant le démarrage de la nouvelle composition, avec le périmètre et la cause diagnostiqués ; une incompatibilité détectée MUST NOT être masquée.
 
 #### Scenario: Activation invalide bloquée
 

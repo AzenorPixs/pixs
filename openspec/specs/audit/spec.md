@@ -7,7 +7,7 @@ L'audit fonctionnel trace les événements métier significatifs, séparés des 
 
 ### Requirement: Audit fonctionnel distinct des logs techniques
 
-L'audit DOIT être un flux fonctionnel séparé des journaux, métriques et traces techniques ; aucun événement d'audit NE DOIT être reconstitué implicitement à partir de logs.
+L'audit MUST être un flux fonctionnel séparé des journaux, métriques et traces techniques ; un événement d.audit MUST NOT être reconstitué implicitement à partir de logs.
 
 #### Scenario: Perte de télémétrie technique
 
@@ -16,7 +16,7 @@ L'audit DOIT être un flux fonctionnel séparé des journaux, métriques et trac
 
 ### Requirement: Contenu minimal d'un événement d'audit
 
-Un événement d'audit DOIT pouvoir représenter au minimum un identifiant, l'instant, l'acteur ou sa référence, le tenant pertinent, l'action, le type et l'identifiant de ressource, le résultat, la raison ou code d'erreur éventuel, les identifiants de corrélation et de causalité, et le composant avec sa version.
+Un événement d'audit MUST pouvoir représenter au minimum un identifiant, l'instant, l'acteur ou sa référence, le tenant pertinent, l'action, le type et l'identifiant de ressource, le résultat, la raison ou code d'erreur éventuel, les identifiants de corrélation et de causalité, et le composant avec sa version.
 
 #### Scenario: Refus d'autorisation tracé
 
@@ -25,7 +25,7 @@ Un événement d'audit DOIT pouvoir représenter au minimum un identifiant, l'in
 
 ### Requirement: Périmètre obligatoire d'audit
 
-Les authentifications, changements d'identité, autorisations sensibles, accès inter-tenants, mutations métier significatives, modifications de configuration et opérations destructives DOIVENT produire un audit persistant, contrôlé et soumis à une politique de rétention.
+Les authentifications, changements d'identité, autorisations sensibles, accès inter-tenants, mutations métier significatives, modifications de configuration et opérations destructives MUST produire un audit persistant, contrôlé et soumis à une politique de rétention.
 
 #### Scenario: Opération destructive sans audit
 
@@ -34,7 +34,7 @@ Les authentifications, changements d'identité, autorisations sensibles, accès 
 
 ### Requirement: Append-only et réécriture contrôlée
 
-L'audit DOIT être append-only dans son usage normal ; toute suppression ou minimisation imposée DOIT passer par une procédure explicite et auditable d'anonymisation ou de purge de champs autorisés, sans présenter une réécriture comme un événement nouveau.
+L'audit MUST être append-only dans son usage normal ; toute suppression ou minimisation imposée MUST passer par une procédure explicite et auditable d'anonymisation ou de purge de champs autorisés, sans présenter une réécriture comme un événement nouveau.
 
 #### Scenario: Obligation d'effacement
 
@@ -43,7 +43,7 @@ L'audit DOIT être append-only dans son usage normal ; toute suppression ou mini
 
 ### Requirement: Minimisation et non-duplication des données
 
-Les valeurs avant/après DOIVENT être limitées aux champs nécessaires et redacted lorsqu'elles sont sensibles ; l'audit NE DOIT PAS devenir une copie de la base métier ni contenir de secret.
+Les valeurs avant/après MUST être limitées aux champs nécessaires et redacted lorsqu'elles sont sensibles ; l'audit MUST NOT devenir une copie de la base métier ni contenir de secret.
 
 #### Scenario: Payload sensible détecté
 

@@ -7,7 +7,7 @@ La configuration déclarative, typée et validable garantit une activation déte
 
 ### Requirement: Schémas typés validés avant activation
 
-Chaque composant DOIT déclarer le schéma de sa configuration avec types, valeurs requises, défauts, contraintes et validations ; toute configuration invalide bloque l'activation ou le passage à ready.
+Chaque composant MUST déclarer le schéma de sa configuration avec types, valeurs requises, défauts, contraintes et validations ; toute configuration invalide bloque l'activation ou le passage à ready.
 
 #### Scenario: Configuration invalide bloquée
 
@@ -15,6 +15,8 @@ Chaque composant DOIT déclarer le schéma de sa configuration avec types, valeu
 - **THEN** l'activation est refusée avec un diagnostic explicite
 
 ### Requirement: Priorité déterministe des sources
+
+Le système MUST respecter les garanties suivantes.
 
 La résolution SUIT schéma, défauts du composant, configuration statique, configuration runtime, puis références de secrets ; une source prioritaire remplace l'inférieure sans fusion ambiguë.
 
@@ -25,7 +27,7 @@ La résolution SUIT schéma, défauts du composant, configuration statique, conf
 
 ### Requirement: Secrets par référence hors artefacts
 
-Les secrets NE DOIVENT figurer ni dans les manifests, ni dans les paquets, images ou journaux ; seules des références contrôlées sont résolues au runtime.
+Les secrets MUST NOT figurer dans les manifests, paquets, images ou journaux ; seules des références contrôlées sont résolues au runtime.
 
 #### Scenario: Secret embarqué refusé
 

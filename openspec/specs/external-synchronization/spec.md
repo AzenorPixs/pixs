@@ -7,7 +7,13 @@ La synchronisation externe relie Pixs aux systèmes tiers via des contrats décl
 
 ### Requirement: Contrat de synchronisation et autorité déclarés
 
-Chaque synchronisation DOIT déclarer direction (import, export, bidirectionnel, projection), autorité, mappings versionnés, points de reprise et stratégie de conflits ; le chargeur externe NE DOIT jamais écrire directement dans les modèles privés.
+Chaque synchronisation MUST déclarer direction (import, export,
+bidirectionnel, projection), autorité, mappings versionnés, points de reprise
+et stratégie de conflits ; le chargeur externe MUST NOT écrire directement
+dans les modèles privés. Une projection LDAP des identités numériques, groupes
+et appartenances MUST être déclarée sortante avec l'autorité PIXS ; elle MUST
+NOT importer de mutation, de suppression ou de décision d'autorisation depuis
+LDAP.
 
 #### Scenario: Import direct refusé
 
@@ -16,7 +22,7 @@ Chaque synchronisation DOIT déclarer direction (import, export, bidirectionnel,
 
 ### Requirement: Reprise persistante et rejou idempotent
 
-Points de reprise, états et accusés sont persistants, idempotents et reprenables ; aucun état nécessaire NE DOIT dépendre de la mémoire locale ; un rejou NE DOIT pas produire deux effets confirmés.
+Points de reprise, états et accusés sont persistants, idempotents et reprenables ; un état nécessaire MUST NOT dépendre de la mémoire locale ; un rejou MUST NOT produire deux effets confirmés.
 
 #### Scenario: Reprise après interruption
 
@@ -25,7 +31,7 @@ Points de reprise, états et accusés sont persistants, idempotents et reprenabl
 
 ### Requirement: Périmètre, traçabilité et échec fermé
 
-Chaque flux DOIT propager identité, ScopeContext, corrélation et gouvernance ; toute identité, autorisation ou périmètre non vérifiable produit un échec fermé audité.
+Chaque flux MUST propager identité, ScopeContext, corrélation et gouvernance ; toute identité, autorisation ou périmètre non vérifiable produit un échec fermé audité.
 
 #### Scenario: Périmètre non vérifiable refusé
 

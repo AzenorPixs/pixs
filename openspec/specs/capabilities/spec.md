@@ -7,7 +7,7 @@ Les capacités décrivent les comportements fournis et requis par les composants
 
 ### Requirement: Descripteur de capacité résolu à la composition
 
-Chaque capacité DOIT déclarer identifiant, version, composant propriétaire, références de contrats, fournisseur éventuel, criticité et politique de repli ; la résolution intervient avant activation sans dépendre du système de fichiers ni des imports.
+Chaque capacité MUST déclarer identifiant, version, composant propriétaire, références de contrats, fournisseur éventuel, criticité et politique de repli ; la résolution intervient avant activation sans dépendre du système de fichiers ni des imports.
 
 #### Scenario: Résolution indépendante de l'ordre
 
@@ -15,6 +15,8 @@ Chaque capacité DOIT déclarer identifiant, version, composant propriétaire, r
 - **THEN** le graphe de capacités résolu est identique
 
 ### Requirement: États de disponibilité distincts
+
+Le système MUST respecter les garanties suivantes.
 
 La disponibilité SUIT DECLARED vers RESOLVED vers AVAILABLE, avec DEGRADED, DISABLED et BLOCKED ; une capacité obligatoire non AVAILABLE bloque l'activation, une optionnelle reste isolée avec repli déclaré.
 
@@ -25,7 +27,7 @@ La disponibilité SUIT DECLARED vers RESOLVED vers AVAILABLE, avec DEGRADED, DIS
 
 ### Requirement: Fanion ne remplace pas la résolution
 
-Un fanion de fonctionnalité NE DOIT jamais remplacer la résolution d'une capacité ni rendre compatible un contrat incompatible.
+Un fanion de fonctionnalité MUST NOT remplacer la résolution d'une capacité ni rendre compatible un contrat incompatible.
 
 #### Scenario: Fanion sans fournisseur refusé
 

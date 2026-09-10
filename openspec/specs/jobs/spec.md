@@ -7,7 +7,7 @@ Les travaux exécutent les unités de travail persistantes, planifiées et repri
 
 ### Requirement: Persistance et états explicites
 
-Chaque travail DOIT être persisté avant exécution avec états PENDING, SCHEDULED, RUNNING, RETRYING, FAILED, CANCELLED ou DEAD_LETTER, bail persistant et politique de réessai bornée distinguant erreurs rejouables et métier.
+Chaque travail MUST être persisté avant exécution avec états PENDING, SCHEDULED, RUNNING, RETRYING, FAILED, CANCELLED ou DEAD_LETTER, bail persistant et politique de réessai bornée distinguant erreurs rejouables et métier.
 
 #### Scenario: Reprise après interruption
 
@@ -16,7 +16,7 @@ Chaque travail DOIT être persisté avant exécution avec états PENDING, SCHEDU
 
 ### Requirement: Autorisation réévaluée à l'exécution
 
-L'autorisation est vérifiée à la création et à l'exécution ; un travail NE DOIT ni utiliser un contexte expiré ni élargir le périmètre de l'acteur initial ; l'indisponibilité du contrôle produit un échec fermé.
+L'autorisation est vérifiée à la création et à l'exécution ; un travail MUST NOT utiliser un contexte expiré ni élargir le périmètre de l'acteur initial ; l'indisponibilité du contrôle produit un échec fermé.
 
 #### Scenario: Contexte expiré refusé
 
@@ -25,7 +25,7 @@ L'autorisation est vérifiée à la création et à l'exécution ; un travail NE
 
 ### Requirement: Idempotence et corrélation des travaux
 
-Chaque travail DOIT porter identifiants distincts du commandement et de l'opération, corrélation, causalité et périmètre, avec déduplication persistante lorsque nécessaire.
+Chaque travail MUST porter identifiants distincts du commandement et de l'opération, corrélation, causalité et périmètre, avec déduplication persistante lorsque nécessaire.
 
 #### Scenario: Double déclenchement dédupliqué
 

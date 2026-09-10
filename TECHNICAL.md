@@ -2,6 +2,12 @@
 
 Ce document précise les décisions techniques transverses du projet. Il complète `PROJECT.md` sans remplacer les spécifications OpenSpec, qui définiront les comportements implémentables.
 
+## Convention normative RFC 2119
+
+Les exigences techniques vérifiables sont formulées dans OpenSpec en prose française avec les mots-clés RFC 2119 `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT` et `MAY`, toujours en majuscules. Les clauses `MUST` et `MUST NOT` sont obligatoires ; `SHOULD` et `SHOULD NOT` nécessitent une justification explicite en cas d'écart ; `MAY` désigne une capacité optionnelle. Une négation normative doit utiliser la forme canonique `MUST NOT` ou `SHOULD NOT`, jamais une construction hybride comme `NE MUST` ou `NE SHOULD`. Une formulation française ou en minuscules hors spécification ne possède pas cette force normative.
+
+Les choix de ce document qui deviennent observables, testables ou nécessaires à l'interopérabilité doivent être transférés dans la capacité OpenSpec concernée. Aucun détail technique ne peut affaiblir une exigence RFC 2119 déjà validée.
+
 ## 1. Identité numérique
 
 L'identité numérique est le référentiel technique de l'authentification Pixs. Elle est distincte de l'utilisateur, du groupe et du provider d'authentification.
@@ -1520,9 +1526,15 @@ UI_SLOT        point d'insertion déclaré par le shell
 
 Chaque contribution possède un identifiant stable, un propriétaire, une version de contrat, des dépendances éventuelles et des conditions d'activation. Le registre frontend valide les identifiants, les versions, les collisions, les permissions d'affichage, les exigences de module et la compatibilité avec le shell avant exposition.
 
+La modularité frontend est portée par les composants `MODULE` et `SUBMODULE` du modèle commun ; aucun type `FRONTEND_MODULE`, `FRONTEND_SUBMODULE`, registre ou lifecycle distinct ne doit être introduit. La section `[frontend]` d'un manifest exprime une facette du composant propriétaire. Un sous-module qui porte une facette frontend reste donc découvert, validé, résolu et diagnostiqué par les mécanismes communs, avec la même relation de parenté, les mêmes contraintes SemVer et les mêmes états que sa partie non frontend.
+
+Un sous-module frontend déclare ses propres contributions, points d'entrée, contrats, traductions et dépendances. Il consomme uniquement les façades publiques du shell, du Design System, de son parent ou d'autres composants explicitement requis. Le parent ne rend ni une contribution enfant active ni son état accessible par convention d'arborescence ; toute intégration entre parent et enfant passe par une contribution, un slot, un service frontend ou un contrat UI public, namespacé et versionné.
+
 Le shell conserve la responsabilité du lifecycle d'interface, du routage global, de l'authentification, du contexte tenant, de la gestion des erreurs, du chargement, du Design System et des garde-fous de sécurité. Une extension peut demander une donnée ou une action au travers des APIs, Commands, Queries et contrats UI publics ; elle ne peut pas modifier directement l'état métier, les ACL ou les modèles backend.
 
 La résolution des contributions doit être déterministe, indépendante de l'ordre des imports et reproductible entre développement, build et runtime. Le lazy loading est une optimisation déclarée par la contribution et ne doit pas modifier les règles d'autorisation. Un adapter TanStack traduit les contrats frontend génériques en routes, composants et mécanismes de chargement propres à TanStack.
+
+La résolution parcourt le graphe complet des modules et sous-modules qui déclarent une facette frontend. Elle vérifie les dépendances de composant et de contribution, les façades publiques, les contraintes de version, les collisions et la compatibilité avec le shell avant de produire une composition unique. Un sous-module optionnel non résolu ne retire que les contributions qui en dépendent ; un sous-module ou une contribution obligatoire non résolu rend le périmètre concerné non composable. L'ordre de découverte, le chemin physique et les imports ne constituent jamais des règles de rattachement ou de priorité.
 
 La distribution de référence est une composition au build. Le composant frontend d'un module est livré avec ses sources ou artefacts, son manifest et ses contraintes de compatibilité avec le shell. Le build résout les contributions et génère les bundles ou chunks nécessaires dans l'artefact Pixs. Le runtime ne doit pas exécuter de téléchargement, d'installation de dépendance ou d'évaluation de code distant pour activer une extension. Le lazy loading ne fait que différer le chargement d'un chunk déjà livré. Un adapter de module distant pourra définir une autre stratégie, mais devra conserver les contrats, signatures, versions, permissions et garanties de sécurité du registre frontend.
 
@@ -1946,6 +1958,29 @@ La suspension, la reprise, la réinitialisation du checkpoint, la résolution ma
 
 Les credentials, scopes, endpoints, certificats, clés de signature et limites du provider sont configurés par référence au système de secrets et ne doivent pas être déduits d'un payload externe. Les webhooks entrants vérifient la signature, la fenêtre de rejeu, l'identifiant externe et l'empreinte du message avant de créer une Command ou un événement interne. Les appels sortants utilisent l'outbox, des retries bornés et une dead-letter. Les événements et erreurs de synchronisation propagent les corrélations, le tenant et le provider sans exposer de secret ou de payload inutile.
 
+### 34.1 Projection LDAP des primitives Core
+
+Un `DirectoryProjectionProvider` peut projeter en lecture les identités
+numériques, groupes et appartenances de `pixs.core` vers LDAP. Il est toujours
+configuré avec `authority_mode` `PIXS` et une direction sortante ; LDAP n'est
+ni une source de mutation, ni un moteur d'autorisation, ni un provider
+d'authentification par effet de cette projection. Les ACL, permissions,
+mécanismes de révocation et décisions ne sont pas délégués à LDAP.
+
+Le provider déclare le mapping versionné, l'allowlist d'attributs, les tenants
+et scopes, les limites de fraîcheur et la politique de suppression. Les
+identifiants canoniques Pixs restent stables ; le DN LDAP et les identifiants
+externes sont des mappings persistants du provider. Les données non classifiées
+ou hors périmètre ne sont pas exportées.
+
+La façade de consultation de `pixs.core` reste l'unique point d'accès des
+consommateurs. Elle vérifie l'autorisation et le `ScopeContext`, lit LDAP
+seulement lorsque le provider déclaré est disponible et convergé dans la limite
+de fraîcheur, puis lit PostgreSQL en cas d'indisponibilité ou de retard. Après
+une mutation confirmée, elle privilégie PostgreSQL jusqu'à confirmation de la
+projection. Le repli produit un état `DEGRADED` corrélé ; il ne peut ni exposer
+une donnée hors périmètre ni élargir une autorisation.
+
 ## 35. Conformité des providers et capacités du point 12
 
 Les contrats `ObjectStorageProvider`, `DocumentRepositoryProvider`, `SearchProvider` et `SynchronizationProvider` doivent disposer d'une suite de conformité versionnée. Cette suite vérifie les garanties du contrat, indépendamment de la technologie du provider. Le runtime ne doit pas déclarer compatible un provider dont la conformité obligatoire est absente, expirée ou échouée.
@@ -2145,3 +2180,74 @@ Le resolver ne doit jamais activer automatiquement un provider parce qu'il est p
 `pixs.core` fournit les primitives transverses — identité, tenant, autorisation, configuration, lifecycle, contrats et persistance commune — sans porter les invariants d'un domaine métier particulier. Un module métier possède ses modèles, migrations, permissions, Commands, Queries, Events et invariants. Un autre module ne peut pas écrire directement ses tables ou importer son implémentation privée ; il utilise ses interfaces publiques.
 
 Un module métier peut requérir un provider ou une capacité concrète, mais cette dépendance doit être déclarée, versionnée et justifiée. Les providers d'intégration externe restent des adapters : ils traduisent un protocole ou un service sans déplacer automatiquement la source de vérité métier hors de Pixs.
+
+## 40. Capacités d'extension de plateforme
+
+### 40.1 Registres et fournisseurs de composants
+
+Un `ComponentRegistryProvider` peut fournir un catalogue, la recherche, la
+résolution d'une version, la récupération, l'installation, la révocation et le
+retrait de composants signés. Il ne remplace pas le résolveur local, ne choisit
+pas un composant implicitement et commence par les sources privées ou hors ligne
+déclarées. Un marketplace public reste un adapter optionnel. La provenance, la
+signature, le SBOM, la compatibilité et le niveau de confiance sont vérifiés
+avant installation ou activation.
+
+### 40.2 Règles, IA et collaboration
+
+Un `BusinessRuleProvider` évalue un DSL déclaratif restreint, versionné,
+testable et audité. Il ne peut pas évaluer du code arbitraire au runtime et est
+séparé du PDP d'autorisation et du moteur de workflow ; une règle ne peut pas
+accorder un droit sans contrôle d'autorisation.
+
+Les fournisseurs IA et agents sont désactivés par défaut et déclarent leurs
+capacités de modèle, outils, mémoire et récupération. Les prompts, évaluations,
+budgets, appels et usages de données sont versionnés, gouvernés et audités. Les
+outils exécutés par un agent passent par des Commands ou contrats autorisés ;
+un fournisseur de modèle ne reçoit que les données que le `ScopeContext`, la
+gouvernance, la finalité et une politique stricte de sortie autorisent.
+
+La collaboration temps réel utilise un contrat distinct de la synchronisation
+de projections. Une session collaborative porte son périmètre, ses participants,
+ses droits, ses opérations et son état de convergence. CRDT et OT sont des
+adapters possibles, sans référence retenue avant l'identification des premières
+ressources collaboratives ; ils ne valident jamais seuls une mutation métier.
+
+### 40.3 Caches, analytique et clients natifs
+
+Un `CacheProvider` peut conserver des données dérivées uniquement. Ses clés,
+tags et invalidations incluent le tenant, le scope, l'identité lorsque requis,
+la version et la classification. Les protections contre stampede, les TTL, les
+états de fraîcheur et l'échec dégradé restent déclarés ; aucune lecture de cache
+ne contourne l'autorisation ni ne devient une source de vérité.
+
+Les projections analytiques, la couche sémantique et les rapports sont des
+composants propriétaires de leurs dérivés. Leurs requêtes et exports passent
+par un filtrage autorisé à la source et conservent la résidence, la rétention,
+la minimisation et la lignée de la donnée.
+
+Les SDK de clients natifs gardent une séparation entre transport, stockage
+sécurisé local et intégrations de plateforme. Les notifications push, liens
+profonds et informations d'appareil sont des adapters explicitement déclarés ;
+aucun credential de session n'est exposé à un stockage non sécurisé.
+
+### 40.4 Secrets, SCIM, déploiement et preuves d'audit
+
+Un `SecretProvider` ne retourne des secrets qu'au runtime selon une référence,
+une identité de workload et une politique déclarée. Il privilégie des
+credentials courts et fournit rotation, révocation, durée de vie, audit et
+erreurs non divulguantes. Le contenu d'un secret ne peut pas être journalisé,
+sérialisé dans un rapport ou incorporé à un artefact.
+
+Un provider SCIM traduit le provisionnement externe vers les Commands de
+`pixs.core`, avec signature ou authentification du fournisseur, idempotence,
+mapping explicite, désactivation contrôlée et audit. Il ne crée aucune relation
+d'autorisation implicite.
+
+Le déploiement progressif coordonne des révisions compatibles à partir de
+health gates et de métriques déclarées. Il ne contourne ni les migrations, ni
+les validations de release, ni les politiques de feature flags. Les preuves
+d'intégrité d'audit utilisent d'abord un chaînage vérifiable et peuvent ajouter
+un scellement externe ; un stockage WORM reste une politique de déploiement
+optionnelle. Elles sont vérifiables, versionnées et ne rendent pas les données
+personnelles ou les secrets immuables au-delà de leur régime légal.

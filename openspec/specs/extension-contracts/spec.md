@@ -7,7 +7,7 @@ Les contrats d'extension cadrent les contributions vers les points d'extension p
 
 ### Requirement: Points d'extension publics versionnés
 
-Chaque point d'extension DOIT déclarer identifiant namespacé, catégorie, version, schéma de contribution, propriétaire et garanties documentées.
+Chaque point d'extension MUST déclarer identifiant namespacé, catégorie, version, schéma de contribution, propriétaire et garanties documentées.
 
 #### Scenario: Contribution sans point déclaré rejetée
 
@@ -16,7 +16,7 @@ Chaque point d'extension DOIT déclarer identifiant namespacé, catégorie, vers
 
 ### Requirement: Contributions déclarées et isolées
 
-Chaque contribution DOIT déclarer identifiant stable, composant cible, version de contrat, point d'entrée, dépendances, permissions, niveau de confiance et conditions d'activation ; elle NE DOIT ni importer d'implémentation privée ni modifier directement les données d'un autre composant.
+Chaque contribution MUST déclarer identifiant stable, composant cible, version de contrat, point d'entrée, dépendances, permissions, niveau de confiance et conditions d'activation ; elle MUST NOT importer d'implémentation privée ni modifier directement les données d'un autre composant.
 
 #### Scenario: Accès privé bloqué
 
@@ -25,7 +25,7 @@ Chaque contribution DOIT déclarer identifiant stable, composant cible, version 
 
 ### Requirement: Collisions et composition déterministe
 
-Les collisions sont refusées par défaut ; toute composition multi-contributions DOIT déclarer politique de fusion, priorité et ordre déterministes ; une contribution obligatoire incompatible bloque, une optionnelle est isolée et diagnostiquée.
+Les collisions sont refusées par défaut ; toute composition multi-contributions MUST déclarer politique de fusion, priorité et ordre déterministes ; une contribution obligatoire incompatible bloque, une optionnelle est isolée et diagnostiquée.
 
 #### Scenario: Deux routes en collision
 
@@ -34,9 +34,18 @@ Les collisions sont refusées par défaut ; toute composition multi-contribution
 
 ### Requirement: Composition interface au build
 
-Les extensions d'interface de référence DOIVENT être composées au build depuis des sources versionnées ; aucun téléchargement, installation ni évaluation de code distant au runtime ; toute isolation (sandbox, iframe) expose une API explicitement limitée.
+Les extensions d'interface de référence MUST être composées au build depuis des sources versionnées ; aucun téléchargement, installation ni évaluation de code distant au runtime ; toute isolation (sandbox, iframe) expose une API explicitement limitée.
 
 #### Scenario: Code distant implicite refusé
 
 - **WHEN** une extension tente de charger du code distant non déclaré au runtime
 - **THEN** le chargement est refusé et l'état FAILED est diagnostiqué
+
+### Requirement: Frontières publiques des composants frontend imbriqués
+
+Un parent, un sous-module et leurs composants frères MUST s'intégrer par des routes, slots, façades, événements UI ou autres points d'extension publics, namespacés et versionnés. Une contribution enfant MUST NOT être activée, fusionnée ou rendue prioritaire par effet de bord du parent ; toute politique de composition reste déclarée et déterministe.
+
+#### Scenario: Slot enfant non déclaré
+
+- **WHEN** un sous-module tente de contribuer à une zone d'interface privée de son parent
+- **THEN** le build refuse la contribution au lieu de l'intégrer par convention d'arborescence

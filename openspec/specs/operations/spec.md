@@ -7,7 +7,7 @@ L'exploitation repose sur une interface de management distincte de l'API métier
 
 ### Requirement: Interface de management distincte et non publique
 
-L'interface d'exploitation DOIT être distincte de l'API métier et consommer les mêmes contrats et la même autorité quelle que soit la façade ; elle NE DOIT PAS être exposée au trafic public par défaut, toute exposition passant par une frontière avec identité, autorisation, périmètre et audit explicites.
+L'interface d'exploitation MUST être distincte de l'API métier et consommer les mêmes contrats et la même autorité quelle que soit la façade ; elle MUST NOT être exposée au trafic public par défaut, toute exposition passant par une frontière avec identité, autorisation, périmètre et audit explicites.
 
 #### Scenario: Façades convergeant sur le même contrat
 
@@ -16,7 +16,7 @@ L'interface d'exploitation DOIT être distincte de l'API métier et consommer le
 
 ### Requirement: Opérations persistantes avec plan et idempotence
 
-Toute opération d'exploitation DOIT porter identifiant, version, acteur, contexte, périmètre, clé d'idempotence, plan, état et résultat persistés ; les mutations sensibles DOIVENT exiger une confirmation ou une étape d'application distincte de la génération du plan.
+Toute opération d'exploitation MUST porter identifiant, version, acteur, contexte, périmètre, clé d'idempotence, plan, état et résultat persistés ; les mutations sensibles MUST exiger une confirmation ou une étape d'application distincte de la génération du plan.
 
 #### Scenario: Rejeu d'une opération annulée
 
@@ -25,7 +25,7 @@ Toute opération d'exploitation DOIT porter identifiant, version, acteur, contex
 
 ### Requirement: Sorties sans secret et codes stables
 
-Les façades d'exploitation NE DOIVENT PAS exposer de secret, token, clé ou charge sensible dans leurs sorties, réponses, journaux ou diagnostics ; les modes non interactifs DOIVENT produire des codes de sortie et des erreurs stables exploitables par un pipeline.
+Les façades d'exploitation MUST NOT exposer de secret, token, clé ou charge sensible dans leurs sorties, réponses, journaux ou diagnostics ; les modes non interactifs MUST produire des codes de sortie et des erreurs stables exploitables par un pipeline.
 
 #### Scenario: Commande non autorisée
 
@@ -34,7 +34,7 @@ Les façades d'exploitation NE DOIVENT PAS exposer de secret, token, clé ou cha
 
 ### Requirement: État de maintenance avec drainage borné
 
-La mise en maintenance DOIT drainer les traitements en cours dans une durée bornée avant de bloquer les nouvelles mutations, n'autoriser par défaut que les lectures explicitement compatibles, et réévaluer configuration, composition, migrations, dépendances et permissions avant la sortie ; le refus de maintenance NE DOIT PAS être présenté comme un échec métier définitif.
+La mise en maintenance MUST drainer les traitements en cours dans une durée bornée avant de bloquer les nouvelles mutations, n'autoriser par défaut que les lectures explicitement compatibles, et réévaluer configuration, composition, migrations, dépendances et permissions avant la sortie ; le refus de maintenance MUST NOT être présenté comme un échec métier définitif.
 
 #### Scenario: Requête reçue pendant le drainage
 
@@ -43,7 +43,7 @@ La mise en maintenance DOIT drainer les traitements en cours dans une durée bor
 
 ### Requirement: Health, diagnostic et audit opérateur
 
-L'exploitation DOIT exposer la santé et le diagnostic sans effet métier ni secret, et chaque action d'opérateur DOIT être corrélée et audité avec acteur, périmètre et résultat.
+L'exploitation MUST exposer la santé et le diagnostic sans effet métier ni secret, et chaque action d'opérateur MUST être corrélée et audité avec acteur, périmètre et résultat.
 
 #### Scenario: Réparation via le diagnostic
 

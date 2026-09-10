@@ -7,7 +7,7 @@ La performance est mesurée avant d'être optimisée, encadrée par des budgets 
 
 ### Requirement: Mesurer avant d'optimiser
 
-Toute optimisation DOIT reposer sur des mesures issues des signaux d'observabilité du composant concerné ; une optimisation sans mesure préalable NE DOIT PAS être retenue comme justification de complexité.
+Toute optimisation MUST reposer sur des mesures issues des signaux d'observabilité du composant concerné ; une optimisation sans mesure préalable MUST NOT être retenue comme justification de complexité.
 
 #### Scenario: Optimisation non mesurée
 
@@ -16,7 +16,7 @@ Toute optimisation DOIT reposer sur des mesures issues des signaux d'observabili
 
 ### Requirement: Budgets déclarés et vérifiés
 
-Chaque release DOIT pouvoir déclarer des budgets et objectifs de performance par surface concernée, vérifiés de façon reproductible ; une régression au-delà du budget déclaré DOIT être détectée et remontée explicitement.
+Chaque release MUST pouvoir déclarer des budgets et objectifs de performance par surface concernée, vérifiés de façon reproductible ; une régression au-delà du budget déclaré MUST être détectée et remontée explicitement.
 
 #### Scenario: Régression détectée
 
@@ -25,7 +25,7 @@ Chaque release DOIT pouvoir déclarer des budgets et objectifs de performance pa
 
 ### Requirement: Aucune performance au prix des invariants
 
-Les gains de performance NE DOIVENT PAS affaiblir l'échec fermé, l'évaluation d'autorisation, l'isolation de tenant ou de périmètre, ni la traçabilité d'audit.
+Les gains de performance MUST NOT affaiblir l'échec fermé, l'évaluation d'autorisation, l'isolation de tenant ou de périmètre, ni la traçabilité d'audit.
 
 #### Scenario: Cache court-circuitant l'autorisation
 
@@ -34,7 +34,7 @@ Les gains de performance NE DOIVENT PAS affaiblir l'échec fermé, l'évaluation
 
 ### Requirement: Caches et projections dérivés non autoritaires
 
-Tout cache, index ou accélération DOIT rester une dérivation reconstruisible dont l'absence ou l'obsolescence produit une dégradation contrôlée, jamais une autorité métier implicite.
+Tout cache, index ou accélération MUST rester une dérivation reconstruisible dont l'absence ou l'obsolescence produit une dégradation contrôlée, jamais une autorité métier implicite.
 
 #### Scenario: Cache périmé indisponible
 

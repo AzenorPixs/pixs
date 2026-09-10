@@ -49,6 +49,12 @@ Implémentation du build
 
 Une spécification OpenSpec validée portant explicitement sur un comportement de construction ou de packaging constitue la référence normative de ce comportement.
 
+### Convention normative RFC 2119
+
+Les contraintes de build, de packaging et de distribution qui sont vérifiables sont spécifiées dans OpenSpec avec les mots-clés RFC 2119 `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT` et `MAY`, en majuscules, au sein d'une prose française. `MUST` et `MUST NOT` bloquent la validation lorsqu'ils ne sont pas satisfaits ; tout écart à `SHOULD` ou `SHOULD NOT` doit être justifié et traçable ; `MAY` exprime une option sans activation implicite. Les interdictions utilisent exclusivement `MUST NOT` ou `SHOULD NOT` ; une forme hybride telle que `NE MUST` n'est pas valide. Les formulations françaises ou en minuscules des explications de ce document ne constituent pas des mots-clés RFC 2119.
+
+Le build doit vérifier les exigences applicables et ne peut ni réinterpréter, ni assouplir, ni contourner une clause RFC 2119 définie par une spécification OpenSpec validée.
+
 ---
 
 ## 2. Principe fondamental
@@ -1324,6 +1330,18 @@ Les tests de workflow doivent vérifier la persistance des définitions et insta
 
 Les tests de synchronisation doivent couvrir les modes `IMPORT`, `EXPORT`, `BIDIRECTIONAL` et `PROJECTION`, les modes d'autorité `PIXS`, `EXTERNAL` et `EXPLICIT_BIDIRECTIONAL`, les mappings d'identifiants, les cursors, checkpoints, webhooks, polling, replays, backoff, quotas, dead-letters, pertes de connexion, divergences, suppressions et conflits. Ils doivent confirmer que la source d'autorité, la stratégie de conflit et la politique de suppression sont déclarées, qu'une valeur absente ou ambiguë bloque l'activation, et qu'aucune modification externe ne contourne une Command, l'autorisation ou l'audit Pixs.
 
+Pour une projection LDAP optionnelle des identités numériques, groupes et
+appartenances de `pixs.core`, le build et les suites de conformité doivent
+vérifier le mapping versionné, l'allowlist des attributs, les tenants et scopes
+admissibles, la projection sortante sous autorité `PIXS`, les checkpoints, les
+retries, l'idempotence, les suppressions et tombstones. Ils doivent confirmer
+qu'une indisponibilité LDAP active le repli PostgreSQL et l'état `DEGRADED`,
+qu'une projection insuffisamment fraîche n'est pas lue après une mutation, et
+que LDAP ne peut ni importer une écriture Core, ni fournir une ACL, une
+décision d'autorisation, une révocation ou une authentification. Les fixtures,
+rapports et artefacts ne doivent contenir ni credential LDAP, ni DN de
+production, ni donnée personnelle réelle.
+
 Les tests du `RegionalPlacementProvider` doivent couvrir la résolution des régions logiques, le placement primaire, les réplicas, les régions de traitement, les sauvegardes, les clés, les transferts, les tombstones, la suppression, la restauration, la révocation et les limites de provider. Ils doivent vérifier la compatibilité de la `TenantPlacementPolicy`, l'absence de fuite entre tenants ou régions, la primaire unique, le fencing, l'epoch régional, la détection du split-brain et le refus d'une région non autorisée.
 
 Les tests de Commands, Events et Jobs doivent vérifier la validation avant mutation, l'autorisation et la transaction Django, la création atomique d'une outbox, la séparation entre `operation_id`, `command_id`, `event_id` et `job_id`, la déduplication Inbox, les replays, l'ordre par agrégat ou partition, les retries bornés, les erreurs non rejouables, les leases, la reprise après perte d'un worker ou du scheduler et l'absence de promesse `exactly-once`. Ils doivent également confirmer la propagation du `ScopeContext`, la réévaluation de l'autorisation à l'exécution, la conservation de l'acteur initial et l'absence de secrets ou de payloads privés dans les événements et diagnostics.
@@ -1436,3 +1454,52 @@ Le build des modules métier doit vérifier la propriété des modèles et migra
 Chaque module doit embarquer ou référencer les métadonnées de ses migrations sans les confondre avec les migrations d'un autre propriétaire. Le build doit vérifier que les migrations préservent les données tenant-scoped, les scopes, les ACL, les tombstones, les états de rétention, les événements et les configurations versionnées. Une migration partiellement appliquée doit rester identifiable et ne doit pas rendre l'artefact activable comme si elle avait réussi.
 
 La sélection du provider doit être reproductible entre Debian, Docker et développement. Le build doit refuser qu'un ordre d'import, un chemin de filesystem, une dépendance transitive ou la simple présence d'un paquet choisisse implicitement l'implémentation active.
+
+## 43. Composition frontend récursive
+
+Le build doit composer les facettes frontend déclarées par les composants `MODULE` et `SUBMODULE` dans le même graphe que leurs dépendances fonctionnelles. Il doit résoudre récursivement les contributions, les façades publiques, les contraintes SemVer, les traductions, les points d'entrée et les compatibilités avec le shell avant de produire les bundles ou chunks livrés. Aucun type de composant, registre ou lifecycle frontend parallèle ne doit être introduit pour cette composition.
+
+La validation de build doit refuser une dépendance frontend obligatoire absente, cyclique ou incompatible, un import d'implémentation privée, une collision de route, d'identifiant ou de contribution, ainsi qu'une politique de fusion ou de priorité implicite. Un sous-module optionnel invalide ne peut retirer que ses contributions et les dépendances qui les requièrent explicitement ; il doit laisser un diagnostic corrélé sans modifier l'ordre ni l'état des composants indépendants.
+
+Les artefacts Debian, Docker et de développement doivent produire la même composition frontend pour les mêmes manifests, versions et paramètres de build autorisés. Le lazy loading ne peut différer que le chargement d'un chunk déjà construit et livré ; le runtime ne doit ni découvrir par scan, ni télécharger, ni installer, ni évaluer du code distant pour rendre active une contribution de module ou de sous-module.
+
+## 44. Validation des capacités d'extension de plateforme
+
+Le build doit vérifier les manifests, contrats, versions, signatures,
+provenances, SBOM et contraintes de compatibilité des composants obtenus par un
+registre. Un composant récupéré depuis une source distante doit être vérifié
+avant son inclusion ; un registre ne peut pas rendre active une dépendance ou
+un provider non sélectionné. Les artefacts doivent d'abord rester utilisables
+avec une source privée ou hors ligne signée ; un marketplace public est validé
+comme adapter optionnel.
+
+Le build des règles métier doit valider le DSL restreint, ses schémas, versions,
+déterminisme, tests et frontières avec l'autorisation et les workflows ; il doit
+refuser toute évaluation de code arbitraire au runtime. Le build IA doit vérifier
+la désactivation par défaut, les contrats des providers, l'autorisation explicite
+des outils médiés par Commands, les versions de prompts et d'évaluations, les
+limites de budget, la politique de sortie des données et l'absence de données,
+credentials ou sorties sensibles dans les artefacts.
+
+Pour les caches, l'analytique et la collaboration, les validations contrôlent
+les partitions tenant/scope, la propagation des invalidations, la reconstruction
+des dérivés, le filtrage autorisé, les politiques de rétention et les modes
+dégradés. Les tests de collaboration couvrent les conflits, le rejeu, la
+révocation, la reconnexion et la convergence sans mutation métier implicite.
+Ils valident les adapters CRDT ou OT déclarés sans imposer de référence avant
+l'identification des premières ressources collaboratives.
+
+Les builds de clients mobiles et desktop génèrent ou valident des SDK fondés
+sur les contrats publics. Ils vérifient le stockage local chiffré lorsque la
+plateforme le déclare, l'absence de jeton dans les artefacts et la propagation
+du tenant, du scope, de l'identité et de la révocation aux notifications et
+liens profonds.
+
+Le build vérifie que les références de secrets restent externes, sont liées à
+des identités de workload et privilégient des credentials courts, que les
+providers SCIM, de secrets et de déploiement déclarent leurs contrats et que
+leurs tests n'utilisent que des données synthétiques. Il valide d'abord le
+chaînage vérifiable d'audit et le scellement externe optionnel ; les politiques
+WORM ne sont validées que lorsqu'un déploiement les déclare. Il valide enfin les
+stratégies canary ou blue/green sans promouvoir une révision incompatible ni
+masquer un échec de health gate, de migration, de compatibilité ou de sécurité.

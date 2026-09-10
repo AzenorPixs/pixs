@@ -7,7 +7,7 @@ Le module obligatoire pixs.core fournit les primitives communes minimales au-des
 
 ### Requirement: Module obligatoire au-dessus du noyau
 
-Toute composition Pixs DOIT inclure pixs.core comme module requis ; une composition sans pixs.core est invalide.
+Toute composition Pixs MUST inclure pixs.core comme module requis ; une composition sans pixs.core est invalide.
 
 #### Scenario: Composition sans core refusée
 
@@ -16,7 +16,12 @@ Toute composition Pixs DOIT inclure pixs.core comme module requis ; une composit
 
 ### Requirement: Primitives minimales communes
 
-pixs.core DOIT exposer utilisateurs, identités numériques, groupes, appartenances, tenants, rôles, ACL et permissions comme capacités communes de bas niveau, consommées via contrats et services.
+pixs.core MUST exposer utilisateurs, identités numériques, groupes,
+appartenances, tenants, rôles, ACL et permissions comme capacités communes de
+bas niveau, consommées via contrats et services. La consultation des identités
+numériques, groupes et appartenances MAY utiliser une projection d'annuaire
+optionnelle sous contrat ; PostgreSQL MUST rester leur source de vérité et le
+service MUST fournir un repli PostgreSQL contrôlé.
 
 #### Scenario: Primitive consommée par contrat
 
@@ -25,7 +30,7 @@ pixs.core DOIT exposer utilisateurs, identités numériques, groupes, appartenan
 
 ### Requirement: Aucun fournisseur concret imposé
 
-Ni le noyau ni pixs.core NE DOIT imposer un annuaire, une authentification, un stockage ou une intégration concrets ; ces apports relèvent des modules, fournisseurs ou extensions.
+Le noyau et pixs.core MUST NOT imposer un annuaire, une authentification, un stockage ou une intégration concrets ; ces apports relèvent des modules, fournisseurs ou extensions.
 
 #### Scenario: Substitution de fournisseur
 
