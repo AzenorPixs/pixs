@@ -164,7 +164,9 @@ Les spécifications OpenSpec DOIVENT rester cohérentes entre elles.
 
 ## 7. OpenCode
 
-OpenCode est un composant technique du projet.
+OpenCode et CGPT constituent un outillage technique de contribution au dépôt. Ils ne font pas partie du produit Pixs, de son Kernel, de ses modules ni de ses artefacts distribuables.
+
+Le bridge `tools/cgpt-approval-bridge/` coordonne les demandes d'approbation entre OpenCode et CGPT pour les écritures ou opérations sensibles. Il reste indépendant de l'architecture fonctionnelle Pixs et ne requiert pas de capacité OpenSpec.
 
 Les éléments suivants sont générés par OpenSpec/OpenCode et NE DOIVENT PAS être modifiés manuellement sans autorisation explicite :
 

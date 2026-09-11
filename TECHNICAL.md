@@ -87,9 +87,9 @@ Le backend Django reste l'autorité pour les règles métier, les transactions e
 
 Le provider ne peut établir qu'un niveau d'assurance couvert par sa configuration de confiance. L'identifiant externe canonique est le triplet `(provider_id, issuer, subject)` ; une adresse e-mail, un nom affiché ou une claim non vérifiée ne constitue pas une clé de rapprochement. La liaison avec une identité existante est une opération explicite, vérifiée, idempotente et auditée.
 
-## 4. Exigences techniques à spécifier
+## 4. Articulation avec OpenSpec et choix techniques ouverts
 
-Les futures spécifications OpenSpec devront notamment définir :
+Les spécifications OpenSpec actives définissent les exigences normatives applicables aux domaines ci-dessous. La présente liste ne les duplique pas : elle recense les choix techniques concrets qui restent volontairement ouverts pour l'implémentation ou qui devront être précisés par une évolution OpenSpec si leur décision modifie un comportement normatif :
 
 * les identifiants internes stables des utilisateurs et identités numériques ;
 * les contraintes d'unicité du lien utilisateur-identité ;

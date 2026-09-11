@@ -1134,7 +1134,7 @@ Le présent document ne fixe volontairement pas encore :
 * la stratégie de signature des artefacts ;
 * la stratégie CI/CD de publication.
 
-Les choix suivants restent également à préciser dans les spécifications OpenSpec :
+Les spécifications OpenSpec actives couvrent les garanties normatives associées aux domaines suivants. Les précisions ci-dessous restent à choisir au moment de l'implémentation ; toute décision qui modifie ces garanties nécessite une évolution OpenSpec approuvée :
 
 * le schéma concret du `DataGovernanceProfile`, sa version et son rattachement aux manifests ;
 * la taxonomie définitive de confidentialité et de données personnelles, ainsi que les contrôles sur les données non classifiées ;
@@ -1170,60 +1170,15 @@ Les choix suivants restent également à préciser dans les spécifications Open
 * les migrations de tenant, restaurations inter-régions, changements de politique et le périmètre des copies offline, logs, traces, caches, index, événements et webhooks ;
 * les conditions exactes d'une éventuelle topologie active-active ou multi-primary, qui restent hors du socle de référence ;
 
-Ces décisions doivent être prises dans les spécifications OpenSpec appropriées avant que leur implémentation ne soit considérée comme normative.
+Ces choix ne complètent une spécification que lorsqu'ils introduisent ou modifient un comportement normatif.
 
 ---
 
-## 37. Capacités OpenSpec recommandées
+## 37. Capacités OpenSpec applicables
 
-Le packaging devrait être spécifié par capacités indépendantes plutôt que comme une extension implicite du runtime.
+La construction, le packaging et la publication s'appuient notamment sur les capacités actives `runtime`, `installation-provisioning`, `deb-package`, `docker-image`, `artifact-publication`, `release-management`, `component-registry` et `progressive-deployment`. Les capacités transverses `configuration`, `secrets-providers`, `security`, `compatibility`, `testing`, `observability`, `operations`, `backup-disaster-recovery`, `data-governance`, `regional-residency`, `offline-first` et `sdk-ecosystem` apportent les garanties complémentaires.
 
-Une décomposition initiale possible est :
-
-```text
-openspec/specs/
-├── ...
-├── deb-package/
-│   └── spec.md
-├── docker-image/
-│   └── spec.md
-├── capabilities/
-│   └── spec.md
-├── feature-flags/
-│   └── spec.md
-├── identity-assurance/
-│   └── spec.md
-├── authorization-engine/
-│   └── spec.md
-├── migrations/
-│   └── spec.md
-├── data-lifecycle/
-│   └── spec.md
-├── data-governance/
-│   └── spec.md
-├── bulk-operations/
-│   └── spec.md
-├── quotas-entitlements/
-│   └── spec.md
-├── offline-first/
-│   └── spec.md
-├── regional-residency/
-│   └── spec.md
-├── sdk-ecosystem/
-│   └── spec.md
-└── runtime/
-    └── spec.md
-```
-
-Des capacités supplémentaires pourront être créées si leur responsabilité devient suffisamment distincte, par exemple pour :
-
-```text
-artifact-publication
-release-management
-production-runtime
-```
-
-Cette décomposition n'est pas normative tant qu'elle n'a pas été introduite et validée dans OpenSpec.
+Toute capacité supplémentaire reste soumise à un changement OpenSpec approuvé ; elle ne doit pas être déduite d'un mécanisme de packaging existant.
 
 ---
 

@@ -2509,7 +2509,7 @@ Les exigences normatives vérifiables de Pixs sont écrites en français et util
 
 Les spécifications OpenSpec portent les exigences comportementales testables et font foi pour leur formulation normative. `PROJECT.md` fixe les invariants architecturaux ; lorsqu'il formule une nouvelle exigence vérifiable, celle-ci doit être reprise dans OpenSpec avec les mots-clés RFC 2119 avant toute implémentation.
 
-Une première décomposition OpenSpec envisagée est :
+La décomposition OpenSpec active est :
 
 ```text
 openspec/specs/
@@ -2632,6 +2632,8 @@ openspec/specs/
 ├── performance/
 │   └── spec.md
 ├── runtime/
+│   └── spec.md
+├── installation-provisioning/
 │   └── spec.md
 ├── operations/
 │   └── spec.md
@@ -2996,6 +2998,11 @@ runtime
 ├── coordination persistante et leases
 └── exposition, arrêt et reprise contrôlés
 
+installation-provisioning
+├── états et opérations de provisionnement d'installation
+├── configuration, secrets et opérateur initial vérifiés
+└── création de tenant, reprise et audit contrôlés
+
 operations
 ├── interface de management et opérations persistantes
 ├── planification, confirmation et idempotence
@@ -3040,7 +3047,7 @@ release-management
 └── validation, activation et retrait de release
 ```
 
-Les spécifications OpenSpec validées constitueront la référence détaillée des comportements implémentables.
+Les spécifications OpenSpec actives constituent la référence détaillée des comportements implémentables.
 
 ## 35. Ordre architectural initial des capacités
 
@@ -3166,6 +3173,8 @@ testing
 performance
     ↓
 runtime
+    ↓
+installation-provisioning
     ↓
 operations
     ↓
@@ -3309,7 +3318,7 @@ Ce premier cadrage ne fixe pas encore :
 * le mode de déploiement final de Pixs ;
 * la stratégie Docker éventuelle du projet.
 
-Ces éléments devront faire l'objet de décisions explicites puis de spécifications OpenSpec.
+Ces éléments restent des choix d'implémentation ou d'exploitation. Lorsqu'ils modifient un comportement normatif, ils doivent faire l'objet d'une décision explicite puis d'une évolution OpenSpec approuvée.
 
 ## 37. Modèle final
 
@@ -3381,7 +3390,8 @@ Outils :
 
 * OpenSpec : spécifications ;
 * OpenCode : agent de codage ;
-* Codex    : orchestrateur ;
+* CGPT / Codex : orchestrateur ;
+* `cgpt-approval-bridge` : médiation des approbations inter-agents ;
 * Git local et distant : versionnement ;
 * VS Code / Geany : développement ;
 
@@ -3394,7 +3404,7 @@ Architecture :
                         │
              ┌──────────┴──────────┐
              ▼                     ▼
-         OpenCode               Codex
+         OpenCode            CGPT / Codex
       Agent de codage        Orchestrateur
              ▲                     │
              └────── API ──────────┘
@@ -3406,7 +3416,9 @@ Architecture :
 
 OpenCode reste l'agent de codage du projet.
 
-Codex intervient en analyse, en revue de code, et en validateur.
+CGPT / Codex intervient en analyse, en revue de code et en validateur. Le bridge `tools/cgpt-approval-bridge/` transmet les demandes d'écriture ou d'opération sensible, conserve leur état d'approbation et n'autorise leur exécution qu'après une décision explicite.
+
+Cet outillage inter-agents est extérieur au produit Pixs : il n'est ni un composant Pixs, ni une dépendance runtime, ni un service distribué avec les artefacts Debian ou Docker. Il sert uniquement à la gouvernance des contributions et des spécifications du dépôt.
 
 ## 39. Environnement de développement et exécution locale
 
