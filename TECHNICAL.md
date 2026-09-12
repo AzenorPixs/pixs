@@ -2006,160 +2006,23 @@ Les tests doivent distinguer les garanties obligatoires des capacités optionnel
 
 ## 36. Packaging, upgrade et exploitation
 
-### 36.1 Topologie de référence
-
-La topologie d'exploitation de référence repose sur un même artefact et des profils d'exécution distincts :
-
-```text
-entrée publique / reverse proxy
-              │
-          web × 1..N
-              │
-        PostgreSQL persistant
-          │       │
-       worker   scheduler
-        × 0..N   1 actif + secours
-```
-
-Le rôle `web` sert l'API et le trafic utilisateur. Le rôle `worker` consomme les Jobs, événements, notifications et synchronisations persistants. Le rôle `scheduler` déclenche les traitements périodiques ; il n'est pas une autorité métier et ne reçoit pas de trafic public. Un même artefact peut fournir ces rôles par une configuration d'exécution explicite, sans branche fonctionnelle cachée. Le développement peut regrouper les rôles, mais la production doit pouvoir les exécuter comme unités séparées.
-
-Seul `web` est exposé à l'entrée publique par défaut. Les workers, schedulers, files, stores de coordination et endpoints de management restent sur un réseau privé ou derrière une frontière d'accès explicitement authentifiée, autorisée et auditée. Un reverse proxy, un gestionnaire de services ou un orchestrateur peut fournir cette frontière, mais aucun de ces adapters ne devient une autorité métier.
-
-Le runtime des processus est stateless. PostgreSQL constitue la persistance de référence des données métier, des outbox, des inbox, des Jobs, des idempotences, des checkpoints et des états de coordination lorsque la capacité les utilise. Un provider de file ou de coordination est autorisé s'il expose des garanties persistantes équivalentes ; aucun broker, orchestrateur ou mécanisme de consensus particulier n'est requis par le Kernel.
-
-Le scheduler acquiert un lease persistant borné par une durée, renouvelable et expirant. Le contrat doit empêcher un ancien détenteur de continuer après expiration, au moyen d'un jeton de clôture monotone ou d'un mécanisme équivalent vérifiable. Un provider qui ne peut pas empêcher un détenteur périmé d'agir ne peut pas être utilisé comme coordination autoritative du scheduler. Les workers peuvent être répliqués, mais leurs effets restent soumis à l'idempotence, à la déduplication et aux limites de concurrence déclarées.
-
-Une installation mono-instance et une exécution multi-instance doivent conserver les mêmes contrats, frontières d'autorisation, garanties d'idempotence et règles de données. La réplication des processus ne fournit pas à elle seule la haute disponibilité de PostgreSQL, des stockages objet, des files ou des sauvegardes ; ces garanties et les objectifs `RPO`/`RTO` sont déclarés par le déploiement.
-
-Une release Pixs est définie par sa version fonctionnelle, sa source, sa composition de composants, ses manifests, ses contrats et ses dépendances. Le paquet Debian et l'image OCI/Docker d'une même release doivent être corrélables et conserver les mêmes garanties fonctionnelles. Les artefacts publiés sont immuables ; une correction produit une nouvelle version ou un nouvel artefact explicitement corrélé.
-
-La configuration, les références de secrets, PostgreSQL, les volumes persistants, les fichiers utilisateur et les stockages externes ne doivent pas être confondus avec l'artefact applicatif. Le runtime reçoit une configuration validée et ne doit pas déduire un provider, un tenant ou une identité de l'état accidentel du paquet, de l'image ou du filesystem éphémère.
-
-Une mise à niveau est une opération orchestrée par Pixs et l'adapter d'exploitation :
-
-```text
-prévalidation de l'artefact et de la composition
-    ↓
-validation des contrats, dépendances et compatibilités
-    ↓
-validation du plan de migration
-    ↓
-exécution des migrations autorisées
-    ↓
-démarrage et validation startup
-    ↓
-readiness / health
-    ↓
-activation du trafic
-```
-
-Les migrations de données sont versionnées, possédées par les modules et orchestrées globalement. Une migration n'est pas annulée automatiquement pour simuler un rollback applicatif. Un downgrade est bloqué lorsqu'il n'existe pas de garantie explicite de compatibilité du code avec le schéma et les données actuels. Un rollback applicatif peut être proposé uniquement lorsque la matrice de compatibilité l'autorise ; sinon, la procédure de restauration doit être explicite, vérifiée et auditée.
-
-Systemd, un runtime de conteneurs et un orchestrateur externe peuvent fournir des adapters d'exploitation différents, mais ils doivent alimenter le même lifecycle Pixs, les mêmes health checks, la même configuration validée, les mêmes signaux d'arrêt et les mêmes diagnostics. Aucun orchestrateur externe ne doit devenir une autorité métier ou une dépendance du Kernel.
-
-Le runtime applicatif est stateless par défaut. Les processus web, workers et schedulers ne doivent pas conserver dans leur mémoire ou leur filesystem local un état nécessaire à l'autorité métier, à l'idempotence, à la reprise d'un Job, à une session durable ou à la synchronisation d'un tenant. PostgreSQL, l'outbox, les Jobs, les sessions et les stockages externes fournissent les mécanismes persistants nécessaires.
-
-Une seule instance doit pouvoir fonctionner avec la même composition qu'un déploiement multi-instance. Les verrous, leases, déduplications, files et checkpoints doivent être coordonnés par une source persistante ; un verrou mémoire ou un fichier local ne peut être utilisé que comme optimisation sans garantie d'autorité. La montée en charge horizontale des rôles web, worker et scheduler ne doit pas modifier les contrats métier ni provoquer de double traitement non maîtrisé.
-
-Les rôles d'exécution sont des profils du même artefact :
-
-```text
-web       API, sessions et trafic utilisateur
-worker    Jobs, événements, notifications et synchronisations
-scheduler planification périodique et déclenchement des Jobs
-```
-
-Le mode de développement peut regrouper plusieurs profils, mais un déploiement de production doit rendre leur activation, leurs capacités et leurs limites inspectables. Le scheduler acquiert un lease persistant avec durée, renouvellement et expiration contrôlés ; la perte du lease arrête ou suspend le déclenchement et ne doit pas laisser l'ancien détenteur continuer comme autorité. Les workers consomment des Jobs persistants et s'appuient sur l'idempotence, la déduplication et les limites de concurrence pour supporter la réplication.
+`BUILD.md` définit intégralement la construction, le packaging, le déploiement,
+les mises à niveau et l'exploitation des artefacts Pixs. Les garanties
+normatives associées sont portées par les capacités OpenSpec concernées.
+Ce document ne duplique pas leurs modalités techniques.
 
 ## 37. Sauvegarde et reprise après sinistre
 
-Pixs ne prescrit pas un outil de sauvegarde, mais expose les éléments nécessaires à une stratégie de récupération déclarée par déploiement. Le déploiement doit définir ses objectifs `RPO` et `RTO`, son périmètre, ses durées de conservation, ses contrôles d'accès, ses procédures de restauration et la preuve attendue après restauration.
-
-La stratégie doit couvrir séparément :
-
-```text
-PostgreSQL
-    modèles, migrations appliquées, outbox, Jobs, idempotence,
-    workflows, mappings, audit et configuration persistée
-
-stockages objet et fichiers
-    contenu, versions, rétention, legal holds et checksums
-
-configuration et secrets
-    références, versions, accès et mécanismes de rotation
-```
-
-Une sauvegarde ne devient pas une nouvelle source d'autorité. Une restauration doit vérifier la cohérence entre les métadonnées PostgreSQL, les objets binaires, les événements non publiés, les Jobs, les checkpoints, les mappings externes et les versions de composants. Les identités, tenants, ACL, secrets, fichiers et données métier ne doivent pas être réinitialisés ou supprimés implicitement pour rendre la restauration possible.
-
-La sauvegarde possède une politique de rétention distincte de celle des données en ligne. Une restauration doit réappliquer les tombstones, le journal d'effacement, les legal holds et les états de rétention applicables avant exposition aux utilisateurs ou aux synchronisations. Les objets restaurés ne doivent pas annuler silencieusement une suppression validée ; une divergence doit être bloquée ou rendue explicite et auditable.
-
-Les restaurations doivent être exécutables dans un environnement isolé et testées régulièrement. Après restauration, Pixs doit pouvoir démarrer en état contrôlé, détecter les écarts de composition ou de version, reprendre les traitements idempotents et maintenir les événements ou synchronisations non confirmés dans un état diagnostiquable. Une restauration destructive ou un retour à un point antérieur nécessite une opération explicitement autorisée et auditée.
-
-Le lifecycle de déploiement doit supporter une mise à niveau avec interruption courte. Les modes rolling, blue/green et canary sont des stratégies d'adapter et ne constituent pas une garantie du Kernel. Un mode progressif exige une compatibilité transitoire entre les versions `N` et `N+1` pour les API, événements, schémas et données partagés ; les migrations suivent lorsque nécessaire une séquence d'expansion, de double compatibilité, puis de contraction. Une suppression de colonne, d'index, de contrat ou de champ consommé par `N` est différée jusqu'à la fin de la fenêtre de compatibilité.
-
-Le contrôleur d'exploitation doit pouvoir distinguer préparation, exposition, activation, retrait et rollback. Une instance qui échoue ses probes ou ses contrôles de compatibilité ne reçoit pas de trafic et ne doit pas être considérée comme une cible valide de rollback sans vérification du schéma et des données.
-
-Une mise à jour applicative est une opération explicitement demandée par un opérateur ou un système d'exploitation autorisé. Le runtime ne doit pas télécharger, installer ou activer silencieusement une nouvelle composition. Avant l'exécution, le plan doit indiquer la release cible, la provenance, les migrations, les contrats affectés, les préconditions, la stratégie de déploiement et les possibilités de reprise. Après l'exécution, il doit conserver le résultat, les diagnostics, les versions actives et les décisions de rollback.
-
-Un mécanisme de mise à jour de sécurité fourni par Debian, le runtime de conteneurs ou un orchestrateur peut automatiser le déclenchement, mais ne supprime pas la validation de signature, provenance, compatibilité, configuration, migrations, health checks et état de récupération. Une mise à jour refusée ou interrompue doit laisser l'ancienne composition ou un état explicitement sûr, sans purge ni activation partielle non diagnostiquée.
-
-Chaque release doit déclarer ses origines compatibles, ses migrations requises, les versions intermédiaires éventuelles et les conditions de sortie de support. La chaîne de migration est ordonnée et vérifiable ; un saut de version n'est permis que si toutes les migrations et garanties intermédiaires sont compatibles ou regroupées explicitement dans le plan. Une version hors fenêtre de support ou sans chemin de migration vérifiable doit être refusée avant modification des données.
-
-Les canaux de publication sont des contextes de confiance distincts :
-
-```text
-stable
-    releases fonctionnelles validées et supportées
-
-security
-    corrections de sécurité compatibles avec une release supportée
-
-experimental
-    essais explicitement sélectionnés, sans garantie de compatibilité stable
-```
-
-Le canal, la version, la source, la composition et le digest éventuel doivent être vérifiables avant installation. Le runtime ne doit pas considérer un tag mutable ou le canal expérimental comme équivalent à une release stable. Un artefact d'un canal non autorisé doit être refusé avant activation.
-
-La signature, la provenance et le SBOM d'un artefact font partie de son identité de distribution. Le trust store, les clés autorisées, leur rotation et leur révocation sont gérés par une capacité de sécurité ou l'adapter d'exploitation, jamais par une valeur secrète intégrée à l'image ou au paquet. La vérification doit être exécutée avant installation, démarrage et mise à niveau ; une signature invalide, absente, expirée ou révoquée bloque l'opération et produit un diagnostic sans exposer de secret.
-
-L'autorité de signature des canaux `stable` et `security` doit être distincte de celle des artefacts `experimental`, sauf décision de confiance explicitement documentée. Le trust store peut être distribué avec l'environnement d'exploitation ou fourni par une capacité de sécurité, mais sa modification est versionnée, autorisée et auditée. Une rotation doit permettre une période de chevauchement contrôlée ; une révocation doit rester vérifiable même lorsqu'un dépôt ou un service de publication est indisponible. Les clés privées ne doivent être accessibles qu'au processus de signature autorisé et ne doivent apparaître dans aucun artefact, log, manifest ou fixture.
+Les détails de sauvegarde, de restauration, de reprise et de publication sont
+définis dans `BUILD.md`, en cohérence avec les capacités OpenSpec de cycle de
+vie, de sauvegarde, de compatibilité et de release.
 
 ## 38. Interface d'exploitation
 
-L'exploitation repose sur une interface de management distincte de l'API métier. Elle peut être consommée par une CLI officielle, une interface HTTP d'administration ou un adapter d'orchestrateur, mais ces façades utilisent les mêmes contrats et la même autorité. En production, cette interface n'est pas exposée au trafic public par défaut ; son exposition éventuelle passe par une frontière réseau et des contrôles d'identité, d'autorisation, de scope et d'audit explicites.
+L'interface d'exploitation, les opérations de management et l'état
+`MAINTENANCE` sont définis dans `BUILD.md` et par la capacité OpenSpec
+`operations`. Ils restent distincts de l'API métier.
 
-Les opérations doivent pouvoir couvrir :
-
-```text
-inspect
-validate
-plan
-migrate
-upgrade
-rollback autorisé
-restart contrôlé
-health
-diagnostic
-```
-
-Une opération d'exploitation porte son identifiant, sa version, son acteur, son contexte plateforme ou tenant, son périmètre, sa clé d'idempotence, son plan, son état et son résultat. Les mutations sensibles exigent une confirmation ou une étape d'application distincte de la génération du plan. Les opérations longues retournent un suivi persistant et utilisent les Jobs lorsque nécessaire.
-
-La CLI et l'API d'exploitation ne doivent pas exposer de secret, token, clé privée, valeur de configuration secrète ou payload sensible dans leur sortie standard, leurs réponses, leurs logs ou leurs diagnostics. Les commandes non interactives doivent produire des codes de sortie et des erreurs stables afin d'être utilisées par un pipeline. Une opération non autorisée, ambiguë ou non idempotente doit échouer explicitement plutôt que simuler un succès.
-
-`MAINTENANCE` est un état d'exploitation distinct des états métier et du lifecycle d'un composant. Il doit pouvoir porter une cause, un acteur, un périmètre, une durée ou condition de sortie et une corrélation. En maintenance :
-
-```text
-mutations métier              bloquées ou limitées explicitement
-lectures                      autorisées selon la politique déclarée
-Jobs                          drainés, suspendus ou repris selon leur contrat
-synchronisations              suspendues ou placées en état contrôlé
-health                        expose l'état et la capacité à reprendre
-management                    accessible aux opérateurs autorisés
-```
-
-La mise en maintenance doit pouvoir drainer les traitements en cours avant de bloquer les nouvelles mutations, avec un délai borné et un résultat diagnostiquable. Une requête métier reçue pendant cette phase répond par un état contractuel stable ; elle ne doit pas être exécutée partiellement. La sortie de maintenance réévalue la configuration, la composition, les migrations, les dépendances et les permissions avant de réactiver le trafic.
-
-Par défaut, `MAINTENANCE` autorise uniquement les Queries explicitement compatibles avec la lecture seule. Les Commands métier, les Commands asynchrones, les Jobs et les synchronisations sont refusés ou suspendus selon leur contrat. La frontière API doit produire une représentation stable de l'état de maintenance, sans exposer de détail sensible, et le client ne doit pas interpréter un refus de maintenance comme un échec métier définitif. Une capacité peut déclarer une opération d'administration ou de sécurité autorisée pendant la maintenance ; cette exception est indépendante des mutations métier ordinaires et reste auditée.
 ## 39. Providers concrets et modules métier
 
 Les providers et modules métier sont des `Component` versionnés. Leur manifest doit déclarer leurs capacités fournies et requises, contrats implémentés, dépendances, configuration, compatibilité, lifecycle, niveau de confiance et tests de conformité applicables.

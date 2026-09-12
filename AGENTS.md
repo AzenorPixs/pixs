@@ -1,5 +1,7 @@
 # AGENTS.md — Pixs
 
+Version : 0.2
+
 ## 1. Contexte
 
 * Projet : `Pixs` ;
@@ -171,8 +173,6 @@ Les spécifications OpenSpec DOIVENT rester cohérentes entre elles.
 
 OpenCode et CGPT constituent un outillage technique de contribution au dépôt. Ils ne font pas partie du produit Pixs, de son Kernel, de ses modules ni de ses artefacts distribuables.
 
-Le bridge `tools/cgpt-approval-bridge/` coordonne les demandes d'approbation entre OpenCode et CGPT pour les écritures ou opérations sensibles. Il reste indépendant de l'architecture fonctionnelle Pixs et ne requiert pas de capacité OpenSpec.
-
 Les éléments suivants sont générés par OpenSpec/OpenCode et NE DOIVENT PAS être modifiés manuellement sans autorisation explicite :
 
 * `.opencode/commands/`
@@ -183,6 +183,11 @@ Toute modification de la configuration OpenCode nécessite une validation explic
 ## 8. Arborescence et fichiers
 
 L'agent DOIT préserver l'arborescence et les conventions existantes.
+
+Toute référence à un prompt renvoie automatiquement au dossier `PROMPTS/` du
+projet. Ce dossier et son contenu ne sont pas versionnés et sont protégés :
+leur création, modification, déplacement ou suppression nécessite une
+validation explicite du développeur.
 
 Le renommage, déplacement ou la suppression d'un fichier ou répertoire nécessite une validation explicite du développeur.
 

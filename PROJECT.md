@@ -3386,226 +3386,28 @@ Aucun provider concret d'annuaire ou d'intégration externe n'appartient au socl
 
 ## 38. Chaîne de développement
 
-Outils :
-
-* OpenSpec : spécifications ;
-* OpenCode : agent de codage ;
-* CGPT / Codex : orchestrateur ;
-* `cgpt-approval-bridge` : médiation des approbations inter-agents ;
-* Git local et distant : versionnement ;
-* VS Code / Geany : développement ;
-
-Architecture :
-
-```text
-                    Développeur
-                        │
-              interaction / validation
-                        │
-             ┌──────────┴──────────┐
-             ▼                     ▼
-         OpenCode            CGPT / Codex
-      Agent de codage        Orchestrateur
-             ▲                     │
-             └────── API ──────────┘
-                                   │
-                                   ▼
-                                  GPT
-                     Analyse / Revue / Validation
-```
-
-OpenCode reste l'agent de codage du projet.
-
-CGPT / Codex intervient en analyse, en revue de code et en validateur. Le bridge `tools/cgpt-approval-bridge/` transmet les demandes d'écriture ou d'opération sensible, conserve leur état d'approbation et n'autorise leur exécution qu'après une décision explicite.
-
-Cet outillage inter-agents est extérieur au produit Pixs : il n'est ni un composant Pixs, ni une dépendance runtime, ni un service distribué avec les artefacts Debian ou Docker. Il sert uniquement à la gouvernance des contributions et des spécifications du dépôt.
+La contribution suit les règles du dépôt et les évolutions OpenSpec applicables.
+Les outils employés pour concevoir, développer et réviser Pixs ne font pas partie
+de son architecture ni de ses artefacts distribuables.
 
 ## 39. Environnement de développement et exécution locale
 
-Pixs doit pouvoir être exécuté directement dans un environnement de
-développement sans nécessiter la construction préalable d'un paquet
-Debian ou d'une image Docker.
-
-Pendant le développement, le backend Django doit pouvoir être démarré au
-moyen de son serveur de développement afin de permettre notamment :
-
--   le développement et le test interactif des fonctionnalités backend ;
--   le développement des modules et sous-modules ;
--   le développement et l'intégration du frontend ;
--   le test des API ;
--   le diagnostic des erreurs ;
--   l'exécution locale rapide après modification du code.
-
-Architecture de développement :
-
-``` text
-Développeur
-    │
-    ├── Backend Django
-    │      └── serveur de développement
-    │
-    ├── Frontend TanStack
-    │      └── serveur de développement frontend
-    │
-    └── PostgreSQL
-           └── source de vérité
-```
-
-Le mode développement constitue un environnement d'exécution de Pixs et
-non une variante fonctionnelle de son architecture.
-
-Les invariants architecturaux, règles métier, contrôles d'autorisation,
-contrats et frontières entre composants restent applicables
-indépendamment du mode d'exécution.
-
-Le serveur de développement Django est exclusivement destiné au
-développement et aux tests locaux. Il ne constitue pas le serveur
-applicatif de référence pour un déploiement de production.
-
-Les commandes exactes de démarrage, ports, variables d'environnement,
-mécanismes de rechargement, dépendances de développement et outils
-associés seront définis par les spécifications et la documentation de
-développement.
+Pixs peut être exécuté directement pour le développement. Ce mode ne constitue
+pas une variante fonctionnelle : les invariants architecturaux, contrats,
+contrôles d'autorisation et frontières entre composants restent identiques.
+Les modalités techniques de construction et d'exécution sont définies dans
+`BUILD.md` et par les capacités OpenSpec concernées.
 
 ## 40. Packaging et distribution
 
-Pixs doit pouvoir être construit et distribué sous plusieurs formes de
-packaging sans modifier son architecture fonctionnelle.
+Pixs prévoit deux formes de distribution : un paquet Debian (`.deb`) et une
+image Docker. Elles distribuent une même release, sans modifier le Kernel,
+`pixs.core`, les modules, les contrats publics ou les règles métier.
 
-Les formes de distribution initialement prévues sont :
-
-``` text
-Pixs
-├── paquet Debian (.deb)
-└── image / conteneur Docker
-```
-
-Le packaging constitue une responsabilité de distribution et de
-déploiement. Il ne doit pas introduire de dépendance fonctionnelle dans
-le Kernel, `pixs.core` ou les modules métiers.
-
-Une même version fonctionnelle de Pixs doit pouvoir être distribuée sous
-plusieurs formats tout en conservant les mêmes invariants
-architecturaux, contrats publics et comportements applicatifs.
-
-Une release Pixs est identifiée par une version fonctionnelle, une source
-et une composition de composants corrélables. Les artefacts Debian et OCI
-correspondants sont immuables après publication. La configuration, les
-secrets, PostgreSQL, les fichiers persistants et les stockages externes
-restent hors de l'artefact lorsque leur nature l'exige.
-
-Une mise à niveau suit une séquence explicite :
-
-```text
-prévalidation
-    ↓
-compatibilité et composition
-    ↓
-migrations autorisées
-    ↓
-démarrage de la nouvelle version
-    ↓
-startup / readiness / health
-    ↓
-activation du trafic
-```
-
-Un downgrade de base de données n'est jamais automatique. Un rollback applicatif n'est autorisé que si la compatibilité avec le schéma et les données courants est garantie. Une migration échouée, une incompatibilité ou un health check bloquant doit arrêter l'activation et produire un diagnostic explicite. La restauration et la reprise sont des opérations d'exploitation distinctes, sans purge implicite.
-
-Systemd constitue l'adapter d'exploitation de référence pour le paquet Debian et un runtime de conteneurs constitue l'adapter de référence pour l'image OCI/Docker. Kubernetes, Nomad ou un autre orchestrateur restent des adapters optionnels et ne doivent pas devenir des dépendances du Kernel.
-
-Le runtime applicatif est stateless par défaut. PostgreSQL, les stockages objet, les files persistantes, les résultats de Jobs, les sessions lorsqu'elles existent et les autres états nécessaires à la reprise sont externalisés ou fournis par des capacités persistantes déclarées. Une installation mono-instance reste supportée ; plusieurs instances web, workers ou schedulers doivent pouvoir fonctionner sans divergence ni dépendance au filesystem local.
-
-Un même artefact Pixs peut être exécuté selon trois rôles logiques : `web` pour l'API et le trafic utilisateur, `worker` pour les Jobs, événements, notifications et synchronisations, et `scheduler` pour les déclenchements périodiques. Le développement peut regrouper ces rôles ; la production les déclare explicitement. Le scheduler utilise un lease persistant et les workers peuvent être multipliés sans modifier les garanties métier.
-
-Seul le rôle `web` reçoit le trafic public. Les workers, schedulers, files, stores de coordination et interfaces de management restent sur un réseau privé ou derrière une frontière d'accès explicitement protégée. Une interface d'exploitation peut être fournie par une CLI, une API d'administration ou un adapter d'orchestrateur, mais elle utilise les mêmes identités, permissions, contextes et audits que Pixs et ne doit pas être exposée comme une route métier publique par défaut.
-
-Le déploiement de référence supporte une instance unique et le scale-out horizontal de `web` et `worker`. La réplication des processus ne fournit pas à elle seule la haute disponibilité de PostgreSQL, des stockages objet, des files ou des sauvegardes : ces garanties, ainsi que les objectifs `RPO` et `RTO`, sont déclarés par le déploiement. Aucun broker, orchestrateur ou mécanisme de consensus particulier n'est requis par le Kernel ; un provider de coordination ou de file doit seulement respecter les contrats persistants de Pixs.
-
-La sauvegarde et la reprise après sinistre sont des responsabilités d'exploitation déclarées par déploiement. Chaque déploiement doit préciser ses objectifs `RPO` et `RTO`, les données couvertes, la stratégie de sauvegarde PostgreSQL, la conservation ou le versionnement des stockages objet, ainsi que la protection séparée de la configuration et des secrets. Une restauration doit être vérifiable, testée et ne doit jamais purger implicitement les données ou réinitialiser les identités, tenants, mappings, événements et checkpoints.
-
-Le déploiement avec interruption courte constitue la garantie minimale. Les stratégies rolling, blue/green et canary sont des adapters d'exploitation optionnels. Lorsqu'un déploiement progressif ou sans interruption est retenu, les versions `N` et `N+1` doivent rester temporairement compatibles avec le schéma et les contrats partagés. Les migrations destructives ou supprimant une compatibilité ne peuvent être exécutées qu'après retrait vérifié de l'ancienne version.
-
-Les mises à jour applicatives sont déclenchées explicitement par l'exploitant. Pixs ne doit pas installer automatiquement une nouvelle version, exécuter une migration destructive ou modifier une composition sans plan validé. Les mises à jour de sécurité peuvent être automatisées par l'environnement d'exploitation, mais restent soumises aux contrôles de provenance, compatibilité, health checks et rollback. Chaque opération doit produire un plan, un résultat, un diagnostic et un audit.
-
-Les chemins d'upgrade supportés sont déclarés par release et par version majeure. Pixs ne doit pas supposer qu'une version ancienne peut être mise à niveau directement vers une version récente. Une migration intermédiaire ou une séquence de releases peut être exigée ; une origine non supportée doit être bloquée avec un diagnostic et une procédure de passage vers une version compatible. Les périodes de support, de dépréciation et de fin de vie sont publiées explicitement.
-
-Le canal `stable` est le canal officiel de distribution. Un canal `security` peut publier des corrections compatibles dans la version supportée. Les canaux expérimentaux sont séparés, explicitement identifiés et ne doivent pas être sélectionnés implicitement par une installation stable. Une version et, lorsque le format le permet, un digest constituent les identifiants canoniques ; un tag mutable tel que `latest` ne constitue pas une référence de release fiable.
-
-Les artefacts `stable` et `security` doivent être signés, associés à une provenance vérifiable et à un SBOM, puis vérifiés avant installation, démarrage et mise à niveau. Un artefact non signé, altéré, révoqué ou dont la provenance ne peut pas être vérifiée doit être bloqué. Les artefacts expérimentaux suivent la même exigence de signature, mais leur sélection et leur niveau de confiance doivent être explicitement autorisés.
-
-La gouvernance des clés de distribution est séparée par canal. Les releases `stable` et `security` relèvent d'une autorité de signature officielle ; les releases `experimental` utilisent une autorité ou une clé distincte. Le trust store, la rotation, le chevauchement de clés et la révocation doivent être gérés explicitement par le déploiement. Les clés privées ne sont jamais stockées dans le dépôt, les paquets, les images ou les journaux.
-
-Pixs doit fournir une interface d'exploitation indépendante des providers, utilisable par une CLI officielle et par des automatismes non interactifs. Elle couvre notamment l'inspection, la validation, les migrations, l'upgrade, le rollback autorisé, la santé et le diagnostic. Cette interface est distincte de l'API métier ; ses opérations sont soumises à une identité numérique, à des permissions, à un contexte plateforme ou tenant explicite et à l'audit. Les commandes sont idempotentes lorsque cela est possible et ne retournent pas de secret par défaut.
-
-L'exploitation peut placer Pixs dans un état `MAINTENANCE` explicite. Dans cet état, les mutations métier sont suspendues ou limitées selon une politique déclarée, les Jobs et synchronisations sont drainés ou suspendus, les lectures autorisées restent distinguées des opérations bloquées et seules les actions d'exploitation autorisées peuvent modifier l'état de maintenance. La sortie de maintenance est explicite, contrôlée par health checks et auditée.
-
-Le comportement par défaut de `MAINTENANCE` est la lecture seule : les Queries compatibles peuvent continuer, tandis que les Commands métier, Commands asynchrones, Jobs et synchronisations sont refusés ou suspendus. Les réponses API indiquent l'état de maintenance au moyen d'une erreur ou d'un statut contractuel stable. Une exception doit être explicitement déclarée par une capacité et rester soumise à l'autorisation et à l'audit.
-
-### 40.1 Paquet Debian
-
-Pixs doit pouvoir être distribué sous forme de paquet Debian afin de
-permettre une installation et une mise à niveau intégrées à un système
-Debian compatible.
-
-Le paquet Debian pourra notamment prendre en charge :
-
--   l'installation des composants applicatifs ;
--   les dépendances système nécessaires ;
--   les fichiers de configuration système ;
--   les permissions et identités système nécessaires ;
--   les opérations d'installation, mise à niveau et suppression ;
--   l'intégration éventuelle avec le gestionnaire de services du
-    système.
-
-Les données applicatives persistantes et les secrets ne doivent pas être
-supprimés implicitement lors d'une mise à niveau ou d'une
-désinstallation non destructive.
-
-### 40.2 Conteneur Docker
-
-Pixs doit également pouvoir être distribué sous forme d'image Docker.
-
-L'image doit permettre l'exécution reproductible de Pixs dans un
-environnement conteneurisé.
-
-Le packaging Docker devra notamment définir explicitement :
-
--   l'image de base ;
--   les dépendances système ;
--   l'identité d'exécution ;
--   l'entrypoint ;
--   les ports exposés ;
--   la configuration externe ;
--   les secrets ;
--   les volumes et données persistantes ;
--   les health checks ;
--   les règles de mise à niveau et de compatibilité.
-
-Le conteneur applicatif ne doit pas transformer son système de fichiers
-éphémère en source de vérité pour les données métier persistantes.
-
-PostgreSQL reste la source de vérité applicative indépendamment du mode
-de packaging utilisé.
-
-### 40.3 Invariant de packaging
-
-Le format de distribution ne doit pas modifier les responsabilités
-architecturales de Pixs.
-
-``` text
-Architecture Pixs
-       │
-       ├── package Debian
-       └── image Docker
-```
-
-Le paquet Debian et l'image Docker sont deux formes de distribution
-d'une même application, et non deux variantes fonctionnelles de Pixs.
-
-Les détails de construction, installation, exécution, mise à niveau et
-publication de ces artefacts seront définis par les spécifications
-OpenSpec dédiées.
+Les détails de construction, de configuration, d'exécution, de mise à niveau,
+de reprise et de publication de ces artefacts relèvent de `BUILD.md` et des
+capacités OpenSpec dédiées. Les secrets, données persistantes et services
+externes restent hors des artefacts lorsque leur nature l'exige.
 
 ## 41. Capacités optionnelles d'extension de plateforme
 
