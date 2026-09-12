@@ -130,10 +130,6 @@ Les documents suivants font foi pour la conception et les exigences détaillées
 - [OpenSpec](openspec/specs/) — exigences fonctionnelles et techniques vérifiables ;
 - [AGENTS.md](AGENTS.md) — règles de contribution au dépôt.
 
-## Outillage de contribution
-
-Le dépôt contient un bridge CGPT/OpenCode pour soumettre les écritures ou opérations sensibles à une approbation explicite. Cet outil de gouvernance est extérieur au produit Pixs : il n'est ni distribué avec Pixs ni requis à son exécution. Sa notice est disponible dans [tools/cgpt-approval-bridge](tools/cgpt-approval-bridge/README.md).
-
 ## Licence
 
 Pixs est distribué sous la [WTFPL v2](LICENSE).

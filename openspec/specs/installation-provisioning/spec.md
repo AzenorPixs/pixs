@@ -34,8 +34,8 @@ secret, de credential ou de jeton.
 
 Le provisionnement MUST créer ou rattacher explicitement une identité
 numérique d'opérateur initial vérifiée, soumise à une politique d'autorisation
-déclarée. Aucun compte, mot de passe, jeton ou privilège administrateur par
-défaut MUST être créé, activé ou déduit implicitement.
+déclarée. Le provisionnement MUST NOT créer, activer ni déduire implicitement
+un compte, mot de passe, jeton ou privilège administrateur par défaut.
 
 #### Scenario: Identité opérateur absente
 
