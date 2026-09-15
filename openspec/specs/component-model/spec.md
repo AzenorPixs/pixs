@@ -28,6 +28,18 @@ Chaque composant MUST fournir un `component.toml` avec identifiant, type, versio
 - **WHEN** un manifest contient un secret ou une expression à évaluer
 - **THEN** la composition est refusée avec un diagnostic explicite
 
+### Requirement: Schéma de manifest versionné et validable
+
+Le `component.toml` MUST déclarer une version de schéma. Le schéma MUST définir
+les champs obligatoires, leurs types et les règles de compatibilité ; une
+version inconnue ou ambiguë MUST bloquer la validation. Le manifest MAY
+référencer des déclarations versionnées sans y embarquer de valeur sensible.
+
+#### Scenario: Version de schéma inconnue
+
+- **WHEN** un composant déclare une version de schéma non prise en charge
+- **THEN** il reste non validé avec un diagnostic indiquant la version concernée
+
 ### Requirement: Identifiants stables namespacés
 
 Le système MUST respecter les garanties suivantes.

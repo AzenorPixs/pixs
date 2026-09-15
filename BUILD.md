@@ -1400,7 +1400,12 @@ Pour chaque entrée, le build doit distinguer les tests de contrat, d'intégrati
 Une incompatibilité obligatoire, une violation d'isolation tenant, un contournement d'autorisation, une perte d'idempotence, une sélection ambiguë ou une exposition de secret bloque la validation. Une capacité optionnelle peut être marquée `DEGRADED` ou `DISABLED` uniquement si son absence est déclarée, diagnostiquée et sans perte silencieuse de données.
 ## 42. Providers concrets et modules métier
 
-Le build doit traiter séparément les composants `CORE`, `OFFICIAL`, `EXTERNAL` et `PRIVATE`. Il doit vérifier leurs manifests, versions, capacités, dépendances, contrats, configuration, niveau de confiance, provenance, signatures et tests de conformité. Un provider présent dans un artefact ne doit pas être activé automatiquement.
+Le build doit traiter séparément les niveaux de confiance `PLATFORM`,
+`TRUSTED`, `SANDBOXED` et `DEVELOPMENT`. Il doit vérifier leurs manifests,
+versions, capacités, dépendances, contrats, configuration, provenance,
+signatures et tests de conformité. Un composant `DEVELOPMENT` ne peut pas être
+embarqué dans un artefact de production ; un composant `SANDBOXED` ne reçoit que
+les permissions et interfaces explicitement accordées.
 
 Les providers officiels doivent être testés comme des implémentations de référence sans devenir des dépendances implicites du Kernel. Les providers externes et privés doivent être vérifiés par les mêmes suites de contrat lorsqu'ils déclarent une compatibilité. Une incompatibilité, une ambiguïté de résolution, une capacité obligatoire absente ou une signature non conforme bloque la composition.
 
@@ -1458,3 +1463,24 @@ chaînage vérifiable d'audit et le scellement externe optionnel ; les politique
 WORM ne sont validées que lorsqu'un déploiement les déclare. Il valide enfin les
 stratégies canary ou blue/green sans promouvoir une révision incompatible ni
 masquer un échec de health gate, de migration, de compatibilité ou de sécurité.
+
+## 45. Runtime de référence, P0 et objectifs de service
+
+Les builds de référence doivent valider une unique pile Django, PostgreSQL et
+TanStack. Ils ne doivent pas introduire une variante de runtime cachée ni
+présenter une implémentation expérimentale comme compatible avec le P0. Les
+adapters futurs sont des composants distincts, validés par leurs contrats et
+leurs matrices de compatibilité.
+
+Un artefact P0 doit vérifier la composition minimale approuvée : mécanismes de
+composition, `pixs.core`, contexte tenant/scope, autorisation, API, migrations,
+runtime, provisionnement, sécurité, secrets, audit, observabilité, gouvernance,
+cycle de vie des données, conformité et composant d'exemple. Une capacité hors
+P0 ne peut devenir active que par sélection explicite.
+
+Chaque release ou profil de déploiement doit déclarer des objectifs de service
+versionnés et mesurables couvrant disponibilité, latence, invalidation, reprise
+et compatibilité. Le build et les suites applicables doivent produire une preuve
+reproductible de leur vérification, ou un diagnostic explicite lorsque le profil
+ne les satisfait pas. Aucun seuil chiffré universel ne doit être inventé par la
+chaîne de build.

@@ -25,7 +25,7 @@ Le noyau MUST fournir le registre de modules, le résolveur de dépendances, le 
 
 ### Requirement: Noyau agnostique aux fournisseurs
 
-Le noyau MUST NOT dépendre d.une implémentation concrète d'annuaire, d'authentification, de stockage, de recherche, de transport ou d'interface utilisateur.
+Le noyau MUST NOT dépendre d'une implémentation concrète d'annuaire, d'authentification, de stockage, de recherche, de transport ou d'interface utilisateur.
 
 #### Scenario: Module ajouté sans modification du noyau
 

@@ -1,6 +1,6 @@
 # TECHNICAL.md — Pixs
 
-Ce document précise les décisions techniques transverses du projet. Il complète `PROJECT.md` sans remplacer les spécifications OpenSpec, qui définiront les comportements implémentables.
+Ce document précise les décisions techniques transverses du projet. Il complète `PROJECT.md` sans remplacer les spécifications OpenSpec, qui définissent les comportements implémentables.
 
 ## Convention normative RFC 2119
 
@@ -2027,16 +2027,22 @@ L'interface d'exploitation, les opérations de management et l'état
 
 Les providers et modules métier sont des `Component` versionnés. Leur manifest doit déclarer leurs capacités fournies et requises, contrats implémentés, dépendances, configuration, compatibilité, lifecycle, niveau de confiance et tests de conformité applicables.
 
-Les niveaux de confiance conceptuels sont :
+Les niveaux de confiance sont :
 
 ```text
-CORE       mécanisme intégré au Kernel ou à pixs.core
-OFFICIAL   provider ou module maintenu et distribué officiellement par Pixs
-EXTERNAL   composant tiers installé depuis une source déclarée
-PRIVATE    composant propre à une installation ou organisation
+PLATFORM     composant maintenu dans l'écosystème Pixs
+TRUSTED      composant tiers signé, vérifié et autorisé par contrat public
+SANDBOXED    contribution isolée avec APIs et permissions limitées
+DEVELOPMENT  composant réservé au développement local
 ```
 
-`CORE` ne doit pas être utilisé pour masquer une implémentation métier ou un provider concret. Un composant `OFFICIAL` peut être livré dans un artefact Pixs, mais reste soumis à son propre versionnement, lifecycle, configuration, signature et sélection. Les composants `EXTERNAL` et `PRIVATE` doivent fournir les mêmes contrats publics et garanties de sécurité que les composants officiels lorsqu'ils prétendent être compatibles.
+Le niveau de confiance est distinct du type de composant et ne doit pas
+masquer une implémentation métier ou un provider concret. Un composant
+`PLATFORM` reste soumis à son versionnement, lifecycle, configuration,
+signature et sélection. Un composant `DEVELOPMENT` ne peut pas être utilisé en
+production ; un composant `SANDBOXED` n'accède qu'aux APIs et permissions
+explicitement accordées. Les composants `TRUSTED` et `SANDBOXED` doivent
+respecter les contrats publics et garanties de sécurité qu'ils déclarent.
 
 Le resolver ne doit jamais activer automatiquement un provider parce qu'il est présent sur le filesystem, importable ou livré dans l'image. La résolution suit la configuration explicite, puis un candidat compatible unique ; plusieurs candidats ou l'absence d'un provider requis produisent une composition invalide. Un fallback concret doit être déclaré comme une composition ou une politique de capacité et ne peut pas être déduit silencieusement.
 
@@ -2114,3 +2120,24 @@ d'intégrité d'audit utilisent d'abord un chaînage vérifiable et peuvent ajou
 un scellement externe ; un stockage WORM reste une politique de déploiement
 optionnelle. Elles sont vérifiables, versionnées et ne rendent pas les données
 personnelles ou les secrets immuables au-delà de leur régime légal.
+
+## 41. Runtime de référence, P0 et objectifs de service
+
+Le runtime de référence est Django, PostgreSQL et TanStack. Les contrats du
+Kernel préservent l'extensibilité des domaines, providers et intégrations, mais
+aucune abstraction multi-runtime ne fait partie du P0. Un adapter de runtime
+futur doit être spécifié, versionné et validé sans modifier implicitement les
+garanties du runtime de référence.
+
+Le profil P0 impose les capacités de composition, `pixs.core`, contexte de
+périmètre, autorisation, API, migrations, runtime, provisionnement, sécurité,
+secrets, audit, observabilité, gouvernance, cycle de vie des données et tests
+de conformité. Une capacité non P0 doit déclarer son absence ou son état
+`DISABLED` sans affaiblir ce socle.
+
+Une décision d'architecture contient son identifiant, son état, son contexte,
+les alternatives considérées, ses conséquences, ses spécifications affectées
+et sa date de réévaluation éventuelle. Les objectifs de service sont déclarés
+par release ou profil : disponibilité, latence, fraîcheur d'invalidation,
+reprise et compatibilité. Leurs seuils sont explicites, versionnés et vérifiés ;
+aucun seuil universel n'est déduit du runtime.

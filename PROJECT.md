@@ -2517,6 +2517,10 @@ openspec/specs/
 │   └── spec.md
 ├── component-model/
 │   └── spec.md
+├── reference-runtime/
+│   └── spec.md
+├── reference-composition/
+│   └── spec.md
 ├── contracts/
 │   └── spec.md
 ├── extension-contracts/
@@ -2532,6 +2536,8 @@ openspec/specs/
 ├── dependencies/
 │   └── spec.md
 ├── lifecycle/
+│   └── spec.md
+├── architecture-decisions/
 │   └── spec.md
 ├── migrations/
 │   └── spec.md
@@ -2609,11 +2615,15 @@ openspec/specs/
 │   └── spec.md
 ├── sdk-ecosystem/
 │   └── spec.md
+├── developer-experience/
+│   └── spec.md
 ├── native-clients/
 │   └── spec.md
 ├── ai-agents/
 │   └── spec.md
 ├── observability/
+│   └── spec.md
+├── service-objectives/
 │   └── spec.md
 ├── resilience/
 │   └── spec.md
@@ -2714,6 +2724,11 @@ dependencies
 ├── résolution
 ├── ordre
 └── détection des cycles
+
+architecture-decisions
+├── décisions contextualisées et traçables
+├── états et remplacements
+└── primauté d'OpenSpec
 
 lifecycle
 ├── validation
@@ -2937,6 +2952,11 @@ sdk-ecosystem
 ├── Developer Kit, CLI et scaffolding
 └── tests de conformité, exemples et distribution
 
+developer-experience
+├── parcours local reproductible
+├── scaffolding sans activation implicite
+└── diagnostics sans fuite
+
 native-clients
 ├── SDK et contrats publics pour mobile et desktop
 ├── stockage sécurisé, notifications et liens profonds
@@ -2992,11 +3012,26 @@ performance
 ├── optimisation
 └── budgets / objectifs futurs
 
+service-objectives
+├── objectifs versionnés par release ou profil
+├── seuils et méthodes de mesure explicites
+└── preuve reproductible ou diagnostic d'insatisfaction
+
 runtime
 ├── profils web / worker / scheduler
 ├── composition et démarrage de l'application
 ├── coordination persistante et leases
 └── exposition, arrêt et reprise contrôlés
+
+reference-runtime
+├── pile Django / PostgreSQL / TanStack
+├── absence de sélection cachée
+└── adapters futurs explicitement spécifiés
+
+reference-composition
+├── socle P0 obligatoire
+├── capacités hors P0 explicites
+└── preuve reproductible de validation
 
 installation-provisioning
 ├── états et opérations de provisionnement d'installation
@@ -3461,3 +3496,33 @@ Les clients mobiles et desktop consomment les mêmes contrats publics que le
 frontend web. Ils peuvent fournir stockage local chiffré, notifications push,
 liens profonds et intégrations système, mais ne contournent ni l'autorisation
 backend, ni les règles de synchronisation offline-first, ni la gouvernance.
+
+## 42. Runtime de référence et composition P0
+
+Pixs définit Django, PostgreSQL et TanStack comme son runtime de référence
+unique. Son agnosticisme concerne les domaines métier, les contrats, les
+providers et les intégrations ; il ne promet pas une interchangeabilité du
+backend ou du frontend de référence. Le Kernel reste portable par ses contrats,
+ce qui permet des adapters futurs explicitement spécifiés sans les imposer au
+socle.
+
+La composition P0 est le socle sécurisé et composable : Kernel, manifests,
+dépendances, configuration, lifecycle, modules, `pixs.core`, tenant et scope,
+identité minimale, autorisation, APIs et contrats publics, migrations, runtime,
+installation, sécurité, secrets, audit, observabilité, gouvernance, cycle de
+vie des données, tests de conformité et composant d'exemple. Les autres
+capacités restent spécifiées, mais ne sont pas obligatoires pour une composition
+P0 valide.
+
+Les extensions déclarent l'un des niveaux de confiance `PLATFORM`, `TRUSTED`,
+`SANDBOXED` ou `DEVELOPMENT`. Le niveau autorise uniquement les frontières et
+permissions explicitement prévues par les contrats ; `DEVELOPMENT` est interdit
+en production et une extension `SANDBOXED` n'obtient aucune capacité hors de
+son API limitée.
+
+Chaque décision d'architecture qui précise un choix ouvert est versionnée,
+liée aux spécifications concernées et ne modifie une exigence normative qu'au
+travers d'une évolution OpenSpec approuvée. Les releases et profils de
+déploiement déclarent des objectifs de service vérifiables — disponibilité,
+latence, invalidation, reprise et compatibilité — sans imposer de seuil chiffré
+universel.
