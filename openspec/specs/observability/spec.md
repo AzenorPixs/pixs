@@ -23,6 +23,18 @@ Les contrôles MUST distinguer vivacité, disponibilité, démarrage et diagnost
 - **WHEN** une intégration optionnelle tombe avec un mode dégradé cohérent
 - **THEN** l'état DEGRADED est exposé au lieu d'une panne globale
 
+### Requirement: Objectifs de service déclarés
+
+Une release ou un profil MAY déclarer des objectifs versionnés de disponibilité,
+latence, invalidation, reprise et compatibilité. Tout objectif déclaré MUST
+identifier sa méthode de mesure, son périmètre, son seuil et sa période ; aucun
+seuil universel MUST être déduit du runtime.
+
+#### Scenario: Objectif sans méthode de mesure
+
+- **WHEN** une release déclare un objectif sans source de mesure vérifiable
+- **THEN** sa validation échoue avec un diagnostic explicite
+
 ### Requirement: Rétention et minimisation séparées
 
 Le système MUST respecter les garanties suivantes.

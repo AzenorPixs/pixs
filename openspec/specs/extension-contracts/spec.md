@@ -23,6 +23,18 @@ Chaque contribution MUST déclarer identifiant stable, composant cible, version 
 - **WHEN** une extension importe un modèle interne ou écrit dans les tables privées d'un autre module
 - **THEN** le build ou l'activation bloque avec un diagnostic explicite
 
+### Requirement: Niveau de confiance des extensions
+
+Toute extension MUST déclarer l'un des niveaux `PLATFORM`, `TRUSTED`,
+`SANDBOXED` ou `DEVELOPMENT`. `DEVELOPMENT` MUST NOT être activé en production.
+`SANDBOXED` MUST limiter ses accès aux APIs, permissions et données explicitement
+accordées ; ce niveau MUST NOT contourner les contrats, l'autorisation ou la gouvernance.
+
+#### Scenario: Extension de développement en production
+
+- **WHEN** une composition de production inclut une extension `DEVELOPMENT`
+- **THEN** sa validation échoue avant activation
+
 ### Requirement: Collisions et composition déterministe
 
 Les collisions sont refusées par défaut ; toute composition multi-contributions MUST déclarer politique de fusion, priorité et ordre déterministes ; une contribution obligatoire incompatible bloque, une optionnelle est isolée et diagnostiquée.

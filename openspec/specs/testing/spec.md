@@ -14,6 +14,19 @@ Le projet MUST distinguer les tests unitaires des comportements internes, les te
 - **WHEN** des tests unitaires réussissent alors qu'un test d'intégration de composition échoue
 - **THEN** la release est considérée non valide et l'échec d'intégration est rapporté explicitement
 
+### Requirement: Kit de conformité et composant d'exemple
+
+Le Developer Kit MUST fournir des validateurs et suites de conformité
+versionnés pour les manifests, contrats et composants déclarés compatibles. Un
+composant d'exemple P0 MUST démontrer la composition par contrats, le contexte
+tenant/scope et l'autorisation ; il MUST NOT devenir une dépendance de
+production.
+
+#### Scenario: Exemple P0 validé
+
+- **WHEN** le composant d'exemple est validé par le Developer Kit
+- **THEN** les preuves indiquent les versions de contrats et les contrôles P0 exécutés
+
 ### Requirement: Suites de conformité versionnées par contrat
 
 Chaque contrat de fournisseur MUST disposer d'une suite de conformité versionnée, indépendante de la technologie implémentée ; le runtime MUST NOT déclarer compatible un provider dont la conformité obligatoire est absente, expirée ou échouée.

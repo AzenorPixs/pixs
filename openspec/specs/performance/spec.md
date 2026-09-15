@@ -23,6 +23,18 @@ Chaque release MUST pouvoir déclarer des budgets et objectifs de performance pa
 - **WHEN** une exécution validée dépasse le budget déclaré d'une surface
 - **THEN** la régression est signalée avec la référence du budget et l'écart constaté
 
+### Requirement: Objectifs propres au profil
+
+Les budgets de performance et objectifs de latence MUST être associés à une
+release ou un profil déclaré. Ils MUST indiquer leur surface, méthode de mesure
+et période de validité ; un budget de profil MUST NOT être présenté comme une
+garantie universelle de Pixs.
+
+#### Scenario: Budget hors profil
+
+- **WHEN** un résultat est publié sans profil ou release de référence
+- **THEN** il reste informatif et ne valide aucune garantie de performance
+
 ### Requirement: Aucune performance au prix des invariants
 
 Les gains de performance MUST NOT affaiblir l'échec fermé, l'évaluation d'autorisation, l'isolation de tenant ou de périmètre, ni la traçabilité d'audit.
