@@ -1,0 +1,45 @@
+schema: spec-driven
+
+context: |
+  Les spécifications OpenSpec sont rédigées en français. Toute exigence normative
+  utilise exclusivement les mots-clés RFC 2119 en majuscules : MUST, MUST NOT,
+  SHOULD, SHOULD NOT et MAY. Les interdictions utilisent exclusivement MUST NOT
+  ou SHOULD NOT ; les formes hybrides telles que NE MUST ou NE SHOULD ne sont
+  pas des mots-clés normatifs RFC 2119.
+
+rules:
+  specs:
+    - Chaque exigence normative emploie au moins un mot-clé RFC 2119 en majuscules.
+    - Une interdiction normative utilise MUST NOT ou SHOULD NOT, jamais une forme hybride.
+    - Les scénarios préservent les comportements, interdictions et garanties de l'exigence.
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
