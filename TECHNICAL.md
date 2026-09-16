@@ -2131,9 +2131,9 @@ garanties du runtime de référence.
 
 Le profil P0 impose les capacités de composition, `pixs.core`, contexte de
 périmètre, autorisation, API, migrations, runtime, provisionnement, sécurité,
-secrets, audit, observabilité, gouvernance, cycle de vie des données et tests
-de conformité. Une capacité non P0 doit déclarer son absence ou son état
-`DISABLED` sans affaiblir ce socle.
+secrets, audit, observabilité, gouvernance, cycle de vie des données, tests
+de conformité et composant d'exemple. Une capacité non P0 doit déclarer son
+absence ou son état `DISABLED` sans affaiblir ce socle.
 
 Une décision d'architecture contient son identifiant, son état, son contexte,
 les alternatives considérées, ses conséquences, ses spécifications affectées
