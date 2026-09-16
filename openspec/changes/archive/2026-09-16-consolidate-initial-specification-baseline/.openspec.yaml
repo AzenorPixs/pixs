@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-09-16
+goal: Établir une baseline OpenSpec unique, cohérente et traçable de 76
+  capacités pour les évolutions futures.
+skip_specs: true
