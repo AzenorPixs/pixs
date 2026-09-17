@@ -1,6 +1,6 @@
 ## Context
 
-Le référentiel actif de Pixs contient 74 capacités. Il est valide en mode
+Le référentiel actif de Pixs contient 76 capacités. Il est valide en mode
 strict, mais la consolidation précédente a seulement établi cette baseline ;
 elle n'a pas encore rendu ses relations et sa rédaction homogènes comme si
 elles provenaient d'une définition initiale unique.
@@ -14,12 +14,13 @@ introduire une règle fonctionnelle sous couvert d'harmonisation.
 
 **Goals:**
 
-- Obtenir un corpus de 74 capacités cohérent, sans contradiction normative
-  confirmée ni frontière implicite.
+- Établir un corpus documenté de 76 capacités cohérent, sans
+  contradiction normative confirmée ni frontière implicite.
 - Préserver chaque exigence et scénario avant toute réécriture.
 - Rendre traçables les dépendances entre la composition P0, le
   provisionnement, l'identité, l'autorisation et les secrets.
-- Maintenir la validité `openspec validate --all --strict` à chaque lot.
+- Maintenir la validité `openspec validate --all --strict` à chaque lot et
+  avant la synchronisation finale.
 
 **Non-Goals:**
 
@@ -33,36 +34,37 @@ introduire une règle fonctionnelle sous couvert d'harmonisation.
 
 ## Decisions
 
-### Conservation par matrice avant écriture
+### Conservation par matrice sans synchronisation
 
-Chaque lot de consolidation sera précédé d'une matrice reliant chaque exigence
-et scénario source à son emplacement cible. La matrice indiquera si le texte
-est conservé textuellement ou reformulé sans changement de sémantique, ainsi
-que les dépendances concernées. Une ligne non résolue bloque le lot.
+La matrice relie chaque exigence et scénario source à son emplacement cible et
+indique leur conservation textuelle ainsi que les dépendances concernées. Une
+ligne non résolue bloque la clôture du change. Ce change ne synchronise aucune
+modification vers les capacités actives.
 
 ### Capacités stables et frontières explicites
 
-Les 74 répertoires de `openspec/specs/` restent les frontières publiques du
+Les 76 répertoires de `openspec/specs/` restent les frontières publiques du
 référentiel. Une cohérence inter-capacités s'obtient par des références
 croisées normatives et des scénarios compatibles, jamais par l'absorption
 silencieuse d'une capacité dans une autre.
 
-### Décisions à reporter vers le change de bootstrap
+### Relations déjà portées par le change de bootstrap
 
-La composition initiale doit être une composition P0. Le change
-`specify-initial-application-bootstrap` devra donc déclarer sa conformité à
+La composition initiale est portée par le change
+`specify-initial-application-bootstrap`, qui déclare sa conformité à
 `reference-composition`, y compris le composant d'exemple requis, sans
 introduire de donnée métier fictive ni de dépendance de production.
 
 ### Opérateur initial et secrets externes
 
-Le Super Admin doit être l'opérateur initial. Sa création ou son rattachement
-devra exprimer une identité numérique vérifiée et une politique d'autorisation
+Le Super Admin est l'opérateur initial. Sa création ou son rattachement doit
+exprimer une identité numérique vérifiée et une politique d'autorisation
 déclarée ; le bypass ACL administratif reste limité à la frontière explicitée
 par la capacité d'administration. Les paramètres PostgreSQL recueillis par
-l'INSTALLER devront être convertis en références externes vers un
+l'INSTALLER doivent être convertis en références externes vers un
 `SecretProvider`, sans sérialisation durable de leur valeur. Ces exigences
-seront ajoutées au change de bootstrap après validation de son périmètre.
+sont portées par le change de bootstrap et restent hors de toute réécriture
+fonctionnelle de la consolidation.
 
 ## Risks / Trade-offs
 
@@ -77,11 +79,10 @@ seront ajoutées au change de bootstrap après validation de son périmètre.
 
 ## Migration Plan
 
-1. Établir et faire valider la matrice de conservation de toutes les capacités.
+1. Établir et valider la matrice de conservation de toutes les capacités.
 2. Isoler les changements fonctionnels nécessaires dans des changes distincts.
-3. Soumettre les lots de consolidation documentaire au développeur avant toute
-   modification des spécifications actives.
-4. Vérifier après chaque lot l'absence de changement fonctionnel, d'API, de
-   dépendance ou de code.
+3. Vérifier que la matrice ne révèle aucun changement fonctionnel, d'API, de
+   dépendance ou de code à synchroniser.
+4. Valider la cohérence documentaire du change et de la baseline.
 5. Présenter la baseline consolidée et la matrice finale au développeur.
-6. Archiver uniquement après validation explicite du développeur.
+7. Archiver uniquement après validation explicite du développeur.
