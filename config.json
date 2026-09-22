@@ -1,4 +1,5 @@
 {
+  "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "cgpt-validation": {
       "type": "remote",
@@ -6,6 +7,24 @@
       "enabled": true,
       "oauth": false,
       "timeout": 30000
+    }
+  },
+  "agent": {
+    "plan": {
+      "model": "opencode-go/qwen3.8-flash",
+      "options": {
+        "reasoningEffort": "low"
+      },
+      "permission": {},
+      "reasoningEffort": "low"
+    },
+    "build": {
+      "model": "opencode-go/qwen3.8-flash",
+      "options": {
+        "reasoningEffort": "low"
+      },
+      "permission": {},
+      "reasoningEffort": "low"
     }
   }
 }
