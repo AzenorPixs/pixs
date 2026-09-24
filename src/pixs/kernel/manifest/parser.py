@@ -27,7 +27,7 @@ SUPPORTED_SCHEMA_VERSIONS = frozenset({"1"})
 def _check_schema_version(data: dict[str, Any]) -> None:
     if "schema_version" not in data:
         raise ManifestValidationError(
-            ["champ obligatoire manquant : schema_version"]
+            ["schema_version : champ obligatoire manquant"]
         )
     version = data["schema_version"]
     if not isinstance(version, str):
@@ -36,7 +36,7 @@ def _check_schema_version(data: dict[str, Any]) -> None:
         )
     if version not in SUPPORTED_SCHEMA_VERSIONS:
         raise ManifestValidationError(
-            [f"version de schéma non supportée : {version!r}"]
+            [f"schema_version : version de schéma non supportée ({version!r})"]
         )
 
 

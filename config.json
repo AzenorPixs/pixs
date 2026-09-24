@@ -26,5 +26,21 @@
       "permission": {},
       "reasoningEffort": "low"
     }
+  },
+  "mode": {
+    "build": {
+      "model": "opencode-go/qwen3.8-flash",
+      "options": {
+        "reasoningEffort": "low"
+      },
+      "permission": {}
+    },
+    "plan": {
+      "model": "opencode-go/qwen3.8-flash",
+      "options": {
+        "reasoningEffort": "low"
+      },
+      "permission": {}
+    }
   }
 }

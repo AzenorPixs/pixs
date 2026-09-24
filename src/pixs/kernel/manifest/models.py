@@ -143,10 +143,10 @@ def parse_manifest(data: Mapping[str, Any]) -> ComponentManifest:
 
     for key in _TOP_REQUIRED:
         if key not in data:
-            diagnostics.append(f"champ obligatoire manquant : {key}")
+            diagnostics.append(f"{key} : champ obligatoire manquant")
     for key in data:
         if key not in _TOP_ALLOWED:
-            diagnostics.append(f"champ non déclaré interdit : {key}")
+            diagnostics.append(f"{key} : champ non déclaré interdit")
 
     schema_version = None
     if "schema_version" in data:
