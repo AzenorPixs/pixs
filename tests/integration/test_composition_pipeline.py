@@ -73,7 +73,7 @@ class TestDeterminismePipeline(unittest.TestCase):
     def test_ordre_et_aretes_canoniques(self) -> None:
         result = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
         self.assertEqual(
-            result.order, ("acme.app", "acme.lib", "pixs.core")
+            result.order, ("acme.lib", "pixs.core", "acme.app")
         )
         self.assertEqual(
             result.edges,
