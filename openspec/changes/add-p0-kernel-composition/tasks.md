@@ -23,18 +23,18 @@
 ## 4. Registres génériques, configuration par références et règle data-driven
 
 - [x] 4.1 Implémenter les sept registres génériques (modules, dépendances, cycle de vie, services, événements, configuration, extensions) alimentés uniquement par des modèles validés — vérification : tests unitaires démontrant le refus d'enregistrement d'une contribution non déclarée et l'idempotence d'un double enregistrement
-- [ ] 4.2 Implémenter la résolution de configuration par priorité déclarée (schéma, défauts, statique, runtime, références de secrets) — vérification : tests unitaires de surcharge d'une même clé avec valeur gagnante reproductible ; le noyau ne résout aucune valeur de secret, test de contrôle de la face publique
-- [ ] 4.3 Implémenter le jeu de composants requis porté en données de composition validées — vérification : test d'intégration déclarant `pixs.core` comme requis en données seulement ; l'absence invalide l'activation avant chargement avec diagnostic, et un test vérifie l'absence de tout nom de concept métier codé en dur dans le code du noyau
+- [x] 4.2 Implémenter la résolution de configuration par priorité déclarée (schéma, défauts, statique, runtime, références de secrets) — vérification : tests unitaires de surcharge d'une même clé avec valeur gagnante reproductible ; le noyau ne résout aucune valeur de secret, test de contrôle de la face publique
+- [x] 4.3 Implémenter le jeu de composants requis porté en données de composition validées — vérification : test d'intégration déclarant `pixs.core` comme requis en données seulement ; l'absence invalide l'activation avant chargement avec diagnostic, et un test vérifie l'absence de tout nom de concept métier codé en dur dans le code du noyau
 
 ## 5. Cycle de vie mécanique et interfaces publiques
 
-- [ ] 5.1 Implémenter les états installed, enabled, configured, ready, healthy et les opérations mécaniques `discover`, `validate`, `install`, `enable`, `configure`, `start`, `disable` — vérification : tests unitaires d'états non confondus (installé-désactivé ≠ prêt) et de refus explicite de `migrate`, `upgrade`, `uninstall`, `purge` hors périmètre
-- [ ] 5.2 Implémenter les hooks de cycle de vie ordonnés par le graphe résolu — vérification : test d'intégration comparant deux exécutions complètes, ordre des hooks et du chargement identiques
-- [ ] 5.3 Exposer l'interface publique du noyau par les façades de paquet et borner l'export — vérification : un test d'intégration importe exclusivement l'API déclarée et asserte que les modules privés ne figurent pas dans les façades exportées
+- [x] 5.1 Implémenter les états installed, enabled, configured, ready, healthy et les opérations mécaniques `discover`, `validate`, `install`, `enable`, `configure`, `start`, `disable` — vérification : tests unitaires d'états non confondus (installé-désactivé ≠ prêt) et de refus explicite de `migrate`, `upgrade`, `uninstall`, `purge` hors périmètre
+- [x] 5.2 Implémenter les hooks de cycle de vie ordonnés par le graphe résolu — vérification : test d'intégration comparant deux exécutions complètes, ordre des hooks et du chargement identiques
+- [x] 5.3 Exposer l'interface publique du noyau par les façades de paquet et borner l'export — vérification : un test d'intégration importe exclusivement l'API déclarée et asserte que les modules privés ne figurent pas dans les façades exportées
 
 ## 6. Tests et contrôles finaux
 
-- [ ] 6.1 Compléter la suite unitaire couvrant chaque scénario normé du périmètre (kernel, component-model, dependencies, capabilities, configuration, compatibility pour la partie déclarative) — vérification : `python -m unittest discover -s tests/unit` passe et la correspondance scénario-test est listée dans le rapport de session
+- [x] 6.1 Compléter la suite unitaire couvrant chaque scénario normé du périmètre (kernel, component-model, dependencies, capabilities, configuration, compatibility pour la partie déclarative) — vérification : `python -m unittest discover -s tests/unit` passe et la correspondance scénario-test est listée dans le rapport de session
 - [ ] 6.2 Compléter la suite d'intégration sur compositions synthétiques (résolution complète, ambiguïtés, cycles, composant requis absent, deux ordres de découverte) — vérification : `python -m unittest discover -s tests/integration` passe avec preuves reproductibles
 - [ ] 6.3 Vérifier l'absence de secret et de donnée de production dans fixtures, rapports et diagnostics — vérification : test automatisé de motifs sensible sur tout artefact de test, suite passant sans fuite détectée
 - [ ] 6.4 Exécuter les contrôles finaux du change : `python -m compileall src/`, suite complète `unittest`, `bash -n` et `shellcheck` sur tout script auxiliaire éventuellement produit — vérification : chaque commande sort code 0 et la sortie est consignée dans le rapport de session
