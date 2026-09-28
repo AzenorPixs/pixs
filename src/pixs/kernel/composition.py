@@ -22,6 +22,7 @@ from .diagnostics import RESOLVE, VALIDATE, Diagnostic
 from .manifest.models import ComponentManifest, ManifestValidationError
 from .manifest.parser import parse_manifest_text
 from .registry.identity import check_component_identities
+from .registry.requirements import check_required_components
 
 __all__ = [
     "CompositionResult",
@@ -56,6 +57,7 @@ def validate(
     texts: Sequence[object],
     *,
     official_ids: Collection[str] = (),
+    required_ids: Collection[str] = (),
 ) -> tuple[tuple[ComponentManifest, ...], tuple[Diagnostic, ...]]:
     """Valide chaque texte TOML et les identités de la collection.
 
@@ -63,7 +65,10 @@ def validate(
     autres textes ; les diagnostics ``ManifestValidationError`` et d'identité
     sont emballés en ``Diagnostic`` d'étape ``validate`` par ``from_legacy``,
     avec un rendu texte inchangé, puis les règles d'identité (2.4) sont
-    appliquées à l'ensemble des manifests structurellement valides.
+    appliquées à l'ensemble des manifests structurellement valides. La règle
+    « jeu de composants requis » (4.3) est ensuite agrégée de même : la présence
+    des identifiants portés en données ``required_ids`` est contrôlée avant toute
+    résolution, sans notion métier ni identifiant codé en dur dans le noyau.
     """
     manifests: list[ComponentManifest] = []
     diagnostics: list[Diagnostic] = []
@@ -89,6 +94,12 @@ def validate(
         Diagnostic.from_legacy(VALIDATE, item)
         for item in check_component_identities(
             manifests, official_ids=official_ids
+        )
+    )
+    diagnostics.extend(
+        Diagnostic.from_legacy(VALIDATE, item)
+        for item in check_required_components(
+            manifests, required_ids=required_ids
         )
     )
     return tuple(manifests), tuple(diagnostics)
@@ -249,15 +260,19 @@ def compose(
     *,
     official_ids: Collection[str] = (),
     configured_providers: Mapping[str, str] | None = None,
+    required_ids: Collection[str] = (),
 ) -> CompositionResult:
     """Enchaîne les étapes ordonnées et retourne un résultat figé.
 
     Dès qu'une étape produit des diagnostics, la composition est refusée à
     cette étape (``activated`` faux, graphe vide) : aucun démarrage partiel
-    n'est observable.
+    n'est observable. Le jeu de composants requis (4.3) est porté en données
+    ``required_ids`` et contrôlé à l'étape ``validate``, avant résolution.
     """
     texts = discover(manifest_texts)
-    manifests, diagnostics = validate(texts, official_ids=official_ids)
+    manifests, diagnostics = validate(
+        texts, official_ids=official_ids, required_ids=required_ids
+    )
     if diagnostics:
         return CompositionResult(
             stage="validate",
