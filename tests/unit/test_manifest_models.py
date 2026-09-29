@@ -1,17 +1,24 @@
-"""Tests unitaires du modèle structurel de manifest (tâche 2.1)."""
+"""Tests unitaires du modèle structurel de manifest (tâche 2.1, schéma 1)."""
 
 import unittest
 
 from pixs.kernel.manifest.models import (
     COMPONENT_TYPES,
     ComponentManifest,
+    ImplementedContract,
     ManifestValidationError,
+    ProvidedCapability,
     parse_manifest,
 )
 
 
 def valid_manifest() -> dict:
-    """Fixture valide inspirée de l'exemple component.toml de TECHNICAL.md."""
+    """Fixture valide inspirée de l'exemple component.toml de TECHNICAL.md.
+
+    Schéma 1 : capacités fournies et contrats implémentés en tableaux de
+    tables versionnées ; la version de la capacité (1.2.0) est distincte de
+    la version du composant (1.0.0).
+    """
     return {
         "schema_version": "1",
         "id": "pixs.authentication.oidc",
@@ -20,10 +27,28 @@ def valid_manifest() -> dict:
         "dependencies": {
             "components": ["pixs.core >=1.0.0 <2.0.0"],
             "capabilities": ["authentication >=1.0.0 <2.0.0"],
+            "contracts": ["pixs.authentication.contract ==1.2.0"],
         },
-        "optional_dependencies": {"capabilities": ["audit"]},
-        "provides": {"capabilities": ["authentication.oidc"]},
-        "implements": {"contracts": ["pixs.authentication.contract"]},
+        "optional_dependencies": {
+            "capabilities": ["audit"],
+            "contracts": ["pixs.audit.contract >=0.5.0 <1.0.0"],
+        },
+        "provides": {
+            "capabilities": [
+                {
+                    "id": "authentication.oidc",
+                    "version": "1.2.0",
+                    "contracts": ["pixs.authentication.contract"],
+                    "criticality": "REQUIRED",
+                    "fallback": "none",
+                }
+            ]
+        },
+        "implements": {
+            "contracts": [
+                {"id": "pixs.authentication.contract", "version": "1.2.0"}
+            ]
+        },
     }
 
 
@@ -43,13 +68,37 @@ class TestManifestValide(unittest.TestCase):
             manifest.dependency_capabilities,
             ("authentication >=1.0.0 <2.0.0",),
         )
+        self.assertEqual(
+            manifest.dependency_contracts,
+            ("pixs.authentication.contract ==1.2.0",),
+        )
         self.assertEqual(manifest.optional_dependency_components, ())
         self.assertEqual(
             manifest.optional_dependency_capabilities, ("audit",)
         )
-        self.assertEqual(manifest.provided_capabilities, ("authentication.oidc",))
         self.assertEqual(
-            manifest.implemented_contracts, ("pixs.authentication.contract",)
+            manifest.optional_dependency_contracts,
+            ("pixs.audit.contract >=0.5.0 <1.0.0",),
+        )
+        self.assertEqual(
+            manifest.provided_capabilities,
+            (
+                ProvidedCapability(
+                    id="authentication.oidc",
+                    version="1.2.0",
+                    contracts=("pixs.authentication.contract",),
+                    criticality="REQUIRED",
+                    fallback="none",
+                ),
+            ),
+        )
+        self.assertEqual(
+            manifest.implemented_contracts,
+            (
+                ImplementedContract(
+                    id="pixs.authentication.contract", version="1.2.0"
+                ),
+            ),
         )
 
     def test_manifest_minimal_valide(self) -> None:

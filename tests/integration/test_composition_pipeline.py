@@ -2,12 +2,15 @@
 
 Fixtures synthétiques sans secret ni donnée de production : deux exécutions
 sur la même entrée doivent produire des résultats strictement identiques, et
-tout refus doit laisser la composition inactive, sans graphe partiel.
+tout refus doit laisser la composition inactive, sans graphe partiel. Les
+compositions positives reçoivent des doubles d'attestations synthétiques
+(``tests.conformity_fixtures``), jamais des preuves réelles.
 """
 
 import unittest
 
 from pixs.kernel.composition import compose
+from tests.conformity_fixtures import synthetic_attestations
 
 APP_TOML = """
 schema_version = "1"
@@ -63,15 +66,27 @@ OFFICIAL_IDS = ("pixs.core",)
 
 class TestDeterminismePipeline(unittest.TestCase):
     def test_double_execution_resultats_strictement_identiques(self) -> None:
-        first = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
-        second = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        first = compose(
+            VALID_TEXTS,
+            official_ids=OFFICIAL_IDS,
+            attestations=synthetic_attestations(VALID_TEXTS),
+        )
+        second = compose(
+            VALID_TEXTS,
+            official_ids=OFFICIAL_IDS,
+            attestations=synthetic_attestations(VALID_TEXTS),
+        )
         self.assertEqual(first, second)
         self.assertEqual(first.stage, "activated")
         self.assertTrue(first.activated)
         self.assertEqual(first.diagnostics, ())
 
     def test_ordre_et_aretes_canoniques(self) -> None:
-        result = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        result = compose(
+            VALID_TEXTS,
+            official_ids=OFFICIAL_IDS,
+            attestations=synthetic_attestations(VALID_TEXTS),
+        )
         self.assertEqual(
             result.order, ("acme.lib", "pixs.core", "acme.app")
         )

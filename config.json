@@ -11,20 +11,38 @@
   },
   "agent": {
     "plan": {
-      "model": "opencode-go/qwen3.8-flash",
+      "model": "opencode-go/muse-spark-1.3-contributor",
       "options": {
         "reasoningEffort": "low"
       },
       "permission": {},
-      "reasoningEffort": "low"
+      "reasoningEffort": "low",
+      "variant": "low"
     },
+    "build": {
+      "model": "opencode-go/muse-spark-1.3-contributor",
+      "options": {
+        "reasoningEffort": "low"
+      },
+      "permission": {},
+      "reasoningEffort": "low",
+      "variant": "low"
+    }
+  },
+  "mode": {
     "build": {
       "model": "opencode-go/qwen3.8-flash",
       "options": {
         "reasoningEffort": "low"
       },
-      "permission": {},
-      "reasoningEffort": "low"
+      "permission": {}
+    },
+    "plan": {
+      "model": "opencode-go/qwen3.8-flash",
+      "options": {
+        "reasoningEffort": "low"
+      },
+      "permission": {}
     }
   }
 }

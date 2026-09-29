@@ -15,7 +15,7 @@ import unittest
 
 from pixs.kernel.composition import compose, resolve
 from pixs.kernel.diagnostics import RESOLVE, VALIDATE, Diagnostic
-from pixs.kernel.manifest.models import ComponentManifest
+from pixs.kernel.manifest import ComponentManifest, ProvidedCapability
 
 BASE_TOML = """
 schema_version = "1"
@@ -102,7 +102,16 @@ def _manifest(
         version="1.0.0",
         dependency_components=dependency_components,
         dependency_capabilities=dependency_capabilities,
-        provided_capabilities=provided_capabilities,
+        provided_capabilities=tuple(
+            ProvidedCapability(
+                id=capability_id,
+                version="1.0.0",
+                contracts=(),
+                criticality="REQUIRED",
+                fallback="none",
+            )
+            for capability_id in provided_capabilities
+        ),
     )
 
 
@@ -193,7 +202,7 @@ class TestDiagnosticsValidate(unittest.TestCase):
         diagnostic = _un_seul(result.diagnostics, "version")
         self.assertEqual(diagnostic.step, VALIDATE)
         self.assertEqual(
-            diagnostic.constraint, "SemVer attendu (majeure.mineure.correctif)"
+            diagnostic.constraint, "SemVer 2.0.0 complète attendue"
         )
 
     def test_version_de_schema_inconnue(self) -> None:
@@ -256,8 +265,9 @@ class TestDiagnosticsResolve(unittest.TestCase):
         )
         self.assertEqual(
             str(diagnostic),
-            "dependencies.components : composant requis absent de la "
-            "composition ('acme.absent')",
+            "dependencies.components : consommateur 'acme.orphan' : composant "
+            "requis absent de la composition ('acme.absent'), contrainte "
+            "'acme.absent >=1.0.0', version absente",
         )
 
     def test_fournisseur_configure_hors_candidats(self) -> None:
@@ -278,8 +288,10 @@ class TestDiagnosticsResolve(unittest.TestCase):
         self.assertEqual(diagnostic.constraint, "fournisseur unique ou configuré")
         self.assertEqual(
             str(diagnostic),
-            "dependencies.capabilities : ambiguïté de fournisseur pour la "
-            "capacité ('audit') entre : 't.p1', 't.p2'",
+            "dependencies.capabilities : consommateur 't.web' : ambiguïté de "
+            "fournisseur pour capacité ('audit') entre : 't.p1', 't.p2', "
+            "contrainte 'audit >=1.0.0', versions trouvées : "
+            "'t.p1'@'1.0.0', 't.p2'@'1.0.0'",
         )
 
     def test_capacite_sans_fournisseur(self) -> None:

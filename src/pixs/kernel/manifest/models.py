@@ -1,25 +1,33 @@
-"""Modèle structurel déclaratif des manifests de composant (tâche 2.1).
+"""Modèle structurel déclaratif des manifests de composant (tâches 2.1, 6.5).
 
 Contrôle la présence, les types et les seuls champs déclarés, en refus
-fermé. Le contrôle de secrets et de logique exécutable (2.3) est agrégé ici
-via ``guards.check_content_guards`` (la détection reste déléguée au module
-``guards``) ; le namespace ``pixs.*`` réservé et les collisions d'identifiants
-(2.4), et le parsing TOML (2.2) sont hors de ce module.
+fermé. Schéma 1 : capacités fournies et contrats implémentés en tables
+versionnées ; toute ancienne chaîne sans version est refusée. Les versions
+et contraintes sont validées par le validateur SemVer partagé
+(`pixs.kernel.manifest.semver`), jamais par une regex locale. Le contrôle
+de secrets et de logique exécutable (2.3) est agrégé ici via
+``guards.check_content_guards`` (la détection reste déléguée au module
+``guards``) ; le namespace ``pixs.*`` réservé et les collisions
+d'identifiants (2.4), et le parsing TOML (2.2) sont hors de ce module.
+Aucun diagnostic ne reproduit une valeur brute invalide : seuls le champ
+et l'index sont nommés.
 """
 
 from __future__ import annotations
 
-import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
 from .guards import check_content_guards
+from .semver import parse_requirement, parse_version
 
 __all__ = [
     "COMPONENT_TYPES",
     "ComponentManifest",
+    "ImplementedContract",
     "ManifestValidationError",
+    "ProvidedCapability",
     "parse_manifest",
 ]
 
@@ -27,12 +35,7 @@ COMPONENT_TYPES = frozenset(
     {"KERNEL", "MODULE", "SUBMODULE", "PROVIDER", "EXTENSION", "THEME"}
 )
 
-_SEMVER_RE = re.compile(
-    r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
-    r"(?:-(?:(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)"
-    r"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
-    r"(?:\+[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)?$"
-)
+CRITICALITIES = frozenset({"REQUIRED", "OPTIONAL"})
 
 _TOP_REQUIRED = ("schema_version", "id", "type", "version")
 _TOP_ALLOWED = frozenset(
@@ -48,12 +51,13 @@ _TOP_ALLOWED = frozenset(
         "implements",
     }
 )
-_SECTION_ALLOWED: dict[str, frozenset[str]] = {
-    "dependencies": frozenset({"components", "capabilities"}),
-    "optional_dependencies": frozenset({"components", "capabilities"}),
-    "provides": frozenset({"capabilities"}),
-    "implements": frozenset({"contracts"}),
-}
+_DEPENDENCIES_ALLOWED = frozenset({"components", "capabilities", "contracts"})
+_PROVIDES_ALLOWED = frozenset({"capabilities"})
+_IMPLEMENTS_ALLOWED = frozenset({"contracts"})
+_CAPABILITY_FIELDS = frozenset(
+    {"id", "version", "contracts", "criticality", "fallback"}
+)
+_CONTRACT_FIELDS = frozenset({"id", "version"})
 
 
 class ManifestValidationError(ValueError):
@@ -62,6 +66,25 @@ class ManifestValidationError(ValueError):
     def __init__(self, diagnostics: list[str]) -> None:
         self.diagnostics = list(diagnostics)
         super().__init__(" ; ".join(self.diagnostics))
+
+
+@dataclass(frozen=True)
+class ProvidedCapability:
+    """Capacité fournie versionnée (schéma 1, propriétaire = composant)."""
+
+    id: str
+    version: str
+    contracts: tuple[str, ...] = ()
+    criticality: str = "REQUIRED"
+    fallback: str = "none"
+
+
+@dataclass(frozen=True)
+class ImplementedContract:
+    """Contrat implémenté en version exacte (schéma 1)."""
+
+    id: str
+    version: str
 
 
 @dataclass(frozen=True)
@@ -75,10 +98,12 @@ class ComponentManifest:
     name: str | None = None
     dependency_components: tuple[str, ...] = ()
     dependency_capabilities: tuple[str, ...] = ()
+    dependency_contracts: tuple[str, ...] = ()
     optional_dependency_components: tuple[str, ...] = ()
     optional_dependency_capabilities: tuple[str, ...] = ()
-    provided_capabilities: tuple[str, ...] = ()
-    implemented_contracts: tuple[str, ...] = ()
+    optional_dependency_contracts: tuple[str, ...] = ()
+    provided_capabilities: tuple[ProvidedCapability, ...] = ()
+    implemented_contracts: tuple[ImplementedContract, ...] = ()
 
 
 def _check_str(
@@ -89,6 +114,21 @@ def _check_str(
         return None
     if non_empty and not value:
         diagnostics.append(f"{path} : une chaîne non vide est attendue")
+        return None
+    return value
+
+
+def _check_bare_id(value: Any, path: str, diagnostics: list[str]) -> str | None:
+    """Valide un identifiant nu (aucun comparateur), sans écho brut."""
+    if _check_str(value, path, diagnostics) is None:
+        return None
+    try:
+        requirement = parse_requirement(value)
+    except ValueError:
+        diagnostics.append(f"{path} : identifiant invalide")
+        return None
+    if requirement.constraints or requirement.target_id != value:
+        diagnostics.append(f"{path} : identifiant invalide")
         return None
     return value
 
@@ -108,7 +148,30 @@ def _check_str_list(
     return tuple(items)
 
 
-def _parse_section(
+def _check_constraint_list(
+    value: Any, path: str, diagnostics: list[str]
+) -> tuple[str, ...]:
+    """Valide une liste d'entrées `"id [comparateurs]"` (indices originaux)."""
+    if not isinstance(value, list):
+        diagnostics.append(f"{path} : une liste est attendue")
+        return ()
+    valid: list[str] = []
+    for index, item in enumerate(value):
+        if not isinstance(item, str) or not item:
+            diagnostics.append(f"{path}[{index}] : une chaîne non vide est attendue")
+            continue
+        try:
+            parse_requirement(item)
+        except ValueError:
+            diagnostics.append(
+                f"{path}[{index}] : entrée de dépendance invalide"
+            )
+        else:
+            valid.append(item)
+    return tuple(valid)
+
+
+def _parse_dependencies_section(
     data: Mapping[str, Any], key: str, diagnostics: list[str]
 ) -> dict[str, tuple[str, ...]]:
     if key not in data:
@@ -119,20 +182,136 @@ def _parse_section(
         return {}
     result: dict[str, tuple[str, ...]] = {}
     for name in section:
-        if name not in _SECTION_ALLOWED[key]:
+        if name not in _DEPENDENCIES_ALLOWED:
             diagnostics.append(f"{key}.{name} : champ non déclaré interdit")
         else:
-            result[name] = _check_str_list(
+            result[name] = _check_constraint_list(
                 section[name], f"{key}.{name}", diagnostics
             )
     return result
+
+
+def _parse_provides(
+    data: Mapping[str, Any], diagnostics: list[str]
+) -> tuple[ProvidedCapability, ...]:
+    if "provides" not in data:
+        return ()
+    section = data["provides"]
+    if not isinstance(section, Mapping):
+        diagnostics.append("provides : une table est attendue")
+        return ()
+    for name in section:
+        if name not in _PROVIDES_ALLOWED:
+            diagnostics.append(f"provides.{name} : champ non déclaré interdit")
+    raw = section.get("capabilities", [])
+    if not isinstance(raw, list):
+        diagnostics.append("provides.capabilities : une liste est attendue")
+        return ()
+    capabilities: list[ProvidedCapability] = []
+    seen: set[str] = set()
+    for index, item in enumerate(raw):
+        path = f"provides.capabilities[{index}]"
+        if not isinstance(item, Mapping):
+            diagnostics.append(f"{path} : une table inline est attendue")
+            continue
+        for field_name in item:
+            if field_name not in _CAPABILITY_FIELDS:
+                diagnostics.append(f"{path}.{field_name} : champ non déclaré interdit")
+        cap_id = _check_bare_id(item.get("id"), f"{path}.id", diagnostics)
+        if cap_id is None:
+            continue
+        try:
+            parse_version(item.get("version"))
+        except ValueError:
+            diagnostics.append(f"{path}.version : SemVer 2.0.0 complète attendue")
+            continue
+        contracts = _check_str_list(
+            item.get("contracts"), f"{path}.contracts", diagnostics
+        )
+        criticality = item.get("criticality")
+        if not isinstance(criticality, str) or criticality not in CRITICALITIES:
+            diagnostics.append(
+                f"{path}.criticality : REQUIRED ou OPTIONAL attendu"
+            )
+            continue
+        fallback = item.get("fallback")
+        if not isinstance(fallback, str):
+            diagnostics.append(f"{path}.fallback : une chaîne est attendue")
+            continue
+        if criticality == "REQUIRED" and fallback != "none":
+            diagnostics.append(
+                f"{path}.fallback : valeur explicite 'none' attendue"
+            )
+            continue
+        if criticality == "OPTIONAL" and not fallback:
+            diagnostics.append(f"{path}.fallback : une chaîne non vide est attendue")
+            continue
+        if cap_id in seen:
+            diagnostics.append(f"{path}.id : identifiant déjà déclaré")
+            continue
+        seen.add(cap_id)
+        capabilities.append(
+            ProvidedCapability(
+                id=cap_id,
+                version=item.get("version"),
+                contracts=contracts,
+                criticality=criticality,
+                fallback=fallback,
+            )
+        )
+    return tuple(capabilities)
+
+
+def _parse_implements(
+    data: Mapping[str, Any], diagnostics: list[str]
+) -> tuple[ImplementedContract, ...]:
+    if "implements" not in data:
+        return ()
+    section = data["implements"]
+    if not isinstance(section, Mapping):
+        diagnostics.append("implements : une table est attendue")
+        return ()
+    for name in section:
+        if name not in _IMPLEMENTS_ALLOWED:
+            diagnostics.append(f"implements.{name} : champ non déclaré interdit")
+    raw = section.get("contracts", [])
+    if not isinstance(raw, list):
+        diagnostics.append("implements.contracts : une liste est attendue")
+        return ()
+    contracts: list[ImplementedContract] = []
+    seen: set[str] = set()
+    for index, item in enumerate(raw):
+        path = f"implements.contracts[{index}]"
+        if not isinstance(item, Mapping):
+            diagnostics.append(f"{path} : une table inline est attendue")
+            continue
+        for field_name in item:
+            if field_name not in _CONTRACT_FIELDS:
+                diagnostics.append(f"{path}.{field_name} : champ non déclaré interdit")
+        contract_id = _check_bare_id(item.get("id"), f"{path}.id", diagnostics)
+        if contract_id is None:
+            continue
+        try:
+            parse_version(item.get("version"))
+        except ValueError:
+            diagnostics.append(f"{path}.version : SemVer 2.0.0 complète attendue")
+            continue
+        if contract_id in seen:
+            diagnostics.append(f"{path}.id : identifiant déjà déclaré")
+            continue
+        seen.add(contract_id)
+        contracts.append(
+            ImplementedContract(id=contract_id, version=item.get("version"))
+        )
+    return tuple(contracts)
 
 
 def parse_manifest(data: Mapping[str, Any]) -> ComponentManifest:
     """Valide un manifest structurel et retourne le modèle immuable.
 
     Lève ``ManifestValidationError`` avec un diagnostic nommant chaque
-    champ fautif ; aucun champ non déclaré n'est toléré silencieusement.
+    champ fautif ; aucun champ non déclaré n'est toléré silencieusement
+    et aucune valeur brute invalide n'est reproduite.
     """
     if not isinstance(data, Mapping):
         raise ManifestValidationError(
@@ -162,34 +341,45 @@ def parse_manifest(data: Mapping[str, Any]) -> ComponentManifest:
     if "type" in data:
         comp_type = _check_str(data["type"], "type", diagnostics)
         if comp_type is not None and comp_type not in COMPONENT_TYPES:
-            diagnostics.append(
-                f"type : valeur hors des six types attendue ({comp_type!r})"
-            )
+            diagnostics.append("type : valeur hors des six types attendue")
 
     comp_version = None
     if "version" in data:
         comp_version = _check_str(data["version"], "version", diagnostics)
-        if comp_version is not None and not _SEMVER_RE.match(comp_version):
-            diagnostics.append("version : SemVer attendu (majeure.mineure.correctif)")
+        if comp_version is not None:
+            try:
+                parse_version(comp_version)
+            except ValueError:
+                diagnostics.append(
+                    "version : SemVer 2.0.0 complète attendue"
+                )
 
     comp_name = None
     if "name" in data:
         comp_name = _check_str(data["name"], "name", diagnostics)
 
-    sections = {
-        key: _parse_section(data, key, diagnostics)
-        for key in _SECTION_ALLOWED
-    }
+    dependencies = _parse_dependencies_section(data, "dependencies", diagnostics)
+    optional_dependencies = _parse_dependencies_section(
+        data, "optional_dependencies", diagnostics
+    )
+    provided = _parse_provides(data, diagnostics)
+    implemented = _parse_implements(data, diagnostics)
+
+    if not diagnostics:
+        implemented_ids = {contract.id for contract in implemented}
+        for index, capability in enumerate(provided):
+            for contract_ref in capability.contracts:
+                if contract_ref not in implemented_ids:
+                    diagnostics.append(
+                        f"provides.capabilities[{index}] : contrat référencé hors "
+                        f"implements du même composant"
+                    )
+                    break
 
     diagnostics.extend(check_content_guards(data))
 
     if diagnostics:
         raise ManifestValidationError(diagnostics)
-
-    dependencies = sections["dependencies"]
-    optional_dependencies = sections["optional_dependencies"]
-    provides = sections["provides"]
-    implements = sections["implements"]
 
     return ComponentManifest(
         schema_version=schema_version,
@@ -199,8 +389,12 @@ def parse_manifest(data: Mapping[str, Any]) -> ComponentManifest:
         name=comp_name,
         dependency_components=dependencies.get("components", ()),
         dependency_capabilities=dependencies.get("capabilities", ()),
+        dependency_contracts=dependencies.get("contracts", ()),
         optional_dependency_components=optional_dependencies.get("components", ()),
-        optional_dependency_capabilities=optional_dependencies.get("capabilities", ()),
-        provided_capabilities=provides.get("capabilities", ()),
-        implemented_contracts=implements.get("contracts", ()),
+        optional_dependency_capabilities=optional_dependencies.get(
+            "capabilities", ()
+        ),
+        optional_dependency_contracts=optional_dependencies.get("contracts", ()),
+        provided_capabilities=provided,
+        implemented_contracts=implemented,
     )

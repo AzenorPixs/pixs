@@ -24,6 +24,7 @@ from dataclasses import dataclass
 
 from ..diagnostics import VALIDATE, Diagnostic
 from ..manifest.models import ComponentManifest
+from ..manifest.semver import parse_requirement
 from .core import Registry
 
 __all__ = [
@@ -232,9 +233,13 @@ class ServiceRegistry(_ManifestRegistry):
         if manifest is None:
             return ()
         if contribution.source == "implements":
-            declared = contribution.entry_id in manifest.implemented_contracts
+            declared = contribution.entry_id in {
+                contract.id for contract in manifest.implemented_contracts
+            }
         elif contribution.source == "provides":
-            declared = contribution.entry_id in manifest.provided_capabilities
+            declared = contribution.entry_id in {
+                capability.id for capability in manifest.provided_capabilities
+            }
         else:
             declared = False
         if not declared:
@@ -345,23 +350,38 @@ class CompositionRegistries:
 def _declared_dependency(
     manifest: ComponentManifest, entry: DependencyEntry
 ) -> bool:
-    """Vrai si l'entrée reproduit une dépendance déclarée du consommateur."""
+    """Vrai si l'entrée reproduit exactement une dépendance déclarée.
+
+    La contrainte complète doit figurer telle quelle dans le groupe déclaré
+    (cible, comparateurs, kind, caractère obligatoire), et la cible extraite
+    par le parseur SemVer partagé doit égaler l'identifiant de l'entrée :
+    une même cible avec une contrainte falsifiée est refusée.
+    """
     if entry.required:
         constraints_by_kind = {
             "components": manifest.dependency_components,
             "capabilities": manifest.dependency_capabilities,
+            "contracts": manifest.dependency_contracts,
         }
     else:
         constraints_by_kind = {
             "components": manifest.optional_dependency_components,
             "capabilities": manifest.optional_dependency_capabilities,
+            "contracts": manifest.optional_dependency_contracts,
         }
-    if entry.kind not in constraints_by_kind:
+    declared = constraints_by_kind.get(entry.kind)
+    if declared is None or entry.constraint not in declared:
         return False
-    return any(
-        constraint.split(" ", 1)[0] == entry.entry_id
-        for constraint in constraints_by_kind[entry.kind]
-    )
+    try:
+        target = parse_requirement(entry.constraint).target_id
+    except (TypeError, ValueError):
+        return False
+    return target == entry.entry_id
+
+
+def _dependency_target(constraint: str) -> str:
+    """Extrait la cible d'une contrainte déclarée validée (parseur partagé)."""
+    return parse_requirement(constraint).target_id
 
 
 def _dependency_entries(manifest: ComponentManifest) -> Iterator[DependencyEntry]:
@@ -369,7 +389,7 @@ def _dependency_entries(manifest: ComponentManifest) -> Iterator[DependencyEntry
     for constraint in manifest.dependency_components:
         yield DependencyEntry(
             manifest.id,
-            constraint.split(" ", 1)[0],
+            _dependency_target(constraint),
             "components",
             True,
             constraint,
@@ -377,15 +397,23 @@ def _dependency_entries(manifest: ComponentManifest) -> Iterator[DependencyEntry
     for constraint in manifest.dependency_capabilities:
         yield DependencyEntry(
             manifest.id,
-            constraint.split(" ", 1)[0],
+            _dependency_target(constraint),
             "capabilities",
+            True,
+            constraint,
+        )
+    for constraint in manifest.dependency_contracts:
+        yield DependencyEntry(
+            manifest.id,
+            _dependency_target(constraint),
+            "contracts",
             True,
             constraint,
         )
     for constraint in manifest.optional_dependency_components:
         yield DependencyEntry(
             manifest.id,
-            constraint.split(" ", 1)[0],
+            _dependency_target(constraint),
             "components",
             False,
             constraint,
@@ -393,8 +421,16 @@ def _dependency_entries(manifest: ComponentManifest) -> Iterator[DependencyEntry
     for constraint in manifest.optional_dependency_capabilities:
         yield DependencyEntry(
             manifest.id,
-            constraint.split(" ", 1)[0],
+            _dependency_target(constraint),
             "capabilities",
+            False,
+            constraint,
+        )
+    for constraint in manifest.optional_dependency_contracts:
+        yield DependencyEntry(
+            manifest.id,
+            _dependency_target(constraint),
+            "contracts",
             False,
             constraint,
         )
@@ -403,9 +439,9 @@ def _dependency_entries(manifest: ComponentManifest) -> Iterator[DependencyEntry
 def _service_entries(manifest: ComponentManifest) -> Iterator[ServiceEntry]:
     """Dérive les services déclarés : contrats implémentés puis capacités fournies."""
     for contract in manifest.implemented_contracts:
-        yield ServiceEntry(manifest.id, contract, "implements")
+        yield ServiceEntry(manifest.id, contract.id, "implements")
     for capability in manifest.provided_capabilities:
-        yield ServiceEntry(manifest.id, capability, "provides")
+        yield ServiceEntry(manifest.id, capability.id, "provides")
 
 
 def build_registries(

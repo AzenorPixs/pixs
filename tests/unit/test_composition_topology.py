@@ -88,5 +88,58 @@ class TestCibleAbsenteRegression(unittest.TestCase):
         )
 
 
+class TestDependanceOptionnelleAbsente(unittest.TestCase):
+    """Scénario dependencies « Optionnelle absente tolérée » (tâche 6.1).
+
+    Une dépendance optionnelle (composant ou capacité) dont la cible est absente
+    ne doit invalider ni la composition ni l'ordre de chargement : aucun
+    diagnostic n'est émis et la cible n'entre jamais dans le graphe. Contraste
+    avec la dépendance obligatoire absente, qui, elle, refuse
+    (TestCibleAbsenteRegression).
+    """
+
+    def test_composant_optionnel_absent_composition_valide(self) -> None:
+        app = ComponentManifest(
+            schema_version="1",
+            id="t.app",
+            type="MODULE",
+            version="1.0.0",
+            optional_dependency_components=("t.ghost >=1.0.0",),
+        )
+        edges, order, diagnostics = resolve((app,))
+        self.assertEqual(diagnostics, ())
+        self.assertEqual(order, ("t.app",))
+        self.assertNotIn(("t.app", "t.ghost"), edges)
+
+    def test_capacite_optionnelle_absente_composition_valide(self) -> None:
+        app = ComponentManifest(
+            schema_version="1",
+            id="t.app",
+            type="MODULE",
+            version="1.0.0",
+            optional_dependency_capabilities=("audit >=1.0.0 <2.0.0",),
+        )
+        _edges, order, diagnostics = resolve((app,))
+        self.assertEqual(diagnostics, ())
+        self.assertEqual(order, ("t.app",))
+
+    def test_optionnelle_absente_ordre_stable_entre_ordinnees(self) -> None:
+        core = _manifest("t.core")
+        app = ComponentManifest(
+            schema_version="1",
+            id="t.app",
+            type="MODULE",
+            version="1.0.0",
+            dependency_components=("t.core",),
+            optional_dependency_components=("t.ghost",),
+        )
+        first = resolve((app, core))
+        second = resolve((core, app))
+        self.assertEqual(first, second)
+        _edges, order, diagnostics = first
+        self.assertEqual(diagnostics, ())
+        self.assertEqual(order, ("t.core", "t.app"))
+
+
 if __name__ == "__main__":
     unittest.main()
