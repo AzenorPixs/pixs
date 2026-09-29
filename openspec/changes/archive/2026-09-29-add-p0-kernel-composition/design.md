@@ -60,6 +60,23 @@ fermé et composition déterministe.
   localement, sans secret ni donnée de production.
   *Alternative documentée* : `pytest`, ergonomique mais dépendance externe soumise à
   validation CGPT ; migrable sans réécriture grâce aux interfaces standard.
+- **D7 — Versions distinctes et contraintes (clarification RSMP, sans comportement
+  indépendant).** Les versions de composant, capacité, contrat et schéma sont
+  distinctes ; les contraintes portent sur la version propre de chaque dimension
+  (références normatives : specs `component-model` pour le schéma, `dependencies`
+  pour la grammaire et la sémantique, `capabilities` et `compatibility` pour la
+  résolution et les preuves). La version du composant ne sert jamais de proxy.
+  Les fixtures historiques en chaînes sans version sont adaptées au schéma 1 ;
+  les anciennes formes restent refusées avec diagnostic.
+- **D8 — Preuves externes et portée P0 (clarification RSMP, sans comportement
+  indépendant).** La conformité est établie par des `ConformityAttestation`
+  fournies en mémoire par l'appelant de confiance (entrée documentée de
+  `compose`, hors manifest) ; couverture exigée de chaque composant activé et
+  de chaque capacité ou contrat résolu auprès de son fournisseur exact, refus
+  fermé sinon. P0 n'évalue que ses dimensions connues et ne prétend aucune
+  compatibilité globale. Les fixtures MAY injecter des doubles de preuves
+  clairement nommés ; aucune suite provider effective n'est implémentée
+  (exclusion initiale préservée).
 
 ## Risks / Trade-offs
 

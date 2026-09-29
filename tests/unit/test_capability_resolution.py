@@ -1,15 +1,17 @@
-"""Tests unitaires de la résolution de fournisseurs de capacités (tâche 3.3).
+"""Tests unitaires de la résolution de fournisseurs de capacités (tâche 3.3, design D7).
 
-Règle normée (providers/spec.md) : fournisseur configuré, sinon candidat
-unique compatible, sinon refus avec diagnostic d'ambiguïté ; sélection
-indépendante de l'ordre de découverte. Satisfaction par égalité stricte du
-nom de capacité (décision CGPT 3.3-A).
+Règle normée (capabilities/spec.md) : fournisseur configuré candidat ET
+compatible, sinon refus sans repli ; sinon candidat compatible unique
+retenu, sinon refus avec diagnostic d'ambiguïté, d'absence ou
+d'incompatibilité ; sélection indépendante de l'ordre de découverte. La
+contrainte déclarée est évaluée contre la version propre du descripteur
+fourni (filtrage par versions), jamais par égalité stricte du seul nom.
 """
 
 import unittest
 
 from pixs.kernel.composition import resolve
-from pixs.kernel.manifest.models import ComponentManifest
+from pixs.kernel.manifest import ComponentManifest, ProvidedCapability
 
 
 def _manifest(
@@ -25,7 +27,16 @@ def _manifest(
         version="1.0.0",
         dependency_components=dependency_components,
         dependency_capabilities=dependency_capabilities,
-        provided_capabilities=provided_capabilities,
+        provided_capabilities=tuple(
+            ProvidedCapability(
+                id=capability_id,
+                version="1.0.0",
+                contracts=(),
+                criticality="REQUIRED",
+                fallback="none",
+            )
+            for capability_id in provided_capabilities
+        ),
     )
 
 

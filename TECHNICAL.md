@@ -28,6 +28,8 @@ Contraintes obligatoires :
 * une identité numérique porte les méthodes d'authentification et les informations de révocation ;
 * une identité numérique peut être utilisée comme `Subject` d'autorisation.
 
+Les identifiants internes stables de l'utilisateur (`User`) et de l'identité numérique (`DigitalIdentity`) sont des UUIDv7 dans le profil minimal v1 défini par `openspec/specs/core/spec.md`. La liaison explicite est unique dans chaque sens ; une référence absente ou une association violant cette cardinalité est refusée. Un compte de service est représenté par une identité de type `SERVICE`, y compris sans utilisateur lié.
+
 Le lien entre un utilisateur et une identité numérique ne doit pas être déduit d'un identifiant fourni par un provider externe. Il doit être représenté explicitement dans la source de vérité Pixs.
 
 L'assurance est portée par des événements et contextes d'authentification, pas par le seul type de l'identité. Pixs distingue au minimum :
@@ -42,7 +44,7 @@ Ces niveaux sont des sémantiques internes et peuvent être mappés par un provi
 
 ## 2. Types d'identité numérique
 
-Les types prévus sont :
+Le profil minimal v1 accepte exclusivement les types explicites suivants :
 
 ```text
 HUMAN      identité associée à une personne
@@ -53,7 +55,7 @@ FEDERATED  identité provenant d'un système externe
 
 Le type décrit la catégorie fonctionnelle exposée par Pixs. Le mode de provisionnement ou le provider d'authentification ne doit pas être confondu avec le type lorsque la conception détaillée nécessitera plusieurs dimensions.
 
-Une identité numérique devrait également disposer d'un état explicite, au minimum :
+Le profil minimal v1 exige un état explicite parmi les valeurs suivantes :
 
 ```text
 ACTIVE
@@ -61,6 +63,8 @@ SUSPENDED
 REVOKED
 EXPIRED
 ```
+
+Un identifiant non UUIDv7, un type inconnu ou un état inconnu est refusé par la validation du profil v1. La validation structurelle ne définit pas de transitions d'état ni de règles temporelles implicites.
 
 Les méthodes d'authentification, identifiants externes, dates d'activation et d'expiration, ainsi que les changements d'état doivent être rattachés à l'identité numérique et auditables.
 
@@ -85,15 +89,15 @@ Un provider OIDC, SAML, LDAP ou local peut authentifier une identité numérique
 
 Le backend Django reste l'autorité pour les règles métier, les transactions et l'autorisation. PostgreSQL reste la source de vérité applicative.
 
+Le premier socle du profil identité v1 se limite aux modèles et validateurs structurels sans authentification réelle, persistance ou provider concret. Leur validation ne crée aucune session et n'accorde aucun accès. Elle ne prouve ni une mutation persistante ni un audit durable et ne dispense pas les mutations réelles des exigences applicables de persistance, d'autorisation et d'audit.
+
 Le provider ne peut établir qu'un niveau d'assurance couvert par sa configuration de confiance. L'identifiant externe canonique est le triplet `(provider_id, issuer, subject)` ; une adresse e-mail, un nom affiché ou une claim non vérifiée ne constitue pas une clé de rapprochement. La liaison avec une identité existante est une opération explicite, vérifiée, idempotente et auditée.
 
 ## 4. Articulation avec OpenSpec et choix techniques ouverts
 
 Les spécifications OpenSpec actives définissent les exigences normatives applicables aux domaines ci-dessous. La présente liste ne les duplique pas : elle recense les choix techniques concrets qui restent volontairement ouverts pour l'implémentation ou qui devront être précisés par une évolution OpenSpec si leur décision modifie un comportement normatif :
 
-* les identifiants internes stables des utilisateurs et identités numériques ;
-* les contraintes d'unicité du lien utilisateur-identité ;
-* la représentation des comptes de service ;
+* l'intégration persistante du profil identité minimal v1 défini par `openspec/specs/core/spec.md` et les sections 1 à 3 ci-dessus ;
 * les sessions, tokens et méthodes d'authentification ;
 * le modèle d'`AuthenticationContext`, des preuves et des niveaux d'assurance ;
 * la révocation immédiate ou différée ;
@@ -270,11 +274,17 @@ capabilities = ["authentication >=1.0.0 <2.0.0"]
 capabilities = ["audit"]
 
 [provides]
-capabilities = ["authentication.oidc"]
+capabilities = [{id = "authentication.oidc", version = "1.0.0", contracts = ["pixs.authentication.contract"], criticality = "REQUIRED", fallback = "none"}]
 
 [implements]
-contracts = ["pixs.authentication.contract"]
+contracts = [{id = "pixs.authentication.contract", version = "1.0.0"}]
 ```
+
+Référence normative : le schéma des capacités et contrats est défini par la
+spécification `component-model`, la grammaire des comparateurs par la
+spécification `dependencies` (les attestations de conformité exigent des
+versions exactes), la résolution par les spécifications `capabilities` et
+`compatibility`.
 
 ## 7. Dépendances et résolution
 
@@ -622,6 +632,14 @@ Une indisponibilité du PDP produit un refus fermé pour les mutations, les acti
 La résolution des groupes imbriqués doit utiliser un graphe acyclique, borné et détectable avant activation. Un cycle, une profondeur excessive ou une relation ambiguë produit un refus ou une composition invalide selon le moment de détection.
 
 Le contexte de décision peut distinguer l'acteur effectif, le sujet représenté et l'éventuel délégant afin de préserver la traçabilité. Une délégation, une impersonation ou une élévation break-glass doit être explicitement accordée, limitée dans le temps, liée à un périmètre, soumise au niveau d'assurance requis et auditée. Aucun rôle permanent de contournement ne doit être créé par défaut.
+
+### 12.5 Profil PDP minimal v1
+
+Le profil minimal v1 est une évaluation pure : les obligations restent déclaratives et ne simulent pas l'audit effectif du PEP. Référence canonique : `openspec/specs/authorization-engine/spec.md`, exigence Profil PDP minimal fermé v1.
+
+Les sélecteurs utilisent l'égalité ou des ensembles finis d'identifiants déclarés, sans wildcard, préfixe ni héritage ; les conditions sont conjonctives eq et in typées, distinctes des seuils minima des trois dimensions de la section 4.1 ; tout fait ou type absent ou inconnu produit un refus fermé. La seule obligation est AUDIT ; toute obligation inconnue est invalide ; les obligations des ALLOW applicables sont unies de façon triée et dédupliquée ; aucun accès n'est accordé avant satisfaction par le PEP et les refus sont audités.
+
+Le temps est UTC fiable injecté avec intervalles [from, until) ; l'expires_at d'un ALLOW est le minimum de now plus TTL, expiration de l'authentification, auth_time plus fraîcheur maximale requise, et prochaine transition autrement correspondante même DENY futur ; toute mutation et toute action sensible sont réévaluées. Les contextes d'authentification proviennent de la chaîne backend exclusivement, sans valeur de booléen client comme preuve, avec expiration, révocation et périmètre vérifiés. La plateforme exige contexte, politique et audit explicites ; l'intertenant est refusé uniquement dans le profil minimal, le contrat général explicite restant préservé. Les limites positives restent configurées sans valeur par défaut inventée.
 
 ## 13. Identifiants des données
 
