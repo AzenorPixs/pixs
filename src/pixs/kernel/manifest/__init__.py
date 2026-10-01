@@ -9,7 +9,9 @@ direct mais non réexportés.
 from .models import (
     COMPONENT_TYPES,
     ComponentManifest,
+    ImplementedContract,
     ManifestValidationError,
+    ProvidedCapability,
     parse_manifest,
 )
 from .parser import (
@@ -21,7 +23,9 @@ from .parser import (
 __all__ = [
     "COMPONENT_TYPES",
     "ComponentManifest",
+    "ImplementedContract",
     "ManifestValidationError",
+    "ProvidedCapability",
     "parse_manifest",
     "SUPPORTED_SCHEMA_VERSIONS",
     "load_manifest_file",

@@ -10,7 +10,9 @@ Garanties normatives exercées exclusivement par la surface publique déclarée 
   réalisées sans importer de module d'implémentation ; les modules privés restent
   atteignables par chemin direct mais ne sont pas requis pour l'usage public.
 
-Fixtures synthétiques, sans secret ni donnée de production.
+Fixtures synthétiques, sans secret ni donnée de production. La composition
+positive reçoit des doubles d'attestations synthétiques, jamais de preuves
+réelles.
 """
 
 import importlib
@@ -26,6 +28,7 @@ from pixs.kernel import (
     manifest,
     registry,
 )
+from tests.conformity_fixtures import synthetic_attestations
 
 PUBLIC_SUBMODULES = (
     "composition",
@@ -38,7 +41,7 @@ PUBLIC_SUBMODULES = (
 
 #: Modules d'implémentation qui ne doivent jamais être publicisés par leur façade.
 HIDDEN_IMPL_MODULES = {
-    manifest: ("models", "parser", "guards"),
+    manifest: ("models", "parser", "guards", "semver"),
     lifecycle: ("state", "hooks"),
     registry: ("core", "registries", "identity", "requirements"),
     config: ("models", "resolution"),
@@ -50,6 +53,9 @@ ROOT_LEAK_SYMBOLS = (
     "resolve",
     "Diagnostic",
     "ComponentManifest",
+    "ProvidedCapability",
+    "ImplementedContract",
+    "ConformityAttestation",
     "run_hooks",
     "Registry",
     "resolve_configuration",
@@ -114,6 +120,16 @@ class TestFacadesSousPaquetsBornes(unittest.TestCase):
         self.assertNotIn("check_content_guards", manifest.__all__)
         self.assertFalse(hasattr(manifest, "check_content_guards"))
 
+    def test_descripteurs_versionnes_publics_manifest(self) -> None:
+        for name in ("ProvidedCapability", "ImplementedContract"):
+            with self.subTest(name=name):
+                self.assertIn(name, manifest.__all__)
+                self.assertTrue(hasattr(manifest, name), name)
+
+    def test_attestation_publique_composition(self) -> None:
+        self.assertIn("ConformityAttestation", composition.__all__)
+        self.assertTrue(hasattr(composition, "ConformityAttestation"))
+
 
 class TestModulesPrivesAtteignables(unittest.TestCase):
     def test_import_direct_des_modules_impl(self) -> None:
@@ -125,7 +141,11 @@ class TestModulesPrivesAtteignables(unittest.TestCase):
 
 class TestSuffisanceSurfacePublique(unittest.TestCase):
     def test_composition_et_hooks_via_facades_seules(self) -> None:
-        result = composition.compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        result = composition.compose(
+            VALID_TEXTS,
+            official_ids=OFFICIAL_IDS,
+            attestations=synthetic_attestations(VALID_TEXTS),
+        )
         self.assertTrue(result.activated)
         self.assertEqual(result.diagnostics, ())
 

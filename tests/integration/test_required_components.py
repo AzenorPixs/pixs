@@ -1,16 +1,18 @@
-"""Tests d'intégration de la règle data-driven « jeu de composants requis » (tâche 4.3).
+"""Tests d'intégration de la règle data-driven « jeu de composants requis » (tâche 4.3, design D4, 6.6).
 
 La règle est portée par la seule donnée ``required_ids`` fournie à ``compose``
 : le noyau ne code en dur AUCUN identifiant de module requis (design D4). Les
 fixtures sont synthétiques, sans secret ni donnée de production, et chaque
 scénario vérifie le refus fermé avant tout chargement lorsqu'un composant
 requis est absent, l'activation lorsqu'il est présent, et le déterminisme de
-l'ordre canonique des diagnostics.
+l'ordre canonique des diagnostics. Les compositions positives reçoivent des
+doubles d'attestations synthétiques, jamais des preuves réelles.
 """
 
 import unittest
 
 from pixs.kernel.composition import compose
+from tests.conformity_fixtures import synthetic_attestations
 
 APP_ID = "acme.app"
 LIB_ID = "acme.lib"
@@ -44,14 +46,16 @@ version = "0.1.0"
 # dans le noyau (design D4, spec core).
 REQUIS_CORE = (CORE_ID,)
 OFFICIELS = (CORE_ID,)
+TEXTES_COMPLETS = [APP_TOML, CORE_TOML, LIB_TOML]
 
 
 class TestRequisPresentActive(unittest.TestCase):
     def test_requis_present_active(self) -> None:
         result = compose(
-            [APP_TOML, CORE_TOML, LIB_TOML],
+            TEXTES_COMPLETS,
             official_ids=OFFICIELS,
             required_ids=REQUIS_CORE,
+            attestations=synthetic_attestations(TEXTES_COMPLETS),
         )
         self.assertEqual(result.stage, "activated")
         self.assertTrue(result.activated)
@@ -60,14 +64,16 @@ class TestRequisPresentActive(unittest.TestCase):
 
     def test_requis_present_double_execution_identique(self) -> None:
         first = compose(
-            [APP_TOML, CORE_TOML, LIB_TOML],
+            TEXTES_COMPLETS,
             official_ids=OFFICIELS,
             required_ids=REQUIS_CORE,
+            attestations=synthetic_attestations(TEXTES_COMPLETS),
         )
         second = compose(
-            [APP_TOML, CORE_TOML, LIB_TOML],
+            TEXTES_COMPLETS,
             official_ids=OFFICIELS,
             required_ids=REQUIS_CORE,
+            attestations=synthetic_attestations(TEXTES_COMPLETS),
         )
         self.assertEqual(first, second)
 
@@ -119,12 +125,61 @@ class TestRequisAbsentRefuse(unittest.TestCase):
         self.assertEqual(a, b)
 
 
+class TestRequisContraintVersion(unittest.TestCase):
+    def test_requis_contrainte_compatible_active(self) -> None:
+        result = compose(
+            TEXTES_COMPLETS,
+            official_ids=OFFICIELS,
+            required_ids=(CORE_ID + " >=1.0.0 <2.0.0",),
+            attestations=synthetic_attestations(TEXTES_COMPLETS),
+        )
+        self.assertEqual(result.stage, "activated")
+        self.assertTrue(result.activated)
+        self.assertEqual(result.diagnostics, ())
+
+    def test_requis_contrainte_incompatible_refuse_en_validate(self) -> None:
+        result = compose(
+            TEXTES_COMPLETS,
+            official_ids=OFFICIELS,
+            required_ids=(CORE_ID + " >=2.0.0",),
+        )
+        self.assertEqual(result.stage, "validate")
+        self.assertFalse(result.activated)
+        self.assertEqual(result.order, ())
+        self.assertEqual(result.edges, ())
+        self.assertTrue(
+            any(
+                "incompatible" in diagnostic and CORE_ID in diagnostic
+                for diagnostic in result.diagnostics
+            ),
+            f"aucun diagnostic de version/contrainte : {result.diagnostics}",
+        )
+
+    def test_refus_incompatibles_identique_inversion_simultanee(self) -> None:
+        a = compose(
+            TEXTES_COMPLETS,
+            official_ids=OFFICIELS,
+            required_ids=(LIB_ID + " >=9.9.9", APP_ID + " >=9.9.9"),
+        )
+        b = compose(
+            [LIB_TOML, CORE_TOML, APP_TOML],
+            official_ids=OFFICIELS,
+            required_ids=(APP_ID + " >=9.9.9", LIB_ID + " >=9.9.9"),
+        )
+        self.assertEqual(a.stage, "validate")
+        self.assertEqual(b.stage, "validate")
+        self.assertFalse(a.activated)
+        self.assertFalse(b.activated)
+        self.assertEqual(a.diagnostics, b.diagnostics)
+
+
 class TestAucunRequisNonRegression(unittest.TestCase):
     def test_aucun_requis_en_donnees_ne_blocque_pas(self) -> None:
         result = compose(
-            [APP_TOML, CORE_TOML, LIB_TOML],
+            TEXTES_COMPLETS,
             official_ids=OFFICIELS,
             required_ids=(),
+            attestations=synthetic_attestations(TEXTES_COMPLETS),
         )
         self.assertEqual(result.stage, "activated")
         self.assertTrue(result.activated)
@@ -134,9 +189,10 @@ class TestAucunRequisNonRegression(unittest.TestCase):
         self,
     ) -> None:
         result = compose(
-            [APP_TOML, CORE_TOML, LIB_TOML],
+            TEXTES_COMPLETS,
             official_ids=OFFICIELS,
             required_ids=(LIB_ID,),
+            attestations=synthetic_attestations(TEXTES_COMPLETS),
         )
         self.assertEqual(result.stage, "activated")
         self.assertTrue(result.activated)
