@@ -6,12 +6,15 @@ ordre de chargement et une suite de hooks strictement identiques, sans
 dépendre du système de fichiers ni de l'ordre de construction des mappings.
 Fixtures synthétiques sans secret ni donnée de production, sur le motif de
 ``test_composition_pipeline`` (acme.app dépend de pixs.core et acme.lib).
+Les compositions reçoivent des doubles d'attestations synthétiques, jamais
+des preuves réelles.
 """
 
 import unittest
 
 from pixs.kernel.composition import compose
 from pixs.kernel.lifecycle.hooks import HOOK_POINTS, HookCall, run_hooks
+from tests.conformity_fixtures import synthetic_attestations
 
 APP_TOML = """
 schema_version = "1"
@@ -39,6 +42,7 @@ version = "0.1.0"
 
 VALID_TEXTS = [APP_TOML, CORE_TOML, LIB_TOML]
 OFFICIAL_IDS = ("pixs.core",)
+ATTESTATIONS = synthetic_attestations(VALID_TEXTS)
 
 
 def _build_hooks(
@@ -62,8 +66,12 @@ def _build_hooks(
 
 class TestDoubleExecutionReproductible(unittest.TestCase):
     def test_double_execution_complete_ordres_identiques(self) -> None:
-        first = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
-        second = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        first = compose(
+            VALID_TEXTS, official_ids=OFFICIAL_IDS, attestations=ATTESTATIONS
+        )
+        second = compose(
+            VALID_TEXTS, official_ids=OFFICIAL_IDS, attestations=ATTESTATIONS
+        )
         self.assertEqual(first, second)
         self.assertTrue(first.activated)
         self.assertEqual(first.order, second.order)
@@ -87,7 +95,9 @@ class TestDoubleExecutionReproductible(unittest.TestCase):
 
 class TestOrdreDuGraphe(unittest.TestCase):
     def test_suite_des_composants_egale_ordre_resolu(self) -> None:
-        result = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        result = compose(
+            VALID_TEXTS, official_ids=OFFICIAL_IDS, attestations=ATTESTATIONS
+        )
         log: list = []
         calls, diagnostics = run_hooks(result.order, _build_hooks(log, result.order))
         self.assertEqual(diagnostics, ())
@@ -98,7 +108,9 @@ class TestOrdreDuGraphe(unittest.TestCase):
         self.assertEqual(tuple(distinct), result.order)
 
     def test_hooks_par_composant_dans_l_ordre_des_points(self) -> None:
-        result = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        result = compose(
+            VALID_TEXTS, official_ids=OFFICIAL_IDS, attestations=ATTESTATIONS
+        )
         log: list = []
         calls, diagnostics = run_hooks(result.order, _build_hooks(log, result.order))
         self.assertEqual(diagnostics, ())
@@ -114,7 +126,9 @@ class TestOrdreDuGraphe(unittest.TestCase):
 
 class TestInvarianceDInsertion(unittest.TestCase):
     def test_constructions_divergentes_meme_sequence(self) -> None:
-        result = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        result = compose(
+            VALID_TEXTS, official_ids=OFFICIAL_IDS, attestations=ATTESTATIONS
+        )
         log_canonique: list = []
         calls_canoniques, _ = run_hooks(
             result.order, _build_hooks(log_canonique, result.order)
@@ -134,7 +148,9 @@ class TestInvarianceDInsertion(unittest.TestCase):
 
 class TestMondeClosSansEffet(unittest.TestCase):
     def test_composant_inconnu_refuse_aucun_callback(self) -> None:
-        result = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        result = compose(
+            VALID_TEXTS, official_ids=OFFICIAL_IDS, attestations=ATTESTATIONS
+        )
         log: list = []
         hooks = _build_hooks(log, result.order)
         hooks["acme.ghost"] = {"install": lambda: log.append(("acme.ghost", "install"))}
@@ -147,7 +163,9 @@ class TestMondeClosSansEffet(unittest.TestCase):
         self.assertIn("acme.ghost", diagnostics[0].message)
 
     def test_hook_hors_ensemble_refuse_aucun_callback(self) -> None:
-        result = compose(VALID_TEXTS, official_ids=OFFICIAL_IDS)
+        result = compose(
+            VALID_TEXTS, official_ids=OFFICIAL_IDS, attestations=ATTESTATIONS
+        )
         log: list = []
         hooks = _build_hooks(log, result.order)
         hooks["acme.lib"] = {

@@ -15,7 +15,12 @@ version = "1.0.0"
 name = "Demo"
 
 [provides]
-capabilities = ["demo.echo@1.0.0"]
+[[provides.capabilities]]
+id = "demo.echo"
+version = "1.0.0"
+contracts = []
+criticality = "REQUIRED"
+fallback = "none"
 """
 
 INJECTED_TOML = f"""
@@ -26,7 +31,12 @@ version = "1.0.0"
 name = "{FAKE_JWT}"
 
 [provides]
-capabilities = ["{INJECTED_BRACES_VALUE}"]
+[[provides.capabilities]]
+id = "{INJECTED_BRACES_VALUE}"
+version = "1.0.0"
+contracts = []
+criticality = "REQUIRED"
+fallback = "none"
 """
 
 

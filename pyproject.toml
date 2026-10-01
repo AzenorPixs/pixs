@@ -3,4 +3,7 @@ name = "pixs"
 version = "0.1.0"
 description = "Socle Pixs : noyau de composition générique et modules (P0 initial)"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "Django==5.2.17",
+    "psycopg==3.3.5",
+]

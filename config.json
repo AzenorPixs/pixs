@@ -11,20 +11,22 @@
   },
   "agent": {
     "plan": {
-      "model": "opencode-go/qwen3.8-flash",
+      "model": "opencode-go/muse-spark-1.3-contributor",
       "options": {
-        "reasoningEffort": "low"
+        "reasoningEffort": "high"
       },
       "permission": {},
-      "reasoningEffort": "low"
+      "reasoningEffort": "low",
+      "variant": "high"
     },
     "build": {
-      "model": "opencode-go/qwen3.8-flash",
+      "model": "opencode-go/muse-spark-1.3-contributor",
       "options": {
-        "reasoningEffort": "low"
+        "reasoningEffort": "high"
       },
       "permission": {},
-      "reasoningEffort": "low"
+      "reasoningEffort": "low",
+      "variant": "high"
     }
   },
   "mode": {

@@ -59,3 +59,31 @@ Le système MUST distinguer les états de composition, d'installation et de sant
 
 - **WHEN** un composant est installé mais désactivé, ou activé mais mal configuré, ou prêt mais dégradé
 - **THEN** chaque état est représenté distinctement et la composition ne devient pas ACTIVE tant que manifest, dépendances, contrats et contraintes de sécurité ne sont pas validés
+
+### Requirement: Manifest schéma 1 — capacités et contrats versionnés
+
+Le `component.toml` de `schema_version = "1"` MUST déclarer les capacités
+fournies comme tableau de tables inline `[provides].capabilities` avec les
+champs `id` (string non vide), `version` (SemVer 2.0.0 complète),
+`contracts` (tableau de strings, sous-ensemble des contrats du `[implements]`
+du MÊME composant, MAY vide), `criticality` (`REQUIRED` ou `OPTIONAL`) et
+`fallback` (string ; valeur `"none"` explicite si `REQUIRED`, non vide si
+`OPTIONAL`). Le propriétaire d'une capacité fournie est dérivé de
+l'identifiant du composant ; aucune liste de noms parallèle.
+
+Le `[implements].contracts` MUST être un tableau de tables inline `{id,
+version}` où `version` est la version exacte du contrat implémenté.
+
+Les `[dependencies]` et `[optional_dependencies]` (`components`,
+`capabilities`, `contracts`) sont des listes de strings
+`"id [comparateurs]"` dont la grammaire et la sémantique sont définies par la
+spécification `dependencies`. Toute ancienne chaîne fournie sans version dans
+`[provides].capabilities` ou `[implements].contracts` MUST être refusée en
+validation avec un diagnostic nommant le champ et l'entrée ; les fixtures
+historiques DOIVENT être adaptées et la version du composant MUST NOT servir
+de proxy. Aucune preuve de conformité ne figure dans le manifest.
+
+#### Scenario: Capacité fournie sans version refusée
+
+- **WHEN** un manifest déclare une capacité fournie sans `version`
+- **THEN** il reste non validé avec un diagnostic nommant le champ et l'entrée concernée

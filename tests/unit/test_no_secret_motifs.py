@@ -10,6 +10,10 @@ valeur AWS d'exemple AKIA…EXAMPLE) pour prouver que le garde les refuse sans l
 reproduire ; ce sont des entrées de test, pas des artefacts produits. Le scanner
 contrôle donc les sorties du moteur, et non leurs entrées.
 
+Les sentinelles synthétiques (fournisseur configuré, proof_ref) sont des
+marqueurs détectables séparés des échantillons de contrôle : elles prouvent
+que les refus n'échoïsent aucune valeur d'entrée sensible.
+
 Garde non muet : échoue si aucun artefact admissible n'est inspecté ou si aucun
 motif n'est actif ; un échantillon de contrôle prouve que chaque motif détecte.
 """
@@ -17,7 +21,8 @@ motif n'est actif ; un échantillon de contrôle prouve que chaque motif détect
 import re
 import unittest
 
-from pixs.kernel.composition import compose
+from pixs.kernel.composition import ConformityAttestation, compose
+from tests.conformity_fixtures import synthetic_attestations
 
 APP_TOML = 'schema_version = "1"\nid = "acme.app"\ntype = "MODULE"\nversion = "1.0.0"\n'
 MISSING_TYPE_TOML = 'schema_version = "1"\nid = "acme.app"\nversion = "1.0.0"\n'
@@ -41,16 +46,39 @@ P1_TOML = (
 )
 PROV1_TOML = (
     'schema_version = "1"\nid = "t.p1"\ntype = "PROVIDER"\nversion = "1.0.0"\n'
-    '[provides]\ncapabilities = ["audit"]\n'
+    '[provides]\n[[provides.capabilities]]\n'
+    'id = "audit"\nversion = "1.0.0"\ncontracts = []\n'
+    'criticality = "REQUIRED"\nfallback = "none"\n'
 )
 PROV2_TOML = (
     'schema_version = "1"\nid = "t.p2"\ntype = "PROVIDER"\nversion = "1.0.0"\n'
-    '[provides]\ncapabilities = ["audit"]\n'
+    '[provides]\n[[provides.capabilities]]\n'
+    'id = "audit"\nversion = "1.0.0"\ncontracts = []\n'
+    'criticality = "REQUIRED"\nfallback = "none"\n'
 )
 DEP_TOML = (
     'schema_version = "1"\nid = "acme.dep"\ntype = "MODULE"\nversion = "1.0.0"\n'
     '[dependencies]\ncomponents = ["acme.absent >=1.0.0"]\n'
 )
+
+SYNTHETIC_PROVIDER_SENTINEL = "synthetic:absent-provider-001"
+SYNTHETIC_PROOF_SENTINEL = "synthetic:proof-001"
+
+
+def _preuve_ephemere_sentinelle() -> ConformityAttestation:
+    """Double en échec portant une proof_ref sentinelle détectable."""
+    return ConformityAttestation(
+        component_id="acme.app",
+        component_version="1.0.0",
+        scope="COMPONENT",
+        target_id="acme.app",
+        target_version="1.0.0",
+        suite_id="synthetic.fixture",
+        suite_version="1.0.0",
+        verdict="FAIL",
+        proof_ref=SYNTHETIC_PROOF_SENTINEL,
+    )
+
 
 FORBIDDEN_PATTERNS: dict[str, re.Pattern[str]] = {
     "aws_access_key_id": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
@@ -82,7 +110,7 @@ CONTROL_SAMPLES: dict[str, str] = {
 def _engine_artifacts() -> list[str]:
     """Collecte les sorties texte produites par le moteur (aucune lecture fichier)."""
     results = [
-        compose([APP_TOML]),
+        compose([APP_TOML], attestations=synthetic_attestations([APP_TOML])),
         compose([MISSING_TYPE_TOML]),
         compose([WRONG_ID_TOML]),
         compose([BAD_TYPE_TOML]),
@@ -97,12 +125,21 @@ def _engine_artifacts() -> list[str]:
             [P1_TOML, PROV1_TOML, PROV2_TOML],
             configured_providers={"audit": "t.absent"},
         ),
+        compose(
+            [P1_TOML, PROV1_TOML, PROV2_TOML],
+            configured_providers={"audit": SYNTHETIC_PROVIDER_SENTINEL},
+        ),
+        compose(
+            [APP_TOML],
+            attestations=[_preuve_ephemere_sentinelle()],
+        ),
         compose([PROV1_TOML], required_ids=("acme.absent",)),
         compose([42]),
     ]
     artifacts: list[str] = []
     for result in results:
         artifacts.extend(str(diagnostic) for diagnostic in result.diagnostics)
+        artifacts.extend(str(warning) for warning in result.warnings)
         artifacts.append(repr(result))
     return artifacts
 
@@ -136,6 +173,39 @@ class TestArtefactsSansSecret(unittest.TestCase):
         self.assertEqual(
             violations, [], f"motif sensible dans un artefact : {violations}"
         )
+
+    def test_succes_app_active_explicitement(self) -> None:
+        result = compose(
+            [APP_TOML], attestations=synthetic_attestations([APP_TOML])
+        )
+        self.assertTrue(result.activated)
+        self.assertEqual(result.stage, "activated")
+        self.assertEqual(result.diagnostics, ())
+
+    def test_aucun_echo_sentinelles_synthétiques(self) -> None:
+        refuse_configure = compose(
+            [P1_TOML, PROV1_TOML, PROV2_TOML],
+            configured_providers={"audit": SYNTHETIC_PROVIDER_SENTINEL},
+        )
+        self.assertFalse(refuse_configure.activated)
+        refuse_preuve = compose(
+            [APP_TOML],
+            attestations=[_preuve_ephemere_sentinelle()],
+        )
+        self.assertFalse(refuse_preuve.activated)
+        sorties = []
+        for result in (refuse_configure, refuse_preuve):
+            sorties.extend(str(d) for d in result.diagnostics)
+            sorties.extend(str(w) for w in result.warnings)
+            sorties.append(repr(result))
+        texte = "\n".join(sorties)
+        for sentinelle in (
+            SYNTHETIC_PROVIDER_SENTINEL,
+            SYNTHETIC_PROOF_SENTINEL,
+        ):
+            self.assertNotIn(
+                sentinelle, texte, f"écho de sentinelle : {sentinelle}"
+            )
 
 
 if __name__ == "__main__":
