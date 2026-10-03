@@ -1,0 +1,17 @@
+schema_version = "1"
+id = "example.hello"
+type = "MODULE"
+version = "1.0.0"
+
+[provides]
+[[provides.capabilities]]
+id = "example.hello"
+version = "1.0.0"
+contracts = ["example.hello.contract"]
+criticality = "REQUIRED"
+fallback = "none"
+
+[implements]
+[[implements.contracts]]
+id = "example.hello.contract"
+version = "1.0.0"

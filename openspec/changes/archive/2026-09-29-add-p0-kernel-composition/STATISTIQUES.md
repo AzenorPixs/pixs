@@ -83,7 +83,15 @@ Sondes : collecte tardive. Initiale et relèves antérieures : **N/A — sondes 
 | +60 min après activation tardive — unique nouvelle tentative / ses_f13a0b9f0ffex8QN1MyBkJQGHe | 2026-09-29T08:54:21.988068+00:00 | 2026-09-29T08:54:23.816161+00:00 | 2026-09-29T08:54:34.357041+00:00 | 2325 | 193 | 1.828 | 220.570 | Invalide, exclue |
 | fin — après archivage effectif / ses_f139c79e5ffeY1s06317oyyaXv | 2026-09-29T08:59:00.528733+00:00 | 2026-09-29T08:59:06.909452+00:00 | 2026-09-29T08:59:21.675015+00:00 | 2370 | 193 | 6.381 | 160.509 | Invalide, exclue |
 | fin — unique nouvelle tentative après archivage / ses_f139bc36dffe147MFIUGNzy0uW | 2026-09-29T08:59:47.233877+00:00 | 2026-09-29T08:59:48.902015+00:00 | 2026-09-29T08:59:58.966992+00:00 | 2325 | 193 | 1.668 | 230.999 | Invalide, exclue |
-
+| 0 (0,0 %) | 0 (0,0 %) |
+| /home/devops/datas/pixs/tests/unit/test_manifest_models.py | 1 (1,8 %) | 1 (100,0 %) | 0 (0,0 %) | 0 (0,0 %) |
+| N/A — écriture avortée avant paramètres | 1 (1,8 %) | 0 (0,0 %) | 0 (0,0 %) | 1 (100,0 %) |
+| /home/devops/datas/pixs/tests/unit/test_manifest_schema1.py | 1 (1,8 %) | 1 (100,0 %) | 0 (0,0 %) | 0 (0,0 %) |
+| /home/devops/datas/pixs/src/pixs/kernel/registry/requirements.py | 2 (3,6 %) | 2 (100,0 %) | 0 (0,0 %) | 0 (0,0 %) |
+| /home/devops/datas/pixs/src/pixs/kernel/registry/registries.py | 1 (1,8 %) | 1 (100,0 %) | 0 (0,0 %) | 0 (0,0 %) |
+| /home/devops/datas/pixs/tests/unit/test_registries.py | 2 (3,6 %) | 2 (100,0 %) | 0 (0,0 %) | 0 (0,0 %) |
+| /home/devops/datas/pixs/tests/unit/test_required_versions.py | 1 (1,8 %) | 1 (100,0 %) | 0 (0,0 %) | 0 (0,0 %) |
+| /home/devops/datas/pixs/src/pixs/kernel/conformity.py | 2 (3,6 %) | 2 (100,0 %) | 0 (
 Surcharge de télémétrie séparée : 8 tentatives (100 %), 87548 tokens natifs dont 18646 de sortie, durée cumulée des requêtes 121.482 s (pas un temps de génération), coût natif 0.009771420. Prompt constant, conservé dans l’état du RUN :
 
 > Sonde de télémétrie purement textuelle. N'utilise aucun outil, ne lis et ne modifie aucun fichier, aucun accès réseau. Sans introduction, conclusion ni raisonnement explicatif, écris exactement 200 lignes. Chaque ligne contient : alpha beta gamma delta epsilon zeta eta theta iota kappa. Répète cette ligne identique 200 fois.

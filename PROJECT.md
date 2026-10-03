@@ -3506,6 +3506,16 @@ backend ou du frontend de référence. Le Kernel reste portable par ses contrats
 ce qui permet des adapters futurs explicitement spécifiés sans les imposer au
 socle.
 
+Le projet devra toujours suivre la dernière version stable officielle supportée
+par Django et adapter l'ensemble de son code, de son runtime Python et de ses
+dépendances aux besoins de cette version. Chaque dépendance Python devra suivre
+sa dernière version disponible compatible ; les versions ou plages imposées par
+Django auront priorité sur la dernière version du paquet. La politique
+obligatoire, le relevé
+horodaté et les éventuels écarts de migration sont précisés dans
+[TECHNICAL.md § 41.1](TECHNICAL.md#411-politique-de-version-django) et la capacité
+OpenSpec `reference-runtime`.
+
 La composition P0 est le socle sécurisé et composable : Kernel, manifests,
 dépendances, configuration, lifecycle, modules, `pixs.core`, tenant et scope,
 identité minimale, autorisation, APIs et contrats publics, migrations, runtime,
