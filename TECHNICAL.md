@@ -641,6 +641,22 @@ Les sélecteurs utilisent l'égalité ou des ensembles finis d'identifiants déc
 
 Le temps est UTC fiable injecté avec intervalles [from, until) ; l'expires_at d'un ALLOW est le minimum de now plus TTL, expiration de l'authentification, auth_time plus fraîcheur maximale requise, et prochaine transition autrement correspondante même DENY futur ; toute mutation et toute action sensible sont réévaluées. Les contextes d'authentification proviennent de la chaîne backend exclusivement, sans valeur de booléen client comme preuve, avec expiration, révocation et périmètre vérifiés. La plateforme exige contexte, politique et audit explicites ; l'intertenant est refusé uniquement dans le profil minimal, le contrat général explicite restant préservé. Les limites positives restent configurées sans valeur par défaut inventée.
 
+### 12.6 Profil préparatoire source-filter-plan-v1
+
+Le profil `source-filter-plan-v1` est une préparation mémoire au filtrage autorisé. Il ne modifie ni le profil PDP minimal v1 ni les signatures existantes. Référence normative : `openspec/specs/authorization-engine/spec.md`, exigence Profil préparatoire fermé source-filter-plan-v1.
+
+Le lot est immuable et homogène : même sujet, même action, même ScopeContext et même correlation que l'en-tête, identifiants ressource et décision uniques, candidats et catalogue déclarés selon le profil PDP v1. Le paramètre `max_filter_requests` est un entier strictement positif explicitement configuré, sans défaut ; le lot vide à en-tête valide est admis.
+
+Chaque ressource est évaluée par l'opération existante `authorize` sur un seul snapshot validé, avec les mêmes ports backend de confiance et une horloge UTC fiable capturée une fois pour le lot. Les DENY et les faits inconnus ne deviennent jamais candidats.
+
+Le plan est déclaratif et immuable : sujet, action, contexte, version snapshot (`epoch` plus tuple trié `policy_id` et version), `evaluated_at` UTC, `resource_ids` triés et dédupliqués des seuls ALLOW, union AUDIT des seuls ALLOW, `expires_at` minimum de ces décisions, vide et à None en l'absence de ALLOW.
+
+Tout lot mal formé, inconnu, hétérogène, dupliqué, hors limite, avec erreur de port ou temps non fiable échoue fermé sans identifiant autorisé ; aucun élément n'est ignoré et aucun plan positif partiel n'est fourni après erreur.
+
+La réévaluation avant mutation et action sensible et l'invalidation après changement de politique, ACL, rôle, appartenance, périmètre, révocation ou assurance restent obligatoires pour l'usage futur. Le plan ne prouve pas la fraîcheur au runtime, ne vaut ni jeton d'accès ni preuve d'AUDIT honorée, et n'effectue aucun filtrage frontend ni lecture métier, pagination, export ou SQL.
+
+Les exigences générales de PEP Django, de filtrage à la source et d'audit réel restent intégralement applicables à l'adaptateur futur. Les tests du profil utilisent exclusivement des ports et doubles mémoire et ne prouvent pas le P0 global. Aucune dépendance nouvelle n'est introduite par ce profil.
+
 ## 13. Identifiants des données
 
 Les entités persistées par Pixs utilisent UUIDv7 comme identifiants internes.
@@ -2146,6 +2162,96 @@ Kernel préservent l'extensibilité des domaines, providers et intégrations, ma
 aucune abstraction multi-runtime ne fait partie du P0. Un adapter de runtime
 futur doit être spécifié, versionné et validé sans modifier implicitement les
 garanties du runtime de référence.
+
+### 41.1 Politique de version Django
+
+Le projet devra toujours se caler sur la dernière version stable officielle
+encore supportée par le projet Django, y compris ses mises à jour correctives,
+mineures et majeures. Une version LTS antérieure ne remplace pas cette cible.
+Les préversions et la branche de développement sont exclues de cette règle.
+
+Pixs devra faire évoluer l'intégralité de son code, ses migrations, ses tests,
+son runtime Python et ses dépendances directes et transitives selon les besoins
+de cette version stable. Les déclarations de compatibilité, le packaging et les
+cadrages devront suivre ces adaptations. Une incompatibilité devra être traitée
+comme un travail de migration, sans maintenir implicitement une ancienne cible
+Django pour préserver des contraintes devenues obsolètes.
+
+La version cible devra être vérifiée dans les sources officielles Django à
+chaque nouvelle version stable et avant toute qualification de release. Ce
+relevé devra être actualisé avec la version, l'horodatage de vérification, son
+fuseau et la source officielle. Les versions effectivement qualifiées devront
+être fixées exactement pour rendre les builds reproductibles ; les installations
+et mises à niveau resteront explicites et validées par les contrôles applicables.
+
+#### Règle n° 2 — versions des dépendances Python
+
+Les dépendances Python nécessaires au projet, directes et transitives, devront
+se caler sur leur dernière version disponible compatible avec la stable Django
+ciblée et avec l'ensemble du graphe installé dans l'environnement du projet.
+Lorsqu'une version exacte ou une plage supportée est indiquée par Django,
+cette contrainte devra prévaloir sur la dernière version disponible du paquet.
+Une version exacte imposée devra être respectée ; dans une plage autorisée,
+la version admissible la plus récente devra être retenue, sans confondre une
+borne minimale avec un verrouillage exact. En l'absence de contrainte explicite
+Django, la dernière version compatible devra être qualifiée par les métadonnées
+et les tests applicables.
+
+La qualification devra conserver les sources et les versions retenues, vérifier
+les dépendances directes et transitives ensemble et signaler toute incompatibilité
+restante. Le projet devra adapter son code et son environnement pour résoudre
+ces incompatibilités. Il ne devra pas installer de force une dépendance refusée
+par Django ni revenir à un ancien Django pour adopter un paquet plus récent.
+
+#### Compatibilité avec le Python actuel du projet
+
+Toute évolution de version d'une dépendance Python devra être supportée par
+la version actuelle de Python du projet, déclarée dans `DEVOPS.md`.
+La qualification devra vérifier ses contraintes `Requires-Python`, les wheels
+applicables et les tests sur cet interpréteur.
+
+En cas d'incompatibilité avec ce Python actuel, l'évolution devra rester
+suspendue jusqu'à la validation ou au refus explicite du développeur. Lui seul
+pourra décider de cette évolution et, si nécessaire, d'un changement de version
+de Python. Les agents ne devront ni valider cette exception à sa place, ni
+forcer l'installation, ni masquer le conflit en changeant implicitement la
+cible. La solution explicitement retenue devra être techniquement qualifiée
+avant son installation ; une validation humaine ne constitue pas une preuve
+de compatibilité.
+
+#### Relevé de la version stable officielle
+
+| Élément | Valeur vérifiée |
+| --- | --- |
+| Dernière version stable officielle supportée | **Django 6.1.1** |
+| Horodatage de vérification UTC | **2026-10-03T06:59:47Z** |
+| Heure locale de vérification | **03/10/2026 à 08:59:47 — Europe/Paris (UTC+02:00)** |
+| Source officielle | [Téléchargement et versions supportées Django](https://www.djangoproject.com/download/) |
+| Versions Python supportées par Django 6.1 | 3.12, 3.13 et 3.14 — [FAQ officielle](https://docs.djangoproject.com/en/6.1/faq/install/#what-python-version-can-i-use-with-django) |
+
+Cet horodatage correspond à la consultation des sources, pas à la date de
+publication de Django ni à une installation dans Pixs. Le relevé est un constat
+daté ; la politique porte sur la stable courante et ne fige pas Django à 6.1.1.
+
+État qualifié le 03/10/2026 : `pyproject.toml` déclare `Django==6.1.1`,
+`psycopg[binary]==3.3.6`, `asgiref==3.12.1`, `sqlparse==0.6.0` et
+`requires-python = ">=3.12"`. L'extra `binary` impose `psycopg-binary==3.3.6`.
+Ces cinq versions sont effectivement installées ; le graphe de dépendances et
+`pip check` sont conformes. Les suites existantes passent sur **Python 3.14.8** :
+**736 tests UNIT et 185 tests INTEGRATION**, sans échec ni test ignoré.
+L'interpréteur a conservé sa version et son empreinte. La compatibilité déclarée
+Python >=3.12 suit les prérequis Django ; elle ne constitue pas un changement
+de l'interpréteur installé. Cette qualification porte sur les dépendances et
+les tests existants, sans démontrer un runtime opérationnel, un P0 complet ou
+une readiness de production. Les décisions archivées restent historiques et
+les versions retenues restent soumises aux règles de suivi de la stable courante.
+
+La règle n° 2 s'applique à toutes les dépendances Python sans exception,
+**psycopg compris**. La version psycopg 3.3.6 qualifiée dans ce relevé est un état
+actuel, pas un verrou permanent ni une dérogation. Toute évolution devra suivre
+la priorité des contraintes Django et rester cohérente avec l'ensemble des
+dépendances Python installées ; le pin historique 3.3.5 ne justifie à lui seul
+aucun retour arrière.
 
 Le profil P0 impose les capacités de composition, `pixs.core`, contexte de
 périmètre, autorisation, API, migrations, runtime, provisionnement, sécurité,

@@ -1,0 +1,23 @@
+# Proposal: add-initial-capability-availability-gate
+
+## Why
+
+L'exigence « États de disponibilité distincts » (R2) de la capacité `capabilities` est non livrée : recherche ciblée sur `src/pixs` sans aucun état DECLARED/RESOLVED/AVAILABLE/DEGRADED/DISABLED/BLOCKED de capacité (unique occurrence sans rapport : `lifecycle/state.py:92`). La désactivation dispose pourtant d'une source déclarative existante jamais consommée par le noyau : `RuntimeProfile.disabled_capabilities` (backend/runtime_profiles.py, validé par `validate_runtime_profile`). R1 « Descripteur de capacité résolu à la composition » et R4 « Résolution sur version déclarée » sont déjà prouvés par le change add-initial-capability-descriptors ; R3 « Fanion ne remplace pas la résolution » reste hors périmètre : aucun fanion, aucun registre, aucune modification de la grammaire SemVer ni du schéma de manifest.
+
+## What Changes
+
+- `src/pixs/kernel/lifecycle/availability.py` (création, pur, stdlib, sans IO) :
+  - types figés exacts, tous champs sans défaut : `CapabilityObservation` (opérabilité courante explicite fournie par l'hôte : `capability_id`, `capability_version`, `provider_id`, `operable`), `CapabilityFallback` (repli consommateur déclaré, map GLOBALE partagée : `capability_id`, `fallback`), `CapabilityState` (état d'un descripteur de `composition.capability_descriptors`), `ConsumedCapabilityState` (état d'une exigence consommée), `GatedLifecycleResult` (avec champ `warnings` obligatoire, distinct des diagnostics FATAUX).
+  - `compute_capability_availability(composition, manifests, observations, optional_fallbacks=(), disabled_capabilities=())` : quatre tuples — (`CapabilityState`, `ConsumedCapabilityState`, diagnostics FATAUX, warnings NONFATAUX) ; six états par précédence fermée ; refus fermé avant tout effet ; aucune seconde résolution, aucun parsing de diagnostics ; association consommateur→fournisseur projetée en trois filtres successifs sur les seuls faits déjà résolus — descripteurs LIÉS (`provider_ref` non None) filtrés sur l'identité de cible de l'exigence, couple (consumer_id, provider_id) associé par arête de `composition.edges` (arêtes NON typées par capacité : elles n'associent que le couple, une arête multiple inter-cibles n'est jamais un refus), `matches()` sur la version exacte déclarée par le descripteur lié (vérifier des faits déjà résolus n'est PAS une nouvelle résolution) ; zéro fait compatible : OPTIONAL = cas normal d'absence/incompatibilité déjà toléré par compose avec `activated is True` (DEGRADED + warning NONFATAL avec repli déclaré, FATAL de déclaration manquante sans), REQUIRED = BLOCKED (cohérence fatale), plusieurs faits compatibles = ambiguïté fatale sans choix arbitraire (n'implique pas de nouvelles candidatures) ; arêtes et observations d'autres cibles ignorées, jamais appariées par capability_id seul.
+  - `run_gated_hooks(composition, manifests, hooks, observations, optional_fallbacks=(), disabled_capabilities=())` : valide gate et projection puis, uniquement en l'absence de diagnostic FATAL, appelle réellement `run_hooks(composition.order, hooks)` du chemin lifecycle existant ; diagnostic FATAL → zéro `HookCall`, aucun callback exécuté, aucun appel à run_hooks, états VALIDES calculés restitués (y compris BLOCKED, warnings OPTIONAL conservés) ; warnings seuls → exécution autorisée ; OPTIONAL non AVAILABLE avec repli déclaré → isolée en DEGRADED + warning NONFATAL, composant reste valide ; OPTIONAL non AVAILABLE sans repli déclaré → FATAL avant tout effet ; DISABLED issu uniquement d'un profil hôte validé transmis par l'hôte ; limite conservée : un callback hôte effectif peut lever une exception propagée par run_hooks après possible effet partiel, sans diagnostic d'exécution ni rollback.
+- Aucune modification de `composition.py` (les faits résolution/conformité sont consommés via le `CompositionResult` figé), de `capabilities.py`, `hooks.py`, `state.py`, `manifest/**` ou `semver.py`.
+
+## Impact
+
+- Affected specs: `capabilities`
+- Affected code:
+  - `src/pixs/kernel/lifecycle/availability.py` (création)
+  - `tests/unit/test_capability_availability_gate.py` (création)
+  - `tests/integration/test_capability_availability_gate_integration.py` (création)
+
+Régression ciblée : suites lifecycle/descripteurs/composition existantes re-exécutées sous runtime actuel (Python 3.14.8 déclaré, mandats distincts) ; tout écart est rapporté à CGPT sans correction silencieuse. Aucune prétention : pas de P0 global, pas de readiness ni de disponibilité opérationnelle de production, pas de probe/Django/PG dans le noyau ; la provenance des observations opérationnelles est la responsabilité de l'hôte.

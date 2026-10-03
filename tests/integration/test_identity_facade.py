@@ -18,7 +18,9 @@ class IdentityFacadeTest(unittest.TestCase):
                     "IdentityState", "IdentityError", "validate_user",
                     "validate_identity", "validate_link", "validate_links",
                     "Group", "Membership", "GroupError", "validate_group",
-                    "validate_membership", "validate_memberships"}
+                    "validate_membership", "validate_memberships",
+                    "TenantMembership", "TenantMembershipError",
+                    "validate_tenant_membership", "validate_tenant_memberships"}
         self.assertEqual(set(identity.__all__), expected)
         self.assertIs(core.identity, identity)
         self.assertIs(core.scope, scope)

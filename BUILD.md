@@ -217,6 +217,30 @@ Paramètres de build explicitement autorisés
 
 Les dépendances utilisées pendant la construction doivent être suffisamment contraintes pour éviter qu'une reconstruction d'une même version fonctionnelle ne produise silencieusement une composition incompatible.
 
+La qualification d'une nouvelle release devra vérifier la dernière version
+stable officielle supportée de Django selon
+[TECHNICAL.md § 41.1](TECHNICAL.md#411-politique-de-version-django), actualiser son
+relevé horodaté et fixer exactement la version qualifiée et les dépendances
+résolues. Les dépendances Python devront employer leurs versions disponibles
+les plus récentes compatibles avec Django et le graphe complet. Les versions
+exactes ou plages imposées par Django auront priorité ; la version la plus
+récente admissible dans une plage devra être retenue. Python, le code, les
+migrations, les tests et l'ensemble des dépendances
+devront être adaptés et validés avant de déclarer la release conforme. Une
+migration restante devra être déclarée explicitement. Les artefacts historiques
+conserveront leurs versions exactes pour leur reconstruction ; cette conservation
+ne constitue pas une dérogation pour une nouvelle release. Aucun téléchargement
+flottant ni mise à niveau silencieuse au runtime ne remplace la qualification.
+
+Toute évolution de version de dépendance Python devra être supportée par le
+Python actuel du projet déclaré dans `DEVOPS.md`. Avant installation, la
+qualification devra vérifier `Requires-Python`, les wheels et les tests sur cet
+interpréteur. Une incompatibilité avec ce Python devra suspendre l'évolution :
+seul le développeur pourra la valider ou la refuser, ainsi que tout changement
+de version de Python éventuellement nécessaire. Les agents ne devront ni
+forcer l'installation ni changer la cible pour masquer le conflit. La solution
+retenue devra être qualifiée avant installation, même après validation humaine.
+
 Les mécanismes exacts de verrouillage des dépendances Python, JavaScript, Debian et des images de base seront définis par les capacités OpenSpec concernées.
 
 Une dépendance non maîtrisée ne doit pas devenir implicitement une partie du contrat de build.
