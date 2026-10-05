@@ -140,8 +140,10 @@ compatibilité implicite avec ses API, formats ou protocoles internes.
 Le [CdC ZTP v0.3.0](ZERO_TRUST.md) décrit les garanties communes, les références
 officielles et le registre A01 à A12. Ce CdC décrit leur application par PA.
 L'usage de bibliothèques indépendantes reste soumis à qualification et à la
-politique de dépendances Pixs. Les arbitrages A01, A02 et A03 sont soumis au
-développeur ; leurs options ne sont pas adoptées sans sa réponse explicite.
+politique de dépendances Pixs. A01, A02 option A pour l'amorçage et A03
+option A pour le transport local sur le même hôte d'exécution sont validés
+par le développeur le 5 octobre 2026. Leurs modalités de réalisation restent
+à préciser et qualifier.
 
 | Capacité de PA | Responsabilité d'exécution | Contrôle et preuve attendus |
 | --- | --- | --- |
@@ -158,16 +160,33 @@ développeur ; leurs options ne sont pas adoptées sans sa réponse explicite.
 
 ### Backend et séparation des privilèges
 
-Le backend WireGuard du noyau est recommandé pour Debian/Linux dans A01,
-sans constituer une sélection définitive ou une qualification. PA conserve
-la chaîne Python, génération C et compilation native ; le backend traite
-les paquets. Un backend en espace utilisateur constitue un profil distinct
-dont la nécessité, les versions et les dépendances restent à arbitrer.
+Le périmètre demandé couvre Linux et Windows sur machines physiques et
+virtuelles, ainsi que Docker et LXC sous Proxmox. A01, validé par le
+développeur le 5 octobre 2026, privilégie le backend WireGuard du noyau Linux
+et un backend natif Windows, dont WireGuardNT reste le candidat à qualifier.
+Le traitement en espace utilisateur est retenu pour les profils qui le
+nécessitent, après qualification. Ce choix couvre toutes les cibles demandées ;
+il ne constitue pas une preuve de compatibilité de chaque environnement.
+
+PA conserve la chaîne Python, génération C et compilation native, avec un
+artefact pour chaque cible OS/CPU ; le backend WireGuard traite les paquets.
+Les interfaces et dépendances du pilotage Linux et Windows sont qualifiées
+séparément. Pour chaque profil en espace utilisateur, la nécessité, les
+versions et les dépendances restent à préciser ; il ne dispense pas des
+droits d'accès aux interfaces virtuelles et du filtrage requis.
 
 Les adapters déclarent les interfaces de pilotage du noyau, routage, DNS
 et filtrage, les privilèges nécessaires et les ressources gérées par PA.
-Les bibliothèques, Netlink, outils système et mécanismes de filtrage restent
-à choisir. Aucun adapter n'accepte de commande shell libre reçue du réseau.
+Les mécanismes de filtrage sont retenus dans A04b, option A validée par le
+développeur le 5 octobre 2026 : nftables sous Linux et Windows Filtering
+Platform sous Windows, avec adapters PA et contrat commun de politiques PZT.
+Les adapters traduisent les règles, vérifient l'état appliqué et identifient
+les ressources PZT séparément des règles de l'opérateur. La coexistence,
+les versions, bibliothèques, Netlink, outils système et interfaces exactes
+restent à préciser et qualifier ; aucun remplacement global du pare-feu
+existant n'est autorisé implicitement. Le choix ne prouve pas l'équivalence
+des capacités par OS ni la protection après panne, qui relève de A05.
+Aucun adapter n'accepte de commande shell libre reçue du réseau.
 Les profils hôte, Docker et LXC distinguent namespace, TPM et périmètre
 administré ; aucun montage, capacité ou accès à l'hôte n'est ajouté implicitement.
 
@@ -178,21 +197,47 @@ propriétaire explicite. Les écritures concurrentes sont contrôlées et le
 retrait ne supprime pas les éléments de l'opérateur ou d'un autre composant.
 Une dérive est diagnostiquée ; sa correction exige une autorisation propre.
 
-A04 recommande de confier à pzt-daemon la gestion permanente des ressources
-PZT de son périmètre. Les six autres modes utilisent les capacités disponibles
-sans réécrire concurremment ces ressources. Les sessions gardent leurs
+A04a, option A validée par le développeur le 5 octobre 2026, confie à
+`pzt-daemon` la gestion permanente des interfaces WireGuard, routes, règles
+de filtrage et ressources DNS PZT de son périmètre. Les six autres modes
+lui soumettent leurs demandes autorisées sans modifier directement ces
+ressources. Le propriétaire est identifié par périmètre ; un PA en conteneur
+n'obtient aucun pouvoir implicite sur l'hôte Proxmox ou une autre instance.
+Les sessions gardent leurs
 identités distinctes et ne reçoivent pas les clés ou privilèges système.
-Le mécanisme strictement interne entre invocations, son authentification
-et ses permissions restent à spécifier. Il ne crée aucun canal PBO–PA hors PZT.
+Le mécanisme strictement interne entre invocations, son authentification,
+ses permissions et sa traçabilité restent à spécifier. Il ne crée aucun canal
+PBO–PA hors PZT. L'indisponibilité de `pzt-daemon` n'autorise aucune prise
+de contrôle implicite des ressources par les autres modes. La protection
+des accès actifs et la reprise après panne relèvent de A05. A04b retient
+les mécanismes natifs de filtrage décrits ci-dessus ; leur réalisation
+reste à qualifier pour chaque profil Linux, Windows, Docker et LXC.
 
 ### Amorçage, contrôle local et clés
 
 L'amorçage prépare les liaisons de clés et les preuves nécessaires au premier
-tunnel. A02 oppose un canal TLS authentifié et restreint intégré à PZT à un
-pair WireGuard préprovisionné. A03 oppose un transport local TLS mutuel intégré
-à PZT à une topologie WireGuard locale isolée. Ces alternatives restent ouvertes
-et préservent le passage obligatoire PBO–PA par PZT. L'attente d'admission
-n'accorde aucun accès métier et n'approuve pas le premier serveur rencontré.
+tunnel. A02, option A validée par le développeur le 5 octobre 2026, retient
+un canal TLS authentifié intégré à PZT, limité à l'enrôlement, aux preuves
+d'attestation requises et aux paramètres publics WireGuard. PA vérifie
+l'autorité à partir d'un ancrage de confiance provisionné avant le premier
+contact, puis présente ses justificatifs. Les preuves requises sont vérifiées
+avant admission et activation des communications courantes : WireGuard
+interhôtes ou TLS mutuel dans le profil local validé dans A03.
+L'attente d'admission n'accorde aucun accès métier. Les formats, versions TLS,
+bibliothèques et modalités de provisionnement restent à spécifier ; aucun
+certificat client déjà délivré n'est supposé avant l'enrôlement. Reprise et
+renouvellement respectent ces garanties sans ouvrir un contrôle général
+hors du transport courant.
+
+A03, option A validée par le développeur le 5 octobre 2026, retient TLS
+mutuel intégré à PZT pour PBO et PA sur le même hôte d'exécution : même OS
+hôte, même VM ou même conteneur selon le profil. Les échanges locaux
+courants utilisent ce transport sans exiger un tunnel WireGuard local.
+Des VM ou conteneurs distincts sur un même serveur physique conservent
+leurs frontières réseau ; leur cohébergement ne suffit pas à appliquer
+ce profil. L'endpoint, sa portée d'écoute et les mécanismes d'isolation
+restent à qualifier selon la plateforme. PA applique aussi les permissions,
+l'attestation, la révocation et l'audit PZT ; TLS mutuel ne les remplace pas.
 
 PA distingue identité stable, certificat PZT, clé WireGuard et clé d'attestation
 TPM. Les valeurs privées restent dans les périmètres protégés déclarés. La
@@ -202,14 +247,58 @@ qualifiées séparément. Le mapping entre connexion logique PZT, tunnel,
 canal de contrôle et renouvellement WireGuard relève de A10, sans exemption
 d'attestation pour une connexion ou reconnexion ZTP.
 
+### Adressage overlay et familles IP
+
+A06a, option A validée par le développeur le 5 octobre 2026, retient IPv4
+et IPv6 dès le socle PA/PZT : contrats, adresses, routes, filtrage et
+qualification prennent en charge les deux familles. Chaque profil active
+IPv4, IPv6 ou les deux selon sa configuration explicite ; une famille
+non activée n'ouvre aucun accès PZT. Les adresses overlay sont distinctes
+des endpoints du transport physique ; aucune connexion Internet IPv6 n'est
+imposée. Un réglage unique « IPv6 activé » du périmètre PZT permet la
+désactivation simple demandée par le développeur. PBO présente ce réglage
+persisté et versionné avec ses permissions, états souhaité/appliqué et écarts.
+Les valeurs par défaut restent à préciser. PA retire alors uniquement les
+adresses, routes, annonces et autorisations IPv6 qu'il gère pour PZT,
+cesse de publier les AAAA propres à PZT et ferme les échanges IPv6 concernés.
+Il ne sélectionne plus d'endpoint IPv6 pour WireGuard ni les canaux TLS
+d'amorçage ou locaux. L'IPv6 de l'hôte et les ressources de l'opérateur
+ne sont pas désactivés ou modifiés implicitement.
+
+La continuité exige une voie IPv4 autorisée ; sinon les accès concernés
+restent bloqués avec diagnostic, sans repli hors PZT ni activation implicite
+d'IPv4. Le retrait suit un plan vérifié, couvre les sessions existantes et
+n'est pas annoncé réussi avant preuve de l'état appliqué. La réactivation
+réconcilie les permissions, routes et preuves courantes sans restaurer des
+droits périmés. PA applique les mêmes permissions, posture et révocation sur les
+deux chemins, sans repli hors PZT. A06b, option A validée par le développeur
+le 5 octobre 2026, retient le plan privé configurable et les allocations
+par l'autorité compétente détaillés ci-dessous. PA applique les allocations
+autorisées et vérifie les conflits du profil sans choisir seul un préfixe.
+A06c, option B validée le 5 octobre 2026, retient le DNS Pixs développé et
+géré par un module essentiel PBO, utilisable par PZT et tous les PA selon
+leurs permissions ; PA applique les configurations autorisées du profil.
+
 ### Révocation, panne et diagnostic réseau
 
 Une configuration WireGuard n'expire pas automatiquement avec un mandat PZT.
 PA applique les retraits aux pairs, filtres, routes, noms et états de connexion
-concernés. A05 définit comment les délais restent tenus après crash de PA
-lorsque le noyau conserve ses ressources. Le profil n'est pas qualifié avant
-preuve de cette garantie. Les règles de reprise et de compensation restent
-bornées et ne réactivent pas un accès invalidé.
+concernés. A05a, option A validée par le développeur le 5 octobre 2026,
+retient le modèle hybride : après perte du contact avec l'autorité, seules
+les permissions déjà accordées, encore vérifiables et réutilisables selon
+leur classe subsistent jusqu'à leur échéance, sans renouvellement implicite
+ni période de grâce. Une révocation connue s'applique dans le délai déclaré
+sans attendre l'expiration ; les classes exigeant une décision en ligne la
+conservent.
+
+Une protection indépendante du processus PA garantit les expirations et
+fermetures préautorisées lorsque PA est arrêté ou planté et que le noyau
+conserve ses ressources. Elle n'accorde aucun accès, ne renouvelle aucune
+permission et ne prend pas la gestion générale des ressources de `pzt-daemon`.
+Sa réalisation, son propre comportement après panne et les délais A05b sont
+à qualifier. Le profil n'est pas qualifié avant preuve de ces garanties.
+Le redémarrage exige une réconciliation vérifiée et ne réactive aucun accès
+expiré ou révoqué ; reprise et compensation restent bornées.
 
 Les changements réseau suivent un plan et une application sans fenêtre
 permissive, vérifiée par postcondition. Le canal de contrôle est vérifié avant
@@ -494,10 +583,11 @@ ne constituent aucune exemption. Un canal direct entre PBO et PA contournant
 PZT est interdit, y compris via une socket Unix, une adresse de boucle locale
 ou des fichiers utilisés comme canal d'échange.
 
-Un éventuel transport local doit être intégré à PZT et appliquer ses garanties
+Le transport TLS mutuel local validé dans A03 est intégré à PZT et applique ses garanties
 d'identification, d'authentification mutuelle, d'autorisation, de chiffrement,
-de validité, de protection contre le rejeu et de traçabilité. Son choix reste
-à définir ; le passage par PZT n'impose pas un détour par un relais distant.
+de validité, de protection contre le rejeu et de traçabilité. Ses endpoints
+et leur isolation restent à qualifier ; le passage par PZT n'impose pas
+un détour par un relais distant.
 Les permissions du système d'exploitation restent des protections
 complémentaires et ne remplacent pas les contrôles PZT.
 
@@ -779,11 +869,36 @@ Une optimisation ne peut affaiblir les autorisations, l'isolation ou l'audit.
 
 ## Plateformes et distribution
 
-**Proposition de première cible :** Debian et conteneurs Linux compatibles
-avec l'environnement Pixs. `DEVOPS.md` décrit actuellement Debian 13 et
-Python 3.14.8 pour le développement ; `pyproject.toml` déclare Python >=3.12
-pour le projet. Ces références ne constituent pas une matrice de support
-déjà validée pour Pixs Agent.
+**Périmètre de conception demandé le 5 octobre 2026 :** PA sur machines
+physiques Linux et Windows, machines virtuelles Linux et Windows, conteneurs
+Docker et conteneurs LXC sous Proxmox. La conception ne se limite pas à Debian.
+Les versions, architectures et profils doivent encore être qualifiés ; le
+périmètre demandé n'est pas une preuve de support logiciel déjà disponible.
+`DEVOPS.md` décrit l'environnement de développement Debian 13 et Python
+3.14.8 ; `pyproject.toml` déclare Python >=3.12. Ces références ne fixent pas
+implicitement les versions de Windows ou de Proxmox supportées par PA et
+ne déplacent pas le runtime de PBO sur Windows.
+
+| Environnement PA demandé | Frontière technique | Qualification attendue |
+| --- | --- | --- |
+| Machine physique Linux | Noyau de l'hôte, services système et sessions Linux. | Backend, routage, filtrage, DNS, permissions et TPM de l'hôte. |
+| Machine physique Windows | Noyau Windows, services et sessions Windows. | Backend natif ou espace utilisateur, API réseau/filtrage/DNS, signatures et protections des clés. |
+| VM Linux | Noyau et identités de l'invité, distincts de l'hyperviseur. | Réseau virtuel, redémarrage, snapshot, clonage et migration, avec preuves TPM selon le profil. |
+| VM Windows | Noyau et identités de l'invité Windows. | Backend Windows et mêmes scénarios VM, sessions et service Windows qualifiés. |
+| Docker sous Proxmox | Noyau du système qui héberge Docker et namespace du conteneur PA. | Placement dans VM ou LXC à préciser, comptes, capacités minimales, persistance et frontière des ressources réseau. |
+| LXC sous Proxmox | Noyau Linux partagé avec l'hôte Proxmox et périmètre du conteneur. | Profil privilégié/non privilégié déclaré, disponibilité de WireGuard, restrictions et isolation. |
+
+Docker dans une VM et Docker imbriqué dans LXC sont des topologies distinctes
+à qualifier lorsqu'elles sont retenues ; aucune modification de l'hôte Proxmox
+ni activation de nesting n'est autorisée par ce seul CdC. LXC sous Proxmox
+vise des invités Linux, sans assimiler une VM Windows à un conteneur LXC.
+Le besoin éventuel de conteneurs Windows Docker reste à préciser séparément.
+
+Le TPM physique, le TPM transmis à un invité et le vTPM sont identifiés
+distinctement. Une VM, un snapshot ou un clone ne crée pas une nouvelle
+confiance automatique et ne duplique pas une identité ou clé admise. Migration,
+restauration et changement d'hôte réévaluent les liaisons et l'attestation
+requises. Un vTPM ne vaut pas implicitement attestation matérielle du PA.
 
 Les versions d'OS, architectures CPU, bibliothèques système et environnements
 graphiques supportés seront déclarés dans une matrice de qualification.
@@ -791,8 +906,10 @@ Un conteneur sans session graphique peut activer seulement les modes système.
 
 **Adaptateurs proposés :** gestionnaire de services système, intégration au
 bureau utilisateur et mécanisme de démarrage et d'arrêt du conteneur.
-Systemd est un candidat pour Debian ; les intégrations exactes ne sont pas
-arrêtées. Un démon peut fonctionner au premier plan sous son superviseur
+Systemd est un candidat pour Linux ; les services Windows et les événements
+de session Windows disposent d'un adapter distinct à spécifier. Les modes
+système/session restent les mêmes contrats, sans déduire leur implémentation
+de l'OS. Les intégrations exactes ne sont pas arrêtées. Un démon peut fonctionner au premier plan sous son superviseur
 tout en assurant le service en arrière-plan pour l'utilisateur.
 
 ### Profils de déploiement
@@ -907,24 +1024,27 @@ contrats et seuils nécessaires seront fixés avant la recette correspondante.
 | R45 | Référence temporelle d'autorisation non fiable | L'opération concernée est refusée ; les délais monotones ne servent pas de preuve de validité du mandat. |
 | R46 | Démarrage du système ou du conteneur avec `pzt-daemon` | Le mode démarre sans délai et assure la convergence et la réconciliation de PZT lorsque celui-ci est activé et configuré sur ce PA ; sinon, il se ferme. |
 | R47 | Backend WireGuard du profil retenu | PA pilote le backend qualifié, sans réimplémenter la cryptographie ; dépendances et privilèges correspondent au profil. |
-| R48 | Carte altérée, périmée, hors destinataire ou séquence manquante | La configuration invalide est refusée et la réconciliation ne réintroduit aucun droit retiré. |
-| R49 | AllowedIPs ou route présents sans permission du service | Les flux non autorisés sont bloqués ; le tunnel ne donne pas accès aux services voisins. |
+| R48 | Carte ou delta altéré, périmé, hors destinataire, dupliqué ou de base incompatible ; séquence manquante et reprise | La configuration invalide est refusée ; un doublon ne produit aucun double effet et ne prolonge aucune permission. Une base incompatible, un trou ou un historique hors rétention déclenche un état complet vérifié. La réconciliation contrôle l'état effectivement appliqué et ne réintroduit aucun droit expiré ou retiré ; les objectifs A05b restent opposables. |
+| R49 | AllowedIPs ou route présents sans permission du service | Les adapters nftables Linux et Windows Filtering Platform Windows appliquent les politiques PZT du profil et vérifient leur état ; les flux non autorisés sont bloqués, le tunnel ne donne pas accès aux services voisins et les ressources gérées restent distinctes des règles de l’opérateur. |
 | R50 | PBO, sessions et modes ponctuels utilisant le même PA | Le propriétaire des ressources réseau évite les écritures concurrentes ; aucune session ne reçoit de clé ou privilège système. |
 | R51 | Enrôlement automatisé et jeton expiré, révoqué ou au quota épuisé | Les nouvelles admissions sont refusées ; les secrets ne sont pas exposés et le retrait des pairs existants suit une opération distincte. |
 | R52 | Fin de vie d'un pair éphémère et reprise après restauration | Accès, routes et noms sont retirés selon la politique ; les traces requises persistent et l'ancien pair n'est pas réactivé. |
 | R53 | Connectivité directe, relayée et transports bloqués | Les chemins qualifiés respectent les permissions et le relais ne déchiffre pas les données WireGuard ; sans chemin admis, l'échec est explicite. |
 | R54 | Changement d'endpoint ou de contexte réseau | L'identité demeure stable et les conditions de posture concernées sont réévaluées selon le profil. |
-| R55 | DNS administré et chevauchement d'adresses ou de routes | Le conflit est signalé et bloque le périmètre concerné ; aucune configuration de l'hôte n'est écrasée sans mandat. |
-| R56 | Nom résolu vers une destination inattendue | La liaison d'identité et de clé attendue reste contrôlée et une résolution DNS seule n'accorde aucun accès. |
+| R55 | Activation/désactivation IPv6 PZT, DNS administré et chevauchement d'adresses ou de routes | Le réglage unique retire les ressources IPv6 PZT, les AAAA propres à PZT et les échanges/endpoints IPv6 WireGuard/TLS concernés sans désactiver l'IPv6 hôte. Les sessions et états souhaité/appliqué sont vérifiés ; aucune réussite n'est annoncée sans preuve, aucun repli hors PZT ni droit périmé restauré. Les familles actives appliquent les garanties PZT ; les conflits bloquent le périmètre concerné sans écraser la configuration de l'hôte sans mandat. |
+| R56 | DNS Pixs via module essentiel PBO : publication, consultation, panne et destination inattendue | Les contrats publics et droits distincts de publication/consultation sont vérifiés pour chaque contexte PA ; retraits et caches gérés respectent la validité, avec aucune fuite par repli public en panne. Dépendance essentielle, état appliqué et continuité sans PBO sont qualifiés selon le profil. Une résolution DNS seule n'accorde aucun accès ; une destination dont l'identité ou la clé diffère de celle attendue est refusée. |
 | R57 | Posture modifiée en session et preuve TPM absente ou rejouée | Origine et fraîcheur sont vérifiées ; les accès concernés sont bloqués selon le profil, sans assimilation d'une déclaration à une attestation. |
-| R58 | Crash de PA avec tunnel et flux déjà actifs dans le noyau | Le mécanisme qualifié borne la durée des permissions et invalide les accès dans les délais déclarés. |
+| R58 | Crash ou blocage de PA avec tunnel et flux déjà actifs dans le noyau | La protection indépendante ferme les accès en 10 secondes maximum, détection et action comprises, sans prolonger une permission ni en créer ; une échéance antérieure reste prioritaire. Une révocation connue n'attend pas l'expiration et prend effet en 5 secondes maximum si PA est joignable sur le chemin de contrôle qualifié. La reprise vérifie l'état courant avant réactivation ; les objectifs A05b doivent être démontrés sur chaque profil. |
 | R59 | Rotation d'une clé WireGuard | L'identité Pixs reste stable, la nouvelle liaison est vérifiée et l'ancienne liaison est retirée conformément à la politique. |
 | R60 | Ressource sans PA derrière une passerelle déclarée | La permission ne donne pas accès aux services locaux de la passerelle ; le dernier segment respecte la protection du profil. |
 | R61 | Basculement de passerelle avec ou sans NAT | Le profil qualifie les routes de retour, les effets sur les sessions et la traçabilité ; aucune continuité non démontrée n'est annoncée. |
 | R62 | Démarrage à froid, admission, renouvellement et basculement sans accès à l'éditeur | Les services PZT exploités par l'opérateur suffisent lorsque les dépendances déclarées du profil sont disponibles. |
-| R63 | Amorçage et transport local retenus dans A02 et A03 | Les échanges restent intégrés à PZT, limités à leur fonction et soumis aux preuves requises ; aucun canal de contournement n'est créé. |
-| R64 | Réconciliation et retrait des ressources réseau | PA ne retire que les ressources dont il possède la gestion ; une application partielle est rapportée sans fenêtre permissive. |
+| R63 | TLS d'amorçage A02 et TLS mutuel local A03 validés | L'amorçage vérifie l'autorité à partir de l'ancrage préalable et refuse l'admission si les preuves requises sont invalides ; aucun accès métier avant admission. Le profil local sur le même hôte d'exécution vérifie les deux identités et les contrôles PZT ; identité, permission ou preuve requise invalides bloquent l'échange sans repli hors PZT. Endpoints, isolation et frontières des VM/conteneurs sont qualifiés par profil. |
+| R64 | Propriété, réconciliation et retrait des ressources réseau | pzt-daemon gère les ressources PZT de son périmètre ; les six autres modes soumettent leurs demandes autorisées sans écritures directes, y compris après indisponibilité du propriétaire. PA ne retire que les ressources dont il possède la gestion ; une application partielle est rapportée sans fenêtre permissive. |
 | R65 | Handshake récent et service indisponible | Le diagnostic distingue transport, joignabilité, readiness, autorisation et résultat métier. |
+| R66 | PA Linux et Windows sur machines physiques et virtuelles | Chaque cible demandée dispose d'un backend, d'adapters système/session, de réseau, DNS et filtrage qualifiés ; aucune exclusion n'est déduite de l'environnement Debian du projet. |
+| R67 | PA Docker et LXC sous Proxmox | Le profil vérifie le noyau effectif, le placement, les droits minimaux et l'isolation ; aucun repli en espace utilisateur ne suppose des privilèges absents. |
+| R68 | Snapshot, clone, restauration ou migration d'une VM ou d'un conteneur | Les identités, liaisons de clés et preuves TPM/vTPM sont réévaluées ; aucun accès ni identité clonée n'est accepté implicitement. |
 
 ## Arbitrages nécessaires avant réalisation
 
@@ -932,25 +1052,376 @@ Le registre canonique A01 à A12 figure dans
 [les points à arbitrer du CdC PZT](ZERO_TRUST.md#points-restant-à-arbitrer).
 Les décisions sont communes aux deux CdC et reportées dans chacun après
 réponse explicite du développeur. WireGuard comme logiciel de base et le
-développement propre à Pixs des capacités inspirées de NetBird sont validés ;
-les recommandations ci-dessous ne le sont pas. A01 est le premier débat
-repris individuellement ; A02 et A03 ont également été soumis mais restent
-ouverts sans réponse. Les autres choix sont présentés pour la suite du débat.
+développement propre à Pixs des capacités inspirées de NetBird sont validés.
+A01 est validé le 5 octobre 2026 : priorité aux backends natifs par OS et
+espace utilisateur pour les profils qui le nécessitent. Les versions,
+dépendances et privilèges restent à qualifier. A02, option A, est validé le
+5 octobre 2026 : TLS d'amorçage intégré à PZT, admission restreinte et ancrage
+de confiance préalable. A03, option A, est validé le 5 octobre 2026 : TLS
+mutuel intégré à PZT sur le même hôte d'exécution, avec maintien des contrôles
+PZT et des frontières des VM et conteneurs. A04a, option A, est validé le
+5 octobre 2026 : `pzt-daemon` gère les ressources réseau PZT de son périmètre,
+les autres modes soumettent leurs demandes autorisées. A04b, option A,
+est validé le 5 octobre 2026 : nftables sous Linux et Windows Filtering
+Platform sous Windows, adapters PA et contrat commun. A05a, option A,
+est validé le 5 octobre 2026 : autorisations bornées, révocation connue sans
+attente d'expiration et protection indépendante de PA. A05b est validé
+comme premier jet le 5 octobre 2026 ; les objectifs ci-dessous restent
+à qualifier sur chaque profil. A06a, option A, est validé le 5 octobre
+2026 : IPv4/IPv6 dès le socle, familles activées par profil et réglage unique
+pour désactiver l'usage IPv6 de PZT sans modifier l'IPv6 de l'hôte. A06b,
+option A, est validé le 5 octobre 2026 : plan privé configurable et allocations
+par l'autorité compétente, avec contrôles de collisions. A06c, option B,
+est validé le 5 octobre 2026 : DNS Pixs géré par un module essentiel PBO,
+utilisable par PZT et tous les PA selon leurs permissions. Placement,
+suffixes, TTL et bibliothèques restent ouverts. A07a, option A, est validé
+le 5 octobre 2026 : contrôle HTTP/JSON avec contrats OpenAPI versionnés
+pour PBO–PA et PA–PA. A07b, option A, est validé le 5 octobre 2026 :
+snapshot initial, deltas ordonnés et reprise complète en cas de
+désynchronisation. A07c, option B, est validé le 5 octobre
+2026 : notifications et retours de suivi WebSocket/JSON, API HTTP conservées.
+A07d option A est validée le 5 octobre 2026 pour les deltas JSON typés.
+Les autres choix sont présentés pour la suite du débat.
 
-| Référence | Choix technique à débattre | Conséquence propre au PA | État |
+| Référence | Choix technique ou décision | Conséquence propre au PA | État |
 | --- | --- | --- | --- |
-| A01 | Noyau Linux prioritaire, espace utilisateur prioritaire ou les deux initialement. | Backend, adapter, dépendances et matrice de qualification. | Soumis, réponse attendue. |
-| A02 | TLS d'amorçage intégré à PZT ou pair WireGuard préprovisionné. | Admission, état initial et reprise sans canal hors PZT. | Soumis, réponse attendue. |
-| A03 | TLS mutuel local intégré à PZT ou WireGuard local isolé. | Frontières PBO–PA cohébergés et privilèges du profil. | Soumis, réponse attendue. |
-| A04 | Filtrage Linux dédié ou plusieurs moteurs ; propriétaire unique ou coordination des modes. | Interfaces de filtrage, pzt-daemon et isolation des sessions et services. | À débattre. |
-| A05 | Autorisations courtes, expiration et protection après crash ; durées par sensibilité. | Révocation des flux et ressources persistants, mécanisme de surveillance et preuve de délai. | À débattre. |
-| A06 | IPv4 initial ou dual stack ; résolveur PZT ou adapter existant ; préfixes. | Adressage, DNS, routes, conflits et intégration aux plateformes. | À débattre. |
-| A07 | HTTP/JSON ou RPC, notifications, snapshots et deltas. | Contrats typés, réception des cartes, versionnement et resynchronisation. | À débattre. |
-| A08 | Passerelles initiales ou profil ultérieur ; NAT ou routes de retour et basculement. | Forwarding, isolation, identité source et protection du dernier segment. | À débattre. |
+| A01 | Priorité au noyau Linux et au backend natif Windows, dont WireGuardNT reste le candidat à qualifier ; espace utilisateur pour les profils qui le nécessitent. | Matrice physique/VM Linux et Windows, Docker/LXC Proxmox ; qualification distincte des versions, dépendances, droits et isolation, sans contournement des restrictions des conteneurs. | Validé le 5 octobre 2026. |
+| A02 | Canal TLS d'amorçage authentifié intégré à PZT, limité à l'admission, aux preuves requises et aux paramètres publics WireGuard. | Ancrage de confiance préalable, vérification des preuves avant admission et accès courant sur WireGuard ; formats, versions, bibliothèques et provisionnement à spécifier. | Option A validée le 5 octobre 2026. |
+| A03 | TLS mutuel local intégré à PZT pour PBO et PA sur le même hôte d'exécution. | Contrôles PZT maintenus ; VM/conteneurs distincts conservent leurs frontières réseau. Endpoints et isolation à qualifier selon le profil. | Option A validée le 5 octobre 2026. |
+| A04 | A04a : gestion permanente par pzt-daemon. A04b : adapters nftables Linux et Windows Filtering Platform Windows avec contrat commun. | Un propriétaire par périmètre PZT ; les six autres modes soumettent leurs demandes autorisées sans écritures directes. Ressources PZT distinctes des règles de l'opérateur ; interfaces, dépendances, privilèges, coexistence et isolation à qualifier. | A04a et A04b option A validées le 5 octobre 2026. |
+| A05 | Modèle hybride, autorisations de durée bornée et protection indépendante de PA ; objectifs initiaux par sensibilité détaillés ci-dessous. | Expiration après crash, révocation connue sans attente d'expiration et contrôle en ligne selon la classe ; protection limitée aux retraits et fermetures préautorisés. Réalisation et objectifs A05b à qualifier. | A05a option A et A05b premier jet validés le 5 octobre 2026. |
+| A06 | A06a : IPv4/IPv6 dès le socle et réglage unique de désactivation IPv6 PZT. A06b : plan privé configurable et allocations par l'autorité compétente. A06c : DNS Pixs développé et géré par un module essentiel PBO. | Tous les PA admis peuvent consommer le DNS via PZT selon leur contexte ; droits de consultation et publication distincts. Adapters par profil, aucun repli public des noms privés, retraits et caches contrôlés. Pools IPv4 RFC 1918, IPv6 ULA /48 et conflits bloquants maintenus ; placement, interfaces, suffixes, TTL et bibliothèques à définir et qualifier. | A06a/A06b option A et A06c option B validées le 5 octobre 2026. |
+| A07 | A07a : contrôle HTTP/JSON avec OpenAPI. A07b : snapshot initial et deltas ordonnés avec reprise complète. A07c : WebSocket/JSON de référence, support SSE complémentaire et adaptation déterministe validés en principe ; commandes et lectures restent HTTP. A07c2 : table de règles prioritaires et seuils explicites pour sélectionner le mode, valeurs à calibrer. A07d : opérations métier JSON typées avec schémas versionnés retenues. | Contrats versionnés, validation et déduplication ; reprise sans prolongation des permissions, curseurs distincts des preuves d'application, clients, ressources et délais A05b à qualifier. Décision A07c2 option A validée le 5 octobre 2026 : règles prioritaires, seuils de bascule/retour distincts et stabilité, aucun contournement de sécurité ; valeurs et consommation à qualifier. Décision A07d option A validée le 5 octobre 2026 : opérations métier JSON typées, validation sémantique et audit. | A07a/A07b option A et A07c option B validées le 5 octobre 2026, extension adaptative validée en principe ; A07c2 option A validée le 5 octobre 2026 ; A07d option A validée le 5 octobre 2026. |
+| A08 | A08a : socle initial entre PA admis avec contrôle PBO, puis profil passerelle ultérieur. A08b : sources conservées et routes retour ; ou traduction source déclarée. A08c : sélection et basculement. | Contrats du rôle passerelle conservés, livraison après qualification du socle. Recommandation A08b : conserver les sources lorsque les routes retour sont maîtrisées ; traductions alternatives, corrélation, ressources et effets sur les sessions à qualifier. Aucun NAT IPv6 ou privilège choisi implicitement. | A08a option A validée le 5 octobre 2026 ; A08b soumis ; A08c à débattre. |
 | A09 | ICE/STUN et rendez-vous ; relais UDP et éventuelle encapsulation TCP/WebSocket. | Connectivité, coûts, bibliothèques indépendantes et qualification du backend. | À débattre. |
 | A10 | Isolation des services, liaisons de clés, formats de certificat et déclencheurs TPM. | Protection des clés, points de contrôle et attestation des connexions logiques. | À débattre. |
 | A11 | Admission opérateur ou mandat préalable, jetons bornés et délais des pairs éphémères. | Provisionnement et retrait traçables, reprise et absence de résurrection. | À débattre. |
 | A12 | État autoritatif, consensus, sources de vérité et signataires des autorités. | Services exécutés selon le rôle attribué et refus des décisions périmées. | À débattre. |
+
+### A05b — Objectifs initiaux validés, qualification requise
+
+Le développeur a validé le premier jet ci-dessous le 5 octobre 2026, commun
+avec le CdC PZT. Ces objectifs doivent être mesurés sur chaque profil Linux,
+Windows, VM, Docker et LXC ; aucune performance n'est présumée démontrée.
+Ils sont des paramètres documentés par profil dans les limites retenues ;
+leur modification nécessite une décision explicite. L'affectation détaillée
+des communications aux classes reste à spécifier.
+
+| Cas | Objectif initial validé | Portée et mesure |
+| --- | --- | --- |
+| Courant | Validité maximale 5 minutes ; renouvellement visé toutes les 60 secondes. | Du début de validité émis par l'autorité à la fin effective de l'accès ; pas de prolongation hors ligne. |
+| Protégé | Validité maximale 60 secondes ; renouvellement visé toutes les 20 secondes. | Même borne ; conditions renforcées du profil maintenues. |
+| Critique | Décision en ligne pour la session ou l'opération protégée selon la politique ; aucun nouveau lancement hors ligne. | Le canal préexistant ne vaut pas autorisation ; durée d'exécution et interruption déclarées dans le mandat. |
+| Révocation, PA joignable | Fermeture des accès concernés en 5 secondes maximum. | De l'engagement autoritatif de la révocation à sa prise d'effet ; objectif valable sur un chemin de contrôle qualifié. En partition, les échéances et exigences de fraîcheur restent opposables. |
+| Crash ou blocage de PA | Fermeture de protection en 10 secondes maximum. | De la perte de fonctionnement de PA à la fermeture effective ; détection et action du mécanisme indépendant incluses. Une échéance antérieure reste prioritaire. |
+
+PA ne prolonge aucune échéance en rejouant une preuve et n'ajoute aucune
+période de grâce. Pause, reprise, snapshot et restauration doivent empêcher
+la réactivation d'un accès périmé avant toute reprise des échanges. La confiance
+temporelle reste requise ; un profil sans preuve des délais retenus n'est pas
+déclaré conforme. Leur modification exige une décision explicite documentée.
+
+### A06b — Plan privé et allocation validés, qualification requise
+
+L'option A, validée par le développeur le 5 octobre 2026 dans les deux CdC,
+prévoit des pools IPv4
+[RFC 1918](https://www.rfc-editor.org/rfc/rfc1918) choisis et validés par
+l'opérateur, et un préfixe IPv6 ULA /48 par domaine généré selon
+[RFC 4193](https://www.rfc-editor.org/rfc/rfc4193) ou fourni. L'autorité
+compétente alloue les adresses dans ce plan ; PA applique seulement les
+allocations autorisées et vérifie les conflits avec les réseaux connus de
+son profil et des domaines interconnectés. Une génération ULA ne dispense
+pas de ces vérifications. Lorsque IPv6 est désactivé pour ce PZT, aucune
+allocation IPv6 n'est activée sur PA. Un conflit bloque le périmètre concerné sans
+renumérotation, NAT ou modification implicite de l'hôte. La persistance,
+les délégations, tailles et découpages restent à préciser, avec A12 pour
+la cohérence autoritative.
+
+Le provisionnement manuel de chaque adresse n'est pas retenu comme mode
+de référence. Les pools concrets, la réalisation et les contrôles de conflits
+restent à qualifier ; le réglage IPv6 A06a demeure applicable.
+
+### A06c — DNS Pixs géré par un module essentiel PBO, option B validée
+
+L'option B est validée par le développeur le 5 octobre 2026 : un DNS géré
+sera développé pour Pixs dans un module essentiel du PBO et utilisé par
+PZT et tous les PA. PBO administre ses zones, vues, enregistrements et règles
+par les contrats publics du module DNS. Le module PZT utilise ces contrats
+pour publier ou retirer ses noms ; il n'accède pas aux données privées du
+module DNS. Les dépendances essentielles et leur effet sur l'activation et
+la readiness sont déclarés pour les profils consommateurs. L'identifiant
+du module, les PA chargés d'exécuter le service DNS, son placement et sa
+redondance restent à spécifier ; le Kernel reste générique.
+
+Chaque PA admis peut consommer le DNS dans son contexte autorisé via PZT.
+Les droits de consultation sont distincts des droits de publication et
+d'administration. Le rôle client ne confère ni un rôle serveur ni une
+visibilité sur tous les autres pairs. PA applique les configurations et
+retraits autorisés de son périmètre et rapporte l'état réellement appliqué,
+les erreurs et les applications partielles. Une résolution ne vaut jamais
+autorisation de communication ; l'identité et la clé de destination restent
+vérifiées indépendamment.
+
+Des adapters dirigent les requêtes des zones PZT vers le service DNS Pixs ;
+les autres noms conservent le DNS habituel sauf configuration explicite.
+Un résolveur autonome développé dans chaque PA n'est pas retenu comme
+mécanisme de référence. Les mécanismes Linux, Windows, Docker et LXC,
+permissions et frontières d'écoute sont qualifiés séparément : domaines
+de routage systemd-resolved et règles NRPT restent des candidats, et les
+profils Docker distinguent DNS hérité et DNS embarqué. Aucun service système,
+montage ou droit du conteneur n'est modifié implicitement.
+
+Une panne DNS ou une preuve requise non vérifiable n'entraîne aucun repli
+des noms privés vers un DNS public. Les caches gérés respectent leur validité ;
+retraits, révocations et désactivation IPv6 invalident les enregistrements et
+caches PZT concernés, dont les AAAA propres à PZT. Les caches des applications
+ne prolongent aucun accès réseau. Une panne du PBO ne permet aucune nouvelle
+publication ou prolongation ; une continuité sur le dernier état vérifié du
+service reste limitée par le contrat et à qualifier. L'amorçage utilise les
+références d'endpoints et ancrages provisionnés sans attendre un DNS privé
+encore inaccessible. Suffixes, TTL, protocoles DNS, bibliothèques, persistance,
+réplication et comportement des applications avec résolveur propre restent
+à préciser ; l'absence de fuite doit être démontrée.
+
+### A07a — Contrats HTTP/JSON, option A validée
+
+L'option A est validée par le développeur le 5 octobre 2026 : HTTP avec
+messages JSON et contrats OpenAPI versionnés pour les échanges de contrôle
+PBO–PA et PA–PA, avec contrats distincts selon les rôles et propriétaires.
+Elle prolonge le choix HTTP/REST OpenAPI des API de gestion PBO. PA valide
+les messages à l'exécution, les versions compatibles, l'identité, le contexte,
+les mandats, leur fraîcheur et les permissions avant application. Erreurs
+stables, corrélation et idempotence des commandes rejouables font partie du
+contrat. Le RPC binaire n'est pas retenu comme mécanisme de référence.
+La qualification couvre la chaîne Python/C et chaque plateforme ; aucune
+performance n'est présumée et aucune bibliothèque n'est sélectionnée.
+
+Les transports PZT A02/A03 et WireGuard interhôtes restent applicables.
+HTTP ne remplace aucun contrôle d'autorisation. La validation ne choisit
+ni version HTTP/OpenAPI ni format de certificat. A07b, option A validée
+le 5 octobre 2026, fixe le snapshot initial, les deltas ordonnés et la reprise
+complète. A07c, option B validée le 5 octobre 2026, retient WebSocket/JSON
+pour les notifications et retours de suivi, avec les API HTTP conservées.
+
+### A07b — Snapshot et deltas ordonnés, option A validée
+
+Un snapshot de contrôle est un état autorisé complet pour ce PA et son
+contexte, distinct d'un snapshot de virtualisation. L'option A est validée
+par le développeur le 5 octobre 2026. Le mécanisme retenu combine snapshot
+initial, notifications de changement et deltas ordonnés,
+avec révision de base et de résultat. PA vérifie l'identifiant du message,
+l'autorité productrice, le destinataire, le périmètre, la version de contrat,
+la validité et les preuves requises. L'ordre est limité au périmètre autoritatif
+ou à la partition déclarée ; le choix multimaître A12 reste ouvert. Les
+notifications annoncent des changements engagés ; doublons et replays sont
+traités sans double effet ni prolongation de permission.
+
+Une base inconnue, une séquence manquante, une contradiction, une version
+incompatible ou un historique trop ancien appelle un état complet vérifié.
+La reprise réconcilie l'état réseau effectivement appliqué et refuse les
+états périmés. Les retraits vérifiés sont prioritaires et ne peuvent être
+annulés par une révision antérieure. Les changements de visibilité retirent
+les données et accès devenus interdits. La réception et l'application restent
+deux états distincts ; les échecs partiels ne sont pas annoncés comme réussis
+et n'ouvrent aucune fenêtre permissive.
+
+Pendant une désynchronisation, PA n'applique aucune nouvelle permission non
+vérifiable. Le maintien des permissions existantes suit strictement A05,
+sans prolongation hors ligne et avec décision en ligne pour les cas critiques.
+La récupération n'ajoute aucune grâce aux délais A05b ; ceux-ci sont qualifiés
+de bout en bout sur Linux/Windows physiques et VM, Docker/LXC Proxmox,
+y compris après interruption ou restauration.
+
+Ce choix vise à limiter les états complets retransmis lors
+de changements fréquents, avec une reprise explicite ; il exige la gestion
+des révisions, doublons et trous de séquence. A07d, option A validée le
+5 octobre 2026, retient les opérations métier JSON typées ; schémas, catalogue
+et versions restent à préciser, sans supprimer les preuves requises.
+La distribution de seuls états complets à chaque changement n'est pas
+retenue comme mécanisme de référence. HTTP/JSON A07a reste applicable ;
+A07c, option B validée le 5 octobre 2026, retient WebSocket pour les
+notifications et retours de suivi. A07d option A est validée pour les deltas ;
+fréquences, limites, rétention et pagination restent à définir et qualifier.
+
+### A07c — Notifications WebSocket, option B validée
+
+L'option B est validée par le développeur le 5 octobre 2026 : PA ouvre un
+canal WebSocket vers un producteur PZT autorisé, avec messages JSON versionnés
+pour les notifications et retours de suivi déclarés. Les rôles PA–PA restent
+explicites. Commandes, rapports hors suivi et lectures de snapshots ou deltas
+conservent HTTP/JSON A07a. Réception, vérification et application sont des
+états distincts, avec types de retour et corrélation ; aucun abonnement
+n'ajoute un droit ou une visibilité. WebSocket demeure la référence ; le
+principe du support SSE complémentaire avec adaptation déterministe est
+ensuite validé, avec règles A07c2 option A validées le 5 octobre 2026.
+
+Le contrat précise versions, identifiants, périmètres, curseurs de reprise
+et limites. PA conserve la déduplication et les contrôles A07b ; WebSocket
+ne prouve ni persistance ni livraison sans perte. Un curseur inconnu,
+incompatible ou hors rétention déclenche l'état complet vérifié. Les messages
+invalides, hors contexte ou expirés sont refusés ; les états réellement
+appliqués sont rapportés séparément des messages reçus.
+
+Connexion, reconnexion et maintien du canal contrôlent identité, contexte,
+permissions et fraîcheur selon les transports PZT A02/A03. La perte de droit
+ferme l'accès concerné dans les délais A05. Heartbeats et curseurs ne
+prolongent aucune permission ; aucun secret n'est placé dans l'URL.
+Une vérification périodique bornée de la révision autoritative détecte les
+notifications perdues. Retraits vérifiés, files saturées, clients lents et
+reprise sont qualifiés avec les délais A05b ; les erreurs sont explicites
+et aucun repli hors PZT n'est admis. Fréquences, tailles, files, reconnexion
+et fermeture restent à préciser.
+
+L'économie des échanges de suivi fréquents motive le choix ; aucun gain
+n'est déclaré mesuré. La qualification compare PA et PBO à charge identique
+avec une référence SSE/HTTP, en incluant les API HTTP conservées : CPU, mémoire,
+connexions, files, trafic et latence d'application, au repos et en charge,
+y compris rafales, coupure et reprise. Le client natif Python/C et le service
+PBO asynchrone sont qualifiés sur Linux/Windows physiques et VM, Docker/LXC
+Proxmox ; aucune bibliothèque ou dépendance n'est sélectionnée. A07d option A est validée le 5 octobre 2026 pour les deltas JSON typés.
+
+### A07c2 — Table de règles déterministes, option A validée
+
+Le développeur a approuvé le 5 octobre 2026 le principe de prise en charge
+SSE et WebSocket avec adaptation déterministe. WebSocket demeure la référence
+A07c validée ; SSE est une capacité complémentaire à qualifier avec les mêmes
+contrats JSON, identités, permissions, validités et garanties A07b. En SSE,
+les retours de suivi utilisent HTTP/JSON ; en WebSocket, ils peuvent utiliser
+le canal bidirectionnel. Les commandes et lectures restent HTTP.
+
+PA applique une politique administrée, versionnée et auditée : modes permis,
+mode imposé éventuel, critères, priorité et périmètre de délégation. Il ne
+choisit localement un mode que si cette adaptation est explicitement déléguée.
+La décision est reproductible à partir de la politique, des mesures, de leur
+fenêtre et de l'état précédent. Un changement de mode ne confère aucun droit.
+
+L'option A est validée par le développeur le 5 octobre 2026 : une table
+de règles prioritaires avec seuils explicites, calibrés pour PA et PBO.
+L'ordre retenu est : mode imposé ; capacités, contexte et sécurité ;
+échec vérifié du seul transport courant ; profil de coût selon fréquence,
+volume, CPU, mémoire, concurrence et trafic ; seuils de bascule/retour et
+durée de stabilité distincts. Les modes non autorisés ou non qualifiés sont
+exclus. Un refus d'identité ou d'autorisation ne déclenche aucun repli.
+Sans mesures de coût suffisamment fraîches, PA conserve le mode courant
+admis ou utilise WebSocket à l'initialisation, sans prolonger de permission.
+Une activité faible ou forte ne démontre pas à elle seule le mode le moins
+coûteux. Seuils, fenêtres, budgets et fraîcheur restent à définir et qualifier.
+La décision reste lisible et reproductible ; aucun gain n'est déclaré mesuré.
+
+Le score pondéré, option B, n'est pas retenu comme mécanisme de référence.
+Les profils de coût et valeurs restent à calibrer avant qualification.
+
+PA maintient un seul canal en régime établi ; une courte coexistence de
+transition est bornée et dédupliquée. La bascule conserve identifiants et
+révisions, distingue reçu/vérifié/appliqué, revalide le nouveau canal et
+reprend par état complet si nécessaire. La temporisation d'optimisation
+ne retarde aucun retrait ou fermeture de sécurité. Les coûts du mode inactif
+proviennent du profil qualifié, sans deux canaux permanents de mesure.
+Bascule, reprise, charge et défaillance sont qualifiées avec A05b sur chaque
+plateforme ; aucun repli hors PZT ou renouvellement implicite n'est admis.
+Le support adaptatif et la table de règles A07c2 sont validés ; les valeurs
+des seuils, budgets, fenêtres, limites de transition et bibliothèques
+restent à définir et qualifier.
+
+### A07d — Deltas par opérations métier JSON typées, option A validée
+
+L'option A est validée par le développeur le 5 octobre 2026 : les changements
+sont représentés par opérations métier JSON typées et schémas versionnés :
+retirer un pair ou mettre à jour une route, par exemple. PA identifie l'objet
+par identité stable et contexte, valide
+l'opération, ses préconditions et ses données, et déduplique son identifiant.
+L'enveloppe A07b conserve les preuves d'autorité, le destinataire, les révisions
+et la validité. Une opération traduit un état engagé ; elle n'autorise
+aucune commande hôte arbitraire ou décision autonome de PA. Le catalogue
+et les schémas précis restent à définir. La validation sémantique et l'audit
+restent explicites, sans gain de ressources présumé.
+
+JSON Patch, option B, n'est pas retenu comme format de référence des deltas.
+Le catalogue, les schémas et leurs versions restent à spécifier avant réalisation.
+
+Un changement invalide, inconnu ou incompatible est
+refusé avec diagnostic et appelle un état complet compatible. Sans contrat
+compatible, le périmètre reste bloqué selon A05. Validation de la configuration
+et application réseau restent distinctes ; les effets partiels sont rapportés,
+les retraits restent prioritaires et aucune réconciliation ne restaure un
+droit expiré ou révoqué. Les deltas restent récupérés par HTTP/JSON A07a ;
+le mode A07c/A07c2 conserve les notifications et leurs retours déclarés.
+Catalogue, tailles, budgets, transactions et bibliothèques restent à définir
+et qualifier.
+Ces modalités restent à qualifier ; A08a, option A validée le 5 octobre
+2026, réserve le rôle passerelle à un profil ultérieur après le socle initial.
+
+### A08a — Socle initial puis profil passerelle ultérieur, option A validée
+
+Un PA peut porter un rôle passerelle déclaré pour transférer des flux
+PZT autorisés vers une destination sans PA. L'accès à cette destination
+reste distinct de l'accès aux services locaux de la passerelle. Ce rôle
+n'ajoute aucun mode aux sept modes existants ; la propriété des ressources
+A04a reste applicable.
+
+L'option A est validée par le développeur le 5 octobre 2026 : le socle
+qualifie d'abord les communications entre PA admis avec le contrôle PBO
+déjà prévu ; le rôle passerelle devient exécutable dans un profil ultérieur
+explicitement qualifié. Ses contrats et garanties restent au cahier des charges, avec une
+décision de livraison distincte. Le premier socle ne déclare pas accessibles
+via PZT les ressources sans PA. Le socle est qualifié avant les contraintes
+de transit et du dernier segment.
+
+Le profil passerelle dès la première réalisation, option B, n'est pas
+retenu ; ses exigences sont conservées pour le profil ultérieur.
+
+PA vérifie les ressources, ports, protocoles et sens d'initiation autorisés,
+la protection du dernier segment et l'état effectivement appliqué. Le tunnel
+WireGuard ne chiffre pas à lui seul le trajet au-delà de la passerelle ;
+l'attestation du PA ne vaut pas attestation de la destination sans PA.
+Les preuves du profil restent requises, sinon l'accès est bloqué. Expiration,
+révocation et reprise A05, collisions et réglage IPv6 A06 restent applicables.
+Chaque cible PA demandée conserve son support ; le rôle passerelle est
+qualifié séparément par profil. Aucun privilège, montage, forwarding hôte
+ou droit Proxmox n'est accordé implicitement. NAT et retours sont débattus
+en A08b, basculement en A08c ; A08a ne choisit ni plateforme passerelle
+initiale ni dépendance. Ces modalités restent à définir et qualifier.
+
+### A08b — Proposition d'adressage source et de routes retour, non validée
+
+Ce choix concerne les flux du profil passerelle ultérieur A08a. Le premier
+socle conserve les communications entre PA admis et le contrôle PBO ; il
+ne devient pas une passerelle du fait de cet arbitrage.
+
+L'option A proposée préserve l'adresse source overlay sans NAT vers la
+ressource. PA vérifie les chemins et les routes de retour des préfixes PZT
+permis via la passerelle compétente, avant exposition. L'adresse reste
+visible pour la corrélation côté destination ; elle ne vaut ni preuve d'identité
+ni permission. Une route absente ou non vérifiable bloque la ressource et
+produit un diagnostic, sans traduction automatique. Cette option est
+recommandée si l'opérateur maîtrise les routes retour.
+
+L'option B utilise une traduction source explicitement déclarée vers une
+adresse de la passerelle joignable depuis la destination. Le retour doit
+être valide vers cette adresse ; une route spécifique vers l'overlay peut
+alors être évitée. Les journaux de destination voient l'adresse traduite ;
+PZT corrèle l'identité et le contexte d'origine avec le flux et la traduction,
+selon les accès, rétention et minimisation déclarés. États, quotas, expiration,
+panne et effets sur les sessions nécessitent une qualification. Cette option
+convient quand les routes de retour PZT ne peuvent pas être établies.
+
+Dans les deux options, PA applique un plan autorisé, versionné par ressource,
+sur les seules ressources de son périmètre, et rapporte la convergence et
+les erreurs. Changer de mode ne renouvelle aucune permission ; les sessions
+existantes sont qualifiées. Transit et services locaux restent distincts.
+Collisions, boucles, asymétries, anti-usurpation et filtrage des retours sont
+contrôlés. IPv6 demeure désactivable selon A06a ; aucun NAT IPv6, traduction
+entre familles ou routage Internet n'est introduit implicitement.
+
+Le basculement A08c doit préserver la cohérence des chemins retour et états
+éventuellement traduits, sans continuité de session présumée. CPU, mémoire,
+tables de suivi, trafic et délais restent à mesurer sur les profils concernés.
+Les interfaces NAT/routage et leurs privilèges sont qualifiés séparément sur
+Linux/Windows physiques et VM, Docker/LXC Proxmox ; le choix des adapters de
+filtrage A04b ne sélectionne pas implicitement toute la réalisation NAT.
+Les sources officielles figurent dans le CdC PZT. Aucune option A08b n'est adoptée.
+
+### Autres modalités de réalisation
 
 Les autres modalités de réalisation sont maintenues ci-dessous. Les nouvelles
 capacités ne choisissent pas implicitement une bibliothèque, un droit de
@@ -987,7 +1458,7 @@ conteneur, une durée ou une plateforme supplémentaire.
 | 0.0.3 | 4 octobre 2026 | Passage obligatoire par PZT de toute communication PBO–PA, y compris locale. |
 | 0.0.4 | 4 octobre 2026 | Intégration des principes de provisionnement, reprise PZT, pilotage modulaire, composition, mandats, séparation des privilèges, persistance, plans, preuves d'exécution, profils et qualification ; cohérence avec le CdC PZT v0.2.0. |
 | 0.0.5 | 4 octobre 2026 | Ajout du septième mode `pzt-daemon`, lancé sans délai au démarrage du système ou du conteneur pour assurer la convergence et la réconciliation de PZT si celui-ci est activé et configuré sur ce PA, sinon fermeture ; mise en cohérence des modes, privilèges et critères de recette. |
-| 0.0.6 | 5 octobre 2026 | Intégration demandée de WireGuard et des capacités inspirées de NetBird à redévelopper dans PZT/PA : adapters, cartes réseau, politiques, DNS, posture, admission, connectivité, révocation et passerelles selon profil ; critères R47–R65 et arbitrages A01–A12. Alignement sur ZTP v0.3.0 ; recommandations ouvertes, sans implémentation ni écriture OpenSpec. |
+| 0.0.6 | 5 octobre 2026 | Intégration demandée de WireGuard et des capacités inspirées de NetBird à redévelopper dans PZT/PA : adapters, cartes réseau, politiques, DNS, posture, admission, connectivité, révocation et passerelles selon profil ; critères R47–R68 et arbitrages A01–A12. Périmètre précisé : Linux/Windows physiques et VM, Docker/LXC sous Proxmox ; A01 validé : priorité aux backends natifs par OS, espace utilisateur selon les besoins du profil. A02 option A validée : TLS d'amorçage intégré à PZT, limité à l'admission et aux preuves requises, avec ancrage de confiance préalable. A03 option A validée : TLS mutuel PZT sur le même hôte d'exécution, frontières des VM et conteneurs préservées. A04a option A validée : pzt-daemon gère les ressources réseau PZT de son périmètre, les autres modes soumettent leurs demandes autorisées. A04b option A validée : adapters PA nftables Linux et Windows Filtering Platform Windows, contrat commun et coexistence avec les règles de l'opérateur à qualifier. A05a option A validée : autorisations bornées, révocation connue sans attente d'expiration et protection indépendante de PA ; A05b premier jet validé : Courant 5 minutes/renouvellement 60 secondes, Protégé 60 secondes/renouvellement 20 secondes, Critique en ligne, révocation PA joignable en 5 secondes et protection après panne en 10 secondes ; objectifs à qualifier. A06a option A validée : IPv4/IPv6 dès le socle, familles activées par profil et désactivation IPv6 PZT par réglage unique, couvrant overlay et endpoints WireGuard/TLS sans modification implicite de l'IPv6 hôte ; A06b option A validée : plan privé configurable, allocations par autorité compétente, pools IPv4 RFC 1918 validés, IPv6 ULA /48 par domaine et contrôles de collisions ; A06c option B validée : DNS Pixs géré par un module essentiel PBO et utilisable par PZT et tous les PA, droits de publication/consultation et contrats publics distincts ; placement, interfaces et TTL à préciser. A07a option A validée : contrôle PBO–PA et PA–PA HTTP/JSON avec contrats OpenAPI versionnés ; A07b option A validée : snapshot initial et deltas ordonnés, déduplication et reprise complète en cas de désynchronisation, sans prolongation ni résurrection des droits ; A07c option B validée : notifications et retours de suivi WebSocket/JSON, commandes et lectures HTTP conservées ; consommation comparative PA/PBO et délais à qualifier. Extension A07c approuvée en principe : SSE et WebSocket avec adaptation déterministe ; A07c2 option A validée le 5 octobre 2026 : table de règles prioritaires, critères déterministes et seuils explicites ; valeurs, fenêtres, bascule et consommation à qualifier. A07d option A validée le 5 octobre 2026 : opérations métier JSON typées, identité stable, préconditions, versions, déduplication et preuves maintenues ; catalogue et schémas à préciser. A08a option A validée le 5 octobre 2026 : socle initial entre PA admis avec contrôle PBO, puis profil passerelle ultérieur, contrats et garanties conservés. A08b sources conservées ou traduction source soumis ; basculement A08c restant à débattre. Alignement sur ZTP v0.3.0 ; autres recommandations ouvertes, sans implémentation ni écriture OpenSpec. |
 
 ## Documents de référence et suite du cadrage
 
@@ -1000,6 +1471,14 @@ de documentation NetBird officielle consultée le 5 octobre 2026 et au
 [logiciel WireGuard](https://www.wireguard.com/). Les références documentaires
 servent à spécifier les capacités développées dans Pixs ; aucune brique
 NetBird ni compatibilité avec son agent n'est introduite.
+
+La préparation des profils s'appuie également sur
+[WireGuardNT](https://git.zx2c4.com/wireguard-nt/about/), la
+[bibliothèque de tunnel Windows](https://git.zx2c4.com/wireguard-windows/about/embeddable-dll-service/README.md),
+[Windows Filtering Platform](https://learn.microsoft.com/en-us/windows/win32/fwp/windows-filtering-platform-start-page)
+et la [documentation des conteneurs Proxmox](https://github.com/proxmox/pve-docs/blob/master/pct.adoc).
+Ces références identifient des mécanismes candidats ; les versions et modes
+d'intégration restent soumis aux arbitrages et à qualification.
 
 Les capacités OpenSpec examinées sont [runtime](openspec/specs/runtime/spec.md),
 [security](openspec/specs/security/spec.md), [api](openspec/specs/api/spec.md),
