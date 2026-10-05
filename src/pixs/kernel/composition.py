@@ -32,6 +32,11 @@ Portée P0 bornée : ``evaluation_scope`` liste les dimensions prises en charge
 (composants, capacités, contrats, conformité), ``unevaluated_dimensions``
 celles hors périmètre, ``globally_compatible`` reste faux — le résultat
 n'est jamais un certificat de compatibilité globale.
+
+Descripteurs canoniques : les capacités fournies des manifests validés sont
+jointes au résultat (champ ``capability_descriptors``) comme projection
+descriptive des cibles résolues existantes, sans état de disponibilité ni
+activation runtime.
 """
 
 from __future__ import annotations
@@ -40,6 +45,11 @@ from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from .capabilities import (
+    CapabilityDescriptor,
+    bind_capability_descriptors,
+    build_capability_descriptors,
+)
 from .conformity import ConformityAttestation, check_conformity
 from .diagnostics import RESOLVE, VALIDATE, Diagnostic
 from .manifest.models import ComponentManifest, ManifestValidationError
@@ -104,6 +114,7 @@ class CompositionResult:
     evaluation_scope: tuple[str, ...] = EVALUATION_SCOPE
     unevaluated_dimensions: tuple[str, ...] = UNEVALUATED_DIMENSIONS
     globally_compatible: bool = False
+    capability_descriptors: tuple[CapabilityDescriptor, ...] = ()
 
 
 def discover(manifest_texts: Sequence[str]) -> tuple[str, ...]:
@@ -612,6 +623,18 @@ def compose(
     edges, order, diagnostics, warnings, resolved_targets = _resolve_full(
         manifests, configured_providers=configured_providers
     )
+    descriptors, descriptor_diagnostics = build_capability_descriptors(manifests)
+    if descriptor_diagnostics:
+        return CompositionResult(
+            stage="resolve",
+            activated=False,
+            order=(),
+            edges=(),
+            diagnostics=descriptor_diagnostics,
+            warnings=warnings,
+            capability_descriptors=(),
+        )
+    bound_descriptors = bind_capability_descriptors(descriptors, resolved_targets)
     if diagnostics:
         return CompositionResult(
             stage="resolve",
@@ -620,6 +643,7 @@ def compose(
             edges=(),
             diagnostics=diagnostics,
             warnings=warnings,
+            capability_descriptors=bound_descriptors,
         )
     conformity = check_conformity(manifests, resolved_targets, attestations)
     if conformity:
@@ -630,6 +654,7 @@ def compose(
             edges=(),
             diagnostics=conformity,
             warnings=warnings,
+            capability_descriptors=bound_descriptors,
         )
     return CompositionResult(
         stage="activated",
@@ -638,4 +663,5 @@ def compose(
         edges=edges,
         diagnostics=(),
         warnings=warnings,
+        capability_descriptors=bound_descriptors,
     )

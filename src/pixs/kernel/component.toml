@@ -1,0 +1,4 @@
+schema_version = "1"
+id = "pixs.kernel"
+type = "KERNEL"
+version = "0.1.0"

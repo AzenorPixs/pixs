@@ -1,0 +1,28 @@
+# Conception descripteurs de capacités canoniques
+
+## Context
+La capacité `capabilities` comporte quatre exigences ; la lacune retenue pour ce jalon est le descripteur typé canonique et sa liaison observable à la composition. `composition.py` produit déjà des cibles résolues `(provider_id, scope, target_id, version)` dans `_resolve_full`, sans les exposer ; `check_conformity` exige la couverture avant `activated=True`. Le sous-paquet `resolver/` est vide. Aucun README kernel n'existe ; la docstring du module suffit (pas de README gratuite).
+
+## Goals / Non-Goals
+But : descripteur typé canonique et liaison observable à la composition, intégrés additivement au pipeline existant, déterministes, sans IO. Non-buts : disponibilité opérationnelle, états DECLARED/RESOLVED/AVAILABLE/DEGRADED/DISABLED/BLOCKED, activation runtime, fanion, registre, conformité refondue, deuxième résolution, parsing de diagnostics pour reconstruire des cibles, modification des algorithmes fournisseurs/conformité, norme nouvelle, configuration_ref inventé.
+
+## Decisions
+- API exacte du nouveau module `src/pixs/kernel/capabilities.py` (pur, stdlib, sans IO, réutilise `parse_requirement`/`parse_version` et `ComponentManifest`/`ProvidedCapability`/`Diagnostic`) :
+  - `@dataclass(frozen=True) CapabilityDescriptor` à sept champs obligatoires, sans défaut : `capability_id` (identifiant nu validé par `parse_requirement` sans contraintes), `capability_version` (SemVer 2.0.0 complète via `parse_version`), `owner_component` (identifiant nu), `contract_refs` (tuple de chaînes non vides), `provider_ref` (identifiant nu ou `None` — reflète la sélection réelle : l'owner si et seulement si la liaison exacte figure dans `resolved_targets`), `criticality` (`REQUIRED` ou `OPTIONAL`, copié du manifest), `fallback` (`"none"` exact si `REQUIRED`, chaîne non vide si `OPTIONAL`, copié du manifest).
+  - `build_capability_descriptors(manifests) -> tuple[tuple[CapabilityDescriptor, ...], tuple[Diagnostic, ...]]` : dérivation exclusive des `provided_capabilities` de manifests validés ; objet non `ComponentManifest` ou champ invalide → `Diagnostic` d'étape `validate`, élément `capabilités`, jamais d'écho de valeur brute ; tri canonique `(capability_id, owner_component, capability_version)` ; deux fournisseurs déclarant la même capacité produisent deux descripteurs distincts (la sélection reste celle de `_resolve_providers`).
+  - `bind_capability_descriptors(descriptors, resolved_targets) -> tuple[CapabilityDescriptor, ...]` : revalide la forme des entrées (quadruplet de chaînes non vides, scope `CAPABILITY`/`CONTRACT`, version SemVer) ; liaison descriptive exacte, `provider_ref = None` si la liaison validée manque ; entrée publique malformée refusée par ValueError générique sans contenu brut ni exception contextuelle ; aucun état émis, aucune indisponibilité inventée.
+- `composition.py` — modification strictement additive :
+  - `CompositionResult` : nouveau champ `capability_descriptors: tuple = ()` ajouté après `globally_compatible` ; valeurs existantes inchangées.
+  - `compose` : après une validation réussie, descripteurs construits via `build_capability_descriptors(manifests)` puis liaison via `bind_capability_descriptors(descriptors, resolved_targets)` sur les cibles déjà produites par `_resolve_full` — une seule résolution, aucune reconstruction depuis les diagnostics ; s'il existe des diagnostics de descripteur (défensif, impossible pour des manifests validés), refus à l'étape `resolve` sans activation partielle.
+  - Étape `validate` : `capability_descriptors = ()` (résolution non intervenue) ; étapes `resolve` et `activated` : descripteurs renseignés, liaison selon le lot de cibles (vide si résolution fatale).
+  - Aucun changement d'algorithme fournisseurs/conformité, de sémantique `activated`, de dimensions bornées ni d'erreurs ; appels P0 existants préservés ; le champ défaut `()` laisse les constructions directes existantes compatibles.
+- Distinguage exact sans inventer : fourni = descripteur présent ; sélectionné/résolu = liaison exacte dans le lot `resolved_targets` ; fourni sans liaison résolue = `provider_ref = None` (non consommé ou résolution non réussie). La criticité `OPTIONAL` isolée par warning reste descriptive (repli déclaré par le manifest du fournisseur) ; aucun état de disponibilité n'est dérivé.
+
+## Files
+`src/pixs/kernel/capabilities.py` ; `src/pixs/kernel/composition.py` (additif) ; `tests/unit/test_capability_descriptors.py` ; `tests/integration/test_capability_descriptors_integration.py`.
+
+## Validation
+Strict OpenSpec avant code puis après preuves ; tests unit (matrices descripteurs, liaisons exactes, tri canonique, refus sans écho, déterminisme) et intégration (subprocess frais via `sys.executable`, gardes IO activées causalement avant l'import, réutilisation réelle de `compose` sur manifests synthétiques, liaison observable via le champ du résultat, sans Django/PG/réseau) sous mandats distincts sur l'exécutable `DEVOPS` déclaré (`/home/devops/python/current/bin/python3`, Python 3.14.8) ; régression ciblée des suites composition/conformité existantes re-exécutées sous runtime actuel avec écarts rapportés sans correction silencieuse ; vérificateur hashé ensuite ; cochage/archive/STATISTIQUES distincts.
+
+## Risks / Trade-offs
+Un test existant comparant intégralement `CompositionResult` pourrait diverger avec le champ renseigné : l'écart serait observé puis soumis à CGPT, jamais corrigé silencieusement. Aucune duplication d'algorithme : la liaison est une projection des cibles existantes. Les trois autres exigences `capabilities` restent sans prétention.

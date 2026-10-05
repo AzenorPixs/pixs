@@ -7,7 +7,7 @@ Les travaux exécutent les unités de travail persistantes, planifiées et repri
 
 ### Requirement: Persistance et états explicites
 
-Chaque travail MUST être persisté avant exécution avec états PENDING, SCHEDULED, RUNNING, RETRYING, FAILED, CANCELLED ou DEAD_LETTER, bail persistant et politique de réessai bornée distinguant erreurs rejouables et métier.
+Chaque travail MUST être persisté avant exécution avec états PENDING, SCHEDULED, RUNNING, SUCCEEDED, RETRYING, FAILED, PAUSED, CANCELLED ou DEAD_LETTER, bail persistant et politique de réessai bornée distinguant erreurs rejouables et métier.
 
 #### Scenario: Reprise après interruption
 

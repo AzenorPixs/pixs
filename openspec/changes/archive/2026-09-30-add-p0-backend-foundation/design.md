@@ -10,7 +10,7 @@ Ne pas réaliser de modèles métier, migrations, vues, API, traitements worker/
 
 ## Decisions
 
-- Dépendances directes proposées : Django==5.2.17, série LTS compatible Python 3.11 et 3.14 ; psycopg==3.3.5, version documentée dans DEVOPS.md. Toute installation est un mandat distinct dans un environnement isolé du projet, jamais globale.
+- Dépendances directes proposées à l'époque de ce jalon : Django==5.2.17, série LTS compatible Python 3.11 et 3.14 ; psycopg==3.3.5. Ces versions restent un constat historique. Les versions et la qualification des installations à venir relèvent de la politique courante de TECHNICAL.md § 41.1 et de la capacité OpenSpec reference-runtime. Toute installation reste un mandat distinct.
 - Un seul paquet src/pixs/backend. Les seuls rôles acceptés sont web, worker et scheduler. local est un profil de déploiement et ne fait pas partie de cette sélection de rôles.
 - PIXS_PROFILE désigne la sélection explicite du rôle dans la configuration fournie au backend. Aucun rôle par défaut, déduction depuis les imports ou choix de pile selon les paquets installés.
 - La configuration Django utilise exclusivement le moteur PostgreSQL. Aucun fallback SQLite ou stockage mémoire. Les tests ne doivent ouvrir aucune connexion PostgreSQL.

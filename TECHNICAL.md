@@ -366,11 +366,11 @@ FeatureFlagAssignment
 
 Le contexte d'évaluation comprend uniquement les dimensions déclarées par le flag. Le socle P2 prend en charge l'installation ou l'environnement, le tenant et le scope enfant ; le ciblage individuel et l'expérimentation statistique ne sont pas des primitives natives. La priorité d'une affectation est déterministe, du périmètre général vers le périmètre le plus spécifique, et aucune relation de scope ou de tenant n'est élargie implicitement.
 
-Un déploiement progressif utilise une `cohort_key` déclarée et un calcul stable. Il ne doit pas tirer un résultat aléatoire à chaque requête. Les règles sont déclaratives, bornées et sans expression ou code arbitraire à exécuter.
+Un déploiement progressif utilise une `cohort_key` déclarée et un calcul stable. Il ne doit pas tirer un résultat aléatoire à chaque requête. Les règles sont déclaratives, bornées et sans expression ou code arbitraire à exécuter. La cohorte est résolue par une configuration canonique serveur distincte de la définition existante : `cohort_key`, `subject_dimension`, `threshold_basis_points` et `configuration_version`. La dimension du sujet est explicitement déclarée parmi INSTALLATION, ENVIRONMENT, TENANT ou SCOPE et doit appartenir aux dimensions du fanion ; l'identité provient du contexte serveur, sans ciblage individuel ni extension de périmètre. Le seuil entier de 0 à 10000 compare un bucket stable de 0 à 9999 par la condition `bucket < threshold_basis_points`. Le bucket dépend de la clé, de la dimension et de l'identité canonique, pas de l'instant de requête ni du seuil ; l'algorithme déterministe sera choisi et documenté dans le design d'implémentation. La configuration et l'identité du sujet sont validées avant toute évaluation d'affectation soumise à une cohorte. Une règle non résolue ou invalide, une identité absente ou une version incompatible avec la configuration canonique attendue bloque cette évaluation avant la sélection de valeur, sans défaut implicite de configuration. Hors d'une cohorte valide, la valeur affectée est exclue et le repli R3 pour ABSENT s'applique ; aucune permission n'en découle. Sans cohorte déclarée, l'évaluation existante est conservée.
 
 La source de vérité des affectations est persistante et versionnée. Les processus peuvent conserver un cache local borné, mais doivent vérifier sa durée de validité et son numéro de configuration ; une invalidation ou une mise à jour ne peut pas être masquée par un cache périmé. Les changements de flags sont des opérations administratives authentifiées, autorisées, corrélées et auditables, sans être embarqués dans un paquet Debian, une image Docker ou un bundle frontend.
 
-Une valeur absente, invalide ou périmée applique la politique de repli déclarée. L'échec est fermé pour une permission, une mutation, une donnée protégée ou un contrat ; un repli différent n'est autorisé que pour une fonctionnalité non sensible. Le frontend peut adapter son affichage, mais le backend réévalue toujours le flag avant toute mutation ou exposition protégée.
+Une valeur absente, invalide ou périmée applique la politique de repli déclarée. Son vocabulaire d'exécution est borné à DENY et DEFAULT : DENY refuse l'opération sans exposer de valeur de fanion ; DEFAULT applique la valeur par défaut validée de la définition uniquement pour une fonctionnalité non sensible. Une permission, une mutation, une donnée protégée ou un contrat est toujours refusé sur valeur absente, invalide ou périmée, quelle que soit la politique déclarée. Une référence inconnue ou incompatible est refusée sans valeur et n'est jamais convertie en alias implicite. La classification sensible ou non sensible provient du contexte applicatif canonique côté serveur, jamais du client ni du frontend. Le frontend peut adapter son affichage, mais le backend réévalue toujours le fanion avant toute mutation ou exposition protégée. La validation structurelle peut conserver les références opaques existantes ; les contraintes du vocabulaire sont vérifiées à l'exécution, sans renommage ni alias automatique.
 
 Les Commands évaluent le flag au point où le comportement est exécuté. Un Job ou un handler d'événement réévalue la configuration au moment de son exécution ; lorsqu'une opération exige de conserver la sémantique choisie à sa création, sa version de flag et sa valeur sont persistées dans son contrat d'opération. Une évolution de schéma ou de contrat doit rester compatible indépendamment de l'état du flag.
 
@@ -380,7 +380,7 @@ Le lifecycle d'un flag est distinct du lifecycle d'un composant :
 DRAFT → ACTIVE → PAUSED → EXPIRED → RETIRED
 ```
 
-L'expiration bloque les nouvelles affectations et produit un diagnostic ; elle ne supprime pas implicitement le code, les données ou les contrats. La retraite d'un flag exige une décision de nettoyage ou de migration explicitement validée.
+L'expiration d'une définition est atteinte lorsque expires_at est inférieur ou égal à l'instant de référence UTC fourni par le contexte applicatif canonique côté serveur. L'évaluateur reçoit cet instant explicitement ; il ne choisit pas l'horloge ni un instant fourni par le client. Les valeurs déjà affectées sont alors traitées comme périmées, même lorsque leur fenêtre propre reste valide, et la politique de repli déclarée s'applique. L'expiration bloque les nouvelles affectations et produit un diagnostic ; elle ne supprime pas implicitement le code, les données ou les contrats. La retraite d'un flag exige une décision de nettoyage ou de migration explicitement validée.
 
 ## 8. Contrats publics
 
@@ -2162,6 +2162,96 @@ Kernel préservent l'extensibilité des domaines, providers et intégrations, ma
 aucune abstraction multi-runtime ne fait partie du P0. Un adapter de runtime
 futur doit être spécifié, versionné et validé sans modifier implicitement les
 garanties du runtime de référence.
+
+### 41.1 Politique de version Django
+
+Le projet devra toujours se caler sur la dernière version stable officielle
+encore supportée par le projet Django, y compris ses mises à jour correctives,
+mineures et majeures. Une version LTS antérieure ne remplace pas cette cible.
+Les préversions et la branche de développement sont exclues de cette règle.
+
+Pixs devra faire évoluer l'intégralité de son code, ses migrations, ses tests,
+son runtime Python et ses dépendances directes et transitives selon les besoins
+de cette version stable. Les déclarations de compatibilité, le packaging et les
+cadrages devront suivre ces adaptations. Une incompatibilité devra être traitée
+comme un travail de migration, sans maintenir implicitement une ancienne cible
+Django pour préserver des contraintes devenues obsolètes.
+
+La version cible devra être vérifiée dans les sources officielles Django à
+chaque nouvelle version stable et avant toute qualification de release. Ce
+relevé devra être actualisé avec la version, l'horodatage de vérification, son
+fuseau et la source officielle. Les versions effectivement qualifiées devront
+être fixées exactement pour rendre les builds reproductibles ; les installations
+et mises à niveau resteront explicites et validées par les contrôles applicables.
+
+#### Règle n° 2 — versions des dépendances Python
+
+Les dépendances Python nécessaires au projet, directes et transitives, devront
+se caler sur leur dernière version disponible compatible avec la stable Django
+ciblée et avec l'ensemble du graphe installé dans l'environnement du projet.
+Lorsqu'une version exacte ou une plage supportée est indiquée par Django,
+cette contrainte devra prévaloir sur la dernière version disponible du paquet.
+Une version exacte imposée devra être respectée ; dans une plage autorisée,
+la version admissible la plus récente devra être retenue, sans confondre une
+borne minimale avec un verrouillage exact. En l'absence de contrainte explicite
+Django, la dernière version compatible devra être qualifiée par les métadonnées
+et les tests applicables.
+
+La qualification devra conserver les sources et les versions retenues, vérifier
+les dépendances directes et transitives ensemble et signaler toute incompatibilité
+restante. Le projet devra adapter son code et son environnement pour résoudre
+ces incompatibilités. Il ne devra pas installer de force une dépendance refusée
+par Django ni revenir à un ancien Django pour adopter un paquet plus récent.
+
+#### Compatibilité avec le Python actuel du projet
+
+Toute évolution de version d'une dépendance Python devra être supportée par
+la version actuelle de Python du projet, déclarée dans `DEVOPS.md`.
+La qualification devra vérifier ses contraintes `Requires-Python`, les wheels
+applicables et les tests sur cet interpréteur.
+
+En cas d'incompatibilité avec ce Python actuel, l'évolution devra rester
+suspendue jusqu'à la validation ou au refus explicite du développeur. Lui seul
+pourra décider de cette évolution et, si nécessaire, d'un changement de version
+de Python. Les agents ne devront ni valider cette exception à sa place, ni
+forcer l'installation, ni masquer le conflit en changeant implicitement la
+cible. La solution explicitement retenue devra être techniquement qualifiée
+avant son installation ; une validation humaine ne constitue pas une preuve
+de compatibilité.
+
+#### Relevé de la version stable officielle
+
+| Élément | Valeur vérifiée |
+| --- | --- |
+| Dernière version stable officielle supportée | **Django 6.1.1** |
+| Horodatage de vérification UTC | **2026-10-03T06:59:47Z** |
+| Heure locale de vérification | **03/10/2026 à 08:59:47 — Europe/Paris (UTC+02:00)** |
+| Source officielle | [Téléchargement et versions supportées Django](https://www.djangoproject.com/download/) |
+| Versions Python supportées par Django 6.1 | 3.12, 3.13 et 3.14 — [FAQ officielle](https://docs.djangoproject.com/en/6.1/faq/install/#what-python-version-can-i-use-with-django) |
+
+Cet horodatage correspond à la consultation des sources, pas à la date de
+publication de Django ni à une installation dans Pixs. Le relevé est un constat
+daté ; la politique porte sur la stable courante et ne fige pas Django à 6.1.1.
+
+État qualifié le 03/10/2026 : `pyproject.toml` déclare `Django==6.1.1`,
+`psycopg[binary]==3.3.6`, `asgiref==3.12.1`, `sqlparse==0.6.0` et
+`requires-python = ">=3.12"`. L'extra `binary` impose `psycopg-binary==3.3.6`.
+Ces cinq versions sont effectivement installées ; le graphe de dépendances et
+`pip check` sont conformes. Les suites existantes passent sur **Python 3.14.8** :
+**736 tests UNIT et 185 tests INTEGRATION**, sans échec ni test ignoré.
+L'interpréteur a conservé sa version et son empreinte. La compatibilité déclarée
+Python >=3.12 suit les prérequis Django ; elle ne constitue pas un changement
+de l'interpréteur installé. Cette qualification porte sur les dépendances et
+les tests existants, sans démontrer un runtime opérationnel, un P0 complet ou
+une readiness de production. Les décisions archivées restent historiques et
+les versions retenues restent soumises aux règles de suivi de la stable courante.
+
+La règle n° 2 s'applique à toutes les dépendances Python sans exception,
+**psycopg compris**. La version psycopg 3.3.6 qualifiée dans ce relevé est un état
+actuel, pas un verrou permanent ni une dérogation. Toute évolution devra suivre
+la priorité des contraintes Django et rester cohérente avec l'ensemble des
+dépendances Python installées ; le pin historique 3.3.5 ne justifie à lui seul
+aucun retour arrière.
 
 Le profil P0 impose les capacités de composition, `pixs.core`, contexte de
 périmètre, autorisation, API, migrations, runtime, provisionnement, sécurité,

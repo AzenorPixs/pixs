@@ -2,8 +2,10 @@
 name = "pixs"
 version = "0.1.0"
 description = "Socle Pixs : noyau de composition générique et modules (P0 initial)"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
-    "Django==5.2.17",
-    "psycopg==3.3.5",
+    "Django==6.1.1",
+    "psycopg[binary]==3.3.6",
+    "asgiref==3.12.1",
+    "sqlparse==0.6.0",
 ]
