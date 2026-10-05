@@ -23,6 +23,6 @@ Aucune.
 
 ## Impact
 
-Fichiers d'implémentation prévus : pyproject.toml, src/pixs/backend/__init__.py, src/pixs/backend/settings.py, src/pixs/backend/checks.py, documentation ciblée du backend et tests unitaires/intégration correspondants. Les dépendances directes proposées sont Django==5.2.17 et psycopg==3.3.5 ; toute installation reste un mandat distinct, dans un environnement isolé du projet.
+Fichiers d'implémentation prévus : pyproject.toml, src/pixs/backend/__init__.py, src/pixs/backend/settings.py, src/pixs/backend/checks.py, documentation ciblée du backend et tests unitaires/intégration correspondants. Les dépendances directes proposées à l'époque de ce jalon sont Django==5.2.17 et psycopg==3.3.5 ; ces versions restent un constat historique. Les versions et la qualification des installations à venir relèvent de la politique courante de TECHNICAL.md § 41.1 et de la capacité OpenSpec reference-runtime. Toute installation reste un mandat distinct.
 
-Exclusions : project.env, lecture de secrets réels, opération PostgreSQL, déploiement, installation globale, SQLite, Git, frontend, API, modèles et migrations. Les contrôles hors base ne prouvent ni la persistance ni le provisionnement de production. Aucun archivage ne sera autorisé avant les preuves applicables.
+Exclusions de ce jalon historique : project.env, lecture de secrets réels, opération PostgreSQL, déploiement, SQLite, Git, frontend, API, modèles et migrations. Les contrôles hors base ne prouvent ni la persistance ni le provisionnement de production. Aucun archivage ne sera autorisé avant les preuves applicables.

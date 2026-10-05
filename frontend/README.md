@@ -16,7 +16,21 @@ Depuis la racine du projet, utiliser l’environnement propre et la configuratio
 /usr/bin/env -i PATH=/home/devops/node/current/bin:/usr/bin:/bin LANG=C.UTF-8 /home/devops/node/current/bin/npm --userconfig=/dev/null --globalconfig=/home/devops/datas/pixs/frontend/.cache/npm/no-global-config.npmrc --cache /home/devops/datas/pixs/frontend/.cache/npm --prefix /home/devops/datas/pixs/frontend run build
 ```
 
-Les trois tests Node vérifient les catalogues complets, le refus des doublons/valeurs invalides et la résolution de langue déterministe. Le build valide les catalogues avant compilation et produit frontend/dist/. Les scripts tiers d’installation sont désactivés. Cache, node_modules et dist sont des artefacts régénérables et ne sont pas des sources.
+`npm test` exécute les trois cas unitaires existants dans Chromium et Firefox
+headless, aux chemins déclarés par `DEVOPS.md` (`/usr/bin/chromium` et
+`/usr/bin/firefox`). Les deux exécutables doivent être présents ; un navigateur
+absent, un cas non exécuté ou une erreur de nettoyage fait échouer le verdict.
+Le harnais sert uniquement les modules de test et `catalogs.js` sur un serveur
+HTTP loopback éphémère. Chaque navigateur possède son profil jetable, sans
+compte connecté, et conserve ses protections ; résultats, fermeture des
+processus et du serveur, suppression des profils sont vérifiés avant réussite.
+Le délai global est borné à 90 secondes. Aucune dépendance supplémentaire ni
+réécriture des trois cas n'est introduite.
+
+Le diagnostic distinct `npm run test:node` conserve l'exécution des trois cas
+sous Node ; son succès ne remplace pas la preuve issue des deux navigateurs.
+Les cas vérifient les catalogues complets, le refus des doublons/valeurs invalides
+et la résolution de langue déterministe. Le build valide les catalogues avant compilation et produit frontend/dist/. Les scripts tiers d’installation sont désactivés. Cache, node_modules et dist sont des artefacts régénérables et ne sont pas des sources.
 
 ## Démarrage et arrêt
 
@@ -25,6 +39,16 @@ Les trois tests Node vérifient les catalogues complets, le refus des doublons/v
 ```
 
 Le serveur reste uniquement sur http://127.0.0.1:5173, refuse un port déjà occupé et limite l’accès au filesystem frontend/. Attendre le message de disponibilité avant le contrôle au navigateur. Arrêter cette commande avec Ctrl+C puis vérifier que le port ne répond plus. En session orchestrée, démarrage et arrêt constituent deux mandats CAB distincts et n’autorisent pas d’autre processus. Aucun déploiement ni accès public n’est fourni.
+
+## Test navigateur reproductible
+
+Une fois le serveur Vite prêt sur http://127.0.0.1:5173, exécuter depuis la racine du projet :
+
+```sh
+/usr/bin/env -i PATH=/home/devops/node/current/bin:/usr/bin:/bin LANG=C.UTF-8 /home/devops/node/current/bin/node frontend/tests/browser-check.mjs
+```
+
+Le script utilise Chromium installé direct via /usr/lib/chromium/chromium, sans dépendance nouvelle. La sandbox est conservée, le profil est jetable et isolé sous frontend/.cache avec préfixe court et TMPDIR éphémère, garde socket en octets et nettoyé après exécution. Les échanges CDP sont bornés avec délai global et nettoyage du processus. Le zoom CSS 200 est un proxy explicite sans zoom natif. Ces contrôles limités ne constituent ni un audit WCAG complet ni une preuve de disponibilité intégrée.
 
 ## Présentation et limites
 

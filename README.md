@@ -72,6 +72,8 @@ Un composant déclare son identité, sa version, ses dépendances, ses capacité
 
 **Évolutivité maîtrisée.** Les versions, contrats, migrations et compatibilités sont validés avant activation ou mise à niveau. Une migration ne devient pas un retour arrière implicite.
 
+**Django stable courant.** Le projet devra suivre la dernière version stable officielle supportée par Django et adapter son code, son runtime et toutes ses dépendances à ses besoins. Chaque dépendance Python devra suivre sa dernière version compatible ; les versions ou plages imposées par Django auront priorité. Le [relevé horodaté et l'état de migration](TECHNICAL.md#411-politique-de-version-django) précisent la cible et les validations encore nécessaires.
+
 **Réactivité sous contrôle.** PostgreSQL et Django restent les autorités métier ; le client local et les mécanismes de synchronisation ne deviennent jamais une source de vérité.
 
 ## Exécution et déploiement cibles
