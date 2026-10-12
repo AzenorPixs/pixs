@@ -5,6 +5,15 @@ L'assurance normalise la force de l'identification, de l'authentification et de 
 
 ## Requirements
 
+### Requirement: Assurance et exception Super Admin
+
+Les contrôles d'assurance MUST s'appliquer sous réserve de l'exception Super Admin de `authorization`. Au premier démarrage et à la réactivation de secours de ce compte, le MFA MUST NOT être exigé, conformément à `initial-administration`. Les niveaux d'assurance MUST décrire les preuves réellement obtenues ; une dérogation MUST NOT augmenter artificiellement un niveau.
+
+#### Scenario: Secours avec assurance réellement obtenue
+
+- **WHEN** le Super Admin se réactive en secours avec son authentification propre sans MFA
+- **THEN** l'absence de MFA ne bloque pas l'accès de secours et le contexte ne déclare pas MULTI_FACTOR sans preuve
+
 ### Requirement: Contexte vérifié et dimensions distinctes
 
 Le système MUST respecter les garanties suivantes.

@@ -16,7 +16,7 @@ Chaque module MUST déclarer dans son manifest son identifiant stable, sa versio
 
 ### Requirement: Frontière API publique et privée
 
-Un module MUST NOT exposer que ses API publiques déclarées ; l'accès direct à son implémentation privée depuis un autre composant MUST être impossible et refusé explicitement.
+Un module MUST exposer uniquement ses API publiques déclarées ; l'accès direct à son implémentation privée depuis un autre composant MUST être impossible et refusé explicitement.
 
 #### Scenario: Accès à une API non déclarée
 

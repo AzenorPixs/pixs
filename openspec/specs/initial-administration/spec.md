@@ -3,20 +3,55 @@
 ## Purpose
 
 L'administration initiale encadre le provisionnement, les modes de démarrage,
-le Super Admin et le panneau d'administration sans exposer de credential ni
-affaiblir l'autorisation applicative.
+le compte fonctionnel Super Admin, son exception explicite et le panneau
+d'administration, avec préservation du régime des Administrateurs ordinaires.
 
 ## Requirements
+
+### Requirement: Compte Super Admin unique de paramétrage et de secours
+
+Chaque installation MUST disposer d'un seul compte Super Admin non nominatif, réservé au paramétrage et au secours. Ce compte MUST NOT être utilisé comme compte de service ni déléguer son exception à un autre compte. Son identité numérique MUST être explicitement distinguée des Administrateurs ordinaires.
+
+#### Scenario: Compte fonctionnel non nominatif
+
+- **WHEN** une installation provisionne son Super Admin
+- **THEN** elle crée ou réutilise le compte fonctionnel unique sans exiger son rattachement nominatif à un utilisateur
+
+#### Scenario: Second compte et transfert refusés
+
+- **WHEN** une demande veut créer un second Super Admin, déléguer son exception ou utiliser ce compte comme compte de service
+- **THEN** la demande est refusée même si elle provient du Super Admin
+
+### Requirement: Exception liée au compte actif
+
+L'exception du Super Admin MUST rester attachée à ce compte tant qu'il est actif ; elle MUST NOT exiger une élévation temporaire par opération. Son périmètre et sa priorité MUST suivre `authorization`. Les contrôles applicatifs de la présente capacité, audit compris, MUST être dérogeables selon cette exception.
+
+#### Scenario: Privilège permanent du compte actif
+
+- **WHEN** le Super Admin actif réalise une opération dans son périmètre autorisé
+- **THEN** son exception est disponible sans activation d'une élévation temporaire
+
+### Requirement: Absence de MFA obligatoire au démarrage et au secours
+
+Le MFA MUST NOT être un prérequis au premier démarrage du Super Admin ni à sa réactivation de secours. Le compte MUST conserver une authentification propre ; l'exemption de MFA MUST NOT être présentée comme une authentification multifacteur effectivement réalisée.
+
+#### Scenario: Premier démarrage sans MFA
+
+- **WHEN** le compte Super Admin s'authentifie au premier démarrage sans MFA
+- **THEN** l'absence de MFA ne bloque pas sa configuration initiale
+- **AND** aucune assurance multifacteur non obtenue n'est annoncée
+
+#### Scenario: Réactivation de secours sans MFA
+
+- **WHEN** le compte Super Admin s'authentifie pour sa réactivation de secours sans MFA
+- **THEN** l'absence de MFA ne bloque pas la réactivation
 
 ### Requirement: Modes de démarrage explicites
 
 Pixs MUST distinguer les modes INSTALLER, FIRST_CONFIGURATION, NORMAL et
 MAINTENANCE. Le mode INSTALLER MUST être lancé explicitement et son éligibilité
 MUST dépendre d'un marqueur externe à PostgreSQL. Un marqueur externe absent,
-inaccessible, invalide ou incohérent MUST empêcher le démarrage NORMAL. Le
-mode FIRST_CONFIGURATION MUST être déterminé par un état de configuration
-initiale persisté en base, distinct du marqueur externe. Les transitions entre
-modes MUST être explicites, autorisées et auditées.
+inaccessible, invalide ou incohérent MUST empêcher le démarrage NORMAL.
 
 #### Scenario: Marqueur externe indisponible
 
@@ -25,6 +60,18 @@ modes MUST être explicites, autorisées et auditées.
 - **THEN** il refuse le démarrage NORMAL sans relancer implicitement
   l'installateur
 
+### Requirement: Première configuration et transitions de mode
+
+Le
+mode FIRST_CONFIGURATION MUST être déterminé par un état de configuration
+initiale persisté en base, distinct du marqueur externe. Les transitions entre
+modes MUST être explicites, autorisées et auditées.
+
+#### Scenario: État initial en base distinct du marqueur
+
+- **WHEN** Pixs détermine le mode FIRST_CONFIGURATION
+- **THEN** il utilise l'état de configuration initiale persisté en base et les transitions de modes restent explicites, autorisées et auditées
+
 ### Requirement: Provisionnement interactif de la base
 
 Le mode INSTALLER MUST demander l'hôte ou IP PostgreSQL, le port avec `5432`
@@ -32,18 +79,22 @@ par défaut, l'identifiant, le mot de passe et le nom de base. Il MUST vérifier
 la connectivité avant toute opération et MUST traiter la base demandée selon
 son état : création confirmée si elle est absente, conservation si elle est
 conforme, plan de migration confirmé si elle est migrable, ou suppression et
-recréation confirmées si elle est incompatible. Les interruptions MUST être
-reprenables sans état ambigu ni effet dupliqué. Après le provisionnement, les
-valeurs de connexion PostgreSQL MUST être remplacées par des références
-externes résolues par un `SecretProvider` autorisé ; elles MUST NOT être
-persistées dans une configuration distribuée, un artefact, un diagnostic ou un
-audit.
+recréation confirmées si elle est incompatible.
 
 #### Scenario: Base migrable
 
 - **WHEN** la base demandée nécessite une migration compatible
 - **THEN** Pixs affiche le plan et n'applique la migration qu'après
   confirmation explicite
+
+### Requirement: Reprise et références de secrets après provisionnement
+
+Les interruptions MUST être
+reprenables sans état ambigu ni effet dupliqué. Après le provisionnement, les
+valeurs de connexion PostgreSQL MUST être remplacées par des références
+externes résolues par un `SecretProvider` autorisé ; elles MUST NOT être
+persistées dans une configuration distribuée, un artefact, un diagnostic ou un
+audit.
 
 #### Scenario: Référence de secret après provisionnement
 
@@ -55,11 +106,10 @@ audit.
 
 Si le mode INSTALLER crée ou recrée une base, Pixs MUST demander un identifiant
 de Super Admin et deux saisies identiques de son mot de passe. Il MUST créer le
-compte dans la base comme identité numérique vérifiée de l'opérateur initial,
-soumise à une politique d'autorisation déclarée, et stocker uniquement une
+compte fonctionnel non nominatif dans la base avec une identité numérique
+explicite et l'exception définie par `authorization`, et stocker uniquement une
 empreinte sécurisée du mot de passe. Il MUST NOT exposer ni journaliser les
-valeurs saisies. Si une base conforme est conservée, Pixs MUST réutiliser les
-comptes existants sans créer un second Super Admin.
+valeurs saisies.
 
 #### Scenario: Mots de passe différents
 
@@ -67,11 +117,21 @@ comptes existants sans créer un second Super Admin.
 - **THEN** le compte n'est pas créé et aucune valeur de mot de passe n'est
   exposée
 
-#### Scenario: Opérateur initial vérifié
+#### Scenario: Compte fonctionnel créé explicitement
 
 - **WHEN** le mode INSTALLER crée un Super Admin
-- **THEN** il crée ou rattache une identité numérique vérifiée et applique la
-  politique d'autorisation déclarée avant la mise en service
+- **THEN** il crée ou rattache l'identité numérique explicite du compte fonctionnel
+  et applique son exception déclarée sans exiger un compte nominatif
+
+### Requirement: Réutilisation du Super Admin d'une base conservée
+
+Si une base conforme est conservée, Pixs MUST réutiliser le
+Super Admin existant sans créer un second compte Super Admin.
+
+#### Scenario: Base conforme conservée
+
+- **WHEN** le mode INSTALLER conserve une base conforme
+- **THEN** Pixs réutilise les comptes existants sans créer un second Super Admin
 
 ### Requirement: Marqueur externe et première configuration
 
@@ -92,9 +152,19 @@ validée, Pixs MUST démarrer en mode NORMAL.
 ### Requirement: Panneau d'administration contrôlé
 
 Le panneau d'administration MUST être accessible initialement via `/admin/`.
-Le Super Admin, ou root, MUST y disposer d'un accès total hors ACL. Les
+Le Super Admin, ou root, MUST y disposer du contrôle total défini par
+`authorization`, avec accès explicite préalable à chaque tenant. Les
 Administrateurs ordinaires MUST être soumis aux ACL et permissions, et les
-éléments non autorisés MUST NOT être visibles ou exécutables. Le Super Admin
+éléments non autorisés MUST NOT être visibles ou exécutables.
+
+#### Scenario: Administrateur ordinaire soumis aux ACL
+
+- **WHEN** un Administrateur ordinaire utilise le panneau
+- **THEN** ses accès restent soumis aux ACL et permissions et les éléments non autorisés ne sont ni visibles ni exécutables
+
+### Requirement: Changement contrôlé de la route d'administration
+
+Le Super Admin
 MUST pouvoir modifier la route du panneau ; la nouvelle route MUST être
 interne à Pixs, unique et sans collision. L'ancienne route MUST être refusée
 dès le changement et sa tentative d'accès MUST être auditée.
@@ -122,13 +192,25 @@ et la déconnexion.
 ### Requirement: Désactivation externe du Super Admin
 
 Un marqueur externe, indépendant de PostgreSQL, MUST pouvoir désactiver le
-Super Admin. Lorsqu'il est actif, Pixs MUST refuser toute connexion ou action
-de ce compte ; les Administrateurs ordinaires MUST NOT pouvoir contourner ou
-réactiver cette désactivation. La réactivation MUST relever exclusivement du
-mécanisme externe autorisé.
+Super Admin. Ce marqueur MUST être dérogeable par ce compte pour sa réactivation
+de secours. Sans dérogation, les nouvelles connexions, actions et exécutions
+différées MUST être refusées ; une transaction déjà engagée MUST pouvoir se
+terminer. Les Administrateurs ordinaires MUST NOT contourner ou réactiver
+cette désactivation.
 
 #### Scenario: Connexion root désactivée
 
-- **WHEN** le Super Admin est désactivé par le marqueur externe
+- **WHEN** le Super Admin est désactivé par le marqueur externe sans dérogation de désactivation ni d'audit
 - **THEN** sa connexion est refusée et l'événement est audité sans information
   sensible
+
+#### Scenario: Secours malgré le marqueur de désactivation
+
+- **WHEN** le compte Super Admin s'authentifie et utilise sa dérogation au marqueur externe pour se réactiver en secours
+- **THEN** le marqueur ne bloque pas cette réactivation et aucun MFA n'est exigé
+
+#### Scenario: Transaction engagée lors de la désactivation
+
+- **WHEN** une désactivation non dérogée intervient pendant une transaction du Super Admin
+- **THEN** la transaction engagée peut se terminer
+- **AND** les nouvelles actions et exécutions différées sont refusées tant que la désactivation s'applique sans dérogation

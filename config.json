@@ -1,22 +1,27 @@
 {
+  "$schema": "https://opencode.ai/config.json",
   "agent": {
     "plan": {
-      "model": "opencode-go/qwen3.8-flash",
-      "variant": "xhigh",
+      "model": "opencode-go/muse-spark-1.3-contributor",
+      "variant": "high",
       "options": {
         "reasoningEffort": "xhigh",
         "effort": "xhigh"
       },
-      "permission": {}
+      "permission": {},
+      "reasoningEffort": "xhigh",
+      "effort": "xhigh"
     },
     "build": {
-      "model": "opencode-go/qwen3.8-flash",
-      "variant": "xhigh",
+      "model": "opencode-go/muse-spark-1.3-contributor",
+      "variant": "high",
       "options": {
         "reasoningEffort": "xhigh",
         "effort": "xhigh"
       },
-      "permission": {}
+      "permission": {},
+      "reasoningEffort": "xhigh",
+      "effort": "xhigh"
     },
     "compaction": {
       "model": "opencode-go/qwen3.8-flash",

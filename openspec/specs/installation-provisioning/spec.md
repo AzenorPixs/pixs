@@ -6,6 +6,15 @@ prérequis d'une instance Pixs et de ses tenants avant toute mise en service.
 
 ## Requirements
 
+### Requirement: Provisionnement du compte fonctionnel de secours
+
+Le provisionnement initial MUST créer ou réutiliser explicitement le compte Super Admin unique, non nominatif et authentifiable décrit par `initial-administration`. Les contrôles applicatifs, audit compris, MUST suivre son exception définie par `authorization`. Le premier démarrage de ce compte MUST NOT exiger de MFA.
+
+#### Scenario: Provisionnement sans compte nominatif ni MFA
+
+- **WHEN** l'opérateur provisionne explicitement l'identité authentifiable du compte fonctionnel Super Admin sans compte nominatif ni MFA
+- **THEN** le provisionnement ne refuse pas ces absences et ne crée pas de second Super Admin
+
 ### Requirement: Provisionnement explicite et états inspectables
 
 Une installation MUST rester dans un état non provisionné, en cours de
@@ -32,10 +41,11 @@ secret, de credential ou de jeton.
 
 ### Requirement: Opérateur initial explicite et sans privilège implicite
 
-Le provisionnement MUST créer ou rattacher explicitement une identité
-numérique d'opérateur initial vérifiée, soumise à une politique d'autorisation
-déclarée. Le provisionnement MUST NOT créer, activer ni déduire implicitement
-un compte, mot de passe, jeton ou privilège administrateur par défaut.
+Le provisionnement MUST créer ou rattacher explicitement l'identité numérique
+authentifiable du compte fonctionnel initial défini par `initial-administration`,
+avec son exception déclarée par `authorization`. Il MUST NOT créer, activer ni
+déduire implicitement un compte, mot de passe, jeton ou privilège administrateur
+par défaut.
 
 #### Scenario: Identité opérateur absente
 
