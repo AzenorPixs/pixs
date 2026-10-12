@@ -41,7 +41,16 @@ définie par la spécification `dependencies`) contre la `capability_version`
 fournie au format défini par la spécification `component-model` ; la version
 du composant fournisseur MUST NOT servir de proxy. Un identifiant seul ne
 restreint pas la version mais ne dispense jamais de la vérification de
-conformité. Un fournisseur explicitement configuré MUST être candidat et
+conformité.
+
+#### Scenario: Identifiant seul sans dispense de conformité
+
+- **WHEN** une capacité est requise par son seul identifiant
+- **THEN** aucune restriction de version n'est ajoutée et la vérification de conformité reste requise
+
+### Requirement: Sélection du fournisseur sur la version de capacité
+
+Un fournisseur explicitement configuré MUST être candidat et
 compatible avec la contrainte, sinon la composition est refusée ; sinon un
 candidat compatible unique est retenu, sinon l'ambiguïté ou l'absence est
 diagnostiquée et l'activation refusée.

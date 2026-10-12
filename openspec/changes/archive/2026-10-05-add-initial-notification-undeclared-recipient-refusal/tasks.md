@@ -1,0 +1,12 @@
+# Tâches — Refus déclaratif explicite du destinataire élargi non déclaré
+
+## 1. Contrôle déclaratif pur
+
+- [x] 1.1 Exécuter les stricts du change, des spécifications et de tous les éléments avant tout code, avec résultat natif contrôlé.
+- [x] 1.2 Publier `src/pixs/kernel/notification_recipient_declaration.py` : `NotificationRecipientDeclarationError(ValueError)`, helper `require_declared_notification_recipient(recipient_key, declared_recipient_keys)`, validation de type exact `str` non vide pour la clé et de `frozenset` exact de `str` exacts non vides intégralement validée avant toute appartenance, comparaison par valeur exacte après validation seulement, retour de la clé entrée inchangée sans normalisation, messages fixes sans reflet des entrées, `__all__` limité à l'erreur et au helper, sans modification de `notifications.py`, de `notification_delivery.py`, de `notification_channel_declaration.py`, de leurs tests ni des façades.
+- [x] 1.3 Publier et exécuter le test unitaire : clé déclarée retournée inchangée ; même valeur sous objet distinct accepté ; clé vide, non-`str`, `None`, `bool`, `int` ou sous-classe de `str` refusée avant tout dunder ; `declared_recipient_keys` de type inexact, sous-classe de `frozenset`, ou contenant `None`, `bool`, `int`, sous-classe de `str` ou chaîne vide refusée avant appartenance ; `frozenset` vide refusant toute clé ; messages ne reproduisant aucune entrée ; export exactement `["NotificationRecipientDeclarationError", "require_declared_notification_recipient"]`.
+- [x] 1.4 Publier et exécuter le test d'intégration : import et comportement contrôlé dans un processus frais borné 10 s, marqueur d'intégration distinct, gardes d'effets positives incluses, snapshots distinguant le `__hash__` déclenché par le constructeur `frozenset` de l'appelant avant le helper du refus du helper après validation intégrale, aucun effet observable.
+- [x] 1.5 Exécuter les trois compilations ciblées et la régression complète existante dans le venv temporaire aux cinq pins déjà déclarés, sans toucher aucun environnement existant, contrôler les résultats natifs, UTF-8/LF et les empreintes des sources livrées et des cadrages non concernés, puis nettoyer le venv temporaire.
+- [x] 1.6 Exécuter les stricts du change, des spécifications et de tous les éléments après code, résultats natifs contrôlés.
+
+Aucune tâche d'archivage ni de rapport de statistiques ; l'archivage et le rapport STATISTIQUES.md relèvent de décisions et mandats CGPT distincts après preuve des tâches et validation stricte finale.

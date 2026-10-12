@@ -33,3 +33,90 @@ Chaque adaptateur MUST déclarer transport, chiffrement, localisation, rétentio
 
 - **WHEN** un adaptateur ne démontre pas la suppression ou la révocation déclarée
 - **THEN** sa composition est refusée
+
+### Requirement: Runtime Bulk v1 B04 — Staging privé et intégrité
+
+Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses B04 et les annexes de données logiques correspondantes ci-dessous. Ces règles MUST NOT modifier les profils préparatoires livrés.
+
+#### Scenario: Objet vérifié
+
+- **WHEN** un objet privé immuable satisfait les contrôles de taille, type, classification et SHA-256
+- **THEN** son contenu peut être traité sous sa version stable et les limites déclarées
+
+#### Scenario: Intégrité rompue
+
+- **WHEN** le checksum ou la version observée diffère du contenu attendu
+- **THEN** le traitement est refusé avant tout appel propriétaire, sans copie de secours locale
+
+## Annexes normatives — RSMP-BULK-EXECUTION-V1
+
+Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk v1 qui les référencent. Le schéma logique ne constitue ni une implémentation ni un nouveau wire format public.
+
+### B04 — Staging privé et intégrité
+
+- Le staging MUST utiliser un objet privé immuable et versionné d’un ObjectStorageProvider déclaré ; lecture et écriture MUST être bornées par politique, délai et cancellation.
+- Le worker MUST vérifier appartenance, classification, type, taille et SHA-256 réel du flux complet avant toute validation ou mutation propriétaire ; un écart MUST refuser l’opération.
+- L’identité de version du contenu MUST rester stable entre vérification et traitement ; un provider incapable de cette garantie MUST être refusé, sans copie de secours locale.
+- Un objet écrit mais non référencé par une transaction validée MUST rester privé et non publiable ; son effacement MUST suivre la politique de gouvernance et de rétention.
+
+### Schéma logique ObjectMetadataV1
+
+```json
+[
+  [
+    "object_reference",
+    "str opaque",
+    "obligatoire"
+  ],
+  [
+    "version_reference",
+    "str opaque",
+    "immuable"
+  ],
+  [
+    "tenant_reference",
+    "str opaque",
+    "obligatoire pour ce runtime Bulk tenant"
+  ],
+  [
+    "scope_reference",
+    "str opaque | None",
+    "contexte serveur explicite"
+  ],
+  [
+    "classification_reference",
+    "str opaque",
+    "gouvernance résolue"
+  ],
+  [
+    "size_bytes",
+    "int exact >=0",
+    "borne PolicyV1"
+  ],
+  [
+    "sha256",
+    "hex minuscule 64 caractères",
+    "recalculé sur octets"
+  ],
+  [
+    "media_type",
+    "text/csv | application/x-ndjson",
+    "format déclaré"
+  ],
+  [
+    "is_private",
+    "bool exact",
+    "True obligatoire"
+  ],
+  [
+    "expires_at",
+    "datetime exact timezone.utc",
+    "politique résolue"
+  ],
+  [
+    "retention_policy_reference",
+    "str opaque",
+    "holds et révocation sous autorité Pixs"
+  ]
+]
+```

@@ -18,9 +18,14 @@ Chaque texte utilisateur MUST être externalisé dans le catalogue du composant 
 
 Le système MUST respecter les garanties suivantes.
 
-La résolution SUIT préférence utilisateur, périmètre applicable, puis défaut d'installation ; dates en UTC sérialisé, précision conservée, affichage localisé sans altérer la valeur métier.
+La résolution SUIT préférence utilisateur, périmètre applicable, préférence navigateur, puis défaut d'installation ; dates en UTC sérialisé, précision conservée, affichage localisé sans altérer la valeur métier.
 
 #### Scenario: Valeur métier préservée
 
 - **WHEN** un montant ou un instant est affiché dans une langue donnée
 - **THEN** la valeur transmise à l'interface reste exacte et sérialisée en UTC
+
+#### Scenario: Préférence navigateur avant défaut d'installation
+
+- **WHEN** aucune préférence utilisateur ni de périmètre n'est définie, le navigateur demande le français supporté et le défaut d'installation est l'anglais
+- **THEN** la locale française est retenue avant le défaut anglais de l'installation

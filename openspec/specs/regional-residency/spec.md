@@ -5,6 +5,16 @@ La résidence régionale optionnelle place les données et dérivés selon la po
 
 ## Requirements
 
+### Requirement: Application de l'exception Super Admin
+
+Les exigences et scénarios de contrôle applicatif de cette capacité MUST s'appliquer sous réserve de l'exception définie par `authorization`, dans le périmètre du seul compte décrit par `initial-administration`. Les comptes ordinaires MUST conserver leurs contrôles. Les profils structurels préparatoires MUST rester inchangés.
+
+#### Scenario: Politique de résidence dérogée
+
+- **WHEN** le Super Admin utilise une dérogation à une politique de résidence pour une opération dans un tenant explicitement accordé
+- **THEN** la restriction applicative de résidence dérogée ne bloque pas l'opération
+- **AND** la dérogation n'accorde pas un accès à un autre tenant
+
 ### Requirement: Politique de placement versionnée par tenant
 
 Chaque politique MUST déclarer régions logiques autorisées pour primaire, réplicas, traitement, sauvegardes et clés, mode de bascule et époque ; un enfant MUST uniquement restreindre la politique du tenant, jamais l'élargir.

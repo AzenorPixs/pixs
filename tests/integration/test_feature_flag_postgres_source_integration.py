@@ -132,7 +132,8 @@ _CHILD = textwrap.dedent(
         assert config.label == "backend"
         assert Record._meta.app_label == "backend"
         assert [model.__name__ for model in apps.get_models()] == [
-            "FeatureFlagSourceSnapshotRecord"
+            "FeatureFlagSourceSnapshotRecord",
+            "JobRecord",
         ]
         assert [field.name for field in Record._meta.fields] == [
             "configuration_version",
