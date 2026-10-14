@@ -5,6 +5,55 @@ L'autorisation évalue sujets, ressources, actions et contexte avec rôles, ACL 
 
 ## Requirements
 
+### Requirement: Portée du contrôle total du Super Admin
+
+Le Super Admin MUST disposer du contrôle total sur la plateforme. Un tenant MUST faire l'objet d'un accès explicite distinct avant toute extension de ce contrôle à ses ressources ; après cet accord, les ACL du tenant, y compris ses refus explicites, MUST NOT limiter ce contrôle. Cet accord MUST NOT ouvrir implicitement les autres tenants.
+
+#### Scenario: Tenant non accordé au Super Admin
+
+- **WHEN** le Super Admin demande une ressource d'un tenant sans accès explicite à ce tenant
+- **THEN** la demande est refusée malgré son contrôle total sur la plateforme
+
+#### Scenario: Tenant accordé malgré un refus ACL
+
+- **WHEN** un accès au tenant A a été explicitement accordé au Super Admin et une ACL de A refuse l'action demandée
+- **THEN** l'exception permet l'action dans A malgré ce refus
+- **AND** aucun accès au tenant B n'est déduit de cet accord
+
+### Requirement: Exception Super Admin dans toutes les interfaces
+
+L'exception Super Admin MUST être disponible dans le panneau, les API, la CLI et les traitements asynchrones demandés par ce compte. Un worker MUST porter l'acteur initial et son périmètre sans s'authentifier avec les credentials du Super Admin ni acquérir ce compte comme identité de service. Cette exécution MUST NOT transférer l'exception à un autre compte.
+
+#### Scenario: Même exception selon la façade
+
+- **WHEN** le Super Admin demande la même opération dans le même périmètre par le panneau, une API, la CLI ou un traitement asynchrone
+- **THEN** les mêmes droits de dérogation s'appliquent
+- **AND** le worker conserve l'acteur initial sans recevoir les credentials du Super Admin
+
+### Requirement: Contrôles applicatifs dérogeables par le Super Admin
+
+Dans son périmètre autorisé, le Super Admin MUST pouvoir déroger à tous les contrôles applicatifs, notamment refus ACL, règles métier, maintenance, quotas, entitlements, feature flags, gouvernance, résidence, rétention, legal holds, audit et désactivation externe. La possibilité de dérogation MUST NOT étendre son accès à un tenant non accordé ni permettre un second Super Admin ou une délégation.
+
+#### Scenario: Contrôle applicatif dérogé
+
+- **WHEN** le Super Admin utilise une dérogation à un contrôle applicatif dans son périmètre autorisé
+- **THEN** le contrôle concerné ne bloque pas cette opération
+- **AND** ni un autre compte ni un tenant non accordé ne bénéficient de l'exception
+
+### Requirement: Priorité transversale de l'exception Super Admin
+
+L'exception Super Admin MUST prévaloir sur les exigences de contrôle applicatif des autres capacités dans son seul périmètre autorisé. Les garanties des profils structurels préparatoires et les contrats d'exécution restent distincts de cette exception. Les comptes ordinaires MUST conserver leurs règles existantes, notamment priorité DENY, refus par défaut et contrôles obligatoires.
+
+#### Scenario: Compte ordinaire sans exception
+
+- **WHEN** un Administrateur ordinaire rencontre un refus ACL, un audit obligatoire ou un autre contrôle bloquant
+- **THEN** le contrôle reste applicable et le rôle administrateur ne donne pas l'exception Super Admin
+
+#### Scenario: Contrat structurel sans privilège
+
+- **WHEN** un profil préparatoire valide une structure d'identité, de périmètre, de politique ou de données
+- **THEN** cette validation reste structurelle et n'établit aucune exception Super Admin
+
 ### Requirement: Modèle Subject Resource Action Context
 
 Chaque décision MUST évaluer sujet (identité numérique, utilisateur, groupe), ressource et action déclarées par le module, plus contexte incluant le ScopeContext valide ; la propriété, l'appartenance ou un rôle administrateur MUST NOT valoir autorisation implicite.
@@ -18,7 +67,7 @@ Chaque décision MUST évaluer sujet (identité numérique, utilisateur, groupe)
 
 Le système MUST respecter les garanties suivantes.
 
-L'évaluation SUIT le refus explicite prioritaire, puis l'autorisation explicite, puis le refus par défaut ; tout accès plateforme ou inter-tenant exige permission, contexte et audit explicites.
+Hors exception Super Admin définie ci-dessus, l'évaluation SUIT le refus explicite prioritaire, puis l'autorisation explicite, puis le refus par défaut ; tout accès plateforme ou inter-tenant exige permission, contexte et audit explicites.
 
 #### Scenario: Conflit DENY contre ALLOW
 

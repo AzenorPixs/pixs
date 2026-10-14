@@ -68,16 +68,41 @@ champs `id` (string non vide), `version` (SemVer 2.0.0 complète),
 `contracts` (tableau de strings, sous-ensemble des contrats du `[implements]`
 du MÊME composant, MAY vide), `criticality` (`REQUIRED` ou `OPTIONAL`) et
 `fallback` (string ; valeur `"none"` explicite si `REQUIRED`, non vide si
-`OPTIONAL`). Le propriétaire d'une capacité fournie est dérivé de
-l'identifiant du composant ; aucune liste de noms parallèle.
+`OPTIONAL`).
 
-Le `[implements].contracts` MUST être un tableau de tables inline `{id,
+#### Scenario: Descripteur de capacité du schéma 1
+
+- **WHEN** un manifest de schéma 1 déclare une capacité fournie
+- **THEN** le descripteur contient les champs et contraintes déclarés, avec fallback explicite selon sa criticité
+
+### Requirement: Manifest schéma 1 — propriétaire et contrats exacts
+
+Le propriétaire d'une capacité fournie est dérivé de
+l'identifiant du composant ; aucune liste de noms parallèle. Le `[implements].contracts` MUST être un tableau de tables inline `{id,
 version}` où `version` est la version exacte du contrat implémenté.
+
+#### Scenario: Propriétaire dérivé du composant
+
+- **WHEN** une capacité est déclarée par un composant de schéma 1
+- **THEN** son propriétaire est dérivé de l'identifiant du composant et les contrats implémentés portent leur version exacte
+
+### Requirement: Manifest schéma 1 — listes de dépendances
+
+Le système MUST respecter les garanties suivantes.
 
 Les `[dependencies]` et `[optional_dependencies]` (`components`,
 `capabilities`, `contracts`) sont des listes de strings
 `"id [comparateurs]"` dont la grammaire et la sémantique sont définies par la
-spécification `dependencies`. Toute ancienne chaîne fournie sans version dans
+spécification `dependencies`.
+
+#### Scenario: Dépendances selon la grammaire commune
+
+- **WHEN** un manifest de schéma 1 déclare des dépendances obligatoires ou optionnelles
+- **THEN** il utilise des listes de strings id et comparateurs selon la spécification dependencies
+
+### Requirement: Manifest schéma 1 — refus des anciennes déclarations
+
+Toute ancienne chaîne fournie sans version dans
 `[provides].capabilities` ou `[implements].contracts` MUST être refusée en
 validation avec un diagnostic nommant le champ et l'entrée ; les fixtures
 historiques DOIVENT être adaptées et la version du composant MUST NOT servir

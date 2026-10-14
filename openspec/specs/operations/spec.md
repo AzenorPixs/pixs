@@ -5,6 +5,15 @@ L'exploitation repose sur une interface de management distincte de l'API métier
 
 ## Requirements
 
+### Requirement: Application de l'exception Super Admin
+
+Les exigences et scénarios de contrôle applicatif de cette capacité MUST s'appliquer sous réserve de l'exception définie par `authorization`, dans le périmètre du seul compte décrit par `initial-administration`. Les comptes ordinaires MUST conserver leurs contrôles. Les profils structurels préparatoires MUST rester inchangés.
+
+#### Scenario: Intervention de secours pendant une maintenance
+
+- **WHEN** le Super Admin utilise sa dérogation pour une opération dans un périmètre placé en maintenance
+- **THEN** la maintenance ne bloque pas cette intervention et le même droit s'applique par panneau ou CLI
+
 ### Requirement: Interface de management distincte et non publique
 
 L'interface d'exploitation MUST être distincte de l'API métier et consommer les mêmes contrats et la même autorité quelle que soit la façade ; elle MUST NOT être exposée au trafic public par défaut, toute exposition passant par une frontière avec identité, autorisation, périmètre et audit explicites.

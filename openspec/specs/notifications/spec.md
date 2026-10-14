@@ -14,6 +14,11 @@ Chaque notification MUST suivre un contrat versionné avec destinataires, canaux
 - **WHEN** un envoi vise un canal non déclaré par le contrat
 - **THEN** l'envoi est refusé avec une erreur explicite
 
+#### Scenario: Destinataire élargi refusé
+
+- **WHEN** un envoi vise un destinataire non déclaré par le contrat
+- **THEN** l'envoi est refusé avec une erreur explicite
+
 ### Requirement: Asynchronisme avec réessais bornés
 
 Le système MUST respecter les garanties suivantes.
