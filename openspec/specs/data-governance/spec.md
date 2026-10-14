@@ -5,6 +5,16 @@ La gouvernance suit la propriété des composants et s'applique à la source de 
 
 ## Requirements
 
+### Requirement: Application de l'exception Super Admin
+
+Les exigences et scénarios de contrôle applicatif de cette capacité MUST s'appliquer sous réserve de l'exception définie par `authorization`, dans le périmètre du seul compte décrit par `initial-administration`. Les comptes ordinaires MUST conserver leurs contrôles. Les profils structurels préparatoires MUST rester inchangés.
+
+#### Scenario: Dérogation de gouvernance dans un tenant accordé
+
+- **WHEN** le Super Admin utilise une dérogation de gouvernance pour une opération dans un tenant qui lui est explicitement accordé
+- **THEN** la restriction applicative dérogée ne bloque pas cette opération
+- **AND** aucun accès à un autre tenant n'est déduit de la dérogation
+
 ### Requirement: Profil de gouvernance versionné par composant
 
 Chaque composant qui introduit, dérive ou transfère des données MUST publier un profil versionné avec propriétaire, source de vérité, classes, confidentialité, données personnelles, finalités, rétention, suppression, consommateurs, processeurs, contraintes de résidence ou transfert, export et lignée.

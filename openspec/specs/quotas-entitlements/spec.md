@@ -5,6 +5,15 @@ Les droits contractuels et les quotas contrôlent disponibilité et consommation
 
 ## Requirements
 
+### Requirement: Application de l'exception Super Admin
+
+Les exigences et scénarios de contrôle applicatif de cette capacité MUST s'appliquer sous réserve de l'exception définie par `authorization`, dans le périmètre du seul compte décrit par `initial-administration`. Les comptes ordinaires MUST conserver leurs contrôles. Les profils structurels préparatoires MUST rester inchangés.
+
+#### Scenario: Quota ou entitlement dérogé
+
+- **WHEN** le Super Admin demande une opération dans son périmètre autorisé avec dérogation à un quota épuisé ou à un entitlement
+- **THEN** le contrôle concerné ne bloque pas son opération et les autres comptes conservent leurs limites
+
 ### Requirement: Droits rattachés sans élargissement
 
 Chaque droit MUST déclarer clé, version, propriétaire, portée (installation, plateforme, tenant, scope enfant explicite), expiration et révocation ; un scope enfant MUST NOT élargir le droit du tenant ; aucun droit utilisateur implicite.

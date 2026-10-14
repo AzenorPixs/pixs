@@ -1,9 +1,9 @@
 # Backend Pixs — fondation préparatoire P0
 
-Fondation partielle déclarée Django 6.1.1, psycopg[binary] 3.3.6,
+Fondation partielle déclarée Django 6.1.2, psycopg[binary] 3.3.6,
 asgiref 3.12.1 et sqlparse 0.6.0, avec Python >=3.12 dans `pyproject.toml`.
-L'extra `binary` impose psycopg-binary 3.3.6. Ces cinq versions sont installées et
-qualifiées sur Python 3.14.8 : 736 tests UNIT et 185 tests INTEGRATION réussis,
+L'extra `binary` impose psycopg-binary 3.3.6. La qualification du 09/10/2026 rapporte ces cinq versions installées dans `.venv` et
+qualifiées sur Python 3.14.8 : 1 101 tests UNIT et 219 tests INTEGRATION réussis,
 sans échec ni test ignoré, et `pip check` conforme. L'interpréteur est inchangé.
 Le projet devra suivre la dernière stable officielle supportée de Django et la
 règle n° 2 pour toutes ses dépendances, psycopg compris : dernières versions
@@ -12,7 +12,9 @@ incompatible avec le Python actuel reste soumise à la décision exclusive du
 développeur. Les versions de ce relevé ne constituent pas des verrous permanents.
 La politique et le relevé horodaté sont décrits dans
 [TECHNICAL.md § 41.1](../../../TECHNICAL.md#411-politique-de-version-django).
-Aucun service opérationnel, aucune persistance démontrée.
+La fondation initiale décrite ci-dessous ne démontre aucun service opérationnel.
+Les jalons ultérieurs ajoutent une persistance bornée de snapshots de fanions
+et de travaux ; ils ne démontrent ni P0 complet ni readiness de production.
 
 
 ## API
@@ -75,34 +77,36 @@ Exemple sans Django, sans réseau et sans vrai secret ni credential.
 Depuis la racine du projet :
 
 ```text
-/home/devops/python/current/bin/python3 -m venv .venv-backend-foundation
+/home/devops/python/current/bin/python3 -m venv .venv
 ```
 
-Chaque commande fait l'objet d'un mandat CAB distinct.
+Dans une session OpenCode pilotée, les commandes concernées suivent le protocole
+CAB d'AGENTS.md. Une session Codex directe ne constitue pas un pilotage OpenCode.
 
 Les versions exactes qualifiées sont maintenant déclarées dans `pyproject.toml`.
 Toute installation ou évolution devra suivre la politique Django stable courante,
 la règle n° 2 et le support du Python actuel pour toutes les dépendances, psycopg
-compris. Les tests ci-dessous décrivent le harnais synthétique en environnement
-dédié ; la qualification du relevé courant utilise l'interpréteur déclaré dans
-`DEVOPS.md`. Chaque commande conserve son mandat CAB distinct.
+compris. Le parcours courant utilise uniquement `.venv`, construit depuis
+l'interpréteur de référence déclaré dans `DEVOPS.md`. Les tests ci-dessous
+utilisent les dépendances de ce venv. Le protocole CAB s'applique aux seules
+sessions OpenCode pilotées.
 
 Tests ciblés backend :
 
 ```text
-./.venv-backend-foundation/bin/python -B -c "import sys, unittest; sys.path.insert(0, 'src'); suite = unittest.defaultTestLoader.discover('tests', pattern='test_backend_*.py'); result = unittest.TextTestRunner(verbosity=2).run(suite); sys.exit(not result.wasSuccessful())"
+./.venv/bin/python -B -c "import sys, unittest; sys.path.insert(0, 'src'); suite = unittest.defaultTestLoader.discover('tests/unit', pattern='test_backend_*.py'); result = unittest.TextTestRunner(verbosity=2).run(suite); sys.exit(not result.wasSuccessful())"
 ```
 
 Régressions unitaires (UNIT) :
 
 ```text
-./.venv-backend-foundation/bin/python -B -c "import sys, unittest; sys.path.insert(0, 'src'); suite = unittest.defaultTestLoader.discover('tests/unit'); result = unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+./.venv/bin/python -B -c "import sys, unittest; sys.path.insert(0, 'src'); suite = unittest.defaultTestLoader.discover('tests/unit'); result = unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
 ```
 
 Régressions d'intégration (INTEGRATION) :
 
 ```text
-./.venv-backend-foundation/bin/python -B -c "import sys, unittest; sys.path.insert(0, 'src'); suite = unittest.defaultTestLoader.discover('tests/integration'); result = unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
+./.venv/bin/python -B -c "import sys, unittest; sys.path.insert(0, 'src'); suite = unittest.defaultTestLoader.discover('tests/integration'); result = unittest.TextTestRunner(verbosity=1).run(suite); sys.exit(not result.wasSuccessful())"
 ```
 
 Chaque suite suit sa propre racine de découverte, à exécuter une par une. La convention de tests/unit/test_pdp_time.py importe test_pdp_decision par nom de module, d'où la découverte séparée sans modification des tests. Ces commandes sont des instructions reproductibles, pas des preuves
@@ -128,11 +132,12 @@ Les trois manifests sont `src/pixs/kernel/component.toml` (KERNEL 0.1.0), `src/p
 Tests ciblés `tests/unit/test_initial_component_declarations.py` en unittest sans base ni secret ni réseau ; commande reproductible `Python -B` avec `sys.path` vers `src` et découverte `tests/unit` motif `test_initial_component_declarations.py`, sans preuve avant exécution.
 Pas de nouveau package, export ou configuration.
 
-## Limites P0
+## Limites du jalon de fondation backend
 
-Pas de fournisseur de secret, persistance, migration, modèle, API,
-serveur, worker, scheduler, frontend ou déploiement. Pas de SQLite, Git,
-environnement réel ou PostgreSQL réel.
+Ce jalon initial ne fournit pas de fournisseur de secret, persistance, migration,
+modèle, API, serveur, worker, scheduler, frontend ou déploiement. Ses contrôles
+synthétiques ne démontrent pas un environnement réel ou PostgreSQL réel.
+Les sections suivantes décrivent les apports et limites des jalons ultérieurs.
 
 Ceci n'est pas un artefact de readiness de production. Les contrôles synthétiques valident cette fondation préparatoire ; ils ne prouvent ni disponibilité de service ni persistance réelle.
 
@@ -168,7 +173,7 @@ Elle ne consulte aucune base, aucun secret et ne réalise aucune mutation.
 
 La fabrique `build_local_test_urlpatterns(dist_root, plan, document, capacity, ...)` réunit des routes TEST littérales explicites : `health/live`, racine du shell, assets préchargés, document `api/v<majeure>/openapi.json` et capacité fournie par l’appelant. Le chemin de cette capacité doit figurer dans le document OpenAPI et sous le préfixe majeur du plan. Les déclarations privées fournies sont refusées par la garde (403), les routes inconnues donnent 404 ; `unknown_ui_route` permet uniquement un littéral UI explicite en TEST. Les noms des déclarations de l’appelant sont conservés ; collisions de noms et chemins sont refusées.
 
-Dépendances déjà présentes : Python compatible 3.11, Django et psycopg, dist TanStack construit séparément. La fabrique lit ce dist de façon bornée, sans configurer Django ni ouvrir de serveur ou de connexion PG. L’appelant configure son application WSGI TEST fraîche ; les fixtures fournissent uniquement l’ENGINE PostgreSQL, avec apps et middleware vides, sans secret ni donnée métier. Le plan, le document et la réponse de capacité synthétique sont cohérents et explicites dans les tests.
+Prérequis : Python ≥3.12, conformément à `pyproject.toml`, Django et psycopg aux versions déclarées dans ce fichier, et frontend TanStack construit séparément. L’interpréteur de développement de référence est celui déclaré dans `DEVOPS.md`. La fabrique lit ce dist de façon bornée, sans configurer Django ni ouvrir de serveur ou de connexion PG. L’appelant configure son application WSGI TEST fraîche ; les fixtures fournissent uniquement l’ENGINE PostgreSQL, avec apps et middleware vides, sans secret ni donnée métier. Le plan, le document et la réponse de capacité synthétique sont cohérents et explicites dans les tests.
 
 Le contexte `local_test_server(application, host=..., port=...)` accepte seulement `127.0.0.1` et un entier exact entre 0 et 65535. Le port 0 est éphémère pour le test du cycle ; le harnais navigateur utilise 5173. Il démarre le thread WSGI, puis demande l’arrêt, joint le thread et ferme la socket en sortie normale ou après une exception du corps. L’arrêt synchrone attend la fin du handler courant : l’appelant doit fournir des handlers TEST finis, et les processus de test ont des délais explicites. Une application arbitraire qui ne retourne jamais ne peut pas être annulée par ce helper.
 
@@ -233,11 +238,42 @@ Tests : `tests/unit/test_health_classifier.py` (objets doubles, matrice combinat
 Commandes reproductibles, exécutable Python déclaré dans `DEVOPS.md` :
 
 ```text
-/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 PYTHONPATH=/home/devops/datas/pixs/src /home/devops/python/current/bin/python3 -B -m unittest discover -s /home/devops/datas/pixs/tests/unit -p test_health_classifier.py -v
+/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 PYTHONPATH=/home/devops/datas/pixs/src /home/devops/datas/pixs/.venv/bin/python -B -m unittest discover -s /home/devops/datas/pixs/tests/unit -p test_health_classifier.py -v
 ```
 
 ```text
-/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 PYTHONPATH=/home/devops/datas/pixs/src /home/devops/python/current/bin/python3 -B -m unittest discover -s /home/devops/datas/pixs/tests/integration -p test_health_classifier_integration.py -v
+/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 PYTHONPATH=/home/devops/datas/pixs/src /home/devops/datas/pixs/.venv/bin/python -B -m unittest discover -s /home/devops/datas/pixs/tests/integration -p test_health_classifier_integration.py -v
 ```
 
 Ce sous-jalon prouve seulement la classification pure d'un snapshot mémoire. Il ne prouve ni disponibilité globale, ni P0, ni readiness, ni persistance ; il n'exécute aucune sonde, ne lit aucune donnée ni variable d'environnement et ne consulte aucun secret.
+
+
+## Source PostgreSQL versionnée des fanions — preuve partielle R4
+
+La limite P0 « aucune persistance démontrée » conserve son sens historique. Ce sous-jalon ajoute seulement une première preuve partielle R4 : une table de snapshots canoniques et une API de lecture. Il ne déclare ni P0, ni production, ni readiness globale.
+
+`src/pixs/backend/models.py` définit `FeatureFlagSourceSnapshotRecord` avec exactement deux champs : `configuration_version` comme `TextField` clé primaire et `snapshot` comme `JSONField`. La table Django standard est `backend_featureflagsourcesnapshotrecord`. L’app `pixs.backend` est enregistrée implicitement sous le label `backend` ; les trois configurations d’app antérieures restent inchangées. Aucun administrateur, audit, corrélation, convergence `web`/`worker`/`scheduler`, garde de build, route ou API HTTP n’est ajouté.
+
+`src/pixs/backend/migrations/0001_feature_flag_source_snapshot.py` est une migration initiale standard, sans dépendance, constituée d’un seul `CreateModel` réversible. Elle ne transporte aucune infrastructure de gestion de schéma : l’application des migrations avant et arrière est seulement exercée par tests explicites.
+
+`src/pixs/backend/feature_flag_postgres_source.py` expose `load_feature_flag_source_snapshot(expected_configuration_version)`. Son import reste pur : aucun réglage, aucun `django.setup()` et aucun modèle ne sont chargés. L’appelant doit configurer Django explicitement avant l’appel.
+
+L’API accepte seulement une valeur de type exact `str` non vide, y compris une chaîne composée uniquement d’espaces, transmise sans normalisation ni `strip()`. Elle lit exactement la ligne désignée par la clé primaire attendue, vérifie la version interne, puis décode le document avec le codec canonique. Aucun contrôle de tenant, cache, runtime ou corrélation n’est réalisé : le caller et son serveur restent responsables de la connexion, de la configuration, de l’isolation et du cycle de vie.
+
+En échec attendu — absence, erreur de base ou refus du codec — l’API lève `FeatureFlagSourceLoadError` avec le message fixe `Source de fanions indisponible` et sans chaîne d’origine. Les erreurs inattendues sont propagées ; l’appelant de confiance doit donc contrôler ses diagnostics. Le chargeur ne journalise rien et son refus normalisé n’expose aucune valeur, requête ou cause technique.
+
+Les preuves locales observées couvrent l’absence de modèle au moment de l’import, les refus et lectures simulées, la réussite d’un aller-retour réel en schéma isolé, la migration avant/arrière, l’unique `SELECT` public attendu, le nettoyage et la fermeture des connexions. Cette preuve reste partielle : elle valide la source versionnée en lecture, pas l’administration, l’activation des rôles ni la disponibilité d’un service.
+
+## Persistance bornée des travaux
+
+`JobRecord` dans `src/pixs/backend/models.py` représente treize champs de travail.
+La migration `0002_job_record.py` dépend de `0001_feature_flag_source_snapshot`.
+Ce modèle ne fournit ni worker, ni transitions, ni acquisition de bail, ni
+politique de réessai, ni autorisation à l'exécution, ni déduplication active.
+Les références restent opaques, sans clé étrangère ni preuve d'existence.
+`save()` n'appelle pas `full_clean()` ; SemVer est contrôlé par la validation
+Python, pas par les contraintes de base.
+
+Les harnais sont `tests/unit/test_job_record.py` et
+`tests/integration/test_job_record_postgres_integration.py`. Leur présence
+ne constitue pas une preuve d'exécution actuelle ni de contrat Job complet.

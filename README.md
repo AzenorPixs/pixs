@@ -6,7 +6,9 @@ Pixs est un framework applicatif conçu pour composer plusieurs applications et 
 
 ## État du projet
 
-Le dépôt formalise actuellement l'architecture, les règles techniques et les spécifications fonctionnelles de Pixs. Il ne publie pas encore de release, de paquet Debian ni d'image Docker utilisable : les noms de commandes, variables d'environnement, ports, chemins d'installation et fournisseurs concrets ne sont donc pas figés.
+Le dépôt contient les cadrages, les spécifications OpenSpec et une implémentation initiale partielle : mécanismes du Kernel, primitives Core, adaptateurs Django et shell TanStack/React. Des modèles et migrations Django représentent les snapshots de fanions et les travaux. Ces jalons ne démontrent pas une composition P0 complète ni un service prêt pour la production.
+
+Le dépôt ne publie pas encore de release, de paquet Debian ni d'image Docker utilisable. Les commandes et paramètres des jalons de développement ne constituent pas encore une interface de déploiement définitive. Les limites et parcours de ces jalons sont décrits dans [la documentation backend](src/pixs/backend/README.md) et [la documentation frontend](frontend/README.md).
 
 Cette documentation présente le périmètre cible du projet sans anticiper ces choix d'implémentation.
 
@@ -66,7 +68,9 @@ Un composant déclare son identité, sa version, ses dépendances, ses capacité
 
 **Modularité.** Les modules possèdent leurs données, invariants et migrations. Ils ne modifient pas directement les données internes d'un autre composant.
 
-**Sécurité.** Les secrets ne sont jamais présents dans un manifest, un artefact, une image, un paquet ou un journal. Toute authentification, autorisation ou configuration non vérifiable échoue de manière fermée.
+**Sécurité.** Les secrets ne sont jamais présents dans un manifest, un artefact, une image, un paquet ou un journal. Dans le régime ordinaire, toute authentification, autorisation ou configuration non vérifiable échoue de manière fermée.
+
+**Paramétrage et secours.** La cible prévoit un Super Admin unique par installation, non nominatif, sans délégation ni usage comme compte de service. Son contrôle total couvre la plateforme et chaque tenant explicitement accordé, malgré ses ACL. Tous les contrôles applicatifs sont dérogeables pour ce compte, audit et désactivation externe compris, dans le panneau, les API, la CLI et ses traitements asynchrones. Aucun MFA n'est requis au premier démarrage ni à la réactivation de secours. Une désactivation non dérogée laisse terminer une transaction engagée et refuse les nouvelles actions. Cette exception est [spécifiée par OpenSpec](openspec/specs/authorization/spec.md) ; son implémentation reste à réaliser.
 
 **Déterminisme.** À composants, versions et configuration identiques, la composition, l'ordre de chargement et les diagnostics doivent être reproductibles.
 
@@ -78,9 +82,14 @@ Un composant déclare son identité, sa version, ses dépendances, ses capacité
 
 ## Exécution et déploiement cibles
 
-Pixs prévoit trois formes d'utilisation : l'exécution directe pour le développement, un paquet Debian (`.deb`) pour l'installation native, et une image Docker pour l'exécution conteneurisée. À version identique, les distributions Debian et Docker doivent fournir les mêmes garanties fonctionnelles.
+Pixs prévoit l’exécution directe pour le développement, deux paquets Debian
+indépendants — PBO/PFO et PA — et une image Docker contenant PBO/PFO et PA.
+Le paquet PA livre quatre binaires ; Docker livre les trois binaires système/PZT
+et exclut le binaire utilisateur et ses modes de session. Les garanties restent
+communes aux capacités déclarées de chaque composition.
 
-Un même artefact peut être lancé selon un profil explicitement configuré :
+Le runtime applicatif PBO d’un même artefact peut être lancé selon un profil
+explicitement configuré ; les binaires PA ont leurs rôles distincts :
 
 - `web` reçoit le trafic applicatif ;
 - `worker` exécute les travaux asynchrones ;
@@ -90,15 +99,37 @@ En production, ces profils peuvent être exécutés séparément. Seul `web` est
 
 ### Image Docker
 
-L'image cible est reproductible, sans état et sans secret. Elle contiendra le runtime nécessaire, Pixs, ses dépendances et le frontend construit ; PostgreSQL, la configuration effective, les secrets et les données persistantes restent externes.
+L’image cible est reproductible, sans état et sans secret. Elle contient PBO,
+PFO et trois binaires PA : démon système, événements de démarrage/arrêt du
+conteneur et exécution PZT. Elle exclut le binaire utilisateur. PostgreSQL,
+configuration effective, secrets et données persistantes restent externes.
+La présence d’un binaire ne vaut ni activation ni privilège d’exécution.
 
 Le conteneur reçoit un unique profil d'exécution. Son système de fichiers inscriptible est éphémère, ses sondes distinguent démarrage, vivacité et disponibilité, et son arrêt draine les traitements en cours de façon contrôlée.
 
 ### Paquet Debian
 
-Le paquet cible installe l'artefact et ses profils d'exécution dans le respect des conventions Debian. La configuration administrée reste séparée du code immuable et une mise à niveau ne l'écrase pas silencieusement.
+Le paquet PBO/PFO et le paquet PA sont indépendants. Ce dernier contient
+quatre binaires : démon système PA, événements de démarrage/arrêt de l’hôte,
+sessions utilisateur et exécution PZT. La configuration administrée reste
+séparée du code immuable et préservée lors des mises à niveau. Les noms et
+versions des paquets restent à spécifier.
 
 Les services système ne sont que des adaptateurs d'exploitation : ils démarrent, arrêtent et supervisent les profils Pixs, sans porter de logique métier. Une installation, une mise à niveau, une désinstallation et une purge explicite restent des opérations distinctes ; aucune ne doit supprimer les données métier implicitement.
+
+### Pixs Agent et PZT
+
+PZT est un module essentiel de PBO pour la configuration, la visualisation,
+la supervision et le monitoring du réseau. Lorsque PZT est activé et configuré,
+son exécution est toujours assurée par le binaire PZT dédié de PA, fondé sur
+WireGuard. Les capacités inspirées de NetBird sont redéveloppées dans Pixs.
+PA peut être installé sans PBO/PFO locaux et joindre un PBO distant autorisé ;
+tout échange PBO–PA passe par PZT, y compris sur le même hôte.
+Ces capacités sont cadrées dans PROJECT.md §43–§44, TECHNICAL.md §42–§45 et
+BUILD.md §46–§47 et désormais déclarées par [pixs-agent](openspec/specs/pixs-agent/spec.md)
+et [pzt](openspec/specs/pzt/spec.md). Nuitka est retenu pour les trois binaires
+système/utilisateur et Cython pour le binaire PZT. Seules les spécifications
+sont rédigées : implémentation, qualification et artefacts restent à réaliser.
 
 ## Configuration de déploiement
 

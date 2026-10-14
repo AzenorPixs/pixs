@@ -66,8 +66,8 @@ ni sécurité, ni P0 achevé.
 Contrôles dédiés exacts :
 
 ```text
-/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/python/current/bin/python3 -m unittest discover -s tests/unit -p test_api_contract_plans.py -v
-/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/python/current/bin/python3 -m unittest discover -s tests/integration -p test_api_contract_plans_integration.py -v
+/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv/bin/python -m unittest discover -s tests/unit -p test_api_contract_plans.py -v
+/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv/bin/python -m unittest discover -s tests/integration -p test_api_contract_plans_integration.py -v
 ```
 
 ---
@@ -109,11 +109,17 @@ Limites : ni HTTP, ni rejeu d'idempotence, ni pagination, ni tenant,
 ni authentification, ni génération/validation OpenAPI, ni mapping de
 statut. La requirement2 globale reste non achevée.
 
+Le champ public `message` reste fixe en français (`Erreur interne du service.`).
+Son externalisation dans un catalogue du composant avec canon anglais et sa
+localisation restent à implémenter pour satisfaire les exigences
+d'internationalisation ; cette limite concerne aussi la réponse JSON qui
+réutilise cette projection.
+
 Contrôles dédiés exacts :
 
 ```text
-/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/python/current/bin/python3 -m unittest discover -s tests/unit -p test_api_error_projection.py -v
-/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/python/current/bin/python3 -m unittest discover -s tests/integration -p test_api_error_projection_integration.py -v
+/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv/bin/python -m unittest discover -s tests/unit -p test_api_error_projection.py -v
+/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv/bin/python -m unittest discover -s tests/integration -p test_api_error_projection_integration.py -v
 ```
 
 ---
@@ -160,8 +166,8 @@ assert apps.ready is False
 Tests dédiés, sous mandats séparés :
 
 ```text
-/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/python/current/bin/python3 -m unittest discover -s tests/unit -p test_api_error_response.py -v
-/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv-backend-foundation/bin/python -m unittest discover -s tests/integration -p test_api_error_response_integration.py -v
+/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv/bin/python -m unittest discover -s tests/unit -p test_api_error_response.py -v
+/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv/bin/python -m unittest discover -s tests/integration -p test_api_error_response_integration.py -v
 ```
 
 Limites : aucune route, serveur, middleware, authentification, tenant,
@@ -239,8 +245,8 @@ assert apps.ready is False
 Tests dédiés, sous mandats séparés :
 
 ```text
-/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/python/current/bin/python3 -m unittest discover -s tests/unit -p test_api_success_envelope.py -v
-/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv-backend-foundation/bin/python -m unittest discover -s tests/integration -p test_api_success_response_integration.py -v
+/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv/bin/python -m unittest discover -s tests/unit -p test_api_success_envelope.py -v
+/usr/bin/env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src /home/devops/datas/pixs/.venv/bin/python -m unittest discover -s tests/integration -p test_api_success_response_integration.py -v
 ```
 
 Limites : aucune route, serveur, version, curseur, idempotence,

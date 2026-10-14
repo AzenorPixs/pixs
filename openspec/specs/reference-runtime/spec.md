@@ -9,15 +9,17 @@ Kernel à des adapters futurs explicitement spécifiés.
 
 ### Requirement: Pile de référence unique
 
-Le runtime de référence MUST utiliser Django pour l'autorité métier,
-PostgreSQL comme source de vérité applicative et TanStack comme frontend de
-référence. L'agnosticisme de Pixs MUST concerner domaines, contrats, providers
-et intégrations, et MUST NOT promettre une interchangeabilité immédiate de la pile.
+Le runtime applicatif PBO/PFO MUST utiliser Django pour l’autorité métier, PostgreSQL comme source de vérité et TanStack comme frontend de référence. L’agnosticisme MUST concerner domaines, contrats, providers et intégrations et MUST NOT promettre l’interchangeabilité immédiate de cette pile. Les binaires PA et le module essentiel PZT MUST respecter leurs exigences distinctes de cette capacité.
 
 #### Scenario: Runtime décrit
 
-- **WHEN** une release décrit son runtime de référence
-- **THEN** elle identifie Django, PostgreSQL et TanStack sans les confondre avec des providers optionnels
+- **WHEN** une release décrit PBO/PFO et les binaires PA
+- **THEN** elle identifie Django/PostgreSQL/TanStack pour PBO/PFO et les fonctions locales PA séparément
+
+#### Scenario: Réseau désactivé
+
+- **WHEN** une composition PBO désactive l’exécution réseau PZT
+- **THEN** le module essentiel de configuration et de supervision reste composé
 
 ### Requirement: Adapter explicite
 
@@ -46,15 +48,18 @@ Pixs MUST cibler en permanence la dernière version stable officielle encore
 supportée par le projet Django, avec ses correctifs et ses évolutions mineures
 ou majeures. Une préversion ou une branche de développement MUST NOT constituer
 cette cible ; une ancienne série LTS MUST NOT remplacer la stable courante.
-Le projet MUST adapter l'intégralité de son code, ses migrations, ses tests,
-son runtime Python, ses dépendances directes et transitives et ses déclarations
-de compatibilité aux besoins de cette version.
 
 #### Scenario: Nouvelle version stable officielle
 
 - **WHEN** Django publie une nouvelle version stable supportée
 - **THEN** Pixs doit actualiser sa cible et adapter le code, le runtime et toutes les dépendances concernés
 - **AND** toute incompatibilité restante doit être déclarée comme un travail de migration et ne justifie pas une cible ancienne implicite
+
+### Requirement: Adaptation complète à la stable Django ciblée
+
+Le projet MUST adapter l'intégralité de son code, ses migrations, ses tests,
+son runtime Python, ses dépendances directes et transitives et ses déclarations
+de compatibilité aux besoins de cette version.
 
 #### Scenario: Migration encore non qualifiée
 
@@ -64,21 +69,23 @@ de compatibilité aux besoins de cette version.
 ### Requirement: Relevé et qualification de la stable courante
 
 Pixs MUST vérifier la cible dans les sources officielles Django à chaque
-nouvelle stable et avant la qualification d'une nouvelle release.
-`TECHNICAL.md` MUST rapporter la version stable supportée observée, l'horodatage
+nouvelle stable et avant la qualification d'une nouvelle release. `TECHNICAL.md` MUST rapporter la version stable supportée observée, l'horodatage
 de vérification avec son fuseau et les liens officiels. Le relevé MUST
 distinguer cible vérifiée, versions déclarées et migration effectivement
-qualifiée. La qualification MUST fixer les versions exactes pour préserver la
-reproductibilité et MUST vérifier le graphe de dépendances, les tests et les
-migrations applicables ; elle MUST NOT procéder par mise à niveau silencieuse.
-La politique des dépendances Python MUST s'appliquer à toutes les dépendances
-sans exception, psycopg compris. Un pin historique MUST NOT constituer une
-dérogation à la priorité des contraintes Django et à la cohérence du graphe.
+qualifiée.
 
 #### Scenario: Relevé horodaté
 
 - **WHEN** la stable officielle est vérifiée
 - **THEN** TECHNICAL.md enregistre la version, l'instant de consultation avec fuseau et les sources officielles sans présenter cette consultation comme une installation ou une qualification
+
+### Requirement: Qualification reproductible et politique sans dérogation
+
+La qualification MUST fixer les versions exactes pour préserver la
+reproductibilité et MUST vérifier le graphe de dépendances, les tests et les
+migrations applicables ; elle MUST NOT procéder par mise à niveau silencieuse. La politique des dépendances Python MUST s'appliquer à toutes les dépendances
+sans exception, psycopg compris. Un pin historique MUST NOT constituer une
+dérogation à la priorité des contraintes Django et à la cohérence du graphe.
 
 #### Scenario: Build reproductible et nouvelle qualification
 
@@ -90,33 +97,49 @@ dérogation à la priorité des contraintes Django et à la cohérence du graphe
 
 Les dépendances Python nécessaires au projet, directes et transitives, MUST
 utiliser leur dernière version disponible compatible avec la stable Django
-ciblée et avec l'ensemble du graphe installé dans l'environnement du projet.
-Une version exacte ou une plage supportée indiquée par Django MUST prévaloir
-sur la dernière version disponible du paquet. Une version exacte imposée MUST
-être respectée ; une plage MUST conduire à la version admissible la plus récente,
-sans traiter une borne minimale comme un verrouillage exact. En l'absence de
-contrainte Django explicite, la compatibilité MUST être qualifiée par les
-métadonnées et les tests applicables. La qualification MUST conserver les
-sources et versions retenues et MUST vérifier ensemble les dépendances directes
-et transitives. Toute incompatibilité restante MUST être explicite et conduire
-à l'adaptation du code ou de l'environnement ; le projet MUST NOT installer de
-force une version refusée par Django ni revenir à un ancien Django pour adopter
-une dépendance plus récente.
+ciblée et avec l'ensemble du graphe installé dans l'environnement du projet. Une version exacte ou une plage supportée indiquée par Django MUST prévaloir
+sur la dernière version disponible du paquet.
 
 #### Scenario: Version imposée par Django
 
 - **WHEN** la dernière version disponible d'une dépendance ne respecte pas la version exacte ou la plage supportée imposée par Django
 - **THEN** la contrainte Django prévaut et la dernière version admissible est retenue sous réserve de la cohérence du graphe complet
 
+### Requirement: Versions exactes, plages et bornes minimales Django
+
+Une version exacte imposée MUST
+être respectée ; une plage MUST conduire à la version admissible la plus récente,
+sans traiter une borne minimale comme un verrouillage exact.
+
 #### Scenario: Plage et borne minimale
 
 - **WHEN** Django indique une plage supportée contenant plusieurs versions disponibles
 - **THEN** la version compatible la plus récente est retenue et une simple borne minimale ne devient pas une version exacte imposée
 
+### Requirement: Qualification du graphe Python et incompatibilités explicites
+
+En l'absence de
+contrainte Django explicite, la compatibilité MUST être qualifiée par les
+métadonnées et les tests applicables. La qualification MUST conserver les
+sources et versions retenues et MUST vérifier ensemble les dépendances directes
+et transitives. Toute incompatibilité restante MUST être explicite et conduire
+à l'adaptation du code ou de l'environnement.
+
 #### Scenario: Graphe incompatible ou contrainte absente
 
 - **WHEN** une dépendance n'a pas de contrainte Django explicite ou que le graphe complet présente une incompatibilité
 - **THEN** les métadonnées et tests applicables doivent qualifier la compatibilité, tout conflit restant empêchant une déclaration de conformité sans forcer l'installation ni rétrograder la cible Django
+
+### Requirement: Absence d'installation forcée ou de recul Django
+
+Le projet MUST NOT installer de
+force une version refusée par Django ni revenir à un ancien Django pour adopter
+une dépendance plus récente.
+
+#### Scenario: Version de dépendance refusée par Django
+
+- **WHEN** une version candidate exige de forcer une dépendance refusée ou de revenir à un ancien Django
+- **THEN** le projet ne l'installe pas de force et ne recule pas sa cible Django pour adopter cette dépendance
 
 ### Requirement: Compatibilité avec le Python actuel du projet
 
@@ -141,3 +164,21 @@ La solution retenue MUST être qualifiée avant installation.
 
 - **WHEN** le développeur valide une solution après une incompatibilité
 - **THEN** la solution choisie doit être qualifiée techniquement avant installation, la validation humaine ne constituant pas en soi une preuve de compatibilité
+
+### Requirement: Couche exécutable PA séparée
+
+Les binaires PA définis par pixs-agent MUST constituer une couche d’exécution locale distincte et MUST NOT remplacer Django, PostgreSQL ou TanStack ni devenir un backend métier alternatif. Leur compilation MUST suivre le choix Nuitka pour trois binaires et Cython pour PZT.
+
+#### Scenario: Couche exécutable PA séparée
+
+- **WHEN** un binaire PA est décrit
+- **THEN** il ne devient pas une implémentation alternative de l’autorité métier PBO
+
+### Requirement: Module PZT essentiel dans PBO
+
+La composition cible PBO MUST inclure le module essentiel PZT défini par pzt, même lorsque le réseau est désactivé. Configuration, visualisation, supervision et monitoring MUST rester dans PBO ; le réseau activé/configuré MUST être exécuté par le binaire PZT de PA.
+
+#### Scenario: Module PZT essentiel dans PBO
+
+- **WHEN** l’opérateur désactive le réseau PZT
+- **THEN** le binaire réseau se ferme et le module essentiel demeure dans PBO

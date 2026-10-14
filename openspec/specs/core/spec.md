@@ -91,17 +91,24 @@ d'accès ni de niveau d'assurance.
 ### Requirement: Frontière des validateurs du profil identité
 
 La validation structurelle du profil v1 MUST pouvoir être exercée sur des
-modèles sans authentification réelle, provider concret ni persistance.
-Elle MUST NOT être présentée comme une authentification, une autorisation,
-une mutation persistante ou une preuve d'audit durable. Le backend Django
-MUST rester l'autorité métier et transactionnelle ; PostgreSQL MUST rester
-la source de vérité applicative. Les mutations réelles MUST conserver les
-exigences applicables de persistance, d'autorisation et d'audit.
-Le profil structurel MUST NOT définir implicitement des transitions d'état,
-des règles temporelles ou des niveaux d'assurance à partir du seul type
-ou état de l'identité.
+modèles sans authentification réelle, provider concret ni persistance. Elle MUST NOT être présentée comme une authentification, une autorisation,
+une mutation persistante ou une preuve d'audit durable.
 
 #### Scenario: Validation structurelle sans effet applicatif
 
 - **WHEN** un modèle d'identité satisfait le profil structurel
 - **THEN** cette validation ne crée aucune session, ne persiste aucune entité et n'accorde aucun accès
+
+### Requirement: Autorités et limites du profil identité structurel
+
+Le backend Django
+MUST rester l'autorité métier et transactionnelle ; PostgreSQL MUST rester
+la source de vérité applicative. Les mutations réelles MUST conserver les
+exigences applicables de persistance, d'autorisation et d'audit. Le profil structurel MUST NOT définir implicitement des transitions d'état,
+des règles temporelles ou des niveaux d'assurance à partir du seul type
+ou état de l'identité.
+
+#### Scenario: Identité structurelle sans assurance implicite
+
+- **WHEN** un modèle satisfait le profil structurel d'identité
+- **THEN** son type ou son état ne définit pas implicitement de transition, règle temporelle ou niveau d'assurance, et les mutations restent sous l'autorité backend
