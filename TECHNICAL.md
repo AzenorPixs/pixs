@@ -1615,6 +1615,8 @@ UI_SLOT        point d'insertion déclaré par le shell
 
 Chaque contribution possède un identifiant stable, un propriétaire, une version de contrat, des dépendances éventuelles et des conditions d'activation. Le registre frontend valide les identifiants, les versions, les collisions, les permissions d'affichage, les exigences de module et la compatibilité avec le shell avant exposition.
 
+Le profil lexical préparatoire `FrontendContributionId v1`, défini dans `openspec/specs/frontend/spec.md`, vérifie uniquement la syntaxe d’un identifiant à segments séparés par des points. Il ne définit aucun champ de manifest et ne prouve ni la propriété du namespace (dont `pixs.*`), ni l’unicité ou l’activation d’une contribution.
+
 La modularité frontend est portée par les composants `MODULE` et `SUBMODULE` du modèle commun ; aucun type `FRONTEND_MODULE`, `FRONTEND_SUBMODULE`, registre ou lifecycle distinct ne doit être introduit. La section `[frontend]` d'un manifest exprime une facette du composant propriétaire. Un sous-module qui porte une facette frontend reste donc découvert, validé, résolu et diagnostiqué par les mécanismes communs, avec la même relation de parenté, les mêmes contraintes SemVer et les mêmes états que sa partie non frontend.
 
 Un sous-module frontend déclare ses propres contributions, points d'entrée, contrats, traductions et dépendances. Il consomme uniquement les façades publiques du shell, du Design System, de son parent ou d'autres composants explicitement requis. Le parent ne rend ni une contribution enfant active ni son état accessible par convention d'arborescence ; toute intégration entre parent et enfant passe par une contribution, un slot, un service frontend ou un contrat UI public, namespacé et versionné.

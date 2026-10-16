@@ -456,6 +456,20 @@ class BulkRuntimeRepository:
             return None
         return binding.as_values()
 
+    def get_latest_checkpoint(
+        self, *, operation_id: object, phase: object
+    ) -> dict | None:
+        """Lit le dernier checkpoint d'une phase sans modifier la progression."""
+        if not _is_text(operation_id) or not _is_phase(phase):
+            raise _invalid()
+        record = (
+            BulkCheckpointRecord.objects.using(self._using)
+            .filter(operation_id=operation_id, phase=phase)
+            .order_by("-revision")
+            .first()
+        )
+        return None if record is None else record.as_values()
+
     def create_schedule(self, *, values: object) -> dict:
         """Crée un ordonnancement pour un Job déjà lié, sous verrous uniformes."""
         snapshot = _exact_keys(values, _SCHEDULE_KEYS)

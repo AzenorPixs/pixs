@@ -75,8 +75,27 @@ VALIDATE sans worker, sans APPLY ni EXPORT.
   trusted ports, parser et repositories.
 - Syntaxe des fichiers modifiés, périmètre strict du change et
   combinaison globale sous intégration.
-- Cibles exactes : cinq fichiers Python maximum déjà réservés, sans
-  migration, seuil, dépendance, documentation ni Git.
+- Cibles exactes : cinq fichiers Python modifiés maximum (lecteur privé,
+  nouveau module, deux nouveaux tests, et
+  `tests/integration/test_feature_flag_postgres_source_integration.py`) ;
+  `bulk_trusted_ports.py` non modifié (helper existant) ; sans migration,
+  seuil, dépendance, documentation ni Git.
+- Validation combinée : modules de tests exécutés en processus frais si
+  leur contrat impose un parent sans Django ; `PYTHONPATH`
+  `src:tests:tests/unit` local au seul processus pour les helpers PDP
+  existants ; aucun test ignoré ni sélection amputée ; confirmation 22
+  tests API/PDP exit 0 sans patch, request
+  cismp1-dbd965bcd6a142cfb20fba104f722403.
+- Cohabitation Bulk : une seule correction de fixture préexistante rendue
+  nécessaire par la cohabitation, le test FeatureFlag exige exactement deux
+  modèles alors que Bulk validé enregistre ses propres modèles ; vérifier
+  présence et identité des modèles FeatureFlag/Job requis et autoriser les
+  autres modèles de capabilities validées, en préservant contrôles Record,
+  migrations, lecture seule, pureté et absence réseau/SQL/écriture ; aucun
+  fichier de production FeatureFlag/modèle/migration modifié, aucune
+  exigence fonctionnelle créée ou élargie.
+- Échecs du lancement monolithique tracés ; succès global non prétendu
+  avant nouveau passage complet adapté.
 
 ## Risks / Limits
 
