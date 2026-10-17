@@ -32,6 +32,8 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 ## Dépendances et progression
 
+- [add-pbo-security-quarantine-and-revocation](../add-pbo-security-quarantine-and-revocation/proposal.md) — dépendance explicitée après audit du 17 octobre 2026.
+
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
 - [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).

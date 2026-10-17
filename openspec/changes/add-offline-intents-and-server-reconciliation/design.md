@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 3 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 3 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -58,3 +58,23 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Posséder file d’intentions, identité d’opération, version source attendue, état provisoire et résultat serveur. L’état local d’envoi ne confirme jamais une mutation ; la file ne contient aucun credential.
+
+À reconnexion, le serveur réévalue identité, tenant/scope, droit, données courantes et garde métier, puis exécute la Command propriétaire. Dédoublonner par opération ; refus/version concurrente appelle la stratégie de conflit déclarée par ressource, sans fusion silencieuse.
+
+Purger/invalider selon révocation et cycle de données ; réconcilier une réponse perdue avant nouvel effet. N02 doit être adopté pour le profil combiné natif/hors ligne, coffre séparé sans repli en clair. Définir ressources, conflits et preuves de purge avant code.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [offline-first #1](../../../openspec/specs/offline-first/spec.md#L8) | ND | Éligibilité/version/minimisation déclarées ; réplique non autoritative sans données restreintes. |
+| [offline-first #2](../../../openspec/specs/offline-first/spec.md#L17) | ND | Rejeu idempotent, état provisoire visible, droits/version/règles courants vérifiés avant confirmation. |
+| [offline-first #3](../../../openspec/specs/offline-first/spec.md#L28) | ND | Conflit par ressource, purge et révocation testées ; coffre natif séparé sans copie cache/projection/file. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

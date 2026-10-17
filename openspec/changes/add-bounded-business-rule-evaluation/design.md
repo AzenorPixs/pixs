@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -59,3 +59,24 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Déclarer propriétaire, identifiant/version de règle, entrées typées et sortie structurée. Le DSL restreint est déterministe ; aucune évaluation de code arbitraire ou accès réseau/horloge implicite. Dépendances, bornes et erreur de validation sont explicites.
+
+Valider avant activation puis évaluer sans mutation. Le moteur fournit une proposition et des motifs minimisés ; le module métier réévalue autorisation, garde et version avant sa Command. Une recommandation favorable ne vaut pas permission.
+
+Conserver version et référence d’évaluation, avec corpus de non-régression ; ne pas journaliser tout le contexte. DSL exact, limites et contrats d’entrée/sortie restent à revoir avant réalisation ; pas de bibliothèque nouvelle retenue.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [business-rules #1](../../../openspec/specs/business-rules/spec.md#L10) | ND | Recommandation métier favorable sans court-circuiter PDP ni garde de workflow. |
+| [business-rules #2](../../../openspec/specs/business-rules/spec.md#L21) | ND | Même entrée/version, même résultat ; ambiguïté et code arbitraire refusés avant activation. |
+| [business-rules #3](../../../openspec/specs/business-rules/spec.md#L39) | ND | Aucune écriture inter-module ; chaque effet passe par la Command autorisée et transactionnelle du propriétaire. |
+| [business-rules #4](../../../openspec/specs/business-rules/spec.md#L51) | ND | Corpus par version et explication corrélée consultable selon droit sans contexte sensible complet. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 8 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 8 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -72,3 +72,28 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+LDAP est une sortie dérivée des primitives Core autoritatives PostgreSQL. Déclarer allowlist ressources/attributs, identités, version de mapping et provider sélectionné ; secrets, justificatifs et fonctions de sécurité sont exclus.
+
+Après mutation confirmée, produire une projection via C09 avec version source et checkpoint durable. Rejouer sans double effet, traiter suppression/retrait et interdire qu’un événement ancien ressuscite un état. Aucune écriture métier entrante depuis LDAP.
+
+Observer retard, erreurs, dernier état confirmé et retrait effectif ; connexion réussie seule ne prouve pas convergence. Avant code, choisir provider, arborescence/mapping et garanties de reprise. O09 consomme ce contrat de fraîcheur et non des tables privées.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [directory-projections #1](../../../openspec/specs/directory-projections/spec.md#L11) | ND | Allowlist de ressources et attributs projetables ; type hors contrat refusé. |
+| [directory-projections #2](../../../openspec/specs/directory-projections/spec.md#L21) | ND | PostgreSQL autoritatif même si LDAP est absent, obsolète ou contradictoire. |
+| [directory-projections #3](../../../openspec/specs/directory-projections/spec.md#L31) | ND | Toute mutation métier via Command propriétaire ; aucune mutation depuis LDAP. |
+| [directory-projections #4](../../../openspec/specs/directory-projections/spec.md#L41) | ND | Credentials, jetons et décisions d’accès absents des attributs projetés. |
+| [directory-projections #5](../../../openspec/specs/directory-projections/spec.md#L51) | ND | Mapping/provider validés avant activation ; mapping ambigu refusé. |
+| [directory-projections #6](../../../openspec/specs/directory-projections/spec.md#L66) | ND | Mutation confirmée avant projection ; rollback sans projection mensongère. |
+| [directory-projections #7](../../../openspec/specs/directory-projections/spec.md#L77) | ND | Reprise après panne et rejeu sans double effet ni perte silencieuse, avec version source. |
+| [directory-projections #8](../../../openspec/specs/directory-projections/spec.md#L87) | ND | Mesurer retard, échec, retrait et convergence ; acquittement seul ne vaut pas synchronisation. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

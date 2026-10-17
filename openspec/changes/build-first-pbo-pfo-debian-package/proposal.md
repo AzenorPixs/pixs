@@ -20,6 +20,8 @@ Aucun texte canonique modifié par ce dossier. `requirements.md` relie les exige
 
 ## Dépendances
 
+- [add-pbo-security-quarantine-and-revocation](../add-pbo-security-quarantine-and-revocation/proposal.md) — dépendance explicitée après audit du 17 octobre 2026.
+
 - `activate-reference-runtime-composition`.
 - `add-installation-and-first-configuration`.
 - `add-reference-worker-scheduler-and-event-delivery`.

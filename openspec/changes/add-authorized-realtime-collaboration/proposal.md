@@ -32,7 +32,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 - [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
 - [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
-- [add-offline-intents-and-server-reconciliation](../add-offline-intents-and-server-reconciliation/proposal.md).
+- [add-offline-intents-and-server-reconciliation](../add-offline-intents-and-server-reconciliation/proposal.md) — conditionnelle au profil décrit dans l’approfondissement d’audit.
 
 
 

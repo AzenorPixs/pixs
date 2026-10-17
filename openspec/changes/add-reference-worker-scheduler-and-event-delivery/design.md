@@ -55,3 +55,16 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 ## Hors profil
 
 PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Pour O21, fournir schémas publics d’événements et versions compatibles avec les enveloppes réellement émises. Les représentations Python déclaratives et records Bulk existants ne démontrent pas un catalogue machine-readable des contrats publics.
+
+Lier producteur propriétaire, type/version, contexte autorisé, corrélation, idempotence, politique de compatibilité et schéma du payload. Ne pas exposer modèles privés ou données de sécurité dans le bundle générable.
+
+C09 conserve émission post-commit, livraison/rejeu et checkpoints ; O21 génère les SDK depuis les schémas publiés. Contrats manquants/divergents bloquent cette génération, sans dépendance inverse vers O21.
+
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

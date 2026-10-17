@@ -1,6 +1,6 @@
 # Décisions et qualifications — préparation globale
 
-La création des 80 dossiers n’a nécessité aucun arbitrage supplémentaire : ce sont des propositions conditionnelles ancrées dans le canon existant. Les éléments ci-dessous sont des points de conception/qualification à traiter avant la réalisation concernée, **pas 80 validations à donner maintenant**.
+La création initiale des 80 dossiers n’avait nécessité aucun arbitrage supplémentaire : ce sont des propositions conditionnelles ancrées dans le canon existant. Les éléments ci-dessous sont des points de conception/qualification à traiter avant la réalisation concernée, **pas 80 validations à donner maintenant**.
 
 ## Règle de tri
 
@@ -103,3 +103,13 @@ La création des 80 dossiers n’a nécessité aucun arbitrage supplémentaire :
 
 Les décisions ouvertes de C00–C19 restent dans leurs conceptions et dans [C00](design.md). La préparation globale n’approuve pas un provider de secrets, un mécanisme de session, une autorité de signature ou une nouvelle dépendance. Une demande de réalisation devra préciser son périmètre ; la préparation seule n’autorise pas le codage.
 
+
+
+## Arbitrages validés pendant l’audit du 17 octobre 2026
+
+| Décision | Validation explicite | Effet limité à la préparation |
+|---|---|---|
+| N01 urgence PBO | « Créer le change dédié (recommandé) » | [Change dédié](../add-pbo-security-quarantine-and-revocation/proposal.md), séparé de la maintenance C15 ; prérequis de C18/C17. |
+| N02 frontière native/hors ligne | « Coffre natif séparé des données hors ligne (recommandé) » | [Deltas proposés](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) pour native-clients/offline-first ; aucune synchronisation ni coffre implémenté. |
+
+L’audit des 94 NE est terminé statiquement ; il remplace la barrière « audit de présence encore nécessaire » pour ces seules lignes. Les choix de providers, ressources, mécanismes, seuils et garanties de reprise listés par les conceptions restent à revoir avant leur code. Les 31 conceptions approfondies précisent maintenant contrats, autorité, effets, pannes et critères. Aucun autre change supplémentaire n’est démontré nécessaire par cet audit borné ; une nouvelle découverte ou un autre profil pourra modifier cet inventaire sur validation.

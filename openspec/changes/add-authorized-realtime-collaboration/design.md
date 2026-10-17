@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -40,7 +40,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 - [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
 - [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
-- [add-offline-intents-and-server-reconciliation](../add-offline-intents-and-server-reconciliation/proposal.md).
+- [add-offline-intents-and-server-reconciliation](../add-offline-intents-and-server-reconciliation/proposal.md) — conditionnelle au profil décrit dans l’approfondissement d’audit.
 
 
 
@@ -61,3 +61,24 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Déclarer session, ressource, participants, version de protocole et présence minimale. Autoriser admission puis chaque rattrapage/diffusion selon contexte courant ; un accès passé ne vaut pas autorisation après révocation.
+
+Convergence collaborative et mutation métier sont distinctes : opération versionnée, résultat provisoire puis Command propriétaire. Définir ressources et conflits avant choix CRDT/OT ; présence expirante sans contenu de document dans les diagnostics.
+
+O18 est conditionnel aux profils comportant intentions hors ligne ; le mode en ligne doit quand même gérer reconnexion et révocation. Fixer transport, modèle de convergence, durée de présence et limites avant code ; aucun nouveau protocole choisi implicitement.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [realtime-collaboration #1](../../../openspec/specs/realtime-collaboration/spec.md#L11) | ND | Admission et diffusion bornées aux droits courants ; participant hors périmètre refusé. |
+| [realtime-collaboration #2](../../../openspec/specs/realtime-collaboration/spec.md#L23) | ND | Ressources/conflits avant choix CRDT/OT ; convergence ne confirmant pas une mutation métier. |
+| [realtime-collaboration #3](../../../openspec/specs/realtime-collaboration/spec.md#L36) | ND | Réévaluation avant rattrapage ; données révoquées absentes, O18 conditionnel aux intentions hors ligne. |
+| [realtime-collaboration #4](../../../openspec/specs/realtime-collaboration/spec.md#L47) | ND | Présence minimale expirant selon politique ; aucun contenu de document ou secret dans diagnostic. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

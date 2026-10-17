@@ -45,3 +45,8 @@ Non éligible indisponible ; pas de secret/jeton/donnée interdite locale ; inva
 ## Décisions restant à valider
 
 Éligibilité et catégories de données locales, chiffrement/protection et politique de purge ; pas de secret/jeton persistant par défaut.
+
+
+## Clarification normative conditionnelle validée
+
+Pour un profil combinant client natif et données hors ligne, adopter [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) avant réalisation : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette préparation ne synchronise pas les deltas.

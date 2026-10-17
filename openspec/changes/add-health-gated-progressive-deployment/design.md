@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -59,3 +59,24 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Le plan relie révision courante/cible, stratégie, étapes, contrats, schémas et capacité de retour. Prévalider compatibilité et health gates alimentés par sondes réelles C15 avant chaque progression ; santé inconnue n’équivaut pas à saine.
+
+Le routage conserve identité, tenant et scope, sans copier ni élargir données pour un palier. Enregistrer étape, opération et faits observés ; réponse perdue impose réconciliation, pas double progression.
+
+Arrêt et retour sont orchestrés/audités ; migration incompatible nécessite restauration/compensation autorisée C16, jamais downgrade automatique. Fixer topologie, stratégie et seuils du profil avant code ; aucun orchestrateur externe ou ressource nouvelle sélectionné.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [progressive-deployment #1](../../../openspec/specs/progressive-deployment/spec.md#L11) | ND | Révisions/compatibilité/stratégie/plan versionnés, inspectables et explicitement sélectionnés. |
+| [progressive-deployment #2](../../../openspec/specs/progressive-deployment/spec.md#L23) | ND | Prévalidation et sondes avant chaque palier ; preuve absente ou négative arrêtant la progression. |
+| [progressive-deployment #3](../../../openspec/specs/progressive-deployment/spec.md#L34) | ND | Identité et contexte conservés ; aucun transfert implicite de données ou tenant. |
+| [progressive-deployment #4](../../../openspec/specs/progressive-deployment/spec.md#L45) | ND | Arrêt et retour compatible ou restauration autorisée ; aucun downgrade automatique de schéma incompatible. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

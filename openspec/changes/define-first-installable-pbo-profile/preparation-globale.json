@@ -1,7 +1,7 @@
 {
   "date": "2026-10-17",
-  "authorization": "Préparer les 80 dossiers restants de l’inventaire, sans implémentation ; demander validation si une décision empêche leur périmètre documentaire.",
-  "scope": "Catalogue complet de 100 candidats, à sélection/qualification distinctes de leur préparation.",
+  "authorization": "Audit explicite des 94 exigences NE et approfondissement sans implémentation ; création dédiée N01 et politique de coffre N02 validées explicitement par le développeur le 17 octobre 2026.",
+  "scope": "100 changes de l’inventaire initial + N01 urgence PBO + N02 clarification native/offline, soit 102 préparés.",
   "inventory": "reports/p0-coverage-2026-10-16/inventaire-global.json",
   "inventory_sha256": "27e4a9a2e80716bb785725475d5c577b1f3e25e6a7139347da21934e05623cd1",
   "canonical_and_reference_sha256_at_start": {
@@ -511,6 +511,7 @@
     "C07",
     "Z12",
     "C04",
+    "N02",
     "PA01",
     "PA02",
     "Z03",
@@ -538,7 +539,9 @@
     "B01",
     "C13",
     "C16",
+    "N01",
     "O01",
+    "O02",
     "O03",
     "O04",
     "O07",
@@ -546,6 +549,7 @@
     "O11",
     "O16",
     "O17",
+    "O19",
     "O20",
     "O23",
     "O24",
@@ -557,7 +561,6 @@
     "B06",
     "B07",
     "C18",
-    "O02",
     "O09",
     "O12",
     "O13",
@@ -573,7 +576,6 @@
     "B08",
     "C17",
     "O14",
-    "O19",
     "PA05",
     "PA06",
     "Z05",
@@ -1827,7 +1829,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "business-rules--3f25b21925",
@@ -1847,7 +1850,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "business-rules--2b5c643b97",
@@ -1863,7 +1867,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "business-rules--40aa442ec2",
@@ -1879,7 +1884,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "DSL borné et résultats explicables, schémas des propriétaires ; la règle métier n’accorde aucune permission.",
@@ -1888,7 +1894,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "Z06",
@@ -2300,7 +2307,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "workflows--47ee284385",
@@ -2316,7 +2324,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "workflows--4ae70ad99e",
@@ -2332,7 +2341,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "DSL/contrats de définition, instances et migration compatible ; aucun changement silencieux de version d’instance.",
@@ -2341,7 +2351,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O10",
@@ -2371,7 +2382,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "scim-provisioning--5599c21123",
@@ -2387,7 +2399,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "scim-provisioning--f6bf2bb1b7",
@@ -2403,7 +2416,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "scim-provisioning--9ab6c7a032",
@@ -2419,7 +2433,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Provider SCIM, authentification/mapping et politiques de désactivation ; pas d’écriture directe Core ni rôle implicite.",
@@ -2428,7 +2443,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O15",
@@ -2458,7 +2474,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "quotas-entitlements--82d09f0497",
@@ -2474,7 +2491,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "quotas-entitlements--55894230e6",
@@ -2490,7 +2508,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "quotas-entitlements--b8fbd4719a",
@@ -2506,7 +2525,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Schémas de politiques et unités de compte/réservation, concurrence et retour ; classification serveur et échec fermé.",
@@ -2515,7 +2535,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O21",
@@ -2543,7 +2564,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "sdk-ecosystem--3df32ac65a",
@@ -2559,7 +2581,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "sdk-ecosystem--e1d2dd0d9a",
@@ -2575,7 +2598,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Générateur et contrat de diffusion des SDK, versions et dépendances ; réutiliser uniquement les contrats publics réellement exposés.",
@@ -2584,7 +2608,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "Z11",
@@ -3114,7 +3139,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "search--f6127a3d57",
@@ -3130,7 +3156,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "search--ceef388275",
@@ -3146,7 +3173,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Provider de recherche et déclarations de cohérence/fraîcheur ; filtrage et confidentialité à la source avant pagination.",
@@ -3155,7 +3183,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O04",
@@ -3184,7 +3213,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "distributed-cache--824e3dbdfd",
@@ -3200,7 +3230,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "distributed-cache--8afbf32f03",
@@ -3216,7 +3247,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "distributed-cache--52bb617f31",
@@ -3232,7 +3264,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Provider cache, partitionnement/TTL/anti-avalanche à déclarer ; aucune autorité de permission, d’idempotence ou de Job en cache.",
@@ -3241,7 +3274,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O07",
@@ -3271,7 +3305,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "external-synchronization--15cfd4361a",
@@ -3287,7 +3322,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "external-synchronization--0e7364a0d3",
@@ -3303,7 +3339,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Provider, direction, mappings, conflits et checkpoints ; aucune écriture privée de modèle hors Command propriétaire.",
@@ -3312,7 +3349,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O08",
@@ -3343,7 +3381,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--293a302d09",
@@ -3359,7 +3398,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--f09eb39c2a",
@@ -3375,7 +3415,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--58d4e99552",
@@ -3391,7 +3432,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--e4f86bd02e",
@@ -3407,7 +3449,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--035a0d26f7",
@@ -3423,7 +3466,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--385a3616eb",
@@ -3439,7 +3483,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--fbc553732a",
@@ -3455,7 +3500,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "testing--19ab684105",
@@ -3491,7 +3537,8 @@
         "frontend/README.md": "8378a9006fb2e9e1142cabfcda08f906f88637f59057fc29a96578d330c7831a",
         "frontend/package.json": "59081cfb32f6f0f3c7e593942a66e884758981c86cc2f3b7addeca9437920e1f"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O11",
@@ -3585,7 +3632,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "synchronization--594b70b7fb",
@@ -3601,7 +3649,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "synchronization--7b38a4bde2",
@@ -3617,7 +3666,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Ressources réactives et provider sélectionnés ; Electric seulement si retenu, aucune source de vérité client.",
@@ -3626,7 +3676,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O17",
@@ -3655,7 +3706,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "offline-first--0fe04ca3cc",
@@ -3671,7 +3723,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "offline-first--c958b582ba",
@@ -3687,7 +3740,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Éligibilité et catégories de données locales, chiffrement/protection et politique de purge ; pas de secret/jeton persistant par défaut.",
@@ -3696,7 +3750,14 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "conditional_dependencies": [
+        {
+          "lot": "N02",
+          "condition": "Adoption du delta validé avant réalisation du profil combiné client natif et données hors ligne."
+        }
+      ],
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O20",
@@ -3725,7 +3786,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "reporting-analytics--08753652ec",
@@ -3741,7 +3803,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "reporting-analytics--0f2354e0de",
@@ -3757,7 +3820,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "reporting-analytics--04b2c9438c",
@@ -3773,7 +3837,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Projections propriétaires, couche sémantique et exports retenus ; pas de nouveau référentiel métier autoritatif.",
@@ -3782,7 +3847,14 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "conditional_dependencies": [
+        {
+          "lot": "O01",
+          "condition": "Sortie de rapport stockée par provider objet Pixs."
+        }
+      ],
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O23",
@@ -3811,7 +3883,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "native-clients--c9ba0ab360",
@@ -3827,7 +3900,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "native-clients--5187bfc498",
@@ -3843,7 +3917,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "native-clients--1400a30ff3",
@@ -3859,7 +3934,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Plateformes/types de client et stockage de session qualifiés ; options offline seulement sélectionnées, pas imposées au client en ligne.",
@@ -3868,7 +3944,14 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "conditional_dependencies": [
+        {
+          "lot": "N02",
+          "condition": "Adoption du delta validé avant réalisation du profil combiné client natif et données hors ligne."
+        }
+      ],
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O24",
@@ -3902,7 +3985,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "ai-agents--c68f58b142",
@@ -3918,7 +4002,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "ai-agents--8331cac4d5",
@@ -3934,7 +4019,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "ai-agents--8419294222",
@@ -3950,7 +4036,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Provider/modèle et finalités/récupérations autorisées ; aucun accès fournisseur ni transmission de données pendant la préparation.",
@@ -3959,7 +4046,11 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "activation_conditions": [
+        "O15 et O25 disponibles avant tout appel fournisseur réel ; adaptateur préparé/testé sur doubles sans cette activation."
+      ],
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O27",
@@ -3988,7 +4079,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "regional-residency--49b65e67e2",
@@ -4004,7 +4096,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "regional-residency--93c3a8ce37",
@@ -4020,7 +4113,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "regional-residency--0d7bd4ca52",
@@ -4036,7 +4130,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Topologie/régions, politiques tenant et transfert/résidence ; appliquer l’exception Super Admin dans son seul périmètre.",
@@ -4045,7 +4140,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "Z01",
@@ -4454,7 +4550,8 @@
         "C13",
         "C14",
         "C15",
-        "C16"
+        "C16",
+        "N01"
       ],
       "status": "PREPARE_PRECEDEMMENT",
       "implementation_authorized": false
@@ -4464,7 +4561,6 @@
       "id": "add-governed-document-repository-adapter",
       "family": "OPTIONS",
       "dependencies": [
-        "O01",
         "C04",
         "C05",
         "C10"
@@ -4487,7 +4583,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "document-repositories--4bf78554ca",
@@ -4503,7 +4600,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "document-repositories--f9f2629c30",
@@ -4519,7 +4617,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Référentiel/provider et modes retenus, mappings et garanties de conflit ; audit de l’existant avant création de code.",
@@ -4528,7 +4627,14 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "conditional_dependencies": [
+        {
+          "lot": "O01",
+          "condition": "Seulement si stockage objet Pixs sélectionné ; mode externe/projection autonome possible."
+        }
+      ],
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O09",
@@ -4555,7 +4661,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--982789bee3",
@@ -4571,7 +4678,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "directory-projections--1354b903ea",
@@ -4587,7 +4695,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "testing--19ab684105",
@@ -4623,7 +4732,8 @@
         "frontend/README.md": "8378a9006fb2e9e1142cabfcda08f906f88637f59057fc29a96578d330c7831a",
         "frontend/package.json": "59081cfb32f6f0f3c7e593942a66e884758981c86cc2f3b7addeca9437920e1f"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O12",
@@ -4808,7 +4918,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "offline-first--0fe04ca3cc",
@@ -4824,7 +4935,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "offline-first--c958b582ba",
@@ -4840,7 +4952,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Stratégies de conflits par ressource et protocole de réconciliation ; intentions provisoires jusqu’au verdict serveur.",
@@ -4849,7 +4962,14 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "conditional_dependencies": [
+        {
+          "lot": "N02",
+          "condition": "Adoption du delta validé avant réalisation du profil combiné client natif et données hors ligne."
+        }
+      ],
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O25",
@@ -4858,7 +4978,8 @@
       "dependencies": [
         "O24",
         "C05",
-        "C09"
+        "C09",
+        "O15"
       ],
       "status": "PREPARE",
       "implementation_authorized": false,
@@ -4882,7 +5003,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "ai-agents--c68f58b142",
@@ -4898,7 +5020,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "ai-agents--8331cac4d5",
@@ -4914,7 +5037,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "ai-agents--8419294222",
@@ -4930,7 +5054,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Catalogue d’outils, médiation/permissions et protocole d’évaluation/budgets ; résultat modèle sans pouvoir d’autorisation.",
@@ -4939,7 +5064,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O26",
@@ -4968,7 +5094,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "audit-integrity--661261e8cb",
@@ -4984,7 +5111,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "audit-integrity--5bff214cdd",
@@ -5000,7 +5128,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "audit-integrity--b185441b51",
@@ -5016,7 +5145,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Mécanisme d’intégrité, stockage et preuves d’export/rétention ; choix non fixé par le canon à soumettre avant réalisation.",
@@ -5025,7 +5155,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O28",
@@ -5053,7 +5184,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "regional-residency--49b65e67e2",
@@ -5069,7 +5201,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "regional-residency--93c3a8ce37",
@@ -5085,7 +5218,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "regional-residency--0d7bd4ca52",
@@ -5101,7 +5235,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Autorité, exclusion/bascule et cohérence des dérivés ; aucun cerveau partagé ni transfert non autorisé.",
@@ -5110,7 +5245,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "PA04",
@@ -5807,7 +5943,8 @@
         "C14",
         "C15",
         "C16",
-        "C18"
+        "C18",
+        "N01"
       ],
       "status": "PREPARE_PRECEDEMMENT",
       "implementation_authorized": false
@@ -6026,8 +6163,7 @@
         "C04",
         "C06",
         "C09",
-        "C10",
-        "O18"
+        "C10"
       ],
       "status": "PREPARE",
       "implementation_authorized": false,
@@ -6047,7 +6183,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "realtime-collaboration--b971ad3198",
@@ -6063,7 +6200,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "realtime-collaboration--10b4b034f8",
@@ -6079,7 +6217,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "realtime-collaboration--8d024eaa6e",
@@ -6095,7 +6234,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Premières ressources collaboratives, modèle de session et adapter ; aucun choix CRDT/OT avant ces ressources.",
@@ -6104,7 +6244,14 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "conditional_dependencies": [
+        {
+          "lot": "O18",
+          "condition": "Profil avec intentions hors ligne ; reconnexion/révocation requises aussi en ligne."
+        }
+      ],
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "PA05",
@@ -6797,7 +6944,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "sdk-ecosystem--3df32ac65a",
@@ -6813,7 +6961,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "sdk-ecosystem--e1d2dd0d9a",
@@ -6829,7 +6978,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Parcours et surface CLI/kit sélectionnés, suites versionnées et exemples ; génération distincte d’activation.",
@@ -6849,7 +6999,8 @@
         "frontend/README.md": "8378a9006fb2e9e1142cabfcda08f906f88637f59057fc29a96578d330c7831a",
         "frontend/package.json": "59081cfb32f6f0f3c7e593942a66e884758981c86cc2f3b7addeca9437920e1f"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O31",
@@ -6878,7 +7029,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER"
+          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER",
+          "audit_status": "P"
         },
         {
           "requirement_id": "performance--15455e35b5",
@@ -6894,7 +7046,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER"
+          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "performance--b5e6edb9da",
@@ -6910,7 +7063,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER"
+          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER",
+          "audit_status": "P"
         },
         {
           "requirement_id": "performance--b744417421",
@@ -6926,7 +7080,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER"
+          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER",
+          "audit_status": "P"
         },
         {
           "requirement_id": "performance--10165ca23e",
@@ -6942,7 +7097,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER"
+          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "service-objectives--274a08a5d0",
@@ -6958,7 +7114,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER"
+          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER",
+          "audit_status": "P"
         },
         {
           "requirement_id": "service-objectives--d2ab8609fb",
@@ -6974,7 +7131,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER"
+          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER",
+          "audit_status": "P"
         },
         {
           "requirement_id": "service-objectives--ad136b9940",
@@ -6990,7 +7148,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER"
+          "disposition": "AUDIT_ET_OBJECTIFS_A_ARRETER",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Objectifs par profil, méthode/seuil/période/charge ; aucune valeur universelle inventée ni optimisation avant mesure.",
@@ -7003,7 +7162,8 @@
         "src/pixs/backend/pg_connectivity.py": "ab23984a136bd6d1cb3bf1d04221a8cbdb0e07b59a772bf9014c0acac1273bc1",
         "src/pixs/backend/runtime_profiles.py": "2562edbe9914f2ef0f65139164fe0ebcc7481f659fcce603ce1aa55a6bf36380"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O32",
@@ -8252,7 +8412,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "component-registry--6cfd37bafa",
@@ -8268,7 +8429,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "component-registry--b9f8616872",
@@ -8284,7 +8446,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "component-registry--05f7e58c02",
@@ -8300,7 +8463,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Sources/canaux du catalogue, contrats de retrait/révocation ; aucune installation ou activation depuis ce dossier.",
@@ -8309,7 +8473,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "O30",
@@ -8338,7 +8503,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "progressive-deployment--8b8585fbee",
@@ -8354,7 +8520,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "progressive-deployment--150f11a0d0",
@@ -8370,7 +8537,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         },
         {
           "requirement_id": "progressive-deployment--627e3aab24",
@@ -8386,7 +8554,8 @@
             }
           ],
           "matrix_status": "NE",
-          "disposition": "AUDIT_AVANT_CREATION"
+          "disposition": "AUDIT_AVANT_CREATION",
+          "audit_status": "ND"
         }
       ],
       "open_design_barrier": "Stratégies et fenêtres de coexistence, seuils health et routage ; rollback soumis à compatibilité prouvée.",
@@ -8395,7 +8564,8 @@
         "src/pixs/kernel/composition.py": "0b749b5f6821006b271abc2773ac4616df0a49de5a4dbb2f7131c9fbf0c6cd9d",
         "src/pixs/backend/README.md": "195ae826070ef047c2641bb572c78e2b7600e76e505b16d79380161b720406b1"
       },
-      "native_new_exit_code": 0
+      "native_new_exit_code": 0,
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     },
     {
       "lot": "PA08",
@@ -10407,6 +10577,94 @@
         "frontend/package.json": "59081cfb32f6f0f3c7e593942a66e884758981c86cc2f3b7addeca9437920e1f"
       },
       "native_new_exit_code": 0
+    },
+    {
+      "lot": "N01",
+      "id": "add-pbo-security-quarantine-and-revocation",
+      "family": "P0",
+      "dependencies": [
+        "C03",
+        "C04",
+        "C05",
+        "C07",
+        "C09",
+        "C15"
+      ],
+      "native_spec_delta_expected": false,
+      "requirements": [
+        {
+          "requirement_id": "resilience--9b984edea1",
+          "title": "Révocation et diagnostic des compromissions",
+          "source": "openspec/specs/resilience/spec.md",
+          "line": 26,
+          "source_sha256": "b32b0eff946a12be7ee217c5bc2ffe19b763fe015b0dcb4b46c9e8254f43d1f3",
+          "scenarios": [
+            {
+              "title": "Composant compromis bloqué",
+              "line": 30
+            }
+          ],
+          "matrix_status": "NE",
+          "status_after": "ND",
+          "block_sha256": "83f4cf05abc44394b6102b27b104b6f92cbd310698122c995bb0b407eb3927bc",
+          "audit_status": "ND"
+        }
+      ],
+      "status": "PREPARE_APRES_VALIDATION_EXPLICITE",
+      "implementation_authorized": false,
+      "validation_date": "2026-10-17",
+      "open_design_barrier": "Revue des contrats, providers, paramètres et preuves du profil avant réalisation ; aucune implémentation autorisée.",
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
+    },
+    {
+      "lot": "N02",
+      "id": "clarify-native-credentials-and-offline-storage-boundary",
+      "family": "CLARIFICATION",
+      "dependencies": [
+        "C03"
+      ],
+      "native_spec_delta_expected": true,
+      "requirements": [
+        {
+          "requirement_id": "native-clients--c9ba0ab360",
+          "title": "Session et stockage local sécurisés",
+          "source": "openspec/specs/native-clients/spec.md",
+          "line": 21,
+          "source_sha256": "62ce0fa6b75b7f8e3e28a806cc8d7ffd6c0bcd4ee8276176a34036613eed2296",
+          "scenarios": [
+            {
+              "title": "Sauvegarde d'application",
+              "line": 27
+            }
+          ],
+          "matrix_status": "NE",
+          "status_after": "ND",
+          "block_sha256": "37ad42567f5efcd704ad174e9192b331861617506a251773fa822e2946ae7ce2",
+          "audit_status": "ND"
+        },
+        {
+          "requirement_id": "offline-first--c958b582ba",
+          "title": "Conflits, révocation et purge locale",
+          "source": "openspec/specs/offline-first/spec.md",
+          "line": 28,
+          "source_sha256": "6641ae55a8411b676899241733feaf05c9c60850056e0b6cf854633d5542f37d",
+          "scenarios": [
+            {
+              "title": "Révocation purgeant le local",
+              "line": 32
+            }
+          ],
+          "matrix_status": "NE",
+          "status_after": "ND",
+          "block_sha256": "8f62af57faa3572f5919d46b545a30853d17c837bc59dda33241bcb56ad771b8",
+          "audit_status": "ND"
+        }
+      ],
+      "status": "PREPARE_APRES_VALIDATION_EXPLICITE",
+      "implementation_authorized": false,
+      "validation_date": "2026-10-17",
+      "open_design_barrier": "Revue des contrats, providers, paramètres et preuves du profil avant réalisation ; aucune implémentation autorisée.",
+      "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
     }
   ],
   "implementation_started": false,
@@ -10491,9 +10749,11 @@
     "Z26",
     "PA09",
     "X01",
-    "Q01"
+    "Q01",
+    "N01",
+    "N02"
   ],
-  "new_changes_prepared_count": 80,
+  "new_changes_prepared_count": 82,
   "preparation_complete": true,
   "selection_or_implementation_approved_by_preparation": false,
   "coordination_files_intentionally_updated": [
@@ -10650,7 +10910,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O24",
+        "O25"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "ai-agents--c68f58b142",
@@ -10678,7 +10945,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O24",
+        "O25"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "ai-agents--8331cac4d5",
@@ -10706,7 +10980,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O24",
+        "O25"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "ai-agents--8419294222",
@@ -10734,7 +11015,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O24",
+        "O25"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "api--a97e341eb5",
@@ -10877,7 +11165,13 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C00"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "architecture-decisions--04b2848494",
@@ -10904,7 +11198,13 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C00"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "architecture-decisions--c261b44233",
@@ -10931,7 +11231,13 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C00"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "artifact-publication--be37da3640",
@@ -11623,7 +11929,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O26"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "audit-integrity--661261e8cb",
@@ -11650,7 +11962,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O26"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "audit-integrity--5bff214cdd",
@@ -11677,7 +11995,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O26"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "audit-integrity--b185441b51",
@@ -11704,7 +12028,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O26"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "authentication--89b1aee436",
@@ -14873,7 +15203,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O06"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "business-rules--3f25b21925",
@@ -14904,7 +15240,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O06"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "business-rules--2b5c643b97",
@@ -14931,7 +15273,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O06"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "business-rules--40aa442ec2",
@@ -14958,7 +15306,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O06"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "capabilities--9199165ac8",
@@ -15716,7 +16070,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O29"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "component-registry--6cfd37bafa",
@@ -15743,7 +16103,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O29"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "component-registry--b9f8616872",
@@ -15770,7 +16136,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O29"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "component-registry--05f7e58c02",
@@ -15797,7 +16169,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O29"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "configuration--3c750c03c4",
@@ -17284,7 +17662,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O08"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--293a302d09",
@@ -17311,7 +17695,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O08"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--f09eb39c2a",
@@ -17338,7 +17728,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O08"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--58d4e99552",
@@ -17365,7 +17761,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O08"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--e4f86bd02e",
@@ -17392,7 +17794,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O08"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--035a0d26f7",
@@ -17419,7 +17827,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O08"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--385a3616eb",
@@ -17446,7 +17860,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O08"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--fbc553732a",
@@ -17473,7 +17893,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O08"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--413edead5b",
@@ -17500,7 +17926,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O09"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--982789bee3",
@@ -17527,7 +17959,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O09"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "directory-projections--1354b903ea",
@@ -17554,7 +17992,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O09"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "distributed-cache--55c9d28225",
@@ -17581,7 +18025,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O04"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "distributed-cache--824e3dbdfd",
@@ -17608,7 +18058,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O04"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "distributed-cache--8afbf32f03",
@@ -17635,7 +18091,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O04"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "distributed-cache--52bb617f31",
@@ -17662,7 +18124,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O04"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "docker-image--eccd04c01b",
@@ -17882,7 +18350,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O02"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "document-repositories--4bf78554ca",
@@ -17909,7 +18383,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O02"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "document-repositories--f9f2629c30",
@@ -17936,7 +18416,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O02"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "events--b4c56dcca6",
@@ -18371,7 +18857,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O07"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "external-synchronization--15cfd4361a",
@@ -18398,7 +18890,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O07"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "external-synchronization--0e7364a0d3",
@@ -18425,7 +18923,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O07"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "feature-flags--5a10834a86",
@@ -21236,7 +21740,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O23"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "native-clients--c9ba0ab360",
@@ -21263,7 +21773,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O23",
+        "N02"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "native-clients--5187bfc498",
@@ -21290,7 +21807,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O23"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "native-clients--1400a30ff3",
@@ -21317,7 +21840,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O23",
+        "N02"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "notifications--4e35ed0c62",
@@ -21738,7 +22268,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O17",
+        "O18"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "offline-first--0fe04ca3cc",
@@ -21766,7 +22303,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O17",
+        "O18"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "offline-first--c958b582ba",
@@ -21794,7 +22338,15 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O17",
+        "O18",
+        "N02"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "operations--4b7364333c",
@@ -22034,7 +22586,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C00",
+        "C17",
+        "O31"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "performance--15455e35b5",
@@ -22064,7 +22624,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "C00",
+        "C17",
+        "O31"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "performance--b5e6edb9da",
@@ -22094,7 +22662,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C00",
+        "C17",
+        "O31"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "performance--b744417421",
@@ -22124,7 +22700,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C00",
+        "C17",
+        "O31"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "performance--10165ca23e",
@@ -22154,7 +22738,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "C00",
+        "C17",
+        "O31"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "pixs-agent--24f2ceb983",
@@ -22869,7 +23461,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O30"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "progressive-deployment--8b8585fbee",
@@ -22896,7 +23494,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O30"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "progressive-deployment--150f11a0d0",
@@ -22923,7 +23527,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O30"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "progressive-deployment--627e3aab24",
@@ -22950,7 +23560,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O30"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "providers--f292362840",
@@ -28326,7 +28942,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O15"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "quotas-entitlements--82d09f0497",
@@ -28353,7 +28975,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O15"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "quotas-entitlements--55894230e6",
@@ -28380,7 +29008,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O15"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "quotas-entitlements--b8fbd4719a",
@@ -28407,7 +29041,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O15"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "realtime-collaboration--8e0e5b5162",
@@ -28434,7 +29074,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O19"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "realtime-collaboration--b971ad3198",
@@ -28461,7 +29107,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O19"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "realtime-collaboration--10b4b034f8",
@@ -28488,7 +29140,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O19"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "realtime-collaboration--8d024eaa6e",
@@ -28515,7 +29173,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O19"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "reference-composition--08e94f2088",
@@ -29077,7 +29741,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O27",
+        "O28"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "regional-residency--49b65e67e2",
@@ -29105,7 +29776,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O27",
+        "O28"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "regional-residency--93c3a8ce37",
@@ -29133,7 +29811,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O27",
+        "O28"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "regional-residency--0d7bd4ca52",
@@ -29161,7 +29846,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O27",
+        "O28"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "release-management--4ad301125e",
@@ -29374,7 +30066,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O20"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "reporting-analytics--08753652ec",
@@ -29401,7 +30099,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O20"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "reporting-analytics--0f2354e0de",
@@ -29428,7 +30132,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O20"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "reporting-analytics--04b2c9438c",
@@ -29455,7 +30165,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O20"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "resilience--14b9abcba5",
@@ -29484,7 +30200,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C15",
+        "C17"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "resilience--a11e699adf",
@@ -29513,7 +30236,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C15",
+        "C17"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "resilience--9b984edea1",
@@ -29542,7 +30272,15 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "N01",
+        "C15",
+        "C17"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "runtime--06d301034b",
@@ -29791,7 +30529,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O10"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "scim-provisioning--5599c21123",
@@ -29818,7 +30562,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O10"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "scim-provisioning--f6bf2bb1b7",
@@ -29845,7 +30595,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O10"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "scim-provisioning--9ab6c7a032",
@@ -29872,7 +30628,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O10"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "scope-context--f850a6eaa2",
@@ -30061,7 +30823,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O21",
+        "O22"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "sdk-ecosystem--3df32ac65a",
@@ -30089,7 +30858,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O21",
+        "O22"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "sdk-ecosystem--e1d2dd0d9a",
@@ -30117,7 +30893,14 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O21",
+        "O22"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "search--8e07b13525",
@@ -30144,7 +30927,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O03"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "search--f6127a3d57",
@@ -30171,7 +30960,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O03"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "search--ceef388275",
@@ -30198,7 +30993,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O03"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "secrets-providers--15be862290",
@@ -30468,7 +31269,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C00",
+        "C17",
+        "O31"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "service-objectives--d2ab8609fb",
@@ -30498,7 +31307,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "P",
+      "current_lots": [
+        "C00",
+        "C17",
+        "O31"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "service-objectives--ad136b9940",
@@ -30528,7 +31345,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "C00",
+        "C17",
+        "O31"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "services--9adf13c599",
@@ -30648,7 +31473,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O16"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "synchronization--594b70b7fb",
@@ -30675,7 +31506,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O16"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "synchronization--7b38a4bde2",
@@ -30702,7 +31539,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O16"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "testing--3bc15eb3da",
@@ -31074,7 +31917,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O05"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "workflows--47ee284385",
@@ -31101,7 +31950,13 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O05"
+      ],
+      "audit_reference": "audit-ne-94.json"
     },
     {
       "requirement_id": "workflows--4ae70ad99e",
@@ -31128,13 +31983,50 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": true,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "audit_date": "2026-10-17",
+      "audit_status": "ND",
+      "current_lots": [
+        "O05"
+      ],
+      "audit_reference": "audit-ne-94.json"
     }
   ],
   "global_plan": "openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md",
   "decisions_register": "openspec/changes/define-first-installable-pbo-profile/arbitrages-preparation-globale.md",
   "additional_human_decision_needed_for_document_preparation": false,
   "final_checks": {
+    "active_changes": 102,
+    "archives": 135,
+    "total_changes": 237,
+    "archive_ratio_percent": 56.96,
+    "unchecked_tasks": 1012,
+    "checked_tasks": 0,
+    "canonical_counts": {
+      "capabilities": 78,
+      "requirements": 717,
+      "scenarios": 812
+    },
+    "audit_requirements_exact": 94,
+    "audit_scenarios_referenced": 96,
+    "source_files_unchanged": 409,
+    "source_file_list_unchanged": true,
+    "canonical_unchanged": 78,
+    "DAG_acyclic": true,
+    "all_modified_files_in_scope": true,
+    "utf8_lf": true,
+    "local_links_exist": true,
+    "git_diff_check_exit": 0,
+    "functional_qualification": false,
+    "implementation": false,
+    "verification_status": "VERIFIE",
+    "native_changes_validation_exit": 0,
+    "native_global_validation_exit": 1,
+    "existing_unit_tests_passed": 124,
+    "completed_tasks": 0
+  },
+  "authorization_before_audit": "Préparer les 80 dossiers restants de l’inventaire, sans implémentation ; demander validation si une décision empêche leur périmètre documentaire.",
+  "final_checks_before_audit": {
     "active_changes": 100,
     "new_changes_prepared": 80,
     "new_change_files": 400,
@@ -31158,5 +32050,107 @@
     "implementation_started": false,
     "native_changes_validation_exit": 0,
     "native_global_validation_exit": 1
+  },
+  "new_changes_prepared_before_audit": [
+    "Z12",
+    "PA01",
+    "PA02",
+    "Z03",
+    "Z13",
+    "PA03",
+    "Z02",
+    "Z09",
+    "O06",
+    "Z06",
+    "Z18",
+    "O05",
+    "O10",
+    "O15",
+    "O21",
+    "Z11",
+    "Z25",
+    "B01",
+    "O01",
+    "O03",
+    "O04",
+    "O07",
+    "O08",
+    "O11",
+    "O16",
+    "O17",
+    "O20",
+    "O23",
+    "O24",
+    "O27",
+    "Z01",
+    "Z04",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "O02",
+    "O09",
+    "O12",
+    "O13",
+    "O18",
+    "O25",
+    "O26",
+    "O28",
+    "PA04",
+    "Z07",
+    "Z10",
+    "B02",
+    "B03",
+    "B08",
+    "O14",
+    "O19",
+    "PA05",
+    "PA06",
+    "Z05",
+    "Z08",
+    "B09",
+    "B10",
+    "O22",
+    "O31",
+    "O32",
+    "PA07",
+    "Z14",
+    "Z19",
+    "B11",
+    "O29",
+    "O30",
+    "PA08",
+    "Z15",
+    "Z17",
+    "Z20",
+    "Z16",
+    "Z21",
+    "Z22",
+    "Z23",
+    "Z24",
+    "Z26",
+    "PA09",
+    "X01",
+    "Q01",
+    "N01",
+    "N02"
+  ],
+  "audit_revision": {
+    "date": "2026-10-17",
+    "report": "reports/audit-ne-94-2026-10-17/RAPPORT.md",
+    "durable_requirement_audit": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json",
+    "requirements": 94,
+    "P": 10,
+    "ND": 84,
+    "remaining_NE": 0,
+    "existing_designs_deepened": 31,
+    "new_changes": [
+      "N01",
+      "N02"
+    ],
+    "canonical_modified": false,
+    "implementation": false,
+    "new_validation_needed_for_preparation": false,
+    "durable_validation": "openspec/changes/define-first-installable-pbo-profile/validation-audit-ne-94.json"
   }
 }

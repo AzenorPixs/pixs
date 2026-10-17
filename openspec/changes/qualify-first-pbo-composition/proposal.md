@@ -20,6 +20,8 @@ Aucun texte canonique modifié par ce dossier. `requirements.md` relie les exige
 
 ## Dépendances
 
+- [add-pbo-security-quarantine-and-revocation](../add-pbo-security-quarantine-and-revocation/proposal.md) — dépendance explicitée après audit du 17 octobre 2026.
+
 - `integrate-runtime-authorization-and-super-admin`.
 - `add-protected-core-http-commands-and-queries`.
 - `add-installation-and-first-configuration`.

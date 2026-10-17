@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -60,3 +60,24 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Le propriétaire conserve droits versionnés avec expiration/révocation et dimensions de quota, unité, portée, période et agrégation. L’enfant ne peut qu’affiner le droit du tenant ; l’entitlement ne remplace pas l’autorisation.
+
+Check/reserve/commit/release s’effectuent durablement et atomiquement sur toutes les portées concernées, avec identité d’opération et réconciliation. Arrêt/crash/réponse perdue ne doivent ni doubler consommation ni libérer prématurément un effet déjà engagé.
+
+Commands et jobs réévaluent au point d’effet et à reprise. L’exception canonique Super Admin est liée au compte authentifié et aux tenants accordés, sans transfert au worker ; un fait de consommation absent ne peut être inventé. O25 consomme ces réservations pour IA. Fixer dimensions/périodes et stratégie de concurrence avant code.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [quotas-entitlements #1](../../../openspec/specs/quotas-entitlements/spec.md#L8) | ND | Dérogation bornée au compte authentifié et tenant accordé ; autres comptes limités et aucun transfert au worker. |
+| [quotas-entitlements #2](../../../openspec/specs/quotas-entitlements/spec.md#L17) | ND | Droit versionné et possédé ; enfant uniquement restrictif et aucun droit utilisateur implicite. |
+| [quotas-entitlements #3](../../../openspec/specs/quotas-entitlements/spec.md#L26) | ND | Check/reserve/commit/release atomiques, idempotents, persistants ; concurrence/reprise/annulation sans double imputation. |
+| [quotas-entitlements #4](../../../openspec/specs/quotas-entitlements/spec.md#L37) | ND | Contrôle avant effet et reprise, indisponibilité refusée selon canon, réponse stable et audit minimisé. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

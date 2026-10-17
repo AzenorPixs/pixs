@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 3 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 3 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -59,3 +59,23 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Le propriétaire de l’index déclare source, schéma/version, clés tenant/scope, politique de fraîcheur et reconstruction. Les mises à jour découlent de mutations confirmées et sont rejouables ; un événement ancien ne réintroduit pas une donnée retirée.
+
+Construire une requête filtrée à la source avant recherche, agrégation, compte et pagination. Le cache de décision ou le client ne confère pas de droit ; changements de périmètre et suppressions invalident la lecture. Exposer version/retard sans contenu privé.
+
+Reconstruction et bascule d’index doivent préserver cohérence et filtrage ; panne ou retard déclenche le comportement déclaré, sans source métier implicite. Choisir moteur, champs, volume et politique de cohérence avant code ; aucun moteur supplémentaire approuvé.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [search #1](../../../openspec/specs/search/spec.md#L8) | ND | Projection versionnée reconstruisible et retrait contrôlé ; aucune écriture métier depuis index. |
+| [search #2](../../../openspec/specs/search/spec.md#L17) | ND | Filtrer à la source avant recherche/agrégation/pagination ; tests négatifs tenant/scope/attributs. |
+| [search #3](../../../openspec/specs/search/spec.md#L26) | ND | Cohérence déclarée, retard/retrait diagnostiqués et refus ou repli conforme sans donnée supprimée exposée. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

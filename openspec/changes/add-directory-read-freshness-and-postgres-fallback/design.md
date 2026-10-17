@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 3 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 3 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -68,3 +68,23 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+La lecture reçoit identité, tenant/scope canonique, attributs autorisés et exigence de fraîcheur. Préférer LDAP seulement si sa projection est admissible ; PostgreSQL conserve son autorité et fournit le repli déclaré.
+
+Une mutation récente transporte une référence/version permettant d’écarter une ancienne projection. Absence, retard, retrait ou panne déclenche le repli ou le refus conforme ; ne pas joindre les résultats de deux sources de fraîcheurs incompatibles comme s’ils étaient atomiques.
+
+Appliquer les mêmes autorisations et minimisation aux deux chemins ; diagnostic sans divulgation d’attributs cachés. Définir preuve de fraîcheur, politique de préférence et budget de lecture avant code ; aucun seuil de retard inventé.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [directory-projections #9](../../../openspec/specs/directory-projections/spec.md#L98) | ND | LDAP uniquement si admissible ; absence ou obsolescence déclenchant le repli source déclaré. |
+| [directory-projections #10](../../../openspec/specs/directory-projections/spec.md#L113) | ND | Version/fraîcheur contrôlée ; ancienne projection jamais annoncée courante après mutation. |
+| [directory-projections #11](../../../openspec/specs/directory-projections/spec.md#L126) | ND | Même tenant/scope/attributs autorisés sur LDAP et source ; aucun diagnostic divulguant des données. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
