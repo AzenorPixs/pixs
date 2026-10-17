@@ -55,3 +55,23 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 ## Hors profil
 
 PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Isoler collecte de faits, classification de santé et actions de maintenance. Une sonde porte propriétaire, instant/version, périmètre et résultat observé ; le classificateur pur existant consomme ces faits, sans en inventer ni déclencher une réparation.
+
+Les adaptateurs d’exécution doivent borner délais/concurrence et isoler les erreurs des providers optionnels. Un composant essentiel ou un contrôle invérifiable bloque la readiness concernée. Le résultat DEGRADED d’une fonction pure ne prouve ni isolation du processus ni arrêt effectif ; la liveness reste distincte.
+
+C15 possède plans de maintenance, drainage et diagnostic ; N01 possède décisions d’incident, révocation/quarantaine et réactivation d’urgence. Réutiliser les mêmes contrats propriétaires et corrélations, avec opérations distinctes. Arrêter surfaces de management, budgets, rétention et méthodes de sonde avant code.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [resilience #1](../../../openspec/specs/resilience/spec.md#L8) | P | Panne optionnelle injectée sur runtime réel, reste disponible si invariants conservés ; état et reprise observés. |
+| [resilience #2](../../../openspec/specs/resilience/spec.md#L17) | P | Signature/contexte/contrôle invérifiable : refus sur HTTP/jobs et aucune readiness permissive. |
+| [resilience #3](../../../openspec/specs/resilience/spec.md#L26) | ND | N01 : décision persistante, effets réconciliés, admissions bloquées, audit et réactivation explicite sans faux succès. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

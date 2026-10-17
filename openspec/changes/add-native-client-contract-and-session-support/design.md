@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -59,3 +59,24 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Le client natif consomme uniquement contrats publics/SDK O21, avec matrice plateformes et versions. Liens profonds et notifications transportent un minimum et déclenchent une nouvelle vérification d’identité et de droit à l’ouverture.
+
+Après adoption de N02, credentials uniquement dans mécanisme sécurisé déclaré de la plateforme, séparé des projections/caches/files. Absence du mécanisme n’autorise aucun repli en fichier/base ordinaire ; sauvegardes et journaux non protégés exclus.
+
+Offline reste optionnel : sa sélection ajoute O17/O18 et la barrière d’adoption N02. Reconnexion n’accorde pas un ancien droit et intention locale reste provisoire. Choisir plateformes, mécanismes de coffre et politique session/révocation avant réalisation ; les binaires PA ne sont pas ces clients.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [native-clients #1](../../../openspec/specs/native-clients/spec.md#L10) | ND | Matrice plateforme/SDK/contrat et refus d’incompatibilité ; contrats publics exclusivement. |
+| [native-clients #2](../../../openspec/specs/native-clients/spec.md#L21) | ND | Coffre sécurisé séparé de la réplique/file et des sauvegardes non protégées ; aucun repli en clair. |
+| [native-clients #3](../../../openspec/specs/native-clients/spec.md#L32) | ND | Réauthentifier contexte/droit à l’ouverture ; notification minimale sans droit implicite. |
+| [native-clients #4](../../../openspec/specs/native-clients/spec.md#L44) | ND | Reconnexion réévaluée côté serveur ; intention provisoire sans succès acquis et purge suivant cycle déclaré. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

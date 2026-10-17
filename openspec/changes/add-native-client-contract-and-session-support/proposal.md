@@ -45,3 +45,8 @@ Pas d'autorité métier locale ; droits maintenus ; révocation/purge et platefo
 ## Décisions restant à valider
 
 Plateformes/types de client et stockage de session qualifiés ; options offline seulement sélectionnées, pas imposées au client en ligne.
+
+
+## Clarification normative conditionnelle validée
+
+Pour un profil combinant client natif et données hors ligne, adopter [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) avant réalisation : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette préparation ne synchronise pas les deltas.

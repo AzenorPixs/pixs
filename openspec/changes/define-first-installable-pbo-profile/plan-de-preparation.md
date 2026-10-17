@@ -1,6 +1,6 @@
 # Plan de préparation — première livraison P0
 
-Date : 17 octobre 2026. Inventaire validé par le développeur ; vingt dossiers préparés, sans réalisation. C00 formalise le profil et ses deltas proposés. C01–C19 réalisent le canon existant : pas de delta identique artificiel, exigences référencées et skip_specs explicite.
+Date : 17 octobre 2026. Inventaire validé par le développeur ; vingt dossiers initiaux préparés, complétés depuis par N01 validé après audit, sans réalisation. C00 formalise le profil et ses deltas proposés. C01–C19 réalisent le canon existant : pas de delta identique artificiel, exigences référencées et skip_specs explicite.
 
 ## Ordre de dépendances conseillé après revue
 
@@ -23,8 +23,9 @@ Date : 17 octobre 2026. Inventaire validé par le développeur ; vingt dossiers 
 | C10 | [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md) | C02, C04, C05, C09 | Documents préparés ; tâches non cochées |
 | C13 | [add-initial-administration-panel](../add-initial-administration-panel/proposal.md) | C08, C10, C11, C12 | Documents préparés ; tâches non cochées |
 | C16 | [add-upgrade-backup-and-restore-contracts](../add-upgrade-backup-and-restore-contracts/proposal.md) | C08, C09, C10, C15 | Documents préparés ; tâches non cochées |
-| C18 | [build-first-pbo-pfo-debian-package](../build-first-pbo-pfo-debian-package/proposal.md) | C07, C08, C09, C11, C13, C14, C15, C16 | Documents préparés ; tâches non cochées |
-| C17 | [qualify-first-pbo-composition](../qualify-first-pbo-composition/proposal.md) | C04, C06, C08, C09, C10, C12, C13, C14, C15, C16, C18 | Documents préparés ; tâches non cochées |
+| N01 | [add-pbo-security-quarantine-and-revocation](../add-pbo-security-quarantine-and-revocation/proposal.md) | C03, C04, C05, C07, C09, C15 | Urgence PBO dédiée validée ; documents préparés, tâches non cochées |
+| C18 | [build-first-pbo-pfo-debian-package](../build-first-pbo-pfo-debian-package/proposal.md) | C07, C08, C09, C11, C13, C14, C15, C16, N01 | Documents préparés ; tâches non cochées |
+| C17 | [qualify-first-pbo-composition](../qualify-first-pbo-composition/proposal.md) | C04, C06, C08, C09, C10, C12, C13, C14, C15, C16, C18, N01 | Documents préparés ; tâches non cochées |
 | C19 | [publish-first-qualified-pbo-release](../publish-first-qualified-pbo-release/proposal.md) | C17, C18 | Documents préparés ; tâches non cochées |
 
 La revue a ajouté C05 comme dépendance explicite de C03 et C04 : authentification et autorisation runtime nécessitent l’audit durable. L’ordre matériel de création initial et l’ordre final de dépendances sont conservés séparément dans preparation.json.
@@ -41,3 +42,8 @@ Après la demande explicite complémentaire du développeur, les 80 autres candi
 
 Les empreintes de 206 entrées sont conservées dans preparation.json pour détecter une dérive ; elles ne prouvent ni une exécution ni une conformité de ces fichiers. Les modifications Git préexistantes ne sont pas reprises ou supprimées.
 
+
+
+## Révision après audit des 94 NE
+
+Le premier P0 compte désormais 21 changes préparés. [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) reste une clarification optionnelle transverse pour les profils natifs hors ligne. Le [plan global actuel](plan-global-preparation.md) compte 102 dossiers ; les anciennes validations C00–C19 et globales de 100 dossiers restent datées et historiques.

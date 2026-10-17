@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -59,3 +59,24 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Déclarer source autoritative, format/version des valeurs, clé comprenant le périmètre nécessaire, génération, péremption et méthode de reconstruction. Ne pas recycler la table source de fanions comme preuve de cache dérivé.
+
+Lecture après contrôle courant ; une valeur obsolète ou hors génération ne peut fournir une autorisation. Invalidation après commit avec identité rejouable ; perte de notification et événements désordonnés doivent conduire à revalidation/reconstruction sûre.
+
+En panne, repli vers source si contrat le permet, concurrence bornée et diagnostic ; refus si la sécurité ne peut être établie. Fixer provider, stratégie d’invalidation, bornes et clés avant implémentation ; pas de seuil arbitraire.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [distributed-cache #1](../../../openspec/specs/distributed-cache/spec.md#L10) | ND | Cache reconstruisible depuis sa source ; perte complète sans perte métier. |
+| [distributed-cache #2](../../../openspec/specs/distributed-cache/spec.md#L22) | ND | Clés et lectures liées au périmètre ; accès inter-tenant et décision périmée refusés. |
+| [distributed-cache #3](../../../openspec/specs/distributed-cache/spec.md#L33) | ND | Génération/version et invalidation rejouable ; retard ne ressuscitant pas une valeur supprimée. |
+| [distributed-cache #4](../../../openspec/specs/distributed-cache/spec.md#L45) | ND | Panne/péremption/reprise testées avec concurrence bornée et aucune réponse permissive. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

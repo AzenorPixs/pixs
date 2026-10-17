@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 3 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 3 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -60,3 +60,23 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Le contrat de connecteur fixe autorité par champ/ressource, sens, identités, mapping/version et politique de conflit. Aucune direction implicite ni rapprochement automatique par courriel. Toute destination passe par les contrats publics propriétaires.
+
+Enregistrer checkpoint source, identité d’opération, version attendue, tentatives et effet confirmé/inconnu. Reprise après perte de réponse par interrogation/réconciliation, sans annoncer un succès sur acquittement de transport. Les effets distants ne sont pas une transaction PostgreSQL commune.
+
+Réévaluer périmètre et secrets par références à chaque exécution/reprise ; conflit et contrôle invérifiable arrêtent la branche concernée avec diagnostic minimisé. Fixer connecteur, contrat d’idempotence et compensations avant code.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [external-synchronization #1](../../../openspec/specs/external-synchronization/spec.md#L8) | ND | Source, sens, mapping/version et conflits déclarés ; destination ambiguë refusée. |
+| [external-synchronization #2](../../../openspec/specs/external-synchronization/spec.md#L23) | ND | Identité d’opération, checkpoint et réconciliation ; réponse perdue/rejeu sans double effet annoncé. |
+| [external-synchronization #3](../../../openspec/specs/external-synchronization/spec.md#L32) | ND | Réévaluation à chaque reprise, refus hors scope, diagnostic sans secret et effet inconnu explicite. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

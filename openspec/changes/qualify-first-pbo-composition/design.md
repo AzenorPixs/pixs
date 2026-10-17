@@ -33,6 +33,8 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 ## Dépendances et progression
 
+- [add-pbo-security-quarantine-and-revocation](../add-pbo-security-quarantine-and-revocation/proposal.md) — dépendance explicitée après audit du 17 octobre 2026.
+
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
 - [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
@@ -62,3 +64,31 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 ## Hors profil
 
 PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Établir un manifeste de campagne attaché au paquet C18 et au profil C00 : versions des composants, configuration non sensible, plateforme, jeux synthétiques, scénarios et résultats reproductibles. Une unité pure, une archive ou un dossier préparé ne couvre pas un scénario intégré.
+
+La campagne P0 comporte isolation de panne optionnelle, refus en dégradé, incident N01 avec propagation/reprise et réactivation, installation/restauration, droits ordinaires et exception canonique Super Admin. Les objectifs déclarés du profil sont mesurés ; O31 approfondit ensuite les charges sélectionnées sans faire dépendre C17 d’O31.
+
+Séparer PASS/FAIL/non exécuté et applicabilité motivée, avec écart, effet observé et preuve. Les capacités optionnelles non sélectionnées restent hors campagne P0 ; Q01 les qualifie par profil. N01 devient un prérequis explicite, sans exiger catalogue O29 ni PA actif.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [performance #1](../../../openspec/specs/performance/spec.md#L8) | P | Référence initiale, protocole et signal observé conservés avant justification d’une optimisation. |
+| [performance #2](../../../openspec/specs/performance/spec.md#L17) | ND | Budgets par surface/profil, seuils déclarés avant mesure, dépassement reproductible signalé. |
+| [performance #3](../../../openspec/specs/performance/spec.md#L26) | P | Release/profil, matériel, surface, charge, méthode et validité associés ; hors profil informatif. |
+| [performance #4](../../../openspec/specs/performance/spec.md#L38) | P | Aucune suppression d’isolation, d’échec fermé ou d’audit dans le chemin optimisé. |
+| [performance #5](../../../openspec/specs/performance/spec.md#L47) | ND | Perte/péremption et repli source observés sans résultat erroné ou obsolète déclaré courant. |
+| [resilience #1](../../../openspec/specs/resilience/spec.md#L8) | P | Panne optionnelle injectée sur runtime réel, reste disponible si invariants conservés ; état et reprise observés. |
+| [resilience #2](../../../openspec/specs/resilience/spec.md#L17) | P | Signature/contexte/contrôle invérifiable : refus sur HTTP/jobs et aucune readiness permissive. |
+| [resilience #3](../../../openspec/specs/resilience/spec.md#L26) | ND | N01 : décision persistante, effets réconciliés, admissions bloquées, audit et réactivation explicite sans faux succès. |
+| [service-objectives #1](../../../openspec/specs/service-objectives/spec.md#L10) | P | Objectif lié à version/périmètre/seuil/méthode/période, valeur non inventée par test local. |
+| [service-objectives #2](../../../openspec/specs/service-objectives/spec.md#L21) | P | Rapport hors profil informatif ; aucune extrapolation d’un résultat ou d’une borne PZT à tout Pixs. |
+| [service-objectives #3](../../../openspec/specs/service-objectives/spec.md#L32) | ND | Campagne synthétique avec versions/charge/méthode, mesure/seuil/écart ; insatisfaction explicitement remontée. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

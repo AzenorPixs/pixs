@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 3 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 3 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -59,3 +59,23 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Séparer définition versionnée, instance persistante, transition attendue, garde et identité d’opération. Le lifecycle de composant n’est pas l’état d’une instance métier. Une instance conserve sa version ou suit un plan explicite de migration.
+
+Lire version, autoriser acteur, évaluer garde courante puis appeler la Command propriétaire dans la frontière transactionnelle applicable. Unicité/version attendue empêchent les transitions concurrentes doublées ; événement uniquement après mutation confirmée.
+
+Timers et reprises passent par C09 avec checkpoint et réconciliation des effets externes incertains. Une panne ne valide pas la transition. Choisir premières ressources, transitions, migration et contrats d’effet avant code ; O06 peut fournir une décision, sans imposer son activation.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [workflows #1](../../../openspec/specs/workflows/spec.md#L8) | ND | Définition versionnée, instance liée et politique explicite d’évolution des instances actives. |
+| [workflows #2](../../../openspec/specs/workflows/spec.md#L17) | ND | Droit/garde/version courants ; concurrence et refus sans mutation partielle. |
+| [workflows #3](../../../openspec/specs/workflows/spec.md#L26) | ND | État et opération durables, crash/rejeu sans transition doublée et effet externe inconnu réconcilié. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

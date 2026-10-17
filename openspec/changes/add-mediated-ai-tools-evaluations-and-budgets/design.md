@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -59,3 +59,29 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Le catalogue d’outils relie entrée/sortie versionnées, propriétaire et Command publique. La proposition du modèle passe par validation de schéma et autorisation courante ; aucun appel direct aux tables, au shell ou aux services privés n’est implicite.
+
+Versionner prompts/corpus et réserver le budget via O15 avant appel ; relier opération fournisseur, réponse, coût confirmé/inconnu et consommation réconciliée. Une panne ou réponse perdue ne justifie ni appel doublé ni coût fictif ; budget épuisé interdit la poursuite selon canon.
+
+Ajouter O15 comme dépendance ferme ; O24 fournit adapter/récupération, C05 audit minimisé et C09 exécution durable. Fixer outils autorisés, schémas de médiation et seuils d’évaluation avant code ; aucune exécution d’outil produit pendant la préparation.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [ai-agents #1](../../../openspec/specs/ai-agents/spec.md#L11) | ND | Provider déclaré et sélection explicite ; présence sans activation et absence testées. |
+| [ai-agents #2](../../../openspec/specs/ai-agents/spec.md#L28) | ND | Filtrage avant récupération, minimisation et résidence ; refus hors scope sur corpus synthétique. |
+| [ai-agents #3](../../../openspec/specs/ai-agents/spec.md#L41) | ND | Tout effet proposé passe par une Command propriétaire autorisée ; outil non déclaré refusé. |
+| [ai-agents #4](../../../openspec/specs/ai-agents/spec.md#L53) | ND | Prompts et corpus versionnés, réservation O15 avant appel, arrêt au budget et coût réconcilié sans double imputation. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+
+
+## Dépendance issue de l’audit
+
+- [add-entitlements-and-atomic-quota-reservations](../add-entitlements-and-atomic-quota-reservations/proposal.md) — dépendance explicitée après audit du 17 octobre 2026.

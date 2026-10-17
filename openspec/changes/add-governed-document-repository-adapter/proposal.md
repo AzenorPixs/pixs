@@ -28,7 +28,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Dépendances
 
-- [add-selected-object-storage-provider](../add-selected-object-storage-provider/proposal.md).
+- [add-selected-object-storage-provider](../add-selected-object-storage-provider/proposal.md) — conditionnelle au profil décrit dans l’approfondissement d’audit.
 - [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
 - [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).

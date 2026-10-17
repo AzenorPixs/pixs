@@ -44,3 +44,8 @@ Révoqué refusé explicitement ; aucun double effet confirmé ni conflit silenc
 ## Décisions restant à valider
 
 Stratégies de conflits par ressource et protocole de réconciliation ; intentions provisoires jusqu’au verdict serveur.
+
+
+## Clarification normative conditionnelle validée
+
+Pour un profil combinant client natif et données hors ligne, adopter [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) avant réalisation : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette préparation ne synchronise pas les deltas.

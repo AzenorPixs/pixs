@@ -1,0 +1,224 @@
+{
+  "date": "2026-10-17",
+  "scope": "Préparation et audit statique sans implémentation ni synchronisation canonique.",
+  "checks": {
+    "active_changes": 102,
+    "archives": 135,
+    "total_changes": 237,
+    "archive_ratio_percent": 56.96,
+    "unchecked_tasks": 1012,
+    "checked_tasks": 0,
+    "canonical_counts": {
+      "capabilities": 78,
+      "requirements": 717,
+      "scenarios": 812
+    },
+    "audit_requirements_exact": 94,
+    "audit_scenarios_referenced": 96,
+    "source_files_unchanged": 409,
+    "source_file_list_unchanged": true,
+    "canonical_unchanged": 78,
+    "DAG_acyclic": true,
+    "all_modified_files_in_scope": true,
+    "utf8_lf": true,
+    "local_links_exist": true,
+    "git_diff_check_exit": 0,
+    "functional_qualification": false,
+    "implementation": false,
+    "verification_status": "VERIFIE",
+    "native_changes_validation_exit": 0,
+    "native_global_validation_exit": 1,
+    "existing_unit_tests_passed": 124,
+    "completed_tasks": 0
+  },
+  "native_changes": {
+    "command": [
+      "/home/devops/.local/npm/bin/openspec",
+      "validate",
+      "--changes",
+      "--strict",
+      "--json"
+    ],
+    "exit_code": 0,
+    "summary": {
+      "totals": {
+        "items": 102,
+        "passed": 102,
+        "failed": 0
+      },
+      "byType": {
+        "change": {
+          "items": 102,
+          "passed": 102,
+          "failed": 0
+        }
+      }
+    }
+  },
+  "native_global": {
+    "command": [
+      "/home/devops/.local/npm/bin/openspec",
+      "validate",
+      "--all",
+      "--strict",
+      "--json"
+    ],
+    "exit_code": 1,
+    "summary": {
+      "totals": {
+        "items": 180,
+        "passed": 178,
+        "failed": 2
+      },
+      "byType": {
+        "change": {
+          "items": 102,
+          "passed": 102,
+          "failed": 0
+        },
+        "spec": {
+          "items": 78,
+          "passed": 76,
+          "failed": 2
+        }
+      }
+    },
+    "preexisting_issues": [
+      {
+        "id": "bulk-operations",
+        "type": "spec",
+        "valid": false,
+        "issues": [
+          {
+            "level": "WARNING",
+            "path": "requirements[6]",
+            "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+          },
+          {
+            "level": "WARNING",
+            "path": "requirements[10]",
+            "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+          },
+          {
+            "level": "WARNING",
+            "path": "requirements[13]",
+            "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+          }
+        ],
+        "durationMs": 2
+      },
+      {
+        "id": "identity-assurance",
+        "type": "spec",
+        "valid": false,
+        "issues": [
+          {
+            "level": "WARNING",
+            "path": "requirements[4]",
+            "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+          }
+        ],
+        "durationMs": 0
+      }
+    ]
+  },
+  "unit_tests": {
+    "command": [
+      "/usr/bin/env",
+      "-i",
+      "PATH=/usr/bin:/bin",
+      "LANG=C.UTF-8",
+      "PYTHONPATH=/home/devops/datas/pixs/src:/home/devops/datas/pixs/tests/unit",
+      "/home/devops/datas/pixs/.venv/bin/python",
+      "-B",
+      "-c",
+      "import io,json,sys,unittest\nmodules=['test_capability_availability_gate','test_health_classifier','test_pdp_decision','test_api_contract_plans']\nrows=[]\nfor name in modules:\n stream=io.StringIO()\n suite=unittest.defaultTestLoader.loadTestsFromName(name)\n result=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)\n rows.append({'module':name,'tests':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),'success':result.wasSuccessful(),'native_output':stream.getvalue()})\nprint(json.dumps(rows,ensure_ascii=False))\nsys.exit(0 if all(x['success'] for x in rows) else 1)\n"
+    ],
+    "exit_code": 0,
+    "results": [
+      {
+        "module": "test_capability_availability_gate",
+        "tests": 35,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      },
+      {
+        "module": "test_health_classifier",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      },
+      {
+        "module": "test_pdp_decision",
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      },
+      {
+        "module": "test_api_contract_plans",
+        "tests": 56,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      }
+    ],
+    "limits": "Unités existantes, synthétiques et pures ; ne qualifient pas les services runtime absents."
+  },
+  "local_evidence_directory": "reports/audit-ne-94-2026-10-17",
+  "modified_existing_files": [
+    "PROJECT.md",
+    "README.md",
+    "openspec/changes/add-audit-integrity-and-verifiable-exports/design.md",
+    "openspec/changes/add-authorized-realtime-collaboration/design.md",
+    "openspec/changes/add-authorized-realtime-collaboration/proposal.md",
+    "openspec/changes/add-authorized-search-projections/design.md",
+    "openspec/changes/add-bounded-business-rule-evaluation/design.md",
+    "openspec/changes/add-declared-ai-provider-and-governed-retrieval/design.md",
+    "openspec/changes/add-derived-distributed-cache-provider/design.md",
+    "openspec/changes/add-directory-read-freshness-and-postgres-fallback/design.md",
+    "openspec/changes/add-entitlements-and-atomic-quota-reservations/design.md",
+    "openspec/changes/add-external-synchronization-provider/design.md",
+    "openspec/changes/add-governed-document-repository-adapter/design.md",
+    "openspec/changes/add-governed-document-repository-adapter/proposal.md",
+    "openspec/changes/add-governed-reporting-analytics/design.md",
+    "openspec/changes/add-health-gated-progressive-deployment/design.md",
+    "openspec/changes/add-ldap-outbound-directory-projections/design.md",
+    "openspec/changes/add-mediated-ai-tools-evaluations-and-budgets/design.md",
+    "openspec/changes/add-mediated-ai-tools-evaluations-and-budgets/proposal.md",
+    "openspec/changes/add-native-client-contract-and-session-support/design.md",
+    "openspec/changes/add-native-client-contract-and-session-support/proposal.md",
+    "openspec/changes/add-offline-eligible-local-projections/design.md",
+    "openspec/changes/add-offline-eligible-local-projections/proposal.md",
+    "openspec/changes/add-offline-intents-and-server-reconciliation/design.md",
+    "openspec/changes/add-offline-intents-and-server-reconciliation/proposal.md",
+    "openspec/changes/add-protected-core-http-commands-and-queries/design.md",
+    "openspec/changes/add-reference-worker-scheduler-and-event-delivery/design.md",
+    "openspec/changes/add-regional-authority-failover/design.md",
+    "openspec/changes/add-runtime-observability-and-operations/design.md",
+    "openspec/changes/add-scim-provisioning-through-owner-commands/design.md",
+    "openspec/changes/add-selected-reactive-synchronization/design.md",
+    "openspec/changes/add-tenant-regional-placement-and-routing/design.md",
+    "openspec/changes/add-verified-component-registry/design.md",
+    "openspec/changes/add-versioned-workflow-execution/design.md",
+    "openspec/changes/build-first-pbo-pfo-debian-package/design.md",
+    "openspec/changes/build-first-pbo-pfo-debian-package/proposal.md",
+    "openspec/changes/complete-developer-kit-and-cli-workflows/design.md",
+    "openspec/changes/define-first-installable-pbo-profile/arbitrages-preparation-globale.md",
+    "openspec/changes/define-first-installable-pbo-profile/couverture-preparation-globale.md",
+    "openspec/changes/define-first-installable-pbo-profile/design.md",
+    "openspec/changes/define-first-installable-pbo-profile/plan-de-preparation.md",
+    "openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md",
+    "openspec/changes/define-first-installable-pbo-profile/preparation-globale.json",
+    "openspec/changes/generate-typescript-python-public-sdks/design.md",
+    "openspec/changes/qualify-first-pbo-composition/design.md",
+    "openspec/changes/qualify-first-pbo-composition/proposal.md",
+    "openspec/changes/qualify-selected-performance-budgets/design.md"
+  ]
+}

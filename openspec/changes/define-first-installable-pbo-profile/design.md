@@ -69,3 +69,31 @@ Préparer C00 puis C01–C19 selon les dépendances de l’inventaire. Les tâch
 ## Migration et retour
 
 C00 ne migre aucune donnée ni configuration. Les deltas ne sont pas synchronisés dans le canon pendant cette préparation. Leur adoption et toute réalisation ultérieure doivent être demandées séparément ; aucun archivage anticipé.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Constituer un registre de décisions du profil : identifiant stable, état canonique, contexte, alternatives, conséquences, exigences affectées, auteur de validation et réévaluation pertinente. Une fiche remplacée pointe vers sa remplaçante ; les instantanés des preuves restent datés.
+
+Le manifeste documentaire du profil relie release, plateformes, capacités et surfaces sélectionnées, contrats obligatoires, budgets/objectifs déclarés et exclusions motivées. Chaque garantie publiée doit renvoyer à une preuve de C17 ou O31 pour cette même version et charge ; le silence sur un objectif n’invente pas de seuil.
+
+N01 rejoint le chemin du premier P0 pour la réponse d’urgence. N02 prépare la clarification des profils natifs hors ligne, sans sélectionner ces options pour P0. Les providers concrets, seuils, support et autorités de confiance restent des décisions à soumettre avant leur réalisation ; une décision contraire au canon exige un delta approuvé.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [architecture-decisions #1](../../../openspec/specs/architecture-decisions/spec.md#L10) | P | Fiche par décision arrêtée : identifiant, contexte, alternatives, conséquences, sources et revue si pertinente. |
+| [architecture-decisions #2](../../../openspec/specs/architecture-decisions/spec.md#L22) | P | Décision contradictoire bloquée ou liée à un delta approuvé avant adoption. |
+| [architecture-decisions #3](../../../openspec/specs/architecture-decisions/spec.md#L33) | P | PROPOSED/ACCEPTED/SUPERSEDED/REJECTED et lien vers le successeur ; historique conservé. |
+| [performance #1](../../../openspec/specs/performance/spec.md#L8) | P | Référence initiale, protocole et signal observé conservés avant justification d’une optimisation. |
+| [performance #2](../../../openspec/specs/performance/spec.md#L17) | ND | Budgets par surface/profil, seuils déclarés avant mesure, dépassement reproductible signalé. |
+| [performance #3](../../../openspec/specs/performance/spec.md#L26) | P | Release/profil, matériel, surface, charge, méthode et validité associés ; hors profil informatif. |
+| [performance #4](../../../openspec/specs/performance/spec.md#L38) | P | Aucune suppression d’isolation, d’échec fermé ou d’audit dans le chemin optimisé. |
+| [performance #5](../../../openspec/specs/performance/spec.md#L47) | ND | Perte/péremption et repli source observés sans résultat erroné ou obsolète déclaré courant. |
+| [service-objectives #1](../../../openspec/specs/service-objectives/spec.md#L10) | P | Objectif lié à version/périmètre/seuil/méthode/période, valeur non inventée par test local. |
+| [service-objectives #2](../../../openspec/specs/service-objectives/spec.md#L21) | P | Rapport hors profil informatif ; aucune extrapolation d’un résultat ou d’une borne PZT à tout Pixs. |
+| [service-objectives #3](../../../openspec/specs/service-objectives/spec.md#L32) | ND | Campagne synthétique avec versions/charge/méthode, mesure/seuil/écart ; insatisfaction explicitement remontée. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

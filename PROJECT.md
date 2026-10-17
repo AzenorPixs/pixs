@@ -2517,44 +2517,47 @@ Pixs est spécifié par capacités. Cette section et la [synthèse du README](RE
 
 Le canon dans [openspec/specs/](openspec/specs/) recense **78 capacités, 717 exigences et 812 scénarios**. Ce comptage porte sur les spécifications canoniques : les deltas proposés dans les changes ouverts ne sont pas comptés avant leur intégration.
 
-Chaque exigence est reliée à un statut, des références, un écart ou une limite identifié et des lots proposés. La [correspondance globale](openspec/changes/define-first-installable-pbo-profile/couverture-preparation-globale.md) donne accès aux exigences et aux dossiers préparés. Les statuts proviennent de la matrice statique du 16 octobre 2026 ; le présent relevé actualise les comptes, sans requalifier leur comportement :
+Chaque exigence est reliée à un statut, des références, un écart ou une limite identifié et des lots proposés. La [correspondance globale](openspec/changes/define-first-installable-pbo-profile/couverture-preparation-globale.md) donne accès aux exigences et aux dossiers préparés. La matrice statique du 16 octobre 2026 reste conservée. L’[audit du 17 octobre des 94 exigences NE](openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json) ajoute une surcouche de suivi : 10 appuis partiels et 84 couvertures non démontrées dans les sources consultées. Les 623 autres exigences ne sont pas réauditées ici :
 
 | Statut de suivi | Exigences | Signification |
 | --- | ---: | --- |
 | L | 79 | Source locale ciblée identifiée ; qualification non réexécutée. |
-| P | 275 | Couverture partielle du domaine ; intégration à compléter. |
-| ND | 269 | Couverture produit non démontrée dans le périmètre consulté. |
-| NE | 94 | Couverture fonctionnelle non évaluée ; audit nécessaire avant de conclure à un manque. |
+| P | 285 | Couverture partielle du domaine ; intégration à compléter. |
+| ND | 353 | Couverture produit non démontrée dans le périmètre consulté. |
+| NE | 0 | Les 94 anciennes lignes NE ont reçu une analyse statique ; aucune qualification intégrée n’est déduite. |
 | **Total** | **717** | **Aucun de ces statuts ne constitue un verdict de qualification actuel.** |
 
 L’analyse est statique : présence de code, tests disponibles et archivage ne prouvent pas à eux seuls un fonctionnement intégré. Les niveaux unitaire, intégration réelle et conformité restent distincts ; les preuves d’installation, de sécurité, de reprise et de qualification du produit doivent être exécutées et conservées.
 
 #### Plan de la première composition installable
 
-Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances et critères de sortie pour le premier P0. Ils sont maintenant matérialisés en changes préparés. Le [plan global](openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md) contient **100 changes préparés** :
+Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances et critères de sortie pour le premier P0. Ils sont maintenant matérialisés en changes préparés. Le [plan global](openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md) contient désormais **102 changes préparés**, après validation de N01 et N02 :
 
 | Périmètre | Changes ouverts |
 | --- | ---: |
-| Premier P0, C00–C19 | 20 |
+| Premier P0, C00–C19 et N01 urgence PBO | 21 |
 | Pixs Agent | 9 |
 | PZT actif et contrats techniques | 26 |
 | Compléments Bulk | 11 |
 | Capacités supplémentaires sélectionnables | 32 |
+| Clarification native/hors ligne N02 | 1 |
 | Distribution Docker | 1 |
 | Recette étendue | 1 |
-| **Total** | **100** |
+| **Total** | **102** |
 
-Les 80 dossiers au-delà de C00–C19 ne sont pas tous requis pour une installation P0 : leur sélection dépend du profil et de ses dépendances obligatoires. Leur préparation ne les active pas et ne vaut pas autorisation de les implémenter. Les décisions encore ouvertes figurent dans le [registre de conception et de qualification](openspec/changes/define-first-installable-pbo-profile/arbitrages-preparation-globale.md).
+Les dossiers hors premier P0 ne sont pas tous requis pour une installation P0 : leur sélection dépend du profil et de ses dépendances obligatoires. Leur préparation ne les active pas et ne vaut pas autorisation de les implémenter. Les décisions encore ouvertes figurent dans le [registre de conception et de qualification](openspec/changes/define-first-installable-pbo-profile/arbitrages-preparation-globale.md).
 
 Les premières priorités sont :
 
 1. Confirmer le profil de première livraison décrit par [C00](openspec/changes/define-first-installable-pbo-profile/proposal.md) et l’applicabilité des obligations PZT/DNS. Les modules essentiels restent présents côté PBO même sans réseau actif.
 2. Livrer les secrets runtime, les primitives Core persistantes et l’audit durable, puis l’authentification et l’autorisation intégrées : C01, C02, C05, puis C03 et C04.
 3. Relier API, composition réelle, installation, traitements persistants et gouvernance : C06–C10, selon leurs dépendances.
-4. Compléter interface modulaire, langues, thèmes, accessibilité, administration, modules essentiels, exploitation et restauration : C11–C16.
+4. Compléter interface modulaire, langues, thèmes, accessibilité, administration, modules essentiels, exploitation et restauration : C11–C16. Intégrer aussi la procédure d’urgence N01, distincte de la maintenance ordinaire, avant construction et recette.
 5. Construire le paquet Debian C18, qualifier la composition distribuée en C17, puis vérifier son identité de distribution et préparer la publication en C19.
 
-Au présent relevé, les **996 tâches de réalisation sont non cochées**. Les [contrôles documentaires](openspec/changes/define-first-installable-pbo-profile/validation-globale.md) valident les 100 changes en mode strict ; le strict global reste en exit 1, avec quatre avertissements de longueur préexistants dans deux capacités. Ces résultats ne constituent pas une recette fonctionnelle.
+Au présent relevé, les **1 012 tâches de réalisation sont non cochées**. Le [rapport d’audit et ses contrôles](reports/audit-ne-94-2026-10-17/RAPPORT.md) couvre 31 conceptions existantes approfondies, les deux nouveaux dossiers et les dépendances révisées. Les contrôles stricts actuels valident les 102 changes ; le strict global reste en exit 1, avec quatre avertissements de longueur préexistants dans deux capacités. Les 124 tests unitaires existants exécutés sont purs et synthétiques : ils ne qualifient pas les services optionnels ni la composition installable. La [validation antérieure des 100 dossiers](openspec/changes/define-first-installable-pbo-profile/validation-globale.md) reste une preuve historique.
+
+N01 décrit la réalisation future de l’obligation existante de révocation/quarantaine d’urgence PBO. N02 propose de distinguer le coffre sécurisé natif des projections, caches et files hors ligne sans secrets ni jetons ; ses deltas ne sont pas synchronisés dans le canon. Les autres écarts de cet audit sont couverts par des lots déjà préparés. Providers, plateformes, paramètres et garanties encore ouverts restent à valider avant réalisation.
 
 #### Ratio d’avancement affiché dans le README
 
@@ -2565,7 +2568,7 @@ total = changes archivés + changes ouverts
 avancement OpenSpec (%) = 100 × changes archivés / total
 ```
 
-Au 17 octobre 2026 : **135 archivés + 100 ouverts = 235 changes**, soit **57,45 %** après arrondi à deux décimales. Les archivés sont les dossiers de changes sous `openspec/changes/archive/` ; les ouverts sont les dossiers directement sous `openspec/changes/`, hors `archive` et dossiers techniques masqués.
+Au 17 octobre 2026 : **135 archivés + 102 ouverts = 237 changes**, soit **56,96 %** après arrondi à deux décimales. Les archivés sont les dossiers de changes sous `openspec/changes/archive/` ; les ouverts sont les dossiers directement sous `openspec/changes/`, hors `archive` et dossiers techniques masqués.
 
 Ce ratio est un indicateur global non pondéré de clôture des changes. Il inclut les archives documentaires, les contrats préparatoires et les capacités hors premier P0 ; il ne mesure ni l’effort restant, ni la proportion de fonctions utilisables, ni la qualification de cette composition. Il peut diminuer lorsque de nouveaux changes sont créés. Une valeur de 100 % ne dispense jamais des critères de livraison, des tests et des preuves de qualification. En l’absence de changes, afficher « non calculable », sans annoncer 100 %.
 

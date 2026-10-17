@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -58,3 +58,24 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Le plan de bascule référence tenant, politique de placement O27, époque attendue, primaire courant, secours autorisé, versions contrats/schémas et autorisation opérateur. Aucun changement de région par simple choix du client.
+
+Persister une barrière/époque empêchant l’ancien primaire d’écrire, vérifier sa prise d’effet puis promouvoir le secours. Perte de réponse et partition réseau produisent une réconciliation prudente ; un acquittement sans exclusion observée n’est pas une preuve d’unicité.
+
+C16 fournit sauvegarde/restauration compatibles, sans RPO/RTO supposé. Preuves sur panne, double demande et ancien primaire avant promesse de HA. Choisir stratégie de fencing, stockage autoritatif et objectifs de reprise avant code.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [regional-residency #1](../../../openspec/specs/regional-residency/spec.md#L8) | ND | Dérogation applicative bornée au tenant accordé, sans inventer région physique disponible ni accès inter-tenant. |
+| [regional-residency #2](../../../openspec/specs/regional-residency/spec.md#L18) | ND | Régions autorisées pour primaire/dérivés/traitement/sauvegardes/clés ; enfant uniquement restrictif. |
+| [regional-residency #3](../../../openspec/specs/regional-residency/spec.md#L27) | ND | Identité puis tenant/scope puis placement ; région client non autoritative, tous dérivés soumis à politique. |
+| [regional-residency #4](../../../openspec/specs/regional-residency/spec.md#L36) | ND | Secours autorisé, compatibilité et fencing/époque durable ; ancien primaire privé d’écriture avant confirmation. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

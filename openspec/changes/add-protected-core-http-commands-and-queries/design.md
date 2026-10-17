@@ -55,3 +55,16 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 ## Hors profil
 
 PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Pour O21, publier un document OpenAPI machine-readable versionné par majeure, associé aux routes et erreurs effectivement exposées. ApiContractPlan référence ce document logiquement mais ne contient pas sa publication ni sa conformité.
+
+Relier chaque opération publique au contexte canonique, authentification, autorisation, pagination, idempotence et statut asynchrone applicable. Validation du document et tests contrat-serveur doivent détecter dérive ou surface privée exposée.
+
+La construction du bundle d’entrée SDK appartient à O21 ; C06 possède contrat et serveur HTTP. Format de publication/version et compatibilité doivent être revus avant code, sans créer ici un nouveau change déjà couvert par ce lot.
+
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

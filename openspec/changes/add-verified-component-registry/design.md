@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 4 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 4 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -58,3 +58,24 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Le catalogue de distribution déclare sources de confiance, identités/versions, empreintes, compatibilité et révocations. Réutiliser SemVer/manifests du Kernel pour valider les métadonnées, sans transformer son registre mémoire en autorité de distribution.
+
+Recherche/résolution déterministes sur version de catalogue ; vérifier artefact et origine avant installation. Installation ne vaut pas activation. Conserver résultat/version de résolution et motif de refus sans secret ; version révoquée reste refusée sur rejeu.
+
+N01 traite urgence PBO indépendamment de l’existence du catalogue ; O29 diffuse révocation de versions et retrait via contrats propriétaires. Fixer autorités/source et politique de confiance avec C19 avant code, sans signature ou publication pendant cette préparation.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [component-registry #1](../../../openspec/specs/component-registry/spec.md#L11) | ND | Sources de catalogue, métadonnées, versions et confiance déclarées. |
+| [component-registry #2](../../../openspec/specs/component-registry/spec.md#L24) | ND | Vérification d’intégrité/signature/provenance et dépendances avant installation, sans activation implicite. |
+| [component-registry #3](../../../openspec/specs/component-registry/spec.md#L36) | ND | Installation de version révoquée refusée ; retrait coordonné ; urgence runtime séparée en N01. |
+| [component-registry #4](../../../openspec/specs/component-registry/spec.md#L48) | ND | Sources et ordre explicites ; résolution reproductible, ambiguïté refusée. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

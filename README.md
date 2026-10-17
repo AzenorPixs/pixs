@@ -1,6 +1,6 @@
 # Pixs
 
-**Version initiale — avancement OpenSpec : 57,45 %** — 135 changes archivés sur 235 au total, dont 100 ouverts. Relevé du 17 octobre 2026.
+**Version initiale — avancement OpenSpec : 56,96 %** — 135 changes archivés sur 237 au total, dont 102 ouverts. Relevé du 17 octobre 2026.
 
 Ce ratio suit les changes, sans mesurer leur taille ni remplacer une qualification fonctionnelle. [Méthode et suivi détaillé](PROJECT.md#34-openspec).
 
@@ -20,7 +20,7 @@ Cette documentation présente le périmètre cible du projet sans anticiper ces 
 
 OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 717 exigences et 812 scénarios**, recensés au 17 octobre 2026.
 
-Les **100 changes ouverts sont préparés**, dont **20 pour le premier socle installable P0**. Chaque exigence est reliée au travail prévu, aux écarts et aux références disponibles. Ce suivi est une analyse des documents et du code ; il ne prouve pas le bon fonctionnement du logiciel.
+Les **102 changes ouverts sont préparés**, dont **21 pour le premier socle installable P0**. Chaque exigence est reliée au travail prévu, aux écarts et aux références disponibles. Ce suivi est une analyse des documents et du code ; il ne prouve pas le bon fonctionnement du logiciel. L’audit des 94 exigences auparavant non évaluées a précisé les écarts et conduit à deux changes supplémentaires validés, sans implémentation.
 
 Les priorités sont de finaliser les données et la sécurité, l’installation et l’interface, puis les tests et la livraison. Le [suivi OpenSpec dans PROJECT.md](PROJECT.md#34-openspec) détaille les étapes et les décisions restantes. Cette synthèse et le ratio en tête de page sont à actualiser pendant toute la vie de Pixs, au fil des changes et de leurs preuves.
 

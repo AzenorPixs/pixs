@@ -6,9 +6,9 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Toute ligne NE impose un audit ciblé avant de confirmer un manque ou de créer du code.
+La capacité est un candidat du canon ; la revue de présence des sources et la matrice ne démontrent pas une réalisation opérationnelle. Les lignes NE historiques ont été auditées le 17 octobre 2026 ; voir les constats individuels ci-dessous, sans qualification runtime.
 
-Ce dossier référence 3 lignes NE : leur présence dans le canon ne prouve pas un manque d’implémentation. La demande actuelle autorise leur préparation conditionnelle ; un audit ciblé doit décider du complément réel avant réalisation.
+Ce dossier référence 3 lignes NE dans la matrice historique. Leur audit statique est maintenant documenté ci-dessous ; les barrières de choix et de qualification avant réalisation restent applicables.
 
 Sources et périmètres consultés :
 
@@ -60,3 +60,23 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Approfondissement issu de l’audit du 17 octobre 2026
+
+Conception proposée sans implémentation. Ces contrats de travail ne modifient pas le canon ; tout changement normatif requiert son delta approuvé.
+
+Déclarer sélection du mécanisme réactif, source PostgreSQL, ressources/projections et versions. Une projection fournit lecture/deltas ; la mutation retourne toujours à une Command serveur autorisée.
+
+Avant souscription et à reconnexion, résoudre périmètre canonique et filtre à la source. Checkpoint, invalidation, suppressions et révocations doivent préserver les mêmes frontières dans snapshot initial et deltas, sans confiance dans un filtre du client.
+
+Exposer fraîcheur et état de reprise ; retard ou perte déclenche le comportement de cohérence déclaré. Fixer tables/colonnes projetables, mécanisme concret et preuves de révocation avant réalisation ; la présence d’Electric dans le cadrage ne prouve pas son activation.
+
+### Exigences auditées et preuves de sortie futures
+
+| Référence canonique | Statut statique après audit | Critère à démontrer |
+|---|---|---|
+| [synchronization #1](../../../openspec/specs/synchronization/spec.md#L8) | ND | Sélection explicite ; mutations par Commands serveur, PostgreSQL source de vérité. |
+| [synchronization #2](../../../openspec/specs/synchronization/spec.md#L17) | ND | Filtrage à la source ; révocation/tenant/scope appliqués aux reprises et deltas sans confiance au client. |
+| [synchronization #3](../../../openspec/specs/synchronization/spec.md#L26) | ND | Version/fraîcheur/reprise déclarées ; perte/retard/resynchronisation contrôlés sans écriture directe depuis projection. |
+
+Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
