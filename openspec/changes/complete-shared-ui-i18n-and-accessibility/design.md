@@ -53,3 +53,22 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 ## Hors profil
 
 PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+
+
+## Revue transversale P0 du 17 octobre 2026
+
+Analyse de préparation sans implémentation ; les critères ci-dessous complètent la recette future et ne constituent pas des résultats exécutés. Les décisions de technologie et de paramètres restent ouvertes avant code.
+
+### T04 — Kit de conformité versus recette finale
+
+C17 consomme/agrège des suites ; kit réutilisable minimal non détaillé et O22 complet tirerait SDK hors profil. N06 dédié validé ; réutiliser validateurs/exemple, C17 garde campagne finale.
+
+Contrôles à intégrer : Preuve absente/expirée/mauvaise version refusée ; Authentification de preuve par exécuteur réel, pas par manifest ; Exemple P0 synthétique hors dépendances de production.
+
+### T15 — Langues, thèmes et accessibilité de tous les parcours
+
+Les parcours CLI, erreurs API, management et secours font aussi partie des textes utilisateur ; couverture ne se limite pas à la page du shell. Compléter la matrice C12/C17 et les contrats de messages ; codes stables non localisés.
+
+Contrôles à intégrer : Deux navigateurs déclarés, clavier/zoom/lecteur d’écran ; Erreurs et confirmations d’installation/exploitation localisées ; Thème/session/tenant sans fuite d’état.
+
+Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.

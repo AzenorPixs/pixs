@@ -1,0 +1,264 @@
+{
+  "date": "2026-10-17",
+  "scope": "Audit transversal et préparation validée N03–N06, sans implémentation ni synchronisation.",
+  "checks": {
+    "active_changes": 106,
+    "P0_changes": 25,
+    "archives": 135,
+    "total_changes": 241,
+    "archive_ratio_percent": 56.02,
+    "unchecked_tasks": 1052,
+    "checked_tasks": 0,
+    "canonical_counts": {
+      "capabilities": 78,
+      "requirements": 717,
+      "scenarios": 812
+    },
+    "proposed_only": {
+      "added_requirements": 13,
+      "modified_existing_requirements": 2,
+      "net_added_scenarios": 25,
+      "new_capabilities": 0
+    },
+    "projection_not_current_canon": {
+      "capabilities": 78,
+      "requirements": 730,
+      "scenarios": 837
+    },
+    "DAG_acyclic": true,
+    "canonical_unchanged": 78,
+    "indexed_source_files_unchanged": 409,
+    "source_file_list_unchanged": true,
+    "local_links_exist": true,
+    "utf8_lf": true,
+    "git_diff_check_exit": 0,
+    "implementation": false,
+    "canonical_sync": false,
+    "functional_status_changes": 0,
+    "verification_status": "VERIFIE",
+    "native_changes_validation_exit": 0,
+    "native_global_validation_exit": 1,
+    "existing_unit_tests_passed": 95,
+    "completed_tasks": 0
+  },
+  "human_decisions": {
+    "date": "2026-10-17",
+    "decisions": [
+      {
+        "scope": [
+          "N03",
+          "N04",
+          "N05"
+        ],
+        "answer": "Préparer les trois changes dédiés (recommandé)",
+        "deltas_authorized_for_preparation": [
+          "N04",
+          "N05"
+        ]
+      },
+      {
+        "scope": [
+          "N06"
+        ],
+        "answer": "Préparer N06 dédié (recommandé)"
+      }
+    ],
+    "implementation_authorized": false,
+    "canonical_sync_authorized": false,
+    "additional_decision_needed_for_document_preparation": false
+  },
+  "native_changes": {
+    "command": [
+      "/home/devops/.local/npm/bin/openspec",
+      "validate",
+      "--changes",
+      "--strict",
+      "--json"
+    ],
+    "exit_code": 0,
+    "summary": {
+      "totals": {
+        "items": 106,
+        "passed": 106,
+        "failed": 0
+      },
+      "byType": {
+        "change": {
+          "items": 106,
+          "passed": 106,
+          "failed": 0
+        }
+      }
+    }
+  },
+  "native_global": {
+    "command": [
+      "/home/devops/.local/npm/bin/openspec",
+      "validate",
+      "--all",
+      "--strict",
+      "--json"
+    ],
+    "exit_code": 1,
+    "summary": {
+      "totals": {
+        "items": 184,
+        "passed": 182,
+        "failed": 2
+      },
+      "byType": {
+        "change": {
+          "items": 106,
+          "passed": 106,
+          "failed": 0
+        },
+        "spec": {
+          "items": 78,
+          "passed": 76,
+          "failed": 2
+        }
+      }
+    },
+    "preexisting_issues": [
+      {
+        "id": "bulk-operations",
+        "type": "spec",
+        "valid": false,
+        "issues": [
+          {
+            "level": "WARNING",
+            "path": "requirements[6]",
+            "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+          },
+          {
+            "level": "WARNING",
+            "path": "requirements[10]",
+            "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+          },
+          {
+            "level": "WARNING",
+            "path": "requirements[13]",
+            "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+          }
+        ],
+        "durationMs": 1
+      },
+      {
+        "id": "identity-assurance",
+        "type": "spec",
+        "valid": false,
+        "issues": [
+          {
+            "level": "WARNING",
+            "path": "requirements[4]",
+            "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+          }
+        ],
+        "durationMs": 0
+      }
+    ]
+  },
+  "unit_tests": {
+    "command": [
+      "/home/devops/datas/pixs/.venv/bin/python",
+      "-B",
+      "-c",
+      "import unittest,io,json,sys\nmodules=['test_backend_settings','test_developer_kit_validators','test_example_component','test_conformity_attestations','test_initial_composition_proof','test_runtime_profiles']\nrows=[]\nfor name in modules:\n stream=io.StringIO();suite=unittest.defaultTestLoader.loadTestsFromName(name);r=unittest.TextTestRunner(stream=stream,verbosity=2).run(suite)\n rows.append({'module':name,'tests':r.testsRun,'failures':len(r.failures),'errors':len(r.errors),'skipped':len(r.skipped),'success':r.wasSuccessful(),'native_output':stream.getvalue()})\nprint(json.dumps(rows,ensure_ascii=False));sys.exit(0 if all(x['success'] for x in rows) else 1)\n"
+    ],
+    "environment": {
+      "PATH": "/usr/bin:/bin",
+      "LANG": "C.UTF-8",
+      "PYTHONPATH": "src:tests/unit"
+    },
+    "exit_code": 0,
+    "results": [
+      {
+        "module": "test_backend_settings",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      },
+      {
+        "module": "test_developer_kit_validators",
+        "tests": 19,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      },
+      {
+        "module": "test_example_component",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      },
+      {
+        "module": "test_conformity_attestations",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      },
+      {
+        "module": "test_initial_composition_proof",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      },
+      {
+        "module": "test_runtime_profiles",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "success": true
+      }
+    ],
+    "limits": "Tests unitaires existants de primitives et validateurs ; aucun serveur de production, restauration, clé réelle ou qualification P0. Aucun test nouveau."
+  },
+  "evidence_directory": "reports/audit-transversal-p0-2026-10-17",
+  "modified_existing_files_this_audit": [
+    "PROJECT.md",
+    "README.md",
+    "openspec/changes/activate-reference-runtime-composition/design.md",
+    "openspec/changes/add-core-postgres-services/design.md",
+    "openspec/changes/add-durable-minimized-audit/design.md",
+    "openspec/changes/add-essential-pbo-pzt-and-dns-modules/design.md",
+    "openspec/changes/add-initial-administration-panel/design.md",
+    "openspec/changes/add-initial-authentication-and-sessions/design.md",
+    "openspec/changes/add-installation-and-first-configuration/design.md",
+    "openspec/changes/add-pbo-runtime-secret-provider/design.md",
+    "openspec/changes/add-pbo-security-quarantine-and-revocation/design.md",
+    "openspec/changes/add-protected-core-http-commands-and-queries/design.md",
+    "openspec/changes/add-reference-worker-scheduler-and-event-delivery/design.md",
+    "openspec/changes/add-runtime-observability-and-operations/design.md",
+    "openspec/changes/add-upgrade-backup-and-restore-contracts/design.md",
+    "openspec/changes/build-first-pbo-pfo-debian-package/design.md",
+    "openspec/changes/build-first-pbo-pfo-debian-package/proposal.md",
+    "openspec/changes/complete-developer-kit-and-cli-workflows/design.md",
+    "openspec/changes/complete-developer-kit-and-cli-workflows/proposal.md",
+    "openspec/changes/complete-shared-ui-i18n-and-accessibility/design.md",
+    "openspec/changes/compose-modular-frontend-with-core-api/design.md",
+    "openspec/changes/define-first-installable-pbo-profile/arbitrages-preparation-globale.md",
+    "openspec/changes/define-first-installable-pbo-profile/couverture-preparation-globale.md",
+    "openspec/changes/define-first-installable-pbo-profile/design.md",
+    "openspec/changes/define-first-installable-pbo-profile/plan-de-preparation.md",
+    "openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md",
+    "openspec/changes/define-first-installable-pbo-profile/preparation-globale.json",
+    "openspec/changes/enforce-core-data-governance-and-lifecycle/design.md",
+    "openspec/changes/integrate-runtime-authorization-and-super-admin/design.md",
+    "openspec/changes/publish-first-qualified-pbo-release/design.md",
+    "openspec/changes/publish-first-qualified-pbo-release/proposal.md",
+    "openspec/changes/publish-first-qualified-pbo-release/tasks.md",
+    "openspec/changes/qualify-first-pbo-composition/design.md",
+    "openspec/changes/qualify-first-pbo-composition/proposal.md",
+    "openspec/changes/qualify-first-pbo-composition/tasks.md"
+  ]
+}

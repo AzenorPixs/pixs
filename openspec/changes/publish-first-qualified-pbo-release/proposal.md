@@ -36,3 +36,14 @@ Installation du paquet final depuis environnement vierge ; empreinte/signature i
 ## Barrière de conception
 
 Identités/autorités de signature, mécanisme de provenance/inventaire et support ; aucun secret, signature ou publication pendant la préparation.
+
+## Dépendances après audit transversal P0
+
+[C17](../qualify-first-pbo-composition/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N03](../add-p0-artifact-trust-and-preinstallation-verification/proposal.md).
+
+Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.
+
+
+## Répartition de la confiance après revue
+
+N03 fournit les contrats et mécanismes de confiance avant installation ; C19 consolide support, preuves finales et publication après C17. Toute modification de l’artefact ou de son identité qualifiée exige la revalidation applicable, jamais une réécriture silencieuse.

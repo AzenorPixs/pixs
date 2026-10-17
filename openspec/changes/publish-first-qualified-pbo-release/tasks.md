@@ -9,8 +9,8 @@ Ces tâches décrivent une réalisation future non autorisée par la demande de 
 
 ## 2. Réalisation future
 
-- [ ] 2.1 Fixer version/canal/support et décisions de confiance de la première release.
-- [ ] 2.2 Implémenter identité/signature/provenance/inventaire, immuabilité et révocation vérifiable.
+- [ ] 2.1 Consolider version/canal/support et décisions de confiance approuvées en amont, sans changer implicitement l’identité qualifiée.
+- [ ] 2.2 Assembler et vérifier les preuves d’identité/signature/provenance/inventaire et révocation produites avec N03/C18, sans réécrire l’artefact qualifié.
 - [ ] 2.3 Vérifier le paquet final depuis un environnement vierge et réconcilier ses preuves de recette.
 - [ ] 2.4 Préparer publication et preuves sans publier jusqu’à autorisation explicite ; tester signature/empreinte/canal invalides et rotation/révocation.
 
