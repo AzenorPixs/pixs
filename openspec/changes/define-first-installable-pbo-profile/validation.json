@@ -1,0 +1,1149 @@
+{
+  "changes": {
+    "command": [
+      "/home/devops/.local/npm/bin/openspec",
+      "validate",
+      "--changes",
+      "--strict",
+      "--json"
+    ],
+    "exit_code": 0,
+    "result": {
+      "items": [
+        {
+          "id": "activate-reference-runtime-composition",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 21
+        },
+        {
+          "id": "add-core-postgres-services",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 21
+        },
+        {
+          "id": "add-durable-minimized-audit",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 22
+        },
+        {
+          "id": "add-essential-pbo-pzt-and-dns-modules",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 22
+        },
+        {
+          "id": "add-initial-administration-panel",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 22
+        },
+        {
+          "id": "add-initial-authentication-and-sessions",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 22
+        },
+        {
+          "id": "add-installation-and-first-configuration",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 12
+        },
+        {
+          "id": "add-pbo-runtime-secret-provider",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 12
+        },
+        {
+          "id": "add-protected-core-http-commands-and-queries",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 12
+        },
+        {
+          "id": "add-reference-worker-scheduler-and-event-delivery",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 11
+        },
+        {
+          "id": "add-runtime-observability-and-operations",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 12
+        },
+        {
+          "id": "add-upgrade-backup-and-restore-contracts",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 12
+        },
+        {
+          "id": "build-first-pbo-pfo-debian-package",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 8
+        },
+        {
+          "id": "complete-shared-ui-i18n-and-accessibility",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 9
+        },
+        {
+          "id": "compose-modular-frontend-with-core-api",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 9
+        },
+        {
+          "id": "define-first-installable-pbo-profile",
+          "type": "change",
+          "valid": true,
+          "issues": [],
+          "durationMs": 38
+        },
+        {
+          "id": "enforce-core-data-governance-and-lifecycle",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 9
+        },
+        {
+          "id": "integrate-runtime-authorization-and-super-admin",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 9
+        },
+        {
+          "id": "publish-first-qualified-pbo-release",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 5
+        },
+        {
+          "id": "qualify-first-pbo-composition",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 4
+        }
+      ],
+      "summary": {
+        "totals": {
+          "items": 20,
+          "passed": 20,
+          "failed": 0
+        },
+        "byType": {
+          "change": {
+            "items": 20,
+            "passed": 20,
+            "failed": 0
+          }
+        }
+      },
+      "version": "1.0",
+      "root": {
+        "path": "/home/devops/datas/pixs",
+        "source": "nearest"
+      }
+    }
+  },
+  "global": {
+    "command": [
+      "/home/devops/.local/npm/bin/openspec",
+      "validate",
+      "--all",
+      "--strict",
+      "--json"
+    ],
+    "exit_code": 1,
+    "result": {
+      "items": [
+        {
+          "id": "accessibility",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 2
+        },
+        {
+          "id": "activate-reference-runtime-composition",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 20
+        },
+        {
+          "id": "add-core-postgres-services",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 20
+        },
+        {
+          "id": "add-durable-minimized-audit",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 20
+        },
+        {
+          "id": "add-essential-pbo-pzt-and-dns-modules",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 21
+        },
+        {
+          "id": "add-initial-administration-panel",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 21
+        },
+        {
+          "id": "add-initial-authentication-and-sessions",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 21
+        },
+        {
+          "id": "add-installation-and-first-configuration",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 11
+        },
+        {
+          "id": "add-pbo-runtime-secret-provider",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 11
+        },
+        {
+          "id": "add-protected-core-http-commands-and-queries",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 11
+        },
+        {
+          "id": "add-reference-worker-scheduler-and-event-delivery",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 11
+        },
+        {
+          "id": "add-runtime-observability-and-operations",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 11
+        },
+        {
+          "id": "add-upgrade-backup-and-restore-contracts",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 11
+        },
+        {
+          "id": "ai-agents",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "api",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "architecture-decisions",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "artifact-publication",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "audit",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "audit-integrity",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "authentication",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "authorization",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "authorization-engine",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "backup-disaster-recovery",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "build-first-pbo-pfo-debian-package",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 8
+        },
+        {
+          "id": "bulk-operations",
+          "type": "spec",
+          "valid": false,
+          "issues": [
+            {
+              "level": "WARNING",
+              "path": "requirements[6]",
+              "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+            },
+            {
+              "level": "WARNING",
+              "path": "requirements[10]",
+              "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+            },
+            {
+              "level": "WARNING",
+              "path": "requirements[13]",
+              "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+            }
+          ],
+          "durationMs": 1
+        },
+        {
+          "id": "business-rules",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "capabilities",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "compatibility",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "complete-shared-ui-i18n-and-accessibility",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 9
+        },
+        {
+          "id": "component-model",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "component-registry",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "compose-modular-frontend-with-core-api",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 9
+        },
+        {
+          "id": "configuration",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "contracts",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "core",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "data-governance",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "data-lifecycle",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "deb-package",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "define-first-installable-pbo-profile",
+          "type": "change",
+          "valid": true,
+          "issues": [],
+          "durationMs": 65
+        },
+        {
+          "id": "dependencies",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "design-system",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "developer-experience",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "directory-projections",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "distributed-cache",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "docker-image",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "document-repositories",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "enforce-core-data-governance-and-lifecycle",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 38
+        },
+        {
+          "id": "events",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "extension-contracts",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "external-synchronization",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "feature-flags",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "frontend",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "identity-assurance",
+          "type": "spec",
+          "valid": false,
+          "issues": [
+            {
+              "level": "WARNING",
+              "path": "requirements[4]",
+              "message": "Requirement text is very long (>500 characters). Move examples and edge cases into scenarios, or split it into separate requirements that each state one behavior."
+            }
+          ],
+          "durationMs": 0
+        },
+        {
+          "id": "initial-administration",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "initial-application-bootstrap",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "installation-provisioning",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "integrate-runtime-authorization-and-super-admin",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 40
+        },
+        {
+          "id": "interactions",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "internationalization",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "jobs",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "kernel",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "lifecycle",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "migrations",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "modules",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "native-clients",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "notifications",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "object-storage",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "observability",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "offline-first",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "operations",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "performance",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "pixs-agent",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "progressive-deployment",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "providers",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "publish-first-qualified-pbo-release",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 37
+        },
+        {
+          "id": "pzt",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 16
+        },
+        {
+          "id": "qualify-first-pbo-composition",
+          "type": "change",
+          "valid": true,
+          "issues": [
+            {
+              "level": "INFO",
+              "path": "file",
+              "message": "skip_specs is set in .openspec.yaml: change declares no spec-level behavior changes, zero deltas accepted"
+            }
+          ],
+          "durationMs": 36
+        },
+        {
+          "id": "quotas-entitlements",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "realtime-collaboration",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "reference-composition",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "reference-runtime",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "regional-residency",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "release-management",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "reporting-analytics",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "resilience",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "runtime",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "scim-provisioning",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "scope-context",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "sdk-ecosystem",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "search",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "secrets-providers",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "security",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 1
+        },
+        {
+          "id": "service-objectives",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "services",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "synchronization",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "testing",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "themes",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        },
+        {
+          "id": "workflows",
+          "type": "spec",
+          "valid": true,
+          "issues": [],
+          "durationMs": 0
+        }
+      ],
+      "summary": {
+        "totals": {
+          "items": 98,
+          "passed": 96,
+          "failed": 2
+        },
+        "byType": {
+          "change": {
+            "items": 20,
+            "passed": 20,
+            "failed": 0
+          },
+          "spec": {
+            "items": 78,
+            "passed": 76,
+            "failed": 2
+          }
+        }
+      },
+      "version": "1.0",
+      "root": {
+        "path": "/home/devops/datas/pixs",
+        "source": "nearest"
+      }
+    }
+  }
+}

@@ -652,6 +652,11 @@ Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses 
 - **WHEN** une limite, une annulation ou une perte de bail interrompt la validation
 - **THEN** aucune validation complète ni mutation ni persistance forcée n'est prétendue et l'état reste explicite à réconcilier
 
+#### Scenario: Chunk ATOMIC_PER_CHUNK REJECT engagé sans rejou
+
+- **WHEN** une opération IMPORT ATOMIC_PER_CHUNK REJECT à validation complète prouvée applique un chunk sous autorité EXECUTE et gouvernance RESOLVED actuelles, avec participation propriétaire PostgreSQL déclarée au même alias et unité protégée même thread et même transaction
+- **THEN** le chunk est engagé avec checkpoint et outbox requise dans la même transaction, les chunks déjà engagés sont conservés, aucun rejou n'est compté comme nouvel effet et un rejet propriétaire ou conflit REJECT annule le chunk courant entier sans mutation partielle
+
 ### Requirement: Runtime Bulk v1 B12 — Export et résultats
 
 Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses B12 et les annexes de données logiques correspondantes ci-dessous. Ces règles MUST NOT modifier les profils préparatoires livrés.

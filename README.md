@@ -1,5 +1,9 @@
 # Pixs
 
+**Version initiale — avancement OpenSpec : 57,45 %** — 135 changes archivés sur 235 au total, dont 100 ouverts. Relevé du 17 octobre 2026.
+
+Ce ratio suit les changes, sans mesurer leur taille ni remplacer une qualification fonctionnelle. [Méthode et suivi détaillé](PROJECT.md#34-openspec).
+
 > Un socle applicatif modulaire, sécurisé et API-first pour construire des applications et services métiers durables.
 
 Pixs est un framework applicatif conçu pour composer plusieurs applications et services métiers à partir de composants indépendants. Il sépare strictement le mécanisme du framework des fonctionnalités de domaine, afin de pouvoir faire évoluer une installation par ajout de modules, providers, extensions ou thèmes, sans modifier son noyau.
@@ -11,6 +15,14 @@ Le dépôt contient les cadrages, les spécifications OpenSpec et une implément
 Le dépôt ne publie pas encore de release, de paquet Debian ni d'image Docker utilisable. Les commandes et paramètres des jalons de développement ne constituent pas encore une interface de déploiement définitive. Les limites et parcours de ces jalons sont décrits dans [la documentation backend](src/pixs/backend/README.md) et [la documentation frontend](frontend/README.md).
 
 Cette documentation présente le périmètre cible du projet sans anticiper ces choix d'implémentation.
+
+## OpenSpec
+
+OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 717 exigences et 812 scénarios**, recensés au 17 octobre 2026.
+
+Les **100 changes ouverts sont préparés**, dont **20 pour le premier socle installable P0**. Chaque exigence est reliée au travail prévu, aux écarts et aux références disponibles. Ce suivi est une analyse des documents et du code ; il ne prouve pas le bon fonctionnement du logiciel.
+
+Les priorités sont de finaliser les données et la sécurité, l’installation et l’interface, puis les tests et la livraison. Le [suivi OpenSpec dans PROJECT.md](PROJECT.md#34-openspec) détaille les étapes et les décisions restantes. Cette synthèse et le ratio en tête de page sont à actualiser pendant toute la vie de Pixs, au fil des changes et de leurs preuves.
 
 ## En bref
 
