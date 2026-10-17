@@ -1,0 +1,52 @@
+# B11 — Recette complète du runtime Bulk
+
+## Pourquoi
+
+Des structures, dépôts PostgreSQL et façades bornées existent ; le dernier sous-lot couvre IMPORT ATOMIC_PER_CHUNK/REJECT. Le catalogue prévoit un complément du runtime, pas une recréation des profils ou records déjà livrés.
+
+Les références de la matrice et les fichiers présents ne constituent pas une preuve fonctionnelle actuelle. Relire le code concerné et ses preuves avant de décider le complément à réaliser. 39 références relèvent de la conservation/réutilisation/qualification : ne pas reproduire leurs modèles ou algorithmes.
+
+## Modifications proposées
+
+Recouper B01–B14 ; conserver profils/records comme régressions ; qualifier modes, PG, propriétaires et surfaces.
+
+## Capacités
+
+### Capacités nouvelles
+
+Aucun comportement normatif nouveau n’est prévu. Ce dossier prépare la réalisation ou la qualification des contrats déjà présents dans le canon.
+
+### Capacités modifiées
+
+Aucune modification de texte canonique. `requirements.md` référence et reproduit les blocs sources, avec empreintes et scénarios ; `skip_specs: true` évite un delta identique artificiel. Si un audit ou une décision exige une évolution normative, présenter son delta avant réalisation, sans considérer cette métadonnée comme une dispense de conformité.
+
+## Sélection et périmètre autorisé
+
+Hors premier P0 proposé ; obligation du profil/capacité sélectionné, applicabilité à confirmer. La préparation demandée ne sélectionne, n’active et ne qualifie pas cette capacité dans le premier profil P0.
+
+La demande actuelle porte exclusivement sur les documents de préparation. Aucun code, test produit, serveur, accès fournisseur, secret, migration, dépendance, configuration système, publication, Git ou archivage n’est exécuté par ce dossier.
+
+## Dépendances
+
+- [add-bulk-atomic-import-execution](../add-bulk-atomic-import-execution/proposal.md).
+- [add-bulk-best-effort-import-execution](../add-bulk-best-effort-import-execution/proposal.md).
+- [complete-bulk-owner-conflict-strategies](../complete-bulk-owner-conflict-strategies/proposal.md).
+- [add-bulk-authorized-export-and-revocable-results](../add-bulk-authorized-export-and-revocable-results/proposal.md).
+- [integrate-bulk-inbox-outbox-and-publication](../integrate-bulk-inbox-outbox-and-publication/proposal.md).
+- [integrate-bulk-worker-jobs-and-cancellation](../integrate-bulk-worker-jobs-and-cancellation/proposal.md).
+- [expose-bulk-versioned-http-api](../expose-bulk-versioned-http-api/proposal.md).
+- [complete-bulk-validation-reports-and-recovery-proofs](../complete-bulk-validation-reports-and-recovery-proofs/proposal.md).
+
+
+
+## Impact de réalisation future
+
+Compléter les façades et dépôts Bulk existants par les ports propriétaires et transactions déclarés. Réutiliser les profils, records, migrations, baux et checkpoints livrés ; distinguer validation, admission, effet et résultat durable. Rattacher chaque effet à autorité/gouvernance/tenant courants, conserver atomicité du mode choisi et reprise idempotente.
+
+## Critère de sortie de réalisation future
+
+Preuves actuelles des scénarios ; existant qualifié avant correction ; aucune réimplémentation de profil déjà livré.
+
+## Décisions restant à valider
+
+Matrice complète modes/propriétaires/PG et scénario par contrat B01–B14 ; profils déjà livrés en régression, pas en réimplémentation.

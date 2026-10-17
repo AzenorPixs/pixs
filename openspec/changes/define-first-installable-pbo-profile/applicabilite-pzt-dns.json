@@ -1,0 +1,1939 @@
+{
+  "profile": "pbo-p0-debian-local-v1",
+  "source": "openspec/specs/pzt/spec.md",
+  "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+  "requirements": [
+    {
+      "requirement_id": "pzt--4e34d93767",
+      "line": 12,
+      "title": "Base WireGuard et développement propre à Pixs",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--73016f3d2e",
+      "line": 21,
+      "title": "Module essentiel PBO et binaire PZT dédié",
+      "scope": "GESTION_PBO",
+      "condition": "Modules essentiels et contrats de gestion requis ; absence d’exécution annoncée séparément, sans retirer le module ni simuler un service.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--b09abd6f60",
+      "line": 30,
+      "title": "Passage obligatoire PBO–PA par PZT",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--95cfbef9df",
+      "line": 39,
+      "title": "Autorités, politiques et délégations distinctes",
+      "scope": "TRANSVERSE",
+      "condition": "Appliquer aux données/autorités/opérations de gestion réellement livrées ; les obligations d’exécution restent conditionnées à leurs rôles.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--8cb0863347",
+      "line": 48,
+      "title": "Autorité métier et état de contrôle cohérents",
+      "scope": "TRANSVERSE",
+      "condition": "Appliquer aux données/autorités/opérations de gestion réellement livrées ; les obligations d’exécution restent conditionnées à leurs rôles.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4e6e13b55e",
+      "line": 57,
+      "title": "Propriétaire des ressources réseau et filtrage",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--36bde46b8d",
+      "line": 66,
+      "title": "Expiration, révocation et protection indépendante",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--005df2f1f1",
+      "line": 75,
+      "title": "IPv6 désactivable et configuration hôte préservée",
+      "scope": "CONFIGURATION_ET_EXECUTION",
+      "condition": "Conserver les décisions et paramètres administrés déjà validés ; aucun effet réseau/DNS/TLS n’est annoncé dans le profil désactivé.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--fd36d11ae5",
+      "line": 84,
+      "title": "DNS essentiel partagé administré par PBO",
+      "scope": "GESTION_PBO",
+      "condition": "Modules essentiels et contrats de gestion requis ; absence d’exécution annoncée séparément, sans retirer le module ni simuler un service.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--120fef4ef9",
+      "line": 93,
+      "title": "Contrats, snapshots, deltas et adaptation de transport",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7c8aaf6a4f",
+      "line": 102,
+      "title": "Découverte, chemins et relais chiffrés",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--030cf179ed",
+      "line": 111,
+      "title": "Passerelles après socle et source conservée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--60b0ba04d0",
+      "line": 120,
+      "title": "Identités de service, PKI et attestation",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--a263a81ed1",
+      "line": 129,
+      "title": "TLS et choix de chiffrement borné",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--672038e548",
+      "line": 138,
+      "title": "Admission, pairs éphémères et retrait par génération",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--82a0e6c439",
+      "line": 147,
+      "title": "Audit applicable et faits réellement établis",
+      "scope": "TRANSVERSE",
+      "condition": "Appliquer aux données/autorités/opérations de gestion réellement livrées ; les obligations d’exécution restent conditionnées à leurs rôles.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--ba5864bec8",
+      "line": 156,
+      "title": "Portée des contrats techniques et valeurs ouvertes",
+      "scope": "TRANSVERSE",
+      "condition": "Appliquer aux données/autorités/opérations de gestion réellement livrées ; les obligations d’exécution restent conditionnées à leurs rôles.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7794d08725",
+      "line": 165,
+      "title": "Qualification et état de spécification distincts",
+      "scope": "TRANSVERSE",
+      "condition": "Appliquer aux données/autorités/opérations de gestion réellement livrées ; les obligations d’exécution restent conditionnées à leurs rôles.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--fa8c14eb09",
+      "line": 174,
+      "title": "Lecture normative des contrats de décision intégrés",
+      "scope": "TRANSVERSE",
+      "condition": "Appliquer aux données/autorités/opérations de gestion réellement livrées ; les obligations d’exécution restent conditionnées à leurs rôles.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4b8f11c8f2",
+      "line": 188,
+      "title": "Contrat A05b — Objectifs initiaux validés, qualification requise",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--93943f7161",
+      "line": 250,
+      "title": "Contrat A06b — Plan privé et allocation validés, qualification requise",
+      "scope": "CONFIGURATION_ET_EXECUTION",
+      "condition": "Conserver les décisions et paramètres administrés déjà validés ; aucun effet réseau/DNS/TLS n’est annoncé dans le profil désactivé.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7a832c1a03",
+      "line": 310,
+      "title": "Contrat A06c — DNS Pixs géré par un module essentiel PBO, option B validée",
+      "scope": "GESTION_PBO",
+      "condition": "Modules essentiels et contrats de gestion requis ; absence d’exécution annoncée séparément, sans retirer le module ni simuler un service.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e5df8c262f",
+      "line": 425,
+      "title": "Contrat A06d — Valeur initiale du réglage IPv6 PZT — option A validée le 6 octobre 2026",
+      "scope": "CONFIGURATION_ET_EXECUTION",
+      "condition": "Conserver les décisions et paramètres administrés déjà validés ; aucun effet réseau/DNS/TLS n’est annoncé dans le profil désactivé.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--a74381eadc",
+      "line": 512,
+      "title": "Contrat A06e — Exécution du service DNS Pixs — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--3cb131fa46",
+      "line": 602,
+      "title": "Contrat A06f — Transport des requêtes DNS PZT — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--6be4b9c289",
+      "line": 698,
+      "title": "Contrat A06g — Politique de cache et TTL DNS — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--63fa6ba7a7",
+      "line": 807,
+      "title": "Contrat A06h — Sélection des serveurs DNS PZT — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e19905d610",
+      "line": 906,
+      "title": "Contrat A06i — Nommage DNS des instances PA — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--6b3cdaf269",
+      "line": 1022,
+      "title": "Contrat A06j — Choix du suffixe DNS privé PZT — option A validée le 6 octobre 2026",
+      "scope": "CONFIGURATION_ET_EXECUTION",
+      "condition": "Conserver les décisions et paramètres administrés déjà validés ; aucun effet réseau/DNS/TLS n’est annoncé dans le profil désactivé.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--33f3f9b057",
+      "line": 1123,
+      "title": "Contrat A06k — Représentation des alias DNS lisibles des PA — option A validée le 6 octobre 2026",
+      "scope": "CONFIGURATION_ET_EXECUTION",
+      "condition": "Conserver les décisions et paramètres administrés déjà validés ; aucun effet réseau/DNS/TLS n’est annoncé dans le profil désactivé.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4dd19c92ee",
+      "line": 1211,
+      "title": "Contrat A07a — Contrats HTTP/JSON, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4df27df948",
+      "line": 1268,
+      "title": "Contrat A07b — Snapshot et deltas ordonnés, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--eb40174af0",
+      "line": 1375,
+      "title": "Contrat A07c — Notifications WebSocket, option B validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--14dc7ac926",
+      "line": 1475,
+      "title": "Contrat A07c2 — Table de règles déterministes, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--027b4f9267",
+      "line": 1587,
+      "title": "Contrat A07d — Deltas par opérations métier JSON typées, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--0162beddae",
+      "line": 1666,
+      "title": "Contrat A08a — Socle initial puis profil passerelle ultérieur, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4408379fd3",
+      "line": 1755,
+      "title": "Contrat A08b — Conservation des sources et routes retour, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4d93d98ef2",
+      "line": 1852,
+      "title": "Contrat A08c — Principale avec secours et basculement, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c881bca702",
+      "line": 1957,
+      "title": "Contrat A09a — Découverte des chemins ICE/STUN, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--253cb3dd9e",
+      "line": 2092,
+      "title": "Contrat A09b — Relais UDP avec secours WSS, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--6951afc6e2",
+      "line": 2237,
+      "title": "Contrat A09c — QUIC avec DATAGRAM pour les relais UDP, option A validée",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--6eb3b452fb",
+      "line": 2362,
+      "title": "Contrat A10a — Transport partagé et identités de service — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--ec480629cf",
+      "line": 2494,
+      "title": "Contrat A10b — Certificats et liaison WireGuard — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7ca51f88af",
+      "line": 2624,
+      "title": "Contrat A10c — Déclencheurs d'attestation TPM — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--9064a45f10",
+      "line": 2766,
+      "title": "Contrat A10d — Admission par profil TPM — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--110cd85b06",
+      "line": 2896,
+      "title": "Contrat A10e — Périmètre des mesures d'intégrité — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--83645fffdb",
+      "line": 3034,
+      "title": "Contrat A10f — Gestion des références d'intégrité — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--13b5623d9e",
+      "line": 3165,
+      "title": "Contrat A10g — Versions TLS pour les canaux PZT — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--2b5633f473",
+      "line": 3259,
+      "title": "Contrat A10h — Choix du chiffrement TLS depuis PBO — choix du développeur validé le 6 octobre 2026",
+      "scope": "CONFIGURATION_ET_EXECUTION",
+      "condition": "Conserver les décisions et paramètres administrés déjà validés ; aucun effet réseau/DNS/TLS n’est annoncé dans le profil désactivé.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--867b266f75",
+      "line": 3379,
+      "title": "Contrat A10h2 — Portée du choix de chiffrement PBO — option A validée le 6 octobre 2026",
+      "scope": "CONFIGURATION_ET_EXECUTION",
+      "condition": "Conserver les décisions et paramètres administrés déjà validés ; aucun effet réseau/DNS/TLS n’est annoncé dans le profil désactivé.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--83f50070da",
+      "line": 3451,
+      "title": "Contrat A10h3 — Chiffrement global initial — option A validée le 6 octobre 2026",
+      "scope": "CONFIGURATION_ET_EXECUTION",
+      "condition": "Conserver les décisions et paramètres administrés déjà validés ; aucun effet réseau/DNS/TLS n’est annoncé dans le profil désactivé.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--58e1823abd",
+      "line": 3514,
+      "title": "Contrat A10h4 — Changement de chiffrement coordonné — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--5e45c1c889",
+      "line": 3606,
+      "title": "Contrat A10h5 — Unités de migration calculées par PBO — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e8c67e515b",
+      "line": 3670,
+      "title": "Contrat A10h6 — Migration séquentielle par unité — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--57b5bfa9d3",
+      "line": 3730,
+      "title": "Contrat A10h7 — Budgets par phase et échéance globale de migration — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--6ef8816da6",
+      "line": 3798,
+      "title": "Contrat A10h8 — Tentatives de reconnexion transitoires bornées — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c753a71342",
+      "line": 3863,
+      "title": "Contrat A10h9 — Temporisation exponentielle plafonnée et déterministe — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--75c102770d",
+      "line": 3927,
+      "title": "Contrat A10i — Renouvellement anticipé des certificats TLS sous mandat — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--45b43e3af7",
+      "line": 4016,
+      "title": "Contrat A10i2 — Nouvelle paire de clés TLS à chaque renouvellement — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c3e75025c7",
+      "line": 4097,
+      "title": "Contrat A10i3 — Transition TLS par chevauchement borné — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--863cc1c210",
+      "line": 4175,
+      "title": "Contrat A10i4 — Durées TLS initiales — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--b363d83a3b",
+      "line": 4257,
+      "title": "Contrat A10i5 — Clé d'authentification TLS ECDSA P-256 — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--fefc801de8",
+      "line": 4325,
+      "title": "Contrat A10i6 — PKI privée dédiée à PZT — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--002cacafae",
+      "line": 4415,
+      "title": "Contrat A10i7 — Émetteur CA dédié par autorité logique habilitée — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--19d4898890",
+      "line": 4495,
+      "title": "Contrat A10i8 — Profils explicites de protection des clés CA intermédiaires — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e870aee0a4",
+      "line": 4585,
+      "title": "Contrat A10i9 — Nouvelle clé CA et recertification après perte — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--f14c94acdf",
+      "line": 4680,
+      "title": "Contrat A10i10 — Secours CA indépendant pré-certifié — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c560650e6f",
+      "line": 4772,
+      "title": "Contrat A10i11 — Bascule CA automatisable sous mandat préalable — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e0a8407845",
+      "line": 4858,
+      "title": "Contrat A10i12 — Exclusion active et vérifiée du signataire CA — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--a721c1d30e",
+      "line": 4943,
+      "title": "Contrat A10i13 — Mécanismes d'exclusion adaptés au profil CA — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7f00749de1",
+      "line": 5039,
+      "title": "Contrat A10i14 — Clés CA ECDSA P-256 et signatures SHA-256 — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--bf2838d7ed",
+      "line": 5117,
+      "title": "Contrat A10i15 — Nouvelle paire à chaque renouvellement normal des CA intermédiaires — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--eacd53b171",
+      "line": 5213,
+      "title": "Contrat A10i16 — Durées et anticipation des CA intermédiaires — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--48e3ce692f",
+      "line": 5334,
+      "title": "Contrat A10i17 — Durée et anticipation de la racine hors ligne — choix du développeur validé le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--f0853e6e7c",
+      "line": 5455,
+      "title": "Contrat A10i18 — Nouvelle paire indépendante à chaque succession racine — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--9f26981801",
+      "line": 5561,
+      "title": "Contrat A10i19 — Coexistence bornée des ancrages racine sur les PA — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--67b216110f",
+      "line": 5657,
+      "title": "Contrat A10i20 — Plafond de coexistence des ancrages racine — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--a1709a96cc",
+      "line": 5766,
+      "title": "Contrat A10i21 — Sauvegarde et récupération de la clé racine hors ligne — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--833ab7d9b9",
+      "line": 5904,
+      "title": "Contrat A10i22 — Opérations de sauvegarde et récupération racine par une personne habilitée — option B validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--338098f06c",
+      "line": 6014,
+      "title": "Contrat A10i23 — Deux sauvegardes privées racine sur supports et lieux distincts — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--1572528364",
+      "line": 6133,
+      "title": "Contrat A10i24 — Clé de protection aléatoire indépendante pour les sauvegardes racine — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--bd4f7394d5",
+      "line": 6242,
+      "title": "Contrat A10i25 — Clé de protection commune aux deux copies d’une génération racine — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--503c3dff0a",
+      "line": 6352,
+      "title": "Contrat A10i26 — Deux moyens complets de récupération de la clé commune — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--b52a2fbee0",
+      "line": 6479,
+      "title": "Contrat A10i27 — Chiffrement des sauvegardes privées racine — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--52ddc3cd15",
+      "line": 6544,
+      "title": "Contrat A10i28 — Production déterministe des nonces de sauvegarde racine — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e09246d68b",
+      "line": 6604,
+      "title": "Contrat A10i29 — Témoin hors ligne indépendant de progression — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--115fd84152",
+      "line": 6666,
+      "title": "Contrat A10i30 — Journal du témoin lié à un ancrage matériel monotone — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--8f11faf34e",
+      "line": 6729,
+      "title": "Contrat A10i31 — Nouvelle protection après perte ou remplacement de l'ancrage du témoin — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--58fdd8af1e",
+      "line": 6795,
+      "title": "Contrat A10i32 — Transition par étapes vers la nouvelle protection des sauvegardes — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--69a59d97aa",
+      "line": 6866,
+      "title": "Contrat A10i33 — Assainissement des anciens éléments sans conservation volontaire — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--d749b26b0b",
+      "line": 6936,
+      "title": "Contrat A10i34 — Méthode d’assainissement qualifiée par profil — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--0fe01f12e2",
+      "line": 6997,
+      "title": "Contrat A10i35 — Dossier de preuve lié au reçu signé de clôture — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--13b0829ae5",
+      "line": 7066,
+      "title": "Contrat A10i36 — Empreinte documentaire SHA-384 entière — option B validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--b7c1c6bee0",
+      "line": 7135,
+      "title": "Contrat A10i37 — Empreinte SHA-384 encodée Base64url sans remplissage — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--9276e5b403",
+      "line": 7196,
+      "title": "Contrat A10i38 — Dossier JSON avec manifeste de pièces séparées — option A validée le 7 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--b34367d9ac",
+      "line": 7268,
+      "title": "Contrat A10i39 — Plafonds configurables de validation du dossier de preuve — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--33a0c4091a",
+      "line": 7341,
+      "title": "Contrat A10i40 — Budgets séquentiels de validation automatique du dossier — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--06edb9782b",
+      "line": 7414,
+      "title": "Contrat A10i41 — Non-admission explicite lorsque le validateur est occupé — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--074960173f",
+      "line": 7469,
+      "title": "Contrat A10i42 — Relances automatiques bornées après non-admission pour capacité — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7fdaa510c8",
+      "line": 7541,
+      "title": "Contrat A10i43 — Réconciliation automatique bornée après réponse perdue ou état incertain — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--1fa56c9494",
+      "line": 7616,
+      "title": "Contrat A10i44 — Fermeture durable d’une tentative coordonnée avec l’admission — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--2f9bdc1c11",
+      "line": 7689,
+      "title": "Contrat A10i45 — Conservation individuelle des marqueurs sans compaction automatique — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--f08bd58cc9",
+      "line": 7751,
+      "title": "Contrat A10i46 — Retrait des marqueurs après minimum 24 heures et preuve d’irrecevabilité — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--d85bddd3ea",
+      "line": 7819,
+      "title": "Contrat A10i47 — Identité structurée opération, cycle et numéro de tentative — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4a4a1a6433",
+      "line": 7891,
+      "title": "Contrat A10i48 — Échéance d’admission fixée à la création active du cycle — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--8a438b699e",
+      "line": 7961,
+      "title": "Contrat A10i49 — Bornes d’incertitude qualifiées pour admission avant échéance — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7c35729f30",
+      "line": 8039,
+      "title": "Contrat A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e4e09ec26e",
+      "line": 8109,
+      "title": "Contrat A10i51 — Lecture cohérente de temps et qualité à chaque décision — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--732f4ee09e",
+      "line": 8169,
+      "title": "Contrat A10i52 — Budgets bornés d’acquisition et fraîcheur de preuve de temps — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--6618b62308",
+      "line": 8246,
+      "title": "Contrat A10i53 — API native ou IPC documentée pour lecture structurée du temps — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--8a99885f28",
+      "line": 8311,
+      "title": "Contrat A10i54 — Auxiliaire local isolé pour les acquisitions temporelles — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7800c6dd7c",
+      "line": 8385,
+      "title": "Contrat A10i55 — Auxiliaire créé à la demande, réutilisé et arrêté après repos — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--43dd13ba2f",
+      "line": 8432,
+      "title": "Contrat A10i56 — Messages IPC JSON UTF-8 typés/versionnés, plafond 16 Kio — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c23a3eff0f",
+      "line": 8485,
+      "title": "Contrat A10i57 — Compte système dédié à la collecte, droits minimaux — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--db6d63aaea",
+      "line": 8533,
+      "title": "Contrat A10i58 — Transport local natif parent/auxiliaire, accès et identités contrôlés — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--91a8063175",
+      "line": 8585,
+      "title": "Contrat A10i59 — Plafonds auxiliaire de premier jet 64 Mio et 50 % d’un cœur — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--cedc4ee89b",
+      "line": 8639,
+      "title": "Contrat A10i60 — Journalisation technique agrégée, transitions et erreurs — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--adaf0a5bc3",
+      "line": 8692,
+      "title": "Contrat A10i61 — Messages IPC préfixés par une longueur sur 4 octets — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--957066ab0a",
+      "line": 8742,
+      "title": "Contrat A10i62 — Schéma JSON IPC fermé par version, champs inconnus refusés — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--79c4edcf65",
+      "line": 8790,
+      "title": "Contrat A10i63 — Recréation technique à la demande, 3 tentatives sur 600 secondes — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--2c055f8404",
+      "line": 8849,
+      "title": "Contrat A10i64 — Grands entiers IPC en chaînes décimales canoniques — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--fd54821153",
+      "line": 8897,
+      "title": "Contrat A10i65 — Complexité JSON IPC plafonnée à 8 niveaux, 32 membres et 32 éléments — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c65e6a1c6b",
+      "line": 8945,
+      "title": "Contrat A10i66 — État de reprise technique local durable, protégé et possédé par le parent — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--3ef6d61fb7",
+      "line": 9007,
+      "title": "Contrat A10i67 — État technique courant en document JSON UTF-8 typé/versionné — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--84b9058dfd",
+      "line": 9058,
+      "title": "Contrat A10i68 — Stockage de l'état technique et de sa publication plafonné à 256 Kio — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--cc057c30a8",
+      "line": 9109,
+      "title": "Contrat A10i69 — Métriques techniques à dimensions stables et finies — option A validée le 8 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--5b57318d5a",
+      "line": 9162,
+      "title": "Contrat A10i70 — Publication de l'état JSON par candidat synchronisé et remplacement atomique — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--33ca2093cb",
+      "line": 9214,
+      "title": "Contrat A10i71 — Exclusion des écrivains par verrou OS sur objet stable distinct — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--5de1dac066",
+      "line": 9267,
+      "title": "Contrat A10i72 — Métriques de collecte plafonnées à 64 séries ordinaires et 1 débordement — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--661eb042b1",
+      "line": 9322,
+      "title": "Contrat A10i73 — Reprise du parent au même démarrage OS sous continuité complète prouvée — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--88f5b461ba",
+      "line": 9377,
+      "title": "Contrat A10i74 — Tampon d'export métrique plafonné à 256 Kio de charges utiles — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--75a34a4fa6",
+      "line": 9429,
+      "title": "Contrat A10i75 — Export métrique périodique à intervalle nominal de 30 secondes — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--cabb815afc",
+      "line": 9480,
+      "title": "Contrat A10i76 — Cycle d'export métrique borné à 5 secondes globales — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--bb8eeea9a8",
+      "line": 9532,
+      "title": "Contrat A10i77 — Un seul pipeline d'export métrique actif par instance — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--ecd2a0ceea",
+      "line": 9581,
+      "title": "Contrat A10i78 — Cycles métriques sans file, non lancés lorsque l'export est occupé — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--cc82d9528b",
+      "line": 9631,
+      "title": "Contrat A10i79 — Temporalité cumulative des sommes et histogrammes métriques compatibles — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--2dfebc72a6",
+      "line": 9681,
+      "title": "Contrat A10i80 — Erreurs techniques répétées regroupées sur fenêtre nominale de 30 secondes — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c3c634b4ef",
+      "line": 9731,
+      "title": "Contrat A10i81 — Alerte d'export après 3 occasions défavorables consécutives — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--41c2872ee1",
+      "line": 9782,
+      "title": "Contrat A10i82 — Rétention nominale des journaux techniques de collecte à 7 jours — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--f4612442df",
+      "line": 9834,
+      "title": "Contrat A10i83 — Rétention nominale des points métriques agrégés à 30 jours — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4edbf82cf8",
+      "line": 9885,
+      "title": "Contrat A10i84 — Rétention nominale des traces techniques à 24 heures — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--b878787fe7",
+      "line": 9931,
+      "title": "Contrat A10i85 — Travaux de purge de télémétrie à cadence nominale de 24 heures — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--b657cbbdb8",
+      "line": 9982,
+      "title": "Contrat A10i86 — Lots de purge plafonnés à 1 000 enregistrements sources — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--7e48e03402",
+      "line": 10032,
+      "title": "Contrat A10i87 — Travail actif de purge borné à 60 secondes globales — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--ba7e93a0f7",
+      "line": 10083,
+      "title": "Contrat A10i88 — Point de reprise durable après chaque lot de purge confirmé — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--dc8facc32b",
+      "line": 10132,
+      "title": "Contrat A10i89 — Réessai technique de purge borné à 2 tentatives et attente nominale de 1 seconde — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--811d4618ea",
+      "line": 10183,
+      "title": "Contrat A10i90 — Un seul travail de purge télémétrie actif par autorité logique — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--311b97a91a",
+      "line": 10233,
+      "title": "Contrat A10i91 — Bail persistant de purge nominal 60 secondes, renouvellement 20 secondes — option B validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--de6f49130f",
+      "line": 10281,
+      "title": "Contrat A10i92 — Travaux de purge ordonnés par rotation déterministe des classes — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--50cc73e0dc",
+      "line": 10330,
+      "title": "Contrat A10i93 — Alerte de reliquat de purge après 2 observations qualifiées consécutives — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e1460fd68b",
+      "line": 10379,
+      "title": "Contrat A10i94 — Audit des effets de purge par lot lié à un manifeste durable — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--1101fe44b5",
+      "line": 10429,
+      "title": "Contrat A10i95 — Attente de purge plafonnée à 3 travaux, un par classe — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--5cc1b0674d",
+      "line": 10478,
+      "title": "Contrat A10i96 — Rétention nominale des métadonnées terminales de purge à 14 jours — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--abc29b404d",
+      "line": 10526,
+      "title": "Contrat A10i97 — Manifeste de purge en JSON UTF-8 fermé, typé et versionné — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--9b000144ed",
+      "line": 10576,
+      "title": "Contrat A10i98 — Empreinte SHA-384 entière du manifeste de purge sur octets exacts — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c2ed4a665a",
+      "line": 10625,
+      "title": "Contrat A10i99 — Manifeste de purge plafonné à 128 Kio par version et phase — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--07099b9279",
+      "line": 10675,
+      "title": "Contrat A10i100 — Empreinte de manifeste SHA-384 encodée Base64url sans remplissage — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--ea000178ff",
+      "line": 10718,
+      "title": "Contrat A10i101 — Complexité du manifeste JSON plafonnée à 8 niveaux, 32 membres et 1 000 éléments — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--8e038084af",
+      "line": 10762,
+      "title": "Contrat A10i102 — Lot préparé par préfixe déterministe sous capacité d'audit de toutes phases — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--f2b88854e9",
+      "line": 10816,
+      "title": "Contrat A10i103 — Manifeste JSON produit selon JCS RFC 8785 sous schéma qualifié — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--f8e023f0af",
+      "line": 10863,
+      "title": "Contrat A10i104 — Sources de purge ordonnées par première persistance puis identité et génération — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c56e4f4144",
+      "line": 10910,
+      "title": "Contrat A10i105 — Manifeste revalidé et empreinte recalculée à chaque usage — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--5bd7342997",
+      "line": 10953,
+      "title": "Contrat A10i106 — Sources du travail délimitées par borne stable versionnée et parcours par lots — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--9b11df840f",
+      "line": 11000,
+      "title": "Contrat A10i107 — Conservation du manifeste liée aux durées et holds de l'audit — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--0559c964ff",
+      "line": 11048,
+      "title": "Contrat A10i108 — Anomalie de manifeste confinée sous preuve, blocage global sinon — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--5a0b413ff8",
+      "line": 11099,
+      "title": "Contrat A10i109 — Réarmement d'incident de manifeste par commande PBO d'opérateur habilité — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4875534343",
+      "line": 11147,
+      "title": "Contrat A10i110 — Original de manifeste protégé, incident marqué hors document sans copie automatique — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--966a6be06d",
+      "line": 11193,
+      "title": "Contrat A10i111 — Alerte d'intégrité persistante avec transitions, sans rappel périodique — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c686ec1622",
+      "line": 11239,
+      "title": "Contrat A10i112 — Preuves du réarmement liées à un dossier de contrôle structuré et versionné — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--0f87b5192f",
+      "line": 11285,
+      "title": "Contrat A10i113 — Commande de réarmement bornée à 60 secondes globales après admission serveur — option B validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--6f2104ada0",
+      "line": 11333,
+      "title": "Contrat A10i114 — Réarmement refusé sur version d'incident obsolète, nouvelle soumission explicite — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--671f0d0301",
+      "line": 11379,
+      "title": "Contrat A10i115 — Réarmement limité à une commande active par autorité, sans file — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--58d9e8b09a",
+      "line": 11424,
+      "title": "Contrat A10i116 — Dossier de contrôle de réarmement en JSON UTF-8 fermé et JCS qualifié — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--94a6d89385",
+      "line": 11475,
+      "title": "Contrat A10i117 — Dossier de contrôle de réarmement plafonné à 64 Kio par version — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--9dcafd80ac",
+      "line": 11521,
+      "title": "Contrat A10i118 — Dossier de contrôle lié par SHA-384 entière et Base64url externe auditée — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e152de0832",
+      "line": 11581,
+      "title": "Contrat A10i119 — Complexité du dossier JSON plafonnée à 8 niveaux, 32 membres et 64 éléments — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--927c72147f",
+      "line": 11626,
+      "title": "Contrat A10i120 — Conservation du dossier de réarmement liée aux durées et holds de l'audit — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--bcd7cf9dcb",
+      "line": 11673,
+      "title": "Contrat A10i121 — Engagement atomique de l'état de réarmement et de ses références — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--c93afebf8e",
+      "line": 11722,
+      "title": "Contrat A10i122 — Vérification du dossier de réarmement à chaque usage — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--81c9885a1d",
+      "line": 11764,
+      "title": "Contrat A10i123 — Suivi événementiel du statut de réarmement avec réconciliation — option A validée le 9 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--98368734a1",
+      "line": 11814,
+      "title": "Contrat A10i124 — Mutualisation du canal de suivi de statut — option A validée le 10 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--43d1ec56b6",
+      "line": 11864,
+      "title": "Contrat A10i125 — Fenêtre nominale de rejeu des statuts de 1 heure — option A validée le 10 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--344e8e53f6",
+      "line": 11910,
+      "title": "Contrat A10i126 — Reprise du suivi par état autoritatif courant puis événements — option A validée le 10 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--952f315f50",
+      "line": 11954,
+      "title": "Contrat A11a — Mode d'admission des PA — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--ff8aebc86d",
+      "line": 12080,
+      "title": "Contrat A11b — Mode d'usage des jetons d'enrôlement — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--54c9fbf487",
+      "line": 12208,
+      "title": "Contrat A11c — Cycle de vie des pairs éphémères — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--2166301eaf",
+      "line": 12328,
+      "title": "Contrat A12a — Source autoritative et coordination — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--50dbb10664",
+      "line": 12458,
+      "title": "Contrat A12b — Durabilité, réplication et bascule — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--e3c2e56efb",
+      "line": 12605,
+      "title": "Contrat A12c — Signataires et preuves d'engagement — option A validée le 5 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--8fb2c433db",
+      "line": 12755,
+      "title": "Contrat A12d — Format des reçus et permissions PZT — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--fdd6745e11",
+      "line": 12867,
+      "title": "Contrat A12e — Algorithme des reçus et permissions PZT — option B validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--4239a47c84",
+      "line": 12984,
+      "title": "Contrat A12f — Protection des clés des signataires opérationnels — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    },
+    {
+      "requirement_id": "pzt--8ee789ff3b",
+      "line": 13081,
+      "title": "Contrat A12g — Reprise après perte des clés opérationnelles — option A validée le 6 octobre 2026",
+      "scope": "EXECUTION_CONDITIONNELLE",
+      "condition": "Traitement exécutant non sélectionné ; conserver toutes ses clauses pour le rôle concerné et appliquer toute clause de gestion PBO rencontrée.",
+      "source_sha256": "81d2b355b118a6e4007f065a6fad91ada3915261fbbd51b0a5fc28e2a230290f",
+      "qualification_proven": false,
+      "clause_review_required_before_profile_adoption": true
+    }
+  ],
+  "implementation_authorized": false,
+  "note": "Portée par responsabilité ; revue de clauses requise avant adoption, pas une preuve de non-applicabilité universelle."
+}

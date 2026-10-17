@@ -607,6 +607,8 @@ L'évaluation suit strictement `DENY explicite`, puis `ALLOW explicite`, puis `d
 
 ### 12.2 Contrat de décision et filtrage
 
+Le profil préparatoire distinct d’invocation du port pour une projection d’audit valide v1 est défini dans `openspec/specs/authorization-engine/spec.md` et sa portée limitée dans `openspec/specs/audit/spec.md` ; son acquittement ne prouve ni persistance ni autorisation d’accès.
+
 Le contrat `authorize` retourne conceptuellement :
 
 ```text
@@ -1318,6 +1320,8 @@ CANCELLED
 ```
 
 La livraison suit `at-least-once`, avec retries, backoff et déduplication. Une notification ne doit pas être envoyée avant le commit de la transaction métier qui la justifie. Le contenu d'une notification ne doit pas exposer de secret. Les notifications sensibles doivent être auditables.
+
+Le profil préparatoire `NotificationDeduplicationReferenceV1`, défini dans la capacité OpenSpec `notifications`, porte seulement les références opaques `deduplication_key` et `perimeter_reference` ; il ne réalise aucune déduplication persistante.
 
 ## 25. Contrat API
 
