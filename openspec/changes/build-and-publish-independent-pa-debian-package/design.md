@@ -6,7 +6,7 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-Les exigences PA décrivent quatre binaires et sept modes ; le README indique que l’implémentation, la qualification et les artefacts restent à réaliser. Le contrôle de présence ciblé des sources n’est pas une recette de plateforme.
+Le canon distingue trois binaires PA et six modes, plus le binaire indépendant PZT et son mode pzt-daemon ; le README indique que l’implémentation, la qualification et les artefacts restent à réaliser. Le contrôle de présence ciblé des sources n’est pas une recette de plateforme.
 
 Les références de la matrice et les fichiers présents ne constituent pas une preuve fonctionnelle actuelle. Relire le code concerné et ses preuves avant de décider le complément à réaliser.
 
@@ -18,9 +18,9 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
-Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les quatre binaires et les choix Nuitka/Cython validés sont conservés.
+Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Nuitka) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
 
-Périmètre propre à ce lot : Paquet PA distinct de PBO/PFO avec quatre binaires, comptes/permissions et identité de distribution ; relation distante compatible.
+Périmètre propre à ce lot : Paquet commun PA/PZT distinct de PBO/PFO avec trois binaires PA et PZT indépendant, comptes/permissions et identité de distribution ; relation distante compatible.
 
 ## Choix déjà fixés et alternatives
 
@@ -48,7 +48,7 @@ Les dépendances sont des contrats et preuves attendus. Un dossier créé ne sig
 
 Modes et sessions, droits minimaux, mandats périmés, crash entre effet et résultat, concurrence d’autorités, état durable, arrêt et reprise ; recettes R01–R68 par plateforme réellement sélectionnée.
 
-Sortie du lot : Installation PA seule sans backend métier embarqué ; contenu, signatures, révocation, mise à niveau et arrêt qualifiés.
+Sortie du lot : Installation PA/PZT sans PBO/PFO locaux ni backend métier embarqué ; contenu, signatures, révocation, mise à niveau et arrêt qualifiés.
 
 Exercer tous les scénarios et clauses applicables des blocs sources, y compris renvois normatifs ; un scénario non applicable doit être motivé par le profil réel. Les contrôles applicatifs suivent l’exception Super Admin du canon dans son seul périmètre, sans fabriquer audit, mesure, signature ou effet absent.
 
@@ -59,3 +59,14 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Alignement PA/PZT validé le 17 octobre 2026
+
+La [décision adoptée](../separate-pa-pzt-and-pbo-management-modules/design.md) fixe pixs.agent pour
+la configuration, l'administration et la supervision de PA hors PZT, et
+pixs.pzt pour le binaire indépendant PZT. PA/PZT restent colivrés : trois
+binaires PA plus PZT dans Debian, deux binaires PA plus PZT dans Docker.
+Le présent lot conserve son périmètre de réalisation, sans code engagé ici.
+Les copies requirements.md et empreintes de préparation sont historiques et
+doivent être réconciliées avec le canon avant réalisation ; le réseau ne
+redevient pas une responsabilité PA du fait d'une formulation héritée.

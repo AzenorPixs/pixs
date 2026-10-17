@@ -62,3 +62,16 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+
+## Gestion PBO et séparation PA/PZT — décision du 17 octobre 2026
+
+Le [canon adopté](../separate-pa-pzt-and-pbo-management-modules/design.md) définit
+pixs.agent pour PA hors PZT et pixs.pzt pour le composant réseau indépendant.
+La composition PBO inclut ces modules ; la présence des exécutables PA/PZT
+ne vaut pas activation. L'exécution PA/PZT n'est pas sélectionnée dans le
+premier P0 par cette mise à jour. Les obligations PBO de gestion restent à
+satisfaire et à recouper avant qualification du profil et du paquet.
+Les contrats de transport/contrôle et leurs garanties restent dans les lots
+propriétaires ; réconcilier deltas proposés, copies et empreintes de préparation
+avec le canon actuel avant réalisation. Aucune tâche produit n'est réalisée.

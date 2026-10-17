@@ -134,3 +134,16 @@ Les pins observés et unités vertes ne valent pas qualification officielle du g
 Contrôles à intégrer : Deux builds contrôlés et graphe identique ; Identité de l’artefact de recette égale à celle livrée ; Budgets/support déclarés avec preuves et limites ; Strict global exit réel conservé, warnings non masqués.
 
 Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
+
+
+## Gestion PBO et séparation PA/PZT — décision du 17 octobre 2026
+
+Le [canon adopté](../separate-pa-pzt-and-pbo-management-modules/design.md) définit
+pixs.agent pour PA hors PZT et pixs.pzt pour le composant réseau indépendant.
+La composition PBO inclut ces modules ; la présence des exécutables PA/PZT
+ne vaut pas activation. L'exécution PA/PZT n'est pas sélectionnée dans le
+premier P0 par cette mise à jour. Les obligations PBO de gestion restent à
+satisfaire et à recouper avant qualification du profil et du paquet.
+Les contrats de transport/contrôle et leurs garanties restent dans les lots
+propriétaires ; réconcilier deltas proposés, copies et empreintes de préparation
+avec le canon actuel avant réalisation. Aucune tâche produit n'est réalisée.

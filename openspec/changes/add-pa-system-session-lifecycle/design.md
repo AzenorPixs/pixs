@@ -6,7 +6,7 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-Les exigences PA décrivent quatre binaires et sept modes ; le README indique que l’implémentation, la qualification et les artefacts restent à réaliser. Le contrôle de présence ciblé des sources n’est pas une recette de plateforme.
+Le canon distingue trois binaires PA et six modes, plus le binaire indépendant PZT et son mode pzt-daemon ; le README indique que l’implémentation, la qualification et les artefacts restent à réaliser. Le contrôle de présence ciblé des sources n’est pas une recette de plateforme.
 
 Les références de la matrice et les fichiers présents ne constituent pas une preuve fonctionnelle actuelle. Relire le code concerné et ses preuves avant de décider le complément à réaliser.
 
@@ -18,9 +18,9 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
-Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les quatre binaires et les choix Nuitka/Cython validés sont conservés.
+Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Nuitka) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
 
-Périmètre propre à ce lot : Délais et annulations, modes start/stop/daemon, fermeture bornée et isolation des sessions/privilèges ; respecter le rôle spécifique de pzt-daemon.
+Périmètre propre à ce lot : Délais et annulations, modes start/stop/daemon, fermeture bornée et isolation des sessions/privilèges ; respecter le cycle indépendant de PZT et de pzt-daemon.
 
 ## Choix déjà fixés et alternatives
 
@@ -30,7 +30,7 @@ Les modalités concrètes encore ouvertes ne reçoivent pas de valeur de défaut
 
 ## Barrières de conception avant réalisation
 
-Adapters de démarrage/session, comptes/permissions et budgets encore ouverts par cible ; conserver pzt-daemon sans délai et les sept modes validés.
+Adapters de démarrage/session, comptes/permissions et budgets encore ouverts par cible ; conserver pzt-daemon sans délai, six modes PA et un mode PZT.
 
 Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant tout code, les choix ayant un impact réel sur sécurité, périmètre, compatibilité, exploitation ou ressources devront être soumis avec conséquences et recommandation ; pour PA/PZT, respecter TECHNICAL §45.4 et ses lots de trois arbitrages. Les paramètres déjà décidés sont à qualifier, pas à remplacer par une nouvelle décision supposée.
 
@@ -58,3 +58,14 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Alignement PA/PZT validé le 17 octobre 2026
+
+La [décision adoptée](../separate-pa-pzt-and-pbo-management-modules/design.md) fixe pixs.agent pour
+la configuration, l'administration et la supervision de PA hors PZT, et
+pixs.pzt pour le binaire indépendant PZT. PA/PZT restent colivrés : trois
+binaires PA plus PZT dans Debian, deux binaires PA plus PZT dans Docker.
+Le présent lot conserve son périmètre de réalisation, sans code engagé ici.
+Les copies requirements.md et empreintes de préparation sont historiques et
+doivent être réconciliées avec le canon avant réalisation ; le réseau ne
+redevient pas une responsabilité PA du fait d'une formulation héritée.

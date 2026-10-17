@@ -6,7 +6,7 @@ Le canon impose les modules PZT et DNS essentiels ; aucun module produit PZT/DNS
 
 ## Modifications proposées
 
-Livrer le module essentiel PZT et le module DNS essentiel, propriété de leurs données, contrats publics, administration et état réseau désactivé. Le périmètre exact dépend de l’examen clause par clause C00 ; une simple page “désactivé” ne suffit pas. Toute clause impérative exigeant PA/DNS actif ajoute D01 au chemin critique.
+Livrer le module essentiel pixs.pzt et le module DNS essentiel, propriété de leurs données, contrats publics, administration et état réseau désactivé. Le périmètre exact dépend de l’examen clause par clause C00 ; une simple page “désactivé” ne suffit pas. Toute clause impérative exigeant PA/DNS actif ajoute D01 au chemin critique.
 
 ## Capacités
 
@@ -29,7 +29,7 @@ Aucun texte canonique modifié par ce dossier. `requirements.md` relie les exige
 
 ## Impact
 
-Périmètre de réalisation futur : Composer deux responsabilités de gestion PBO propriétaires via les mécanismes communs ; manifests et contrats exacts après décision d’identifiants. Conserver configuration souhaitée, versions et états d’absence d’exécutant ; appliquer les choix validés pertinents à la configuration. N’engager aucun PA, service DNS ou réseau non sélectionné, ni canal de substitution.
+Périmètre de réalisation futur : Composer deux responsabilités de gestion PBO propriétaires via les mécanismes communs ; identifiant pixs.pzt validé, identifiant DNS et manifests/contrats exacts restant à préciser. Conserver configuration souhaitée, versions et états d’absence d’exécutant ; appliquer les choix validés pertinents à la configuration. N’engager aucun PA, service DNS ou réseau non sélectionné, ni canal de substitution.
 
 La demande actuelle autorise uniquement les documents de ce dossier. Aucun code, test produit, migration, dépendance, configuration runtime, Git, déploiement ou publication n’est modifié/exécuté. Les tâches ci-jointes ne sont pas lancées.
 

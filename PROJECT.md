@@ -855,42 +855,66 @@ Pixs ne doit pas confondre identité minimale, autorisation, authentification et
 
 ## 4. Architecture générale
 
-Architecture conceptuelle :
+Architecture conceptuelle et exemples de déploiement :
 
-```text
-                              PIXS
-                               │
-                  ┌────────────▼────────────┐
-                  │         Kernel          │
-                  │ mécanismes génériques   │
-                  └────────────┬────────────┘
-                               │
-                  ┌────────────▼────────────┐
-                  │       pixs.core         │
-                  │ REQUIRED                │
-                  │ User / DigitalIdentity │
-                  │ Group / ACL             │
-                  └────────────┬────────────┘
-                               │
-                  ┌────────────▼────────────┐
-                  │        Modules          │
-                  │ métiers / capacités     │
-                  └────────────┬────────────┘
-                               │
-                    services / contracts
-                               │
-              ┌────────────────┼────────────────┐
-              │                │                │
-          Providers        Extensions        Themes
-
-                               │
-                             Django
-                               │
-                           PostgreSQL
-                     SOURCE DE VÉRITÉ
+```mermaid
+flowchart TB
+    U["PFO / clients / intégrations"]
+    subgraph H["Hôte local — PBO/PFO, PA et PZT"]
+        subgraph B["PBO — Django"]
+            M["Modules fonctionnels"]
+            A["pixs.agent — configuration, administration et supervision de PA hors PZT"]
+            Z["pixs.pzt — configuration, administration et supervision de PZT"]
+            C["pixs.core — identités, tenants et permissions"]
+            K["Kernel — composition et services génériques"]
+            M --> A
+            K -. "composition" .-> A
+            K -. "composition" .-> Z
+            A -. "contrats communs" .-> C
+            Z -. "contrats communs" .-> C
+        end
+        D[("PostgreSQL — source de vérité applicative")]
+        T["PZT local — exécutable indépendant"]
+        P["PA local — fonctions système et utilisateur selon profil"]
+        B --- D
+        A <-->|"Instructions, états et résultats via PZT"| T
+        Z <-->|"Contrôle sécurisé de PZT"| T
+        T <-->|"Échanges protégés"| P
+    end
+    U --> M
+    subgraph R1["Hôte distant A — sans PBO/PFO"]
+        T1["PZT distant A"]
+        P1["PA distant A"]
+        T1 <-->|"Échanges protégés"| P1
+    end
+    subgraph R2["Hôte distant B — avec PBO/PFO facultatifs"]
+        F2["PFO distant B"]
+        B2["PBO distant B — modules fonctionnels, pixs.agent et pixs.pzt"]
+        D2[("PostgreSQL distant B")]
+        T2["PZT distant B"]
+        P2["PA distant B"]
+        F2 --> B2
+        B2 --- D2
+        B2 <-->|"Contrats de gestion via PZT"| T2
+        T2 <-->|"Échanges protégés"| P2
+    end
+    T <-->|"Réseau PZT — relation autorisée"| T1
+    T <-->|"Réseau PZT — relation autorisée"| T2
 ```
 
-Les providers et intégrations externes sont périphériques au socle et aucun provider concret ne bénéficie d'un statut architectural privilégié.
+Ce schéma représente les relations logiques, sans fixer les endpoints ni les
+canaux entre processus. Sur un même environnement d'exécution, le profil
+local PZT utilise TLS mutuel ; entre environnements, les transports PZT
+qualifiés s'appliquent. Le même serveur physique ne fusionne pas les
+frontières des VM ou conteneurs. Un PBO distant peut gérer ses exécutants
+locaux et des exécutants distants uniquement dans les périmètres autorisés ;
+sa présence ne donne aucun droit automatique sur un autre PA ou PZT.
+PFO adresse toujours ses demandes à PBO. Aucun échange PBO–PA ne contourne PZT.
+
+Le Kernel fournit les mécanismes ; `pixs.core`, `pixs.agent`, `pixs.pzt` et les
+modules fonctionnels fournissent leurs capacités via contrats publics. Les
+providers, extensions et thèmes s'intègrent par les mécanismes communs ; aucun
+provider concret ne bénéficie d'un statut architectural privilégié.
 
 ## 5. Backend Django
 
@@ -2515,9 +2539,9 @@ Pixs est spécifié par capacités. Cette section et la [synthèse du README](RE
 
 #### État de référence au 17 octobre 2026
 
-Le canon dans [openspec/specs/](openspec/specs/) recense **78 capacités, 717 exigences et 812 scénarios**. Ce comptage porte sur les spécifications canoniques : les deltas proposés dans les changes ouverts ne sont pas comptés avant leur intégration.
+Le canon dans [openspec/specs/](openspec/specs/) recense **78 capacités, 724 exigences et 824 scénarios**. Ce comptage porte sur les spécifications canoniques. La séparation PA/PZT et les modules pixs.agent/pixs.pzt, validés le 17 octobre, ajoutent sept exigences et douze scénarios nets au canon. Les deltas de PA10 tracent cette intégration déjà effectuée ; les autres deltas proposés ne sont pas comptés avant adoption.
 
-Chaque exigence est reliée à un statut, des références, un écart ou une limite identifié et des lots proposés. La [correspondance globale](openspec/changes/define-first-installable-pbo-profile/couverture-preparation-globale.md) donne accès aux exigences et aux dossiers préparés. La matrice statique du 16 octobre 2026 reste conservée. L’[audit du 17 octobre des 94 exigences NE](openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json) ajoute une surcouche de suivi : 10 appuis partiels et 84 couvertures non démontrées dans les sources consultées. Leur statut fonctionnel n’est pas réévalué par l’audit transversal suivant :
+Chaque exigence est reliée à un statut, des références, un écart ou une limite identifié et des lots proposés. La [correspondance globale](openspec/changes/define-first-installable-pbo-profile/couverture-preparation-globale.md) donne accès aux exigences et aux dossiers préparés. La matrice statique du 16 octobre 2026 reste conservée. L’[audit du 17 octobre des 94 exigences NE](openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json) ajoute une surcouche de suivi : 10 appuis partiels et 84 couvertures non démontrées dans les sources consultées. Leur statut fonctionnel n’est pas réévalué par l’audit transversal suivant. Le tableau conserve cet instantané de 717 exigences avant PA10 ; les sept nouvelles exigences de gestion/séparation ne disposent d’aucune preuve produit :
 
 | Statut de suivi | Exigences | Signification |
 | --- | ---: | --- |
@@ -2531,19 +2555,19 @@ L’analyse est statique : présence de code, tests disponibles et archivage ne 
 
 #### Plan de la première composition installable
 
-Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances et critères de sortie pour le premier P0. Ils sont maintenant matérialisés en changes préparés. Le [plan global](openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md) contient désormais **106 changes préparés**, après validation de N01/N02 puis N03–N06 :
+Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances et critères de sortie pour le premier P0. Ils sont maintenant matérialisés en changes préparés. Le [plan global](openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md) contient désormais **107 changes préparés**, après N01/N02, N03–N06 et le nouveau lot PA10 de séparation PA/PZT et gestion pixs.agent :
 
 | Périmètre | Changes ouverts |
 | --- | ---: |
 | Premier P0, C00–C19, N01 et N03–N06 | 25 |
-| Pixs Agent | 9 |
+| Pixs Agent et séparation PA/PZT | 10 |
 | PZT actif et contrats techniques | 26 |
 | Compléments Bulk | 11 |
 | Capacités supplémentaires sélectionnables | 32 |
 | Clarification native/hors ligne N02 | 1 |
 | Distribution Docker | 1 |
 | Recette étendue | 1 |
-| **Total** | **106** |
+| **Total** | **107** |
 
 Les dossiers hors premier P0 ne sont pas tous requis pour une installation P0 : leur sélection dépend du profil et de ses dépendances obligatoires. Leur préparation ne les active pas et ne vaut pas autorisation de les implémenter. Les décisions encore ouvertes figurent dans le [registre de conception et de qualification](openspec/changes/define-first-installable-pbo-profile/arbitrages-preparation-globale.md).
 
@@ -2555,11 +2579,11 @@ Les premières priorités sont :
 4. Compléter interface modulaire, langues, thèmes, accessibilité, administration, modules essentiels, exploitation et restauration : C11–C16. Intégrer aussi N01 urgence, N04 entrée web et N05 réadmission après restauration selon leurs contrats, avant construction et recette.
 5. Fournir les vérifications de confiance N03 avant installation, construire le paquet Debian C18, puis qualifier la composition distribuée en C17 avec le kit minimal N06. C19 conserve support, preuves finales et préparation de publication, sans modification implicite de l’artefact qualifié.
 
-Au présent relevé, les **1 052 tâches de réalisation sont non cochées**. L’[audit transversal P0](openspec/changes/define-first-installable-pbo-profile/audit-transversal-p0.md) documente 17 parcours/interfaces, la vérification des références des 717 exigences et quatre nouveaux changes validés : N03 confiance avant installation, N04 entrée web, N05 réadmission après restauration et N06 kit minimal de conformité. Le rattachement préalable de 351 exigences à des lots P0 et de 366 à d’autres lots ne suffit pas à prouver leur applicabilité ou leur couverture ; les clauses conditionnelles restent à vérifier par rôle. Ce contrôle ne constitue pas un nouvel audit fonctionnel exhaustif des 623 exigences hors ancien périmètre NE.
+Au présent relevé, les **1 056 tâches de réalisation sont non cochées**, dont quatre tâches futures PA10 ; les cinq tâches documentaires PA10 sont comptées séparément. L’[audit transversal P0](openspec/changes/define-first-installable-pbo-profile/audit-transversal-p0.md) documente 17 parcours/interfaces, la vérification des références des 717 exigences et quatre nouveaux changes validés : N03 confiance avant installation, N04 entrée web, N05 réadmission après restauration et N06 kit minimal de conformité. Le rattachement préalable de 351 exigences à des lots P0 et de 366 à d’autres lots ne suffit pas à prouver leur applicabilité ou leur couverture ; les clauses conditionnelles restent à vérifier par rôle. Ce contrôle ne constitue pas un nouvel audit fonctionnel exhaustif des 623 exigences hors ancien périmètre NE.
 
-Les contrôles stricts actuels valident les **106 changes** ; le strict global reste en exit 1 avec les quatre avertissements de longueur préexistants. Les **95 tests unitaires existants exécutés pendant l’audit transversal** vérifient des primitives et validateurs ; ils ne qualifient pas la composition installable. Les [contrôles locaux](reports/audit-transversal-p0-2026-10-17/RAPPORT.md) conservent commandes, résultats et limites. Les validations antérieures des 100 puis 102 dossiers et les 124 unités de l’audit NE restent des preuves historiques distinctes.
+Les contrôles stricts actuels valident les **107 changes** ; le strict global reste en exit 1 avec les quatre avertissements de longueur préexistants. Les **95 tests unitaires existants exécutés pendant l’audit transversal** vérifient des primitives et validateurs ; ils ne qualifient pas la composition installable. Les [contrôles locaux](reports/audit-transversal-p0-2026-10-17/RAPPORT.md) conservent commandes, résultats et limites. Les validations antérieures des 100 puis 102 dossiers et les 124 unités de l’audit NE restent des preuves historiques distinctes.
 
-Les compteurs canoniques ci-dessus ont été revérifiés dans les fichiers de cadrage. Les deltas ouverts C00/N02/N04/N05 proposent **13 exigences ajoutées, 2 exigences existantes modifiées et 25 scénarios supplémentaires nets**, sans nouvelle capacité. Si tous étaient intégrés sans modification, la projection serait de **78 capacités, 730 exigences et 837 scénarios** ; elle ne remplace pas le canon courant **78/717/812**. Aucun delta n’est synchronisé par ces audits.
+Les compteurs canoniques ci-dessus ont été revérifiés dans les fichiers de cadrage. PA10 est déjà intégré dans ces compteurs ; ses deltas ne constituent pas une seconde augmentation du canon. Les deltas ouverts C00/N02/N04/N05 proposent **13 exigences ajoutées, 2 exigences existantes modifiées et 25 scénarios supplémentaires nets**, sans nouvelle capacité. Si tous étaient intégrés sans modification, la projection serait de **78 capacités, 737 exigences et 849 scénarios** ; elle ne remplace pas le canon courant **78/724/824**. Aucun delta n’est synchronisé par ces audits.
 
 Les décisions de providers, serveur/session/transport, schémas détaillés, paramètres, budgets, support et mécanismes de confiance restent à valider avant réalisation. Les autres écarts transversaux complètent les dossiers propriétaires existants ; aucune option PA, réseau PZT, Docker, SDK complet, Bulk ou client natif n’est activée implicitement.
 
@@ -2572,7 +2596,7 @@ total = changes archivés + changes ouverts
 avancement OpenSpec (%) = 100 × changes archivés / total
 ```
 
-Au 17 octobre 2026 : **135 archivés + 106 ouverts = 241 changes**, soit **56,02 %** après arrondi à deux décimales. Les archivés sont les dossiers de changes sous `openspec/changes/archive/` ; les ouverts sont les dossiers directement sous `openspec/changes/`, hors `archive` et dossiers techniques masqués.
+Au 17 octobre 2026 : **135 archivés + 107 ouverts = 242 changes**, soit **55,79 %** après arrondi à deux décimales. Les archivés sont les dossiers de changes sous `openspec/changes/archive/` ; les ouverts sont les dossiers directement sous `openspec/changes/`, hors `archive` et dossiers techniques masqués.
 
 Ce ratio est un indicateur global non pondéré de clôture des changes. Il inclut les archives documentaires, les contrats préparatoires et les capacités hors premier P0 ; il ne mesure ni l’effort restant, ni la proportion de fonctions utilisables, ni la qualification de cette composition. Il peut diminuer lorsque de nouveaux changes sont créés. Une valeur de 100 % ne dispense jamais des critères de livraison, des tests et des preuves de qualification. En l’absence de changes, afficher « non calculable », sans annoncer 100 %.
 
@@ -3445,59 +3469,41 @@ Ce premier cadrage ne fixe pas encore :
 * les capacités minimales de haute disponibilité des dépendances persistantes et leur responsabilité de déploiement ;
 * le mode de déploiement final de Pixs ;
 * les détails de construction et de qualification de la composition Docker
-  PBO/PFO/PA sans binaire utilisateur, dont le contenu cible est désormais fixé.
+  PBO/PFO/PA/PZT sans binaire utilisateur PA, dont le contenu cible est désormais fixé.
 
 Ces éléments restent des choix d'implémentation ou d'exploitation. Lorsqu'ils modifient un comportement normatif, ils doivent faire l'objet d'une décision explicite puis d'une évolution OpenSpec approuvée.
 
 ## 37. Modèle final
 
-```text
-                            PIXS
-                             │
-                    ┌────────▼────────┐
-                    │     Kernel      │
-                    │ mécanismes seuls│
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │    pixs.core    │
-                    │    REQUIRED     │
-                    │ User / DigitalIdentity │
-                    │ Group / ACL / Permission│
-                    └────────┬────────┘
-                             │
-                    ┌────────▼────────┐
-                    │     Modules     │
-                    │ métiers...      │
-                    └────────┬────────┘
-                             │
-                  services / contracts
-                             │
-              ┌──────────────┼──────────────┐
-              │              │              │
-          Providers      Extensions       Themes
-              │                             │
-        integrations                  Light / Dark
-              │
-                             ▼
-                           Django
-                             │
-                             ▼
-                        PostgreSQL
-                     source de vérité
-                             │
-                    ┌────────┴────────┐
-                    │                 │
-                 Django           Electric
-               API/Commands       Sync/Reactive
-                    │                 │
-                    └────────┬────────┘
-                             ▼
-                          TanStack
-                           Frontend
+```mermaid
+flowchart TB
+    subgraph B["PBO — Django, modules et contrats"]
+        K["Kernel — mécanismes génériques"] --> C["pixs.core — primitives communes"]
+        C --> M["Modules fonctionnels"]
+        K -. "composition et services" .-> A["pixs.agent — gestion PA hors PZT"]
+        K -. "composition et services" .-> Z["pixs.pzt — gestion PZT"]
+        A -. "primitives communes" .-> C
+        Z -. "primitives communes" .-> C
+        M --> A
+        M --> S["Services et contrats publics"]
+        S --> V["Providers et intégrations"]
+        S --> X["Extensions"]
+        S --> TH["Thèmes — Light / Dark"]
+        M --- DJ["Django — autorité métier, API et Commands"]
+    end
+    DJ --> DB[("PostgreSQL — source de vérité")]
+    FE["PFO — TanStack"] -->|"API / Commands"| DJ
+    DB --> E["Electric — synchronisation optionnelle"] --> FE
+    A <-->|"Gestion PA via PZT"| T["PZT — exécutable réseau indépendant"]
+    Z <-->|"Gestion sécurisée PZT"| T
+    T <-->|"Échanges protégés locaux ou distants"| P["PA — exécution système et utilisateur"]
 ```
 
-Le modèle final sépare explicitement le Kernel, les primitives très bas niveau du Core, les fonctionnalités fournies par les modules, les contrats, les providers, les extensions, les thèmes, la source de vérité PostgreSQL, le backend Django, la synchronisation réactive optionnelle et le frontend TanStack.
+Les déploiements locaux et les deux exemples distants, avec ou sans PBO/PFO,
+sont détaillés au §4. Les flèches sont des relations logiques, sans imposer les
+endpoints de réalisation ni transférer les décisions métier à PA ou PZT.
+
+Le modèle final sépare explicitement le Kernel, les primitives très bas niveau du Core, les fonctionnalités fournies par les modules, les contrats, les providers, les extensions, les thèmes, la source de vérité PostgreSQL, le backend Django, la synchronisation réactive optionnelle et le frontend TanStack, ainsi que PA/PZT et leurs modules de gestion distincts.
 
 La gouvernance des données et la confidentialité constituent une capacité transverse : elles suivent la propriété des composants et s'appliquent à la source de vérité comme à ses dérivés, sans transformer un provider, un canal de transport ou une topologie de déploiement en autorité métier.
 
@@ -3531,8 +3537,8 @@ Les modalités techniques de construction et d'exécution sont définies dans
 
 Pixs prévoit deux formats de distribution : des paquets Debian et une image
 Docker. Un paquet Debian contient PBO/PFO ; un paquet indépendant contient
-les quatre binaires PA. L’image Docker contient PBO/PFO et les trois binaires
-PA système/PZT, sans binaire utilisateur. Ces compositions déclarées restent
+les trois binaires PA et le binaire indépendant PZT. L’image Docker contient
+PBO/PFO, les deux binaires PA système/événements et PZT, sans binaire utilisateur PA. Ces compositions déclarées restent
 corrélables à la release, sans modifier le Kernel, pixs.core, les contrats
 publics ou les règles métier. Leur détail relève de BUILD.md §46.
 
@@ -3644,36 +3650,39 @@ Le cadrage PA/PZT est intégré aux fichiers officiels du projet le 10 octobre
 aucun binaire PA, réseau PZT, paquet Debian ou image Docker n'est déclaré
 implémenté, testé ou publié par cette intégration documentaire.
 
-Pixs comprend Pixs Backoffice (PBO), Pixs Frontoffice (PFO) et Pixs Agent
-(PA). PA est un ensemble de quatre binaires dédiés, construit à partir des
-sources Python avec génération de C puis compilation native à qualifier.
-Nuitka est retenu pour les trois binaires système/utilisateur et Cython pour
-le binaire PZT ; versions et compatibilité restent à qualifier, sans installation.
-PBO conserve Django et PostgreSQL ; les binaires PA ne sont pas une variante
-du runtime applicatif Django et ne deviennent pas une autorité métier.
+La séparation validée le 17 octobre 2026 définit quatre composants : Pixs
+Backoffice (PBO), Pixs Frontoffice (PFO), Pixs Agent (PA) et PZT.
+PA comprend exactement trois binaires dédiés, compilés avec Nuitka depuis
+Python via C. PZT est le composant réseau indépendant, avec son propre binaire
+compilé avec Cython. Versions et compatibilité restent à qualifier.
+PBO conserve Django et PostgreSQL ; PA et PZT ne deviennent ni un runtime
+Django alternatif ni une autorité métier.
 
-La décision de publication du développeur remplace le modèle antérieur du
-binaire PA unique. Les sept modes fonctionnels déjà cadrés sont répartis
-entre quatre binaires, sans créer un cinquième exécutable :
+Cette décision remplace le rattachement antérieur du binaire PZT à PA.
+Les quatre exécutables distribués et leurs sept modes au total sont conservés :
+six modes appartiennent à PA et `pzt-daemon` appartient exclusivement à PZT.
 
-| Binaire PA par responsabilité — noms d'exécutables à spécifier | Modes fonctionnels regroupés | Paquet Debian PA | Image Docker Pixs |
+| Composant et binaire par responsabilité | Modes fonctionnels | Paquet Debian commun PA/PZT | Image Docker Pixs |
 | --- | --- | --- | --- |
-| Démon système PA | system-daemon | Inclus | Inclus |
-| Événements système PA | system-start et system-stop | Inclus : démarrage/arrêt de l'hôte | Inclus : démarrage/arrêt du conteneur |
-| Sessions utilisateur PA | session-start, session-stop et session-daemon déjà cadré | Inclus | Exclu |
-| Exécution PZT | pzt-daemon | Inclus | Inclus |
+| PA — démon système | system-daemon | Inclus | Inclus |
+| PA — événements système | system-start et system-stop | Inclus : cycle de l'hôte | Inclus : cycle du conteneur |
+| PA — sessions utilisateur | session-start, session-stop et session-daemon | Inclus | Exclu |
+| PZT — exécutable réseau indépendant | pzt-daemon | Inclus | Inclus |
 
-Le paquet Debian PA est indépendant du paquet Debian contenant PBO et PFO.
-L'image Docker contient toujours PBO, PFO et les trois binaires PA système/PZT,
-sans le binaire utilisateur ni ses modes de session. Les noms, chemins,
-options CLI, versions minimales et architectures distribuées restent à
-spécifier ; aucun nom de paquet définitif ni dépendance système n'est adopté.
+Le paquet Debian commun PA/PZT reste indépendant du paquet PBO/PFO. Docker
+contient PBO/PFO, deux binaires PA et PZT, sans binaire utilisateur PA.
+La séparation des composants ne change ni le nombre des exécutables distribués
+ni les exclusions des modes de session dans Docker. PZT est le nom du composant
+et du binaire réseau ; casse du fichier, chemins, options CLI, noms de paquets,
+versions et architectures restent à spécifier avant réalisation.
 
-Le binaire PZT assure l'exécution réseau lorsque PZT est activé et configuré.
-PBO assure toujours la configuration, la visualisation, la supervision et le
-monitoring de PZT ; PA collecte et remonte les états et applique les décisions
-autorisées. PBO peut être local ou distant ; ses échanges avec PA passent
-toujours par PZT, y compris lorsque les processus partagent un hôte.
+Dans PBO, `pixs.agent` configure, administre et supervise l'ensemble de PA hors
+PZT. `pixs.pzt`, module officiel essentiel, configure, administre, visualise,
+supervise et monitore PZT. PA et PZT exécutent leurs opérations respectives,
+collectent leurs observations et rapportent les états réellement appliqués.
+Leurs instructions, résultats et identités d'exécutants restent distincts.
+PBO peut être local ou distant ; tous ses échanges avec PA passent par PZT,
+y compris lorsque les processus partagent un hôte.
 
 Les modes de session existants sont regroupés dans le seul binaire utilisateur.
 Cette répartition ne transforme pas le démon système en processus de session
@@ -3682,7 +3691,7 @@ et ne donne pas aux traitements utilisateur les privilèges système.
 Les détails de fonctionnement et les 174 références de décision sont dans
 [TECHNICAL.md](TECHNICAL.md#42-pixs-agent-et-séparation-des-binaires).
 La distribution et la recette sont dans
-[BUILD.md](BUILD.md#46-distribution-des-binaires-pa).
+[BUILD.md](BUILD.md#46-distribution-des-binaires-pa-et-pzt).
 
 ### 43.1 Synthèse des décisions validées
 
@@ -3693,12 +3702,12 @@ PZT et ZTP désignent le même réseau Pixs.
 
 | Domaine | Fonctionnement retenu | Références détaillées |
 | --- | --- | --- |
-| Responsabilités | Le binaire PA assure toujours le fonctionnement de PZT. PBO, local ou distant, assure toujours sa configuration, sa visualisation, sa supervision et son monitoring. PA collecte et remonte les états observés. | Répartition permanente des responsabilités PZT |
+| Responsabilités | PZT indépendant exécute le réseau sous gestion de `pixs.pzt`. `pixs.agent` configure, administre et supervise PA hors PZT. PBO peut être local ou distant ; les exécutants rapportent leurs états observés. | Répartition permanente des responsabilités PZT |
 | Base réseau | WireGuard constitue la base logicielle ; les fonctions inspirées de NetBird sont redéveloppées dans Pixs. Backends natifs privilégiés, espace utilisateur pour les profils qualifiés qui le nécessitent. | A01 ; Base WireGuard |
-| Plateformes et exécution | PA est prévu sur Linux et Windows physiques ou en VM, Docker et LXC sous Proxmox. Les sept modes sont conservés et répartis entre les quatre binaires ; pzt-daemon est lancé sans délai et assure PZT si celui-ci est activé/configuré, sinon se ferme. La chaîne cible Python vers C puis binaire reste à qualifier. | Modes d'exécution ; Plateformes |
+| Plateformes et exécution | PA est prévu sur Linux et Windows physiques ou en VM, Docker et LXC sous Proxmox. Six modes PA et un mode PZT restent répartis entre trois binaires PA et PZT indépendant ; pzt-daemon est lancé sans délai et assure PZT si celui-ci est activé/configuré, sinon se ferme. La chaîne cible Python vers C puis binaire reste à qualifier. | Modes d'exécution ; Plateformes |
 | Amorçage et contrôle local | Admission par TLS d'amorçage PZT avec ancrage préalable. PBO–PA passe toujours par PZT, même cohébergés ; TLS mutuel local admis sans WireGuard local obligatoire. VM et conteneurs conservent leurs frontières propres. | A02 ; A03 ; A11a–A11b |
 | Gestion du réseau | pzt-daemon possède les ressources PZT de son périmètre ; les autres modes lui adressent leurs demandes. Filtrage natif nftables Linux et Windows Filtering Platform, sans écraser les ressources de l'opérateur hors mandat. | A04 ; A04a–A04b |
-| Validité et panne | Modèle hybride : autorisations bornées, contrôles en ligne selon classe, retrait connu sans attendre l'expiration, protection indépendante de PA. Objectifs initiaux : révocation en 5 s si joignable et fermeture après panne en 10 s, à démontrer par profil. | A05 ; A05b |
+| Validité et panne | Modèle hybride : autorisations bornées, contrôles en ligne selon classe, retrait connu sans attendre l'expiration, protection indépendante de l’exécutant PZT. Objectifs initiaux : révocation en 5 s si joignable et fermeture après panne en 10 s, à démontrer par profil. | A05 ; A05b |
 | Adressage et DNS | IPv4/IPv6 implémentés ; IPv6 PZT simplement désactivable et désactivé par défaut sur les nouveaux périmètres sans choix explicite. DNS essentiel administré dans PBO, service exécuté sous pilotage PA désignés, autres PA clients ; DoT protégé, cache borné, noms stables et alias CNAME directs. | A06 ; A06b–A06k |
 | Contrats et suivi | Commandes et lectures HTTP/JSON versionnées ; état complet et deltas métier ordonnés. WebSocket de référence et SSE complémentaire, sélection déterministe administrée et qualifiée, sans entretenir deux canaux permanents. | A07a–A07d ; A07c2 |
 | Chemins et passerelles | Direct prioritaire, découverte ICE/STUN ; relais QUIC DATAGRAM avec secours WSS. Profil passerelle ultérieur après le socle, sources conservées sans NAT automatique, principale et secours avec un seul actif par périmètre cohérent. | A08a–A08c ; A09a–A09c |
@@ -3729,17 +3738,18 @@ une bibliothèque ni une valeur absente, et ne déclare aucune plateforme qualif
 Les cadrages intégrés restent des documents de conception :
 cette consolidation ne constitue pas une implémentation ou une recette.
 
-### 43.2 Positionnement des trois composants
+### 43.2 Positionnement des quatre composants
 
 | Composant | Abréviation conventionnelle | Responsabilité dans le cadrage |
 | --- | --- | --- |
 | Pixs Frontoffice | PFO | Interface utilisateur et interactions avec les capacités exposées par Pixs Backoffice. |
-| Pixs Backoffice | PBO | Règles métier, autorisation applicative, API, orchestration et accès à PostgreSQL ; configuration, visualisation, supervision et monitoring de PZT. |
-| Pixs Agent | PA | Fonctionnement opérationnel de PZT par le binaire dédié ; appui à PBO et PFO par l'exécution locale, la collecte d'états et l'application des opérations autorisées. |
+| Pixs Backoffice | PBO | Autorité Django/PostgreSQL, API et orchestration ; gestion PA hors PZT par pixs.agent et gestion PZT par pixs.pzt. |
+| Pixs Agent | PA | Exécution système et utilisateur hors PZT, collecte et résultats réels sous gestion de pixs.agent. |
+| PZT | PZT | Exécution réseau indépendante de PA, sous gestion de pixs.pzt ; colivraison avec PA. |
 
 Les dénominations Pixs Agent, Pixs Backoffice et Pixs Frontoffice sont
-conservées dans tout le document. Les abréviations PA, PBO et PFO désignent
-respectivement ces trois composants. Le rôle d'appui de PA respecte leurs
+conservées avec PA, PBO et PFO ; PZT désigne désormais aussi le quatrième
+composant exécutable indépendant. Le rôle d'appui de PA respecte leurs
 frontières de responsabilité ; le détail fonctionnel de PBO et PFO reste
 défini par les spécifications Pixs existantes.
 
@@ -3758,26 +3768,26 @@ Pixs Backoffice sont distinguées dans leur contrat.
 
 #### 43.2.1 Pilotage par les modules de PBO et appui à PFO
 
-Le pilotage réseau de PA passe par le module Pixs officiel ZTP défini dans
-[Cadrage technique PZT](TECHNICAL.md#43-réseau-pzt-contrats-et-garanties-techniques). Ce module appartient au système normal de
-modules de PBO, avec ses contrats publics, données de gestion, migrations,
-permissions, contributions frontend et lifecycle. Il consomme les primitives
-de `pixs.core` par leurs contrats ; il n'est intégré ni au Kernel ni à
-`pixs.core` et ne crée pas de référentiel d'identité concurrent.
+Le module `pixs.agent` fournit la configuration, l'administration et la
+supervision des trois binaires PA et de leurs six modes, hors PZT. Il possède
+ses données de gestion, contrats publics, permissions, contributions frontend
+et lifecycle. Les autres modules utilisent ces contrats pour solliciter PA et
+suivre les états ; ils restent propriétaires de leurs règles et opérations métier.
+`pixs.agent` ne configure ni n'administre l'exécutable PZT.
 
-Le module PZT est essentiel et protégé dans toute composition PBO.
-Désactiver le réseau n'enlève pas le socle de configuration et de supervision. Ses sous-modules enrichissent les capacités
-par les interfaces publiques sans affaiblir les contrôles obligatoires.
-Tout profil utilisant PZT s'appuie sur ce module dans un PBO local ou
-distant pour sa configuration, sa visualisation, sa supervision et son
-monitoring. PBO n'est pas requis sur chaque machine PA ; un PA seul
-ne remplace pas les fonctions de gestion PZT de PBO.
+Le module officiel essentiel `pixs.pzt` prend le nom canonique du module PZT
+antérieur. Il possède les données et contrats de gestion du réseau et contrôle
+le binaire indépendant PZT. Il conserve configuration, administration,
+visualisation, supervision et monitoring même lorsque le réseau est désactivé.
+Il n'absorbe pas les opérations système ou utilisateur de PA.
 
-Les fonctions réseau sont exécutées par PA selon ses rôles attribués. Les
-autres opérations système ou utilisateur sont apportées par les modules
-propriétaires de ces fonctionnalités, qui utilisent les interfaces publiques
-de PA et PZT. Le module de pilotage réseau ne devient pas propriétaire de
-toutes les règles métier ou opérations système.
+Ces deux modules utilisent les mécanismes normaux de composition et les
+primitives de `pixs.core` par contrats publics. Le Kernel ne contient aucune
+logique propre à PA/PZT ; `pixs.core` ne devient pas une passerelle de transport.
+`pixs.agent` utilise PZT pour tous les échanges PBO–PA ; `pixs.pzt` utilise
+les interfaces sécurisées PZT pour son contrôle. Les garanties réseau
+n'accordent aucun droit métier supplémentaire. Les contrats concrets restent
+à qualifier avant code, sans nom de service ou endpoint inventé.
 
 PFO présente les informations et adresse ses demandes à PBO. PBO applique
 les contrôles applicatifs avant de transmettre une instruction à PA via PZT.
@@ -3789,7 +3799,7 @@ un cadrage distinct préservant les mêmes frontières d'autorisation.
 Le besoin initial couvre les éléments suivants :
 
 - un logiciel développé en Python, compilé en passant par du C pour produire
-  les quatre binaires PA et rechercher de meilleures performances ;
+  les trois binaires PA et le binaire indépendant PZT, et rechercher de meilleures performances ;
 - un déploiement sur un système d'exploitation ou dans un conteneur ;
 - un fonctionnement en arrière-plan pour les activités permanentes ;
 - une relation avec différentes instances Pixs via le réseau Zéro Trust Pixs ;
@@ -3800,7 +3810,7 @@ Le besoin initial couvre les éléments suivants :
 - un démon système lancé après un délai suivant le démarrage ;
 - un démon PZT lancé sans délai au démarrage du système ou du conteneur,
   assurant la convergence et la réconciliation de PZT si celui-ci est activé
-  et configuré sur ce PA, et se fermant sinon ;
+  et configuré sur ce composant PZT, et se fermant sinon ;
 - des opérations ponctuelles à l'ouverture et à la fermeture d'une session
   graphique, avec les droits de l'utilisateur ;
 - un démon de session lancé après un délai suivant l'ouverture de la session ;
@@ -3811,17 +3821,17 @@ Les sections suivantes décrivent les exigences du cadrage pour répondre à ce 
 Les propositions de mécanismes concrets et les modalités non arrêtées sont
 signalées à leur emplacement et dans le tableau des arbitrages.
 
-## 44. PZT : module essentiel PBO et exécution PA
+## 44. PZT : module pixs.pzt et exécutable indépendant
 
 PZT et ZTP désignent le même réseau Zéro Trust Pixs, fondé sur le logiciel
 WireGuard et sur des capacités inspirées de NetBird redéveloppées dans Pixs.
 Aucune brique ni compatibilité interne NetBird n'est intégrée implicitement.
 
-Côté PBO, PZT est un module officiel essentiel, composé et protégé par les
+Côté PBO, `pixs.pzt` est le module officiel essentiel, composé et protégé par les
 mécanismes normaux des modules, au-dessus du Kernel et de pixs.core. Son
 caractère essentiel ne dépend pas de l'activation du réseau : désactiver PZT
 n'enlève pas son module de configuration et de supervision de PBO.
-Le réseau activé est toujours exécuté par le binaire PZT de PA.
+Le réseau activé est toujours exécuté par le binaire indépendant PZT, distinct de PA.
 
 ### 44.1 Objet et périmètre
 
@@ -3869,7 +3879,10 @@ La procédure d'adhésion ou de retrait reste à spécifier.
 | --- | --- |
 | Zéro Trust Pixs (ZTP) | Le réseau sécurisé Pixs et ses mécanismes de communication et d'autorité. |
 | PZT | Sigle employé dans le cadrage du PA pour le même réseau ; ZTP reste le sigle de ce document. |
-| Pixs Agent (PA) | Le composant qui exécute ZTP selon les rôles et permissions qui lui sont attribués. |
+| Pixs Agent (PA) | Le composant d’exécution système et utilisateur hors PZT, administré par `pixs.agent`. |
+| PZT, exécutable | Le composant réseau indépendant, administré par `pixs.pzt`, distribué avec PA. |
+| `pixs.agent` | Le module PBO de configuration, administration et supervision de PA hors PZT. |
+| `pixs.pzt` | Le module essentiel PBO de configuration, administration et supervision de PZT. |
 | Pixs Backoffice (PBO) | Le composant qui contrôle et configure le PA dans le périmètre autorisé. |
 | Instance Pixs | Une installation logique Pixs ; elle peut comporter plusieurs processus ou services. |
 | Pair | Une entité communicante identifiée : machine, environnement isolé, instance ou service. |
@@ -3886,7 +3899,7 @@ réseau ne modifie pas automatiquement son identité, sa tranche ou ses droits.
 
 ### 44.4 Modèle des identités ZTP
 
-L'installation Pixs, l'autorité logique, le membre d'autorité, le PA, le pair
+L'installation Pixs, l'autorité logique, le membre d'autorité, le PA, le composant PZT, le pair
 et le service exposé possèdent des références distinctes et stables. Les
 entités persistées par Pixs utilisent les UUIDv7 prévus par le projet ; les
 composants, capacités et contrats utilisent leurs identifiants namespacés.
@@ -3909,24 +3922,23 @@ La représentation détaillée des identités et de leurs mappings reste à spé
 
 #### 44.5.1 Répartition permanente des responsabilités PZT
 
-Règle précisée par le développeur le 10 octobre 2026 : le fonctionnement
-opérationnel de PZT est toujours assuré par le binaire PZT dédié de Pixs Agent
-(PA), dans les rôles qui lui sont attribués, notamment par son mode
-`pzt-daemon` pour les fonctions permanentes. PA pilote WireGuard et les
+Règle actualisée et validée le 17 octobre 2026 : le fonctionnement
+opérationnel de PZT est toujours assuré par le binaire indépendant PZT, dans les rôles qui lui sont attribués, notamment par son mode
+`pzt-daemon` pour les fonctions permanentes. PZT pilote WireGuard et les
 adapters de plateforme qualifiés ; cette règle conserve les backends natifs
 et la séparation des services selon leurs rôles.
 
 La configuration, la visualisation, la supervision et le monitoring de PZT
 sont toujours assurés par Pixs Backoffice (PBO), au travers de son module
-officiel PZT et de ses sous-modules. PBO porte les interfaces de gestion,
+officiel essentiel `pixs.pzt` et de ses sous-modules. PBO porte les interfaces de gestion,
 les vues de topologie et d'état, le suivi des métriques, diagnostics et
-alertes, ainsi que les actions autorisées. PA collecte les informations
-locales, exécute les contrôles et rapporte les états réellement observés.
+alertes, ainsi que les actions autorisées. PZT collecte les informations
+réseau locales, exécute les contrôles et rapporte les états réellement observés.
 
 Cette répartition s'applique à tous les environnements PA prévus :
 machines physiques et VM Linux/Windows, Docker et LXC sous Proxmox.
 PBO peut être local ou distant ; sa présence sur chaque machine PA n'est
-pas requise. Même si PBO et PA partagent un hôte, PZT reste exécuté par PA
+pas requise. Même si PBO et PA partagent un hôte, PZT reste exécuté par son binaire indépendant
 et tous leurs échanges de configuration, d'état et de monitoring passent
 par PZT selon les contrôles applicables.
 
@@ -3938,12 +3950,12 @@ ou des mesures périmées ; aucune disponibilité ou conformité n'est inventée
 Le provisionnement et la reprise strictement internes au PA conservent
 leurs procédures autorisées distinctes.
 
-Le PA assure l'exécution de ZTP. Selon les rôles qui lui sont attribués, il
+Le composant PZT assure l'exécution de ZTP. Selon les rôles qui lui sont attribués, il
 porte les fonctions de communication entre pairs et les services de contrôle
 ou de transport décrits dans ce document. Ses capacités effectives restent
 limitées par sa configuration, son identité et ses mandats.
 
-Le PBO contrôle et configure le PA : il permet de gérer les rôles, les
+Le PBO contrôle et configure PZT via `pixs.pzt` : il permet de gérer les rôles, les
 paramètres et les politiques applicables, ainsi que de consulter l'état
 d'exécution et les diagnostics autorisés. Les actions effectuées depuis le
 PBO respectent les trois politiques complémentaires et la chaîne d'autorité.
@@ -3951,17 +3963,18 @@ PBO respectent les trois politiques complémentaires et la chaîne d'autorité.
 | Élément | Responsabilité |
 | --- | --- |
 | ZTP | Définir le fonctionnement du réseau et ses garanties. |
-| PA | Exécuter les fonctions ZTP autorisées et appliquer la configuration reçue. |
-| PBO | Assurer la configuration, la visualisation, la supervision et le monitoring de ZTP, et contrôler PA dans le périmètre autorisé. |
+| PZT indépendant | Exécuter les fonctions ZTP autorisées et appliquer la configuration reçue depuis `pixs.pzt`. |
+| PA | Exécuter les fonctions système/utilisateur hors PZT, sous gestion de `pixs.agent`. |
+| PBO | Assurer la configuration, la visualisation, la supervision et le monitoring de ZTP, via `pixs.pzt`, et gérer PA hors PZT via `pixs.agent`, dans le périmètre autorisé. |
 
 Le PBO constitue le point de contrôle et de configuration ; son utilisation
 ne vaut pas, à elle seule, autorisation d'une opération. Les décisions restent
-rattachées à l'autorité compétente et aux permissions de l'acteur. Le PA
+rattachées à l'autorité compétente et aux permissions de l'acteur. Chaque exécutant
 vérifie les instructions et leurs mandats avant de les appliquer.
 
 Le backend Django du PBO autorise les opérations de gestion. Les services
-d'autorité ZTP exécutés par les PA valident les communications dans leur
-mandat ; les PA destinataires appliquent les décisions vérifiables. Une
+d'autorité ZTP exécutés par PZT valident les communications dans leur
+mandat ; les exécutants PZT destinataires appliquent les décisions vérifiables. Une
 instruction de gestion acceptée par le PBO ne remplace pas la validation
 réseau requise par l'autorité compétente.
 
@@ -3970,7 +3983,8 @@ Le PA ne devient pas une seconde autorité métier et une permission de
 communication ne vaut pas permission applicative.
 
 Tous les échanges entre PBO et PA passent par ZTP, dans les deux sens et
-pour les sept modes décrits par le cadrage PA. Cela couvre les instructions,
+pour les six modes PA. Le contrôle du composant PZT conserve ses interfaces
+sécurisées propres. Les échanges PBO–PA couvrent les instructions,
 configurations, opérations d'administration, états, diagnostics, événements
 et résultats, même sur le même hôte ou dans le même conteneur.
 
@@ -3994,9 +4008,9 @@ PBO–PA concernée est bloquée sans repli hors ZTP. Le séquencement d'amorça
 les modalités du TLS mutuel local et la répartition des services restent à
 spécifier.
 
-### 44.6 Module ZTP côté PBO
+### 44.6 Module pixs.pzt côté PBO
 
-Le pilotage de ZTP côté PBO est fourni par un module Pixs officiel dédié,
+Le pilotage de ZTP côté PBO est fourni par le module officiel essentiel `pixs.pzt`,
 utilisant le système normal de modules. Il possède ses propres responsabilités,
 contrats publics, données de gestion, migrations, permissions, contributions
 frontend et cycle de vie.
@@ -4008,20 +4022,21 @@ par leurs contrats publics. ZTP ne crée pas de référentiel d'identité Pixs
 concurrent.
 
 Le module porte la représentation et le pilotage des autorités, des délégations,
-des politiques, des configurations des PA, des opérations de contrôle et de
-leur suivi. Le PA conserve l'exécution des fonctions réseau et des services
+des politiques, des configurations PZT, des opérations de contrôle réseau et de
+leur suivi. Le composant PZT conserve l'exécution des fonctions réseau et des services
 ZTP correspondant à ses rôles. Cette séparation ne déplace pas l'exécution
 des communications dans le PBO.
 
 Les autres opérations système ou utilisateur restent possédées par les
-modules qui les définissent et utilisent les interfaces publiques PA et ZTP.
+modules qui les définissent et utilisent les contrats publics de `pixs.agent`,
+avec communication via PZT.
 Le module réseau ne devient pas propriétaire de toutes les opérations locales.
 PFO adresse ses demandes à PBO, qui les autorise avant transmission via ZTP ;
 une liaison directe PFO–PA exige un cadrage distinct.
 
 #### 44.6.1 Caractère obligatoire et protection
 
-Le module PZT est essentiel dans toute composition PBO. Une composition
+Le module `pixs.pzt` est essentiel dans toute composition PBO. Une composition
 PBO sans ce module est invalide, même lorsque le réseau est désactivé.
 Son caractère obligatoire
 est déclaré et vérifié par les mécanismes génériques de composition, sans
@@ -4041,14 +4056,14 @@ garanties, sans fonctionnement permissif ni abandon des contraintes du réseau.
 
 Pour toute installation autonome utilisant ZTP, sa configuration, sa
 visualisation, sa supervision et son monitoring relèvent d'un PBO local ou
-distant disposant du module officiel. Un PA seul peut exécuter les fonctions
+distant disposant de `pixs.pzt`. Un PZT sans PBO local peut exécuter les fonctions
 déjà configurées et encore autorisées ; il ne remplace pas ce module PBO.
-Un PA autonome sans PBO local ne devient pas un PBO ; toute composition
-PBO conserve son module essentiel PZT même lorsque le réseau est désactivé.
+PA et PZT sans PBO local ne deviennent pas un PBO ; toute composition
+PBO conserve son module essentiel `pixs.pzt` même lorsque le réseau est désactivé.
 
 #### 44.6.2 Enrichissement par sous-modularité
 
-Le module comprend un socle stable de pilotage et de contrats avec le PA.
+Le module `pixs.pzt` comprend un socle stable de pilotage et de contrats avec PZT.
 Ses capacités sont enrichies par des sous-modules utilisant les mécanismes
 Pixs habituels : manifests, dépendances, lifecycle, services, permissions,
 configuration et contributions frontend déclarées.
@@ -4056,11 +4071,11 @@ configuration et contributions frontend déclarées.
 Le découpage envisagé est le suivant ; ses frontières exactes restent à préciser :
 
 ```text
-Module ZTP côté PBO
-├── Socle de pilotage et contrats PA
+pixs.pzt côté PBO
+├── Socle de pilotage et contrats PZT
 ├── Autorités et délégations
 ├── Politiques et autorisations
-├── Gestion des agents
+├── Gestion des exécutants PZT
 ├── Découverte et relais
 ├── Topologie et supervision
 └── Extensions spécialisées
@@ -4086,9 +4101,9 @@ strictement internes au PA et les adapters de plateforme déclarés sont
 spécifiés séparément, avec leur autorisation ; ils ne créent pas un canal
 alternatif PBO–PA. Aucun accès local hors ZTP n'est activé implicitement.
 
-Les mécanismes exacts de protection du lifecycle, l'accès local de reprise,
-l'identifiant canonique du module et les contrats PBO vers PA restent à
-spécifier avant implémentation.
+Les identifiants `pixs.agent` et `pixs.pzt` sont validés. Les mécanismes exacts
+de protection du lifecycle, l'accès local de reprise et les contrats concrets
+PBO–PA/PZT restent à spécifier et qualifier avant implémentation.
 
 ### 44.7 Trois politiques complémentaires
 

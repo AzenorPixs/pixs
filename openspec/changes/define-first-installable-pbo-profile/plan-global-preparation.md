@@ -1,29 +1,29 @@
-# Plan global de préparation — 106 changes
+# Plan global de préparation — 107 changes
 
-Relevé du 17 octobre 2026. Les 100 dossiers initiaux sont complétés par N01/N02 après audit des NE et N03–N06 après audit transversal, tous explicitement validés pour préparation. **Aucune implémentation autorisée.**
+Relevé du 17 octobre 2026. Les 100 dossiers initiaux sont complétés par N01/N02 après audit des NE et N03–N06 après audit transversal, tous explicitement validés pour préparation. PA10 formalise ensuite la décision PA/PZT et prépare pixs.agent sans code. **Aucune implémentation autorisée.**
 
 ## Comptes et profil
 
 | Famille | Dossiers |
 |---|---:|
 | Premier P0 : C00–C19, N01 et N03–N06 | 25 |
-| Pixs Agent | 9 |
+| Pixs Agent et séparation PA/PZT | 10 |
 | PZT et contrats techniques | 26 |
 | Compléments Bulk | 11 |
 | Capacités supplémentaires | 32 |
 | Clarification native/hors ligne N02 | 1 |
 | Docker | 1 |
 | Recette étendue | 1 |
-| **Total** | **106** |
+| **Total** | **107** |
 
-Les **1 052 tâches de réalisation restent non cochées**. Les options ne sont pas sélectionnées par leur préparation. Le canon reste à 78 capacités, 717 exigences et 812 scénarios ; les deltas proposés de C00/N02/N04/N05 ne sont pas synchronisés.
+Les **1 056 tâches de réalisation restent non cochées** : 1 052 historiques et quatre tâches de réalisation future PA10. Les cinq tâches de formalisation PA10 sont distinctes. Le canon adopté compte 78 capacités, 724 exigences et 824 scénarios ; les deltas encore proposés de C00/N02/N04/N05 ne sont pas synchronisés. Les options ne sont pas sélectionnées par leur préparation.
 
 ## Audits et preuves
 
 - [Audit NE durable](audit-ne-94.json) et [résultats antérieurs sur 102 dossiers](validation-audit-ne-94.json) : analyse statique de 94 exigences, pas qualification fonctionnelle.
 - [Audit transversal durable](audit-transversal-p0.json) : 17 parcours/interfaces et contrôle des références des 717 exigences ; [rapport local actuel](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md).
 - [Couverture actuelle](couverture-preparation-globale.md), [dépendances structurées](preparation-globale.json), [registre d’arbitrages](arbitrages-preparation-globale.md).
-- Les validations de 20, 100 et 102 dossiers restent historiques ; les contrôles du présent audit portent sur 106.
+- Les validations des audits précédents sur 20, 100, 102 et 106 dossiers restent historiques. Après PA10, le contrôle OpenSpec porte sur 107 changes. Les matrices structurées des audits restent des instantanés antérieurs à PA10, à réconcilier avant réalisation.
 
 ## Ordre possible des dépendances fermes
 
@@ -138,6 +138,8 @@ Cet ordre de préparation ne vaut pas ordre d’activation ni autorisation de co
 | 105 | X01 | [build-and-qualify-pixs-docker-image](../build-and-qualify-pixs-docker-image/proposal.md) | C19, PA09, Z26 |
 | 106 | Q01 | [qualify-selected-extended-pixs-compositions](../qualify-selected-extended-pixs-compositions/proposal.md) | C19, PA09, Z26, B11, X01, O01, O02, O03, O04, O05, O06, O07, O08, O09, O10, O11, O12, O13, O14, O15, O16, O17, O18, O19, O20, O21, O22, O23, O24, O25, O26, O27, O28, O29, O30, O31, O32 |
 
+| 107 | PA10 | [separate-pa-pzt-and-pbo-management-modules](../separate-pa-pzt-and-pbo-management-modules/proposal.md) | C00, C02, C04, C06, C07 |
+
 ## Conditions et frontières
 
 - N03 fournit vérificateurs/matériaux publics de confiance avant toute installation de recette ; C19 garde support, décision et publication finale. Les octets et l’identité qualifiés ne sont pas modifiés silencieusement après C17.
@@ -147,7 +149,7 @@ Cet ordre de préparation ne vaut pas ordre d’activation ni autorisation de co
 - O02 → O01 seulement pour stockage objet Pixs ; O19 → O18 seulement pour intentions hors ligne ; O20 → O01 seulement pour sorties objet Pixs.
 - O17/O18/O23 : adoption de N02 pour les profils combinés natifs/hors ligne. O24 : aucun appel fournisseur réel avant O15/O25 ; O25 dépend fermement d’O15.
 - Z08 requiert qualification Z26 du socle avant première activation passerelle. Q01 décrit le catalogue étendu, sans imposer toutes les options à un profil réduit.
-- C14 garde PZT/DNS essentiels et gestion PBO ; les obligations par rôle restent à recouper avant adoption, sans succès d’exécution PA inventé. X01 conserve sa composition propre avec trois binaires PA.
+- C14 garde PZT/DNS essentiels et gestion PBO ; les obligations par rôle restent à recouper avant adoption, sans succès d’exécution PA inventé. X01 conserve deux binaires PA plus PZT indépendant. PA10 porte pixs.agent et la coordination PA/PZT ; C14 garde pixs.pzt et DNS.
 
 ## Barrières avant réalisation
 

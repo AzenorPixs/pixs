@@ -18,7 +18,7 @@ Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les stru
 
 ## Architecture proposée
 
-Composer deux responsabilités de gestion PBO propriétaires via les mécanismes communs ; manifests et contrats exacts après décision d’identifiants. Conserver configuration souhaitée, versions et états d’absence d’exécutant ; appliquer les choix validés pertinents à la configuration. N’engager aucun PA, service DNS ou réseau non sélectionné, ni canal de substitution.
+Composer deux responsabilités de gestion PBO propriétaires via les mécanismes communs ; identifiant pixs.pzt validé, identifiant DNS et manifests/contrats exacts restant à préciser. Conserver configuration souhaitée, versions et états d’absence d’exécutant ; appliquer les choix validés pertinents à la configuration. N’engager aucun PA, service DNS ou réseau non sélectionné, ni canal de substitution.
 
 ## Alternatives et frontière de conception
 
@@ -69,3 +69,13 @@ La table 193 clauses reste conditionnelle et exige revue par rôle avant adoptio
 Contrôles à intégrer : Modules essentiels présents même réseau désactivé ; État souhaité distinct de mesure/appliqué ; Suffixe/droits/conflits des données gérées conformes ; Aucune publication DNS/réseau ni modification hôte inventée.
 
 Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
+
+## Identifiant et séparation validés le 17 octobre 2026
+
+pixs.pzt est le nom canonique adopté du module essentiel PZT. Ce lot conserve
+sa gestion réseau et DNS ; le nouveau lot [PA10](../separate-pa-pzt-and-pbo-management-modules/design.md)
+porte pixs.agent, qui gère PA hors PZT. L'exécutant réseau est PZT indépendant,
+colivré avec PA. Le nom pixs.pzt n'est plus un arbitrage ouvert ; les contrats
+concrets et le nom du module DNS restent à qualifier. Relire les instantanés
+requirements.md contre le canon actuel avant reprise ; aucune tâche produit
+n'est réalisée par cet alignement documentaire.
