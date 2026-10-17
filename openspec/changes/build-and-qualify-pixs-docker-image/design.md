@@ -6,7 +6,7 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-Le README déclare les distributions non livrées ; le canon impose à l’image PBO/PFO/PZT et trois binaires PA, avec exclusion des modes utilisateur.
+Le README déclare les distributions non livrées ; le canon impose à l’image PBO/PFO avec pixs.agent/pixs.pzt, deux binaires PA et PZT indépendant, avec exclusion des modes utilisateur.
 
 Les références de la matrice et les fichiers présents ne constituent pas une preuve fonctionnelle actuelle. Relire le code concerné et ses preuves avant de décider le complément à réaliser.
 
@@ -18,9 +18,9 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
-Construire depuis sources et versions déclarées l’image Pixs complète en contenu PBO/PFO/PZT et exactement trois binaires PA. Exclure binaire utilisateur et modes de session, séparer profils applicatifs et supervision PA, préserver état/configuration/secrets hors image ; transmettre signaux/drain et identité de distribution sans nouvelle autorité métier.
+Construire depuis sources et versions déclarées l’image Pixs complète en contenu PBO/PFO avec pixs.agent/pixs.pzt, deux binaires PA et le binaire indépendant PZT. Exclure binaire utilisateur et modes de session, séparer profils applicatifs et supervision distincte PA/PZT, préserver état/configuration/secrets hors image ; transmettre signaux/drain et identité de distribution sans nouvelle autorité métier.
 
-Périmètre propre à ce lot : PBO/PFO/PZT et trois binaires PA ; état externe, sondes/arrêt/reproductibilité/publication.
+Périmètre propre à ce lot : PBO/PFO avec pixs.agent/pixs.pzt, deux binaires PA et PZT indépendant ; état externe, sondes/arrêt/reproductibilité/publication.
 
 ## Choix déjà fixés et alternatives
 
@@ -30,7 +30,7 @@ Les modalités concrètes encore ouvertes ne reçoivent pas de valeur de défaut
 
 ## Barrières de conception avant réalisation
 
-Base/outils/architecture, rôles/comptes/supervision et permissions du profil ; trois binaires PA seulement, pas de binaire utilisateur.
+Base/outils/architecture, rôles/comptes/supervision et permissions du profil ; deux binaires PA et PZT indépendant, pas de binaire utilisateur.
 
 Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant tout code, les choix ayant un impact réel sur sécurité, périmètre, compatibilité, exploitation ou ressources devront être soumis avec conséquences et recommandation ; pour PA/PZT, respecter TECHNICAL §45.4 et ses lots de trois arbitrages. Les paramètres déjà décidés sont à qualifier, pas à remplacer par une nouvelle décision supposée.
 
@@ -59,3 +59,11 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Séparation PA/PZT validée le 17 octobre 2026
+
+La [décision adoptée](../separate-pa-pzt-and-pbo-management-modules/design.md) conserve
+trois exécutables hors PBO/PFO dans Docker : deux PA et PZT indépendant. Le
+binaire utilisateur PA reste exclu. Les snapshots requirements.md doivent
+être réconciliés avec le canon actuel avant réalisation ; aucune image n'est
+construite ni qualifiée pendant cet alignement documentaire.

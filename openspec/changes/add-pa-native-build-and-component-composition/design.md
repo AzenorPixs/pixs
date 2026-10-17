@@ -6,7 +6,7 @@ PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix en
 
 ## Contexte actuel
 
-Les exigences PA décrivent quatre binaires et sept modes ; le README indique que l’implémentation, la qualification et les artefacts restent à réaliser. Le contrôle de présence ciblé des sources n’est pas une recette de plateforme.
+Le canon distingue trois binaires PA et six modes, plus le binaire indépendant PZT et son mode pzt-daemon ; le README indique que l’implémentation, la qualification et les artefacts restent à réaliser. Le contrôle de présence ciblé des sources n’est pas une recette de plateforme.
 
 Les références de la matrice et les fichiers présents ne constituent pas une preuve fonctionnelle actuelle. Relire le code concerné et ses preuves avant de décider le complément à réaliser.
 
@@ -18,9 +18,9 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
-Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les quatre binaires et les choix Nuitka/Cython validés sont conservés.
+Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Nuitka) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
 
-Périmètre propre à ce lot : Catalogue fermé au build, quatre exécutables, sept modes, Nuitka pour trois binaires et Cython pour PZT ; qualifier versions, ABI et runtime avant installation des outils.
+Périmètre propre à ce lot : Catalogue fermé au build, quatre exécutables colivrés, six modes PA et un mode PZT, Nuitka pour PA et Cython pour PZT ; qualifier versions, ABI et runtime avant installation des outils.
 
 ## Choix déjà fixés et alternatives
 
@@ -58,3 +58,14 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+## Alignement PA/PZT validé le 17 octobre 2026
+
+La [décision adoptée](../separate-pa-pzt-and-pbo-management-modules/design.md) fixe pixs.agent pour
+la configuration, l'administration et la supervision de PA hors PZT, et
+pixs.pzt pour le binaire indépendant PZT. PA/PZT restent colivrés : trois
+binaires PA plus PZT dans Debian, deux binaires PA plus PZT dans Docker.
+Le présent lot conserve son périmètre de réalisation, sans code engagé ici.
+Les copies requirements.md et empreintes de préparation sont historiques et
+doivent être réconciliées avec le canon avant réalisation ; le réseau ne
+redevient pas une responsabilité PA du fait d'une formulation héritée.

@@ -9,7 +9,7 @@ Kernel à des adapters futurs explicitement spécifiés.
 
 ### Requirement: Pile de référence unique
 
-Le runtime applicatif PBO/PFO MUST utiliser Django pour l’autorité métier, PostgreSQL comme source de vérité et TanStack comme frontend de référence. L’agnosticisme MUST concerner domaines, contrats, providers et intégrations et MUST NOT promettre l’interchangeabilité immédiate de cette pile. Les binaires PA et le module essentiel PZT MUST respecter leurs exigences distinctes de cette capacité.
+Le runtime applicatif PBO/PFO MUST utiliser Django pour l’autorité métier, PostgreSQL comme source de vérité et TanStack comme frontend de référence. L’agnosticisme MUST concerner domaines, contrats, providers et intégrations et MUST NOT promettre l’interchangeabilité immédiate de cette pile. PA, PZT, pixs.agent et pixs.pzt MUST respecter leurs exigences distinctes.
 
 #### Scenario: Runtime décrit
 
@@ -167,18 +167,31 @@ La solution retenue MUST être qualifiée avant installation.
 
 ### Requirement: Couche exécutable PA séparée
 
-Les binaires PA définis par pixs-agent MUST constituer une couche d’exécution locale distincte et MUST NOT remplacer Django, PostgreSQL ou TanStack ni devenir un backend métier alternatif. Leur compilation MUST suivre le choix Nuitka pour trois binaires et Cython pour PZT.
+Les trois binaires PA définis par pixs-agent et le binaire indépendant PZT
+défini par pzt MUST rester distincts du runtime applicatif. Ils MUST NOT
+remplacer Django, PostgreSQL ou TanStack ni devenir un backend métier
+alternatif. Les trois binaires PA MUST suivre Nuitka et PZT MUST suivre Cython,
+avec chaînes et plateformes qualifiées avant construction.
 
-#### Scenario: Couche exécutable PA séparée
+#### Scenario: Exécutants distincts du backend
 
-- **WHEN** un binaire PA est décrit
-- **THEN** il ne devient pas une implémentation alternative de l’autorité métier PBO
+- **WHEN** une release décrit PA et PZT
+- **THEN** elle distingue trois binaires PA et un binaire PZT sans autorité métier alternative
 
-### Requirement: Module PZT essentiel dans PBO
+### Requirement: Modules de gestion pixs.agent et pixs.pzt dans PBO
 
-La composition cible PBO MUST inclure le module essentiel PZT défini par pzt, même lorsque le réseau est désactivé. Configuration, visualisation, supervision et monitoring MUST rester dans PBO ; le réseau activé/configuré MUST être exécuté par le binaire PZT de PA.
+La composition cible PBO MUST inclure pixs.agent pour la gestion PA hors PZT
+selon pixs-agent et le module essentiel pixs.pzt selon pzt, même réseau
+désactivé. Les deux modules MUST utiliser les mécanismes communs et les
+primitives pixs.core par contrats publics. La gestion PZT MUST rester dans
+pixs.pzt et son exécution dans le binaire indépendant PZT.
 
-#### Scenario: Module PZT essentiel dans PBO
+#### Scenario: Composition des deux modules de gestion
+
+- **WHEN** la composition PBO est décrite
+- **THEN** pixs.agent et pixs.pzt ont des responsabilités et contrats distincts au-dessus du Kernel et de pixs.core
+
+#### Scenario: Réseau désactivé
 
 - **WHEN** l’opérateur désactive le réseau PZT
-- **THEN** le binaire réseau se ferme et le module essentiel demeure dans PBO
+- **THEN** le binaire réseau se ferme et pixs.pzt demeure dans PBO

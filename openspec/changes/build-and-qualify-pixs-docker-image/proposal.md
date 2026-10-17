@@ -2,13 +2,13 @@
 
 ## Pourquoi
 
-Le README déclare les distributions non livrées ; le canon impose à l’image PBO/PFO/PZT et trois binaires PA, avec exclusion des modes utilisateur.
+Le README déclare les distributions non livrées ; le canon impose à l’image PBO/PFO avec pixs.agent/pixs.pzt, deux binaires PA et PZT indépendant, avec exclusion des modes utilisateur.
 
 Les références de la matrice et les fichiers présents ne constituent pas une preuve fonctionnelle actuelle. Relire le code concerné et ses preuves avant de décider le complément à réaliser.
 
 ## Modifications proposées
 
-PBO/PFO/PZT et trois binaires PA ; état externe, sondes/arrêt/reproductibilité/publication.
+PBO/PFO avec pixs.agent/pixs.pzt, deux binaires PA et PZT indépendant ; état externe, sondes/arrêt/reproductibilité/publication.
 
 ## Capacités
 
@@ -36,7 +36,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Impact de réalisation future
 
-Construire depuis sources et versions déclarées l’image Pixs complète en contenu PBO/PFO/PZT et exactement trois binaires PA. Exclure binaire utilisateur et modes de session, séparer profils applicatifs et supervision PA, préserver état/configuration/secrets hors image ; transmettre signaux/drain et identité de distribution sans nouvelle autorité métier.
+Construire depuis sources et versions déclarées l’image Pixs complète en contenu PBO/PFO avec pixs.agent/pixs.pzt, deux binaires PA et le binaire indépendant PZT. Exclure binaire utilisateur et modes de session, séparer profils applicatifs et supervision distincte PA/PZT, préserver état/configuration/secrets hors image ; transmettre signaux/drain et identité de distribution sans nouvelle autorité métier.
 
 ## Critère de sortie de réalisation future
 
@@ -44,4 +44,4 @@ Binaire et modes utilisateur absents ; aucun hôte administré implicitement ; r
 
 ## Décisions restant à valider
 
-Base/outils/architecture, rôles/comptes/supervision et permissions du profil ; trois binaires PA seulement, pas de binaire utilisateur.
+Base/outils/architecture, rôles/comptes/supervision et permissions du profil ; deux binaires PA et PZT indépendant, pas de binaire utilisateur.

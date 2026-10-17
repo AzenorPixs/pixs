@@ -2361,31 +2361,51 @@ aucun seuil universel n'est déduit du runtime.
 
 ## 42. Pixs Agent et séparation des binaires
 
-Ce chapitre porte les modalités techniques de PA ; PROJECT.md §43–§44
-définit les responsabilités et BUILD.md §46–§47 la distribution et la recette.
-Les quatre binaires PA regroupent sept modes : démon système,
-événements système, sessions utilisateur et exécution PZT. Le mode
-session-daemon déjà cadré appartient au binaire utilisateur, absent de Docker.
+Ce chapitre porte les modalités techniques de PA et son articulation avec PZT ;
+PROJECT.md §43–§44 définit les responsabilités et BUILD.md §46–§47 la distribution.
+La séparation validée le 17 octobre 2026 définit trois binaires PA compilés
+avec Nuitka, pour six modes système/utilisateur, et le binaire indépendant
+PZT compilé avec Cython, pour `pzt-daemon`. Le binaire de sessions PA reste
+absent de Docker. PA et PZT sont distribués ensemble, sans confondre leurs
+composants, identités, contrats, droits ou cycles de vie.
+
+Dans PBO, `pixs.agent` assure configuration, administration et supervision de
+PA hors PZT ; `pixs.pzt`, nom canonique du module essentiel PZT, assure celles
+de PZT, avec visualisation et monitoring. Les modules fonctionnels conservent
+leurs opérations et consomment les contrats publics de `pixs.agent`.
+Le Kernel résout les services génériques ; `pixs.core` fournit les primitives
+communes d'identité et de permissions. Aucun des deux ne porte le transport PA.
 
 Les instructions, configurations et états PBO–PA passent exclusivement par
-PZT. Les canaux internes entre binaires PA ou auxiliaires locaux sont déclarés,
-protégés et qualifiés ; ils ne créent aucun chemin de contrôle PBO–PA hors PZT.
-Le binaire PZT gère les ressources réseau de son périmètre, le démon PA
-exécute ses autres fonctions système, et le binaire utilisateur conserve
-ses droits de session. Une frontière de processus ne vaut pas autorisation.
+PZT, localement comme à distance. Le contrôle PBO–PZT passe par les interfaces
+sécurisées PZT. Les canaux entre PA, PZT ou auxiliaires sont déclarés, protégés
+et qualifiés, avec appelant, cible et autorisation vérifiés ; la colivraison
+n'accorde aucun privilège implicite. Les canaux entre binaires PA ne fournissent
+aucun chemin PBO–PA hors PZT. Le binaire PZT gère les ressources réseau de son
+périmètre ; les binaires PA gèrent leurs fonctions système ou utilisateur.
 
-Le runtime de référence Django/PostgreSQL/TanStack reste celui de PBO/PFO.
-Les états techniques locaux PA explicitement nécessaires à la reprise
-gardent leur contrat propre, borné et protégé, sans devenir une source
-autoritative métier ni un stockage local implicite du runtime PBO.
+Le runtime Django/PostgreSQL/TanStack reste celui de PBO/PFO. Les états techniques
+locaux PA et PZT requis pour la reprise restent distincts, bornés, protégés et
+sans autorité métier. La capacité pixs-agent définit PA et sa gestion par
+`pixs.agent` ; pzt définit PZT et sa gestion par `pixs.pzt`.
+Aucune implémentation n'est réalisée ; profils et valeurs non validés restent
+ouverts. La décision du 17 octobre remplace le rattachement antérieur de PZT à
+PA, sans modifier le contenu des distributions ni les garanties de sécurité.
 
-Les capacités [pixs-agent](openspec/specs/pixs-agent/spec.md) et
-[pzt](openspec/specs/pzt/spec.md) déclarent les exigences normatives de ce cadrage.
-Aucune implémentation n'est réalisée ; profils et valeurs non validés restent ouverts.
-La compilation retenue est Nuitka pour les trois binaires système/utilisateur,
-et Cython pour le binaire PZT, sous qualification ultérieure des versions.
-Les décisions nouvelles sur les quatre binaires et le module PZT essentiel
-prévalent sur les descriptions antérieures d'un exécutable unique.
+
+### 42.0 Contrats de gestion et frontières d'exécution
+
+```mermaid
+flowchart LR
+    M["Module fonctionnel — propriétaire de l'opération"] --> A["pixs.agent — gestion PA hors PZT"]
+    A <-->|"Instructions et résultats protégés"| T["PZT — transport et exécution réseau indépendants"]
+    Z["pixs.pzt — gestion réseau dans PBO"] <-->|"Contrôle sécurisé PZT"| T
+    T <-->|"Échanges PA autorisés"| P["PA — trois binaires, six modes"]
+```
+
+Les flèches représentent des contrats logiques, sans imposer un endpoint ou un
+canal entre processus. Les schémas de topologie dans PROJECT.md §4 montrent
+le PA/PZT local et les deux cas distants, avec ou sans PBO/PFO locaux.
 
 ### 42.1 Composition et catalogue des capacités
 
@@ -2407,28 +2427,28 @@ sélectionnent uniquement des opérations déjà livrées et autorisées. Aucun
 chargement implicite de code distant n'est admis.
 
 Cette composition ne remplace pas le runtime Django de PBO et n'impose pas
-à PA d'embarquer Django ou PostgreSQL. Les garanties des quatre binaires sont
+à PA d'embarquer Django ou PostgreSQL. Les garanties des trois binaires PA et du binaire PZT sont
 déclarées par pixs-agent et pzt, sans variante cachée du runtime de référence ;
 leur implémentation nécessitera un change distinct.
 
 ### 42.2 Capacités réseau PZT fondées sur WireGuard
 
 WireGuard est utilisé comme logiciel de transport IP authentifié et chiffré.
-PA pilote une implémentation éprouvée selon un adapter de plateforme qualifié ;
+PZT pilote une implémentation éprouvée selon un adapter de plateforme qualifié ;
 il ne réimplémente pas sa cryptographie. Les fonctions complémentaires sont
 développées dans PZT et PA. Les briques, clients, serveurs et code NetBird ne
 sont pas intégrés ; sa documentation sert de référence de capacités, sans
 compatibilité implicite avec ses API, formats ou protocoles internes.
 
 Le [cadrage technique PZT](TECHNICAL.md#43-réseau-pzt-contrats-et-garanties-techniques) décrit les garanties communes, les références
-officielles et le registre A01 à A12. Ce cadrage décrit leur application par PA.
+officielles et le registre A01 à A12. Ce cadrage décrit leur application par PZT et leur consommation par PA.
 L'usage de bibliothèques indépendantes reste soumis à qualification et à la
 politique de dépendances Pixs. A01, A02 option A pour l'amorçage et A03
 option A pour le transport local sur le même hôte d'exécution sont validés
 par le développeur le 5 octobre 2026. Leurs modalités de réalisation restent
 à préciser et qualifier.
 
-| Capacité de PA | Responsabilité d'exécution | Contrôle et preuve attendus |
+| Capacité de PZT | Responsabilité d'exécution | Contrôle et preuve attendus |
 | --- | --- | --- |
 | Adapter WireGuard | Configurer interfaces, pairs, endpoints, MTU et paramètres du backend. | État réel conforme au plan autorisé ; clés privées protégées. |
 | Carte réseau | Vérifier et appliquer les versions, relations et décisions destinées au PA. | Refus des états non vérifiables ; resynchronisation après rupture de séquence. |
@@ -2621,7 +2641,7 @@ consultation et ne publient jamais de clé privée ou de jeton.
 
 ### 42.3 Modes d'exécution
 
-Les sept modes sont répartis entre les quatre binaires définis dans
+Les six modes PA et le mode PZT sont répartis entre les quatre exécutables définis dans
 PROJECT.md §43 et BUILD.md §46. Le contexte
 et le mode sont explicites ; ils ne sont pas déduits de la présence d'un
 Pixs Backoffice local. Les noms techniques ci-dessous sont proposés et les
@@ -2635,7 +2655,7 @@ options de ligne de commande restent à spécifier.
 | `session-start` | Ouverture d'une session graphique | Ponctuelle | Utilisateur de la session | Opérations liées à l'ouverture. |
 | `session-stop` | Fermeture contrôlée d'une session graphique | Ponctuelle et bornée | Utilisateur de la session | Opérations liées à la fermeture. |
 | `session-daemon` | Ouverture d'une session graphique, après délai | Permanente, limitée à la session | Utilisateur de la session | Fonctionnement, paramétrage, contrôle, surveillance et dérives. |
-| `pzt-daemon` | Démarrage du système ou du conteneur, sans délai | Permanente | Système | Assure la convergence et la réconciliation de PZT si celui-ci est activé et configuré sur ce PA, sinon se ferme. |
+| `pzt-daemon` | Démarrage du système ou du conteneur, sans délai | Permanente | Système | Assure la convergence et la réconciliation de PZT si celui-ci est activé et configuré sur ce composant PZT, sinon se ferme. |
 
 Une invocation ponctuelle produit un résultat et se termine. Un démon reste
 actif jusqu'à son arrêt, son échec ou la disparition de son contexte. Les
@@ -2664,7 +2684,7 @@ invalide bloque les communications et les opérations qui en dépendent.
 L'initialisation minimale nécessaire à PZT est distinguée de l'activation
 différée des activités permanentes de fonctionnement et de surveillance.
 Le septième mode `pzt-daemon` démarre sans délai pour assurer la convergence
-et la réconciliation de PZT lorsque celui-ci est activé et configuré sur ce PA ;
+et la réconciliation de PZT lorsque celui-ci est activé et configuré sur ce composant PZT ;
 sinon, il se ferme. Les délais de `system-daemon` et de `session-daemon` sont
 préservés. Le séquencement exact de l'initialisation minimale PZT et les
 préconditions de chaque mode restent à qualifier dans l'adaptateur de plateforme.
@@ -2861,7 +2881,7 @@ secrets, ressources, fichiers et capacités système nécessaires. Les instances
 de session ne reçoivent ni les clés réservées au contexte système ni ses
 permissions d'exécution.
 
-Les quatre binaires mettent en œuvre la séparation des fonctions ; leur
+Les trois binaires PA et le binaire indépendant PZT séparent les fonctions ; leur
 isolation, leurs comptes et leurs canaux internes restent à qualifier.
 La séparation des exécutables ne justifie aucun cumul implicite de droits.
 Les comptes, canaux locaux internes et ressources partagées sont déclarés
@@ -2876,45 +2896,45 @@ que plusieurs Pixs Backoffice peuvent administrer librement la même cible.
 
 Le cadrage réseau intégré à PROJECT.md §44 et TECHNICAL.md §43–§44
 décrit les orientations PZT ; il reste une cible de conception à spécifier.
-PA exécute PZT selon les rôles attribués, sous le contrôle et la configuration
-de PBO dans le périmètre autorisé. Ce rôle ne lui attribue pas automatiquement
+PA consomme le transport du composant indépendant PZT. `pixs.agent` gère PA ;
+`pixs.pzt` contrôle et configure PZT dans le périmètre autorisé. Ce rôle ne lui attribue pas automatiquement
 les pouvoirs d'autorité, de certification, de relais ou de Pixs Backoffice.
 
 #### 42.6.1 Répartition permanente des responsabilités PZT
 
-Règle précisée par le développeur le 10 octobre 2026 : le fonctionnement
-opérationnel de PZT est toujours assuré par le binaire PZT dédié de Pixs Agent
-(PA), dans les rôles qui lui sont attribués, notamment par son mode
-`pzt-daemon` pour les fonctions permanentes. PA pilote WireGuard et les
-adapters de plateforme qualifiés ; cette règle conserve les backends natifs
-et la séparation des services selon leurs rôles.
+La décision validée le 17 octobre 2026 sépare les exécutants : PA exécute ses
+fonctions système et utilisateur sous gestion de `pixs.agent` ; PZT exécute
+les fonctions réseau sous gestion de `pixs.pzt`. Le mode `pzt-daemon` appartient
+au seul composant PZT et pilote WireGuard et les adapters qualifiés.
 
-La configuration, la visualisation, la supervision et le monitoring de PZT
-sont toujours assurés par Pixs Backoffice (PBO), au travers de son module
-officiel PZT et de ses sous-modules. PBO porte les interfaces de gestion,
-les vues de topologie et d'état, le suivi des métriques, diagnostics et
-alertes, ainsi que les actions autorisées. PA collecte les informations
-locales, exécute les contrôles et rapporte les états réellement observés.
+`pixs.agent` conserve la configuration souhaitée et les opérations de gestion
+PA hors PZT. Il suit les capacités, versions, lifecycle, instructions, états
+appliqués, diagnostics, maintenance et quarantaine de PA. Les modules métier
+restent propriétaires de leurs opérations ; leurs requêtes passent par ses
+contrats publics. La réception d'une instruction ne prouve pas son exécution.
 
-Cette répartition s'applique à tous les environnements PA prévus :
-machines physiques et VM Linux/Windows, Docker et LXC sous Proxmox.
-PBO peut être local ou distant ; sa présence sur chaque machine PA n'est
-pas requise. Même si PBO et PA partagent un hôte, PZT reste exécuté par PA
-et tous leurs échanges de configuration, d'état et de monitoring passent
-par PZT selon les contrôles applicables.
+`pixs.pzt` possède les données et contrats de gestion PZT, ses interfaces de
+configuration, administration, visualisation, supervision et monitoring. Il
+n'administre pas les autres fonctions de PA. PZT collecte et rapporte les
+états réseau réellement observés ; PA rapporte ceux de ses fonctions propres.
+Les dépendances de transport ne transfèrent ni propriété métier ni autorité.
 
-L'indisponibilité de PBO ne transfère pas ses responsabilités à PA.
-PA poursuit uniquement les fonctions déjà autorisées et encore valides,
-selon les règles de continuité existantes. PBO distingue le dernier état
-connu daté d'un état courant confirmé et signale une supervision indisponible
-ou des mesures périmées ; aucune disponibilité ou conformité n'est inventée.
-Le provisionnement et la reprise strictement internes au PA conservent
-leurs procédures autorisées distinctes.
+PBO peut être local ou distant. PA/PZT peuvent être installés sans PBO/PFO
+locaux, ou cohabiter avec eux sur un hôte distant. Les relations entre plusieurs
+PBO restent bornées par leurs autorités et mandats ; aucune priorité ne se
+déduit de la proximité. Les deux topologies distantes sont dessinées dans
+PROJECT.md §4 et README.md.
+
+Si PBO est indisponible, PA et PZT poursuivent seulement leurs fonctions déjà
+autorisées et encore valides. Les modules PBO distinguent le dernier état connu
+daté d'un état courant confirmé. Si PZT est indisponible, les échanges PBO–PA
+concernés restent bloqués sans substitution ; les procédures opérateur de
+provisionnement/réparation restent distinctes et explicitement autorisées.
 
 #### 42.6.2 Passage obligatoire par PZT
 
 Toute communication entre un PBO et un PA doit passer par PZT, dans les
-deux sens et pour chacun des sept modes d'exécution. Cette obligation couvre
+deux sens et pour chacun des six modes PA ; le mode PZT garde son contrôle sécurisé propre. Cette obligation couvre
 les instructions, la configuration, l'administration, les consultations
 d'état, les diagnostics, les événements et les résultats d'opérations.
 
@@ -3179,13 +3199,13 @@ contrats ; lorsqu'elles relient PBO à PA, leurs échanges passent par PZT.
 
 ## 43. Réseau PZT, contrats et garanties techniques
 
-Les fonctions réseau sont exécutées par le binaire PZT de PA sous les rôles
-et mandats attribués. Le module essentiel PZT de PBO assure gestion,
+Les fonctions réseau sont exécutées par le binaire indépendant PZT sous les rôles
+et mandats attribués. Le module essentiel `pixs.pzt` de PBO assure gestion,
 configuration, visualisation, supervision et monitoring. Les contrôles
 applicatifs suivent les exceptions OpenSpec déjà définies, sans inventer
 un audit, un contrôle ou un effet absent.
 
-Les backends WireGuard natifs sont pilotés par PA ; le découpage des binaires
+Les backends WireGuard natifs sont pilotés par PZT ; le découpage des binaires
 ne réimplémente pas la cryptographie et ne contourne aucune frontière
 Linux, Windows, VM, Docker ou LXC sous Proxmox.
 
@@ -3206,7 +3226,7 @@ La réutilisation de bibliothèques standards indépendantes de NetBird reste
 soumise aux choix techniques et à la politique de dépendances Pixs.
 
 Le plan de contrôle associe les décisions de gestion du PBO et les décisions
-des autorités compétentes selon les frontières déjà décrites. Le PA exécute
+des autorités compétentes selon les frontières déjà décrites. PZT exécute
 les fonctions de contrôle qui correspondent à ses rôles déclarés et applique
 le plan de données WireGuard. Le trafic métier ne traverse pas obligatoirement
 le PBO ni une autorité. Une carte réseau autorisée ne crée pas un maillage
@@ -3271,19 +3291,16 @@ reverse proxies publics et intégrations EDR/MDM restent des extensions
 
 ### 43.2 Articulation avec le cadrage du PA
 
-Le cadrage PA de TECHNICAL.md §42 décrit les quatre binaires PA pouvant
-fonctionner sans PBO, PFO ou navigateur local. ZTP conserve cette indépendance d'installation. Le langage cible du PA
-est Python avec génération de C puis compilation native ; les bibliothèques
-et adapters ZTP doivent être qualifiés avec cette chaîne, ses dépendances et
-les plateformes retenues. L'outil de compilation n'est pas choisi par ce cadrage.
+Le cadrage PA de TECHNICAL.md §42 décrit trois binaires PA et un exécutable
+PZT indépendant, distribués ensemble et utilisables sans PBO/PFO ni navigateur
+local. Leurs cycles de vie, propriétaires de configuration et identités restent
+distincts ; PZT n'est plus un mode ou un sous-binaire de PA.
 
-Les sept modes répartis entre les quatre binaires PA sont system-start,
-system-stop, system-daemon, session-start, session-stop, session-daemon et
-`pzt-daemon` ; le binaire utilisateur et ses modes de session sont absents de Docker.
-Ils constituent
-des contextes d'exécution du PA, distincts de ses rôles ZTP de pair, d'autorité,
-de découverte ou de relais. Un mode système ne donne pas automatiquement
-un pouvoir d'autorité et un mode utilisateur ne s'élève pas implicitement.
+Les six modes PA sont system-start, system-stop, system-daemon, session-start,
+session-stop et session-daemon. Le mode `pzt-daemon` appartient à PZT.
+Les fonctions de session PA sont absentes de Docker. Les rôles réseau de pair,
+d'autorité, de découverte ou de relais relèvent des capacités autorisées de PZT ;
+un mode système ne confère aucun de ces pouvoirs implicitement.
 
 Les identités, états et permissions des contextes système et utilisateur sont
 séparés. Une session graphique est distinguée du compte utilisateur ; plusieurs
@@ -3294,7 +3311,7 @@ Les délais de lancement de system-daemon et de session-daemon, les préconditio
 et les budgets d'arrêt sont déclarés. Le mode `pzt-daemon` démarre sans délai
 au démarrage du système ou du conteneur, avec les droits système. Il assure
 la convergence et la réconciliation de ZTP lorsque celui-ci est activé et
-configuré sur ce PA ; sinon, il se ferme. Son démarrage sans délai ne dispense
+configuré sur ce composant PZT ; sinon, il se ferme. Son démarrage sans délai ne dispense
 pas des préconditions et contrôles d'autorisation applicables et ne modifie
 pas les délais des deux autres démons.
 Le séquencement garantit que les fonctions ZTP nécessaires sont
@@ -3338,7 +3355,7 @@ de contrôle, les rapports d'état, la découverte, les autorisations et les
 révocations. Chaque contrat possède un propriétaire, un identifiant, une
 version, des schémas, des erreurs stables et des garanties documentées.
 
-Les versions du cadrage, du module PBO, du PA, du protocole ZTP, des schémas de
+Les versions du cadrage, de pixs.agent, de pixs.pzt, de PA, de PZT, du protocole ZTP, des schémas de
 configuration et des politiques sont distinctes. Une matrice de compatibilité
 vérifie les composants, capacités, contrats, événements, providers et données
 concernés avant activation ou mise à niveau. Une version plus récente n'est
@@ -3349,7 +3366,7 @@ mineure et conserve les autres composantes : x.(y+1).z. La consolidation
 présente fait ainsi passer le cadrage de 0.2.0 à 0.3.0.
 
 Les API de gestion PBO suivent les contrats OpenAPI Pixs, leurs enveloppes de
-succès et d'erreur et leur versionnement. Le protocole entre PA peut employer
+succès et d'erreur et leur versionnement. Le protocole entre exécutants PZT peut employer
 un transport adapté avec ses propres schémas documentés. Les événements de
 contrôle sont versionnés séparément des contrats HTTP.
 
@@ -3363,7 +3380,7 @@ Le contrat d'instruction de contrôle précise l'émetteur PBO vérifié, l'acte
 initial, l'exécuteur technique, la cible canonique, le contexte, l'opération
 et sa version, les paramètres typés et bornés, le mandat et sa validité,
 les versions de politique et de délégation, les obligations et les références
-de suivi. PA vérifie ces éléments à l'exécution, y compris après attente ou
+de suivi. L'exécutant ciblé PA ou PZT vérifie ces éléments à l'exécution, y compris après attente ou
 reprise. Une permission de surveillance ne vaut pas permission de modification.
 
 La réception, la validation, l'exécution technique, la livraison du résultat
@@ -3374,7 +3391,8 @@ ou requiert une intervention autorisée, sans rejeu aveugle.
 
 ### 43.4 Configuration demandée et configuration appliquée
 
-Le PBO conserve la configuration souhaitée. Le PA rapporte la configuration
+Le PBO conserve la configuration souhaitée par module propriétaire. Chaque
+exécutant PA ou PZT rapporte sa configuration
 effectivement appliquée, sa version, son résultat et les écarts diagnostiquables.
 Une configuration envoyée ou reçue n'est pas présentée comme appliquée avant
 confirmation vérifiable de son application.
@@ -3636,8 +3654,9 @@ une panne et un vTPM ne vaut pas implicitement un ancrage physique.
 | Relais | Acheminer le trafic chiffré lorsque la communication directe est impossible. |
 | Adressage et DNS | Gérer les adresses overlay, les noms et la résolution dans les périmètres autorisés. |
 | Passerelle | Acheminer les flux autorisés vers des ressources sans PA selon un profil de réseau étendu déclaré. |
-| Pixs Agent (PA) | Exécuter ZTP selon les rôles attribués, présenter les identités des pairs, vérifier les permissions et établir les canaux. |
-| Pixs Backoffice (PBO) | Contrôler et configurer les PA et consulter leur état dans le périmètre autorisé. |
+| PZT indépendant | Exécuter ZTP selon ses rôles, présenter les identités des pairs, vérifier les permissions et établir les canaux. |
+| Pixs Agent (PA) | Exécuter les opérations système/utilisateur hors PZT sous gestion de pixs.agent. |
+| Pixs Backoffice (PBO) | Gérer PA via pixs.agent et PZT via pixs.pzt dans le périmètre autorisé. |
 
 La découverte et le relais peuvent comporter plusieurs services répartis.
 Leur emplacement ne leur donne aucun pouvoir d'autorité implicite. Les rôles
@@ -3656,7 +3675,7 @@ publiques, les adresses overlay, les capacités, les groupes, les services,
 les profils, les versions et les états d'admission. Les données privées de
 connexion et de posture respectent les règles de minimisation et de rétention.
 
-Chaque PA reçoit une carte réseau limitée à ses relations autorisées. Elle
+Chaque exécutant PZT reçoit une carte réseau limitée à ses relations autorisées. Elle
 identifie l'autorité compétente, le destinataire, la version et la validité,
 les pairs joignables, leurs clés publiques vérifiées, leurs chemins candidats,
 les routes et les décisions applicables. Elle ne révèle pas toute la topologie
@@ -3702,7 +3721,7 @@ A09a, option A validée le 5 octobre 2026, retient ICE/STUN avec signalisation
 propre à PZT et sondes techniques bornées ; l'intégration au chemin UDP
 WireGuard reste à qualifier. A09b, option A validée le 5 octobre 2026,
 retient les relais UDP prioritaires avec secours WSS ; A09c, option A validée
-le 5 octobre 2026, fixe QUIC avec DATAGRAM pour les liaisons PA–relais UDP.
+le 5 octobre 2026, fixe QUIC avec DATAGRAM pour les liaisons PZT–relais UDP.
 
 La recherche de chemins reprend les capacités de rendez-vous et de traversée
 de NAT documentées par NetBird, avec un protocole et une implémentation propres
@@ -3850,14 +3869,14 @@ général. Les directions d'initiation et le trafic de réponse sont spécifiés
 
 Les AllowedIPs WireGuard associent les adresses aux clés des pairs ; ils
 ne constituent pas une autorisation par port ou par service applicatif.
-Le PA applique les contrôles complémentaires sur les flux entrants,
+PZT applique les contrôles complémentaires sur les flux entrants,
 sortants et transférés selon le profil et vérifie leur état réel. Une règle
 autorisant une ressource derrière une passerelle n'autorise pas les services
 locaux de la passerelle. Les états de connexion existants sont invalidés
 conformément aux délais de révocation, sans exception générale pour les
 flux déjà établis. A04b, option A validée par le développeur le 5 octobre
 2026, retient nftables sous Linux et Windows Filtering Platform sous Windows,
-pilotés par des adapters PA avec un contrat commun de politiques PZT.
+pilotés par des adapters PZT avec un contrat commun de politiques PZT.
 Chaque adapter traduit les règles et vérifie leur application effective sur
 les flux de son profil. Les ressources PZT sont identifiées séparément et
 leur coexistence avec les règles de l'opérateur est qualifiée ; aucun
@@ -3889,13 +3908,13 @@ concerné. La posture complète l'attestation TPM sans la remplacer.
 
 A05a, option A validée par le développeur le 5 octobre 2026, retient le
 modèle hybride avec autorisations de durée bornée et protection indépendante
-du processus PA. Après perte du contact avec l'autorité, seules les permissions
+du processus PZT. Après perte du contact avec l'autorité, seules les permissions
 déjà accordées, encore vérifiables et réutilisables selon leur classe restent
 applicables jusqu'à leur échéance, sans renouvellement implicite ni période
 de grâce. Une révocation connue est appliquée dans le délai déclaré sans
 attendre l'expiration. Les classes exigeant une décision en ligne la conservent.
 
-Un profil qualifie l'expiration et la révocation même si PA est arrêté ou
+Un profil qualifie l'expiration et la révocation même si PZT est arrêté ou
 planté alors que les tunnels et filtres du noyau subsistent. Le mécanisme
 indépendant applique uniquement les expirations, retraits ou fermetures
 préautorisés du périmètre PZT ; il n'accorde aucun accès, ne renouvelle aucune
@@ -4042,7 +4061,7 @@ mais ne prouve pas l'identité de chaque application qu'elle héberge.
 L'identification d'un service exige une identité distincte et un point de
 contrôle adapté : intégration au service, proxy ou agent avec identification
 vérifiée du processus. Un numéro de port ou une étiquette déclarée par le
-client ne suffit pas. Le PA porte ou coordonne ce point de contrôle selon
+client ne suffit pas. PZT porte ou coordonne ce point de contrôle selon
 le mode d'intégration retenu.
 
 A10a, option A validée le 5 octobre 2026, mutualise le transport WireGuard
@@ -4050,7 +4069,7 @@ entre services d'un même environnement d'exécution et d'un périmètre PZT
 compatible, avec identités, permissions et contrôles distincts. La granularité
 service ne requiert pas systématiquement un pair dédié. VM, conteneurs,
 installations et périmètres de confiance restent séparés ; aucune clé
-globale n'est partagée entre tous les PA d'un hôte.
+globale n'est partagée entre les instances PA ou PZT d'un hôte.
 
 L'isolation d'un service dépend aussi de la frontière fournie par l'hôte.
 Le réseau ne promet pas de protéger un service contre un administrateur qui
@@ -4069,7 +4088,7 @@ stores de coordination ou interfaces de management existants.
 
 L'exécution utilise le moindre privilège. Les fonctions nécessitant des droits
 système élevés sont limitées, justifiées et isolées autant que possible.
-L'API PBO ne reçoit pas automatiquement les privilèges réseau du PA. Le
+L'API PBO ne reçoit pas automatiquement les privilèges réseau de PZT. Le
 contrôle d'une machine n'accorde pas une exécution arbitraire de commandes
 système hors des opérations et mandats déclarés.
 
@@ -4099,13 +4118,13 @@ Les nouveaux services de contrôle sont explicitement déclarés et protégés ;
 leur présence ne rend pas publics les services privés existants.
 
 Le placement côté PBO est fixé par le module officiel ZTP décrit ci-dessus.
-Le détail des sous-modules, providers et profils d'exécution du PA reste à
+Le détail des sous-modules, providers et profils d'exécution de PA/PZT reste à
 définir en respectant le Kernel agnostique. WireGuard est la base logicielle
 du transport IP. Les orchestrateurs, stores de consensus, adapters et autres
 outils ne sont pas imposés implicitement au Kernel ou au socle Pixs ; leurs
 choix suivent les arbitrages et profils déclarés.
 
-La qualification des déploiements distingue PA seul, le cohébergement PBO–PA
+La qualification des déploiements distingue PA/PZT sans PBO local, le cohébergement PBO–PA
 sur un hôte, les conteneurs séparés et le conteneur commun. Un conteneur commun
 exige un profil et un adapter explicitement validés ; il ne découle pas d'un
 lancement implicite des rôles PBO. Chaque profil précise ses modes, comptes,
@@ -4183,12 +4202,19 @@ Il reprend les 174 fiches communes ; les 100 fiches identiques des deux
 sources sont dédupliquées et les 74 applications PA distinctes sont rattachées
 à leur fiche canonique. Les options, dates et limites restent conservées.
 
-Le découpage en quatre binaires PA, l'exclusion du binaire utilisateur de
-Docker et le module essentiel PZT côté PBO sont les précisions ultérieures
-validées par le développeur le 10 octobre 2026. Elles remplacent les seules
-mentions antérieures incompatibles ; aucun autre choix technique n'est rouvert.
-Une recommandation, un candidat ou une limite à qualifier ne vaut pas une
-validation d'implémentation ou une mesure de performance.
+La décision du 17 octobre 2026 remplace le découpage du 10 octobre : trois
+binaires PA et un binaire PZT indépendant, gérés respectivement par `pixs.agent`
+et `pixs.pzt`, restent colivrés. Les fiches A01–A12 gardent leurs identifiants,
+dates, valeurs et garanties. Dans leurs formulations héritées, le propriétaire
+ou exécutant réseau PZT précédemment nommé « PA » désigne désormais PZT.
+Cela couvre WireGuard, filtrage, découverte, relais, convergence et révocation.
+Cette correspondance ne fusionne pas les identités : les mentions de PA pour
+ses fonctions propres, ses sessions, l'hôte, les preuves TPM ou les services
+non transférés gardent leur objet. Les liaisons d'identités, clés et preuves
+PA/PZT doivent être explicites et qualifiées ; aucun transfert de secret ni
+admission automatique ne découle de la séparation ou de la colivraison.
+Aucun autre choix technique n'est rouvert. Les recommandations et valeurs à
+qualifier ne deviennent ni des décisions d'implémentation ni des mesures.
 
 ### 44.PZT Présentation et état des décisions PZT
 
@@ -5587,7 +5613,7 @@ droits et reprises respectent A05/A06 ; aucun chevauchement ou retrait connu
 n'est contourné par le transfert. Une ressource qui exige des preuves que
 ce profil ne peut fournir reste inaccessible.
 
-Les sept modes PA conservent leurs responsabilités A04a ; le rôle passerelle
+Les six modes PA et le mode PZT conservent leurs responsabilités A04a ; le rôle passerelle
 ne crée pas de mode supplémentaire ni de droits implicites sur l'hôte.
 Linux/Windows physiques et VM, Docker/LXC Proxmox conservent leur périmètre
 PA ; la capacité passerelle est déclarée et qualifiée séparément sur chaque
@@ -14859,12 +14885,14 @@ paramètres et qualification restent à préciser.
 ## 45. Traçabilité, paramètres ouverts et préparation OpenSpec
 
 La formalisation documentaire est portée par le change
-formalize-pa-pzt-and-distribution. Les capacités pixs-agent et pzt sont déclarées ;
+formalize-pa-pzt-and-distribution, puis par
+separate-pa-pzt-and-pbo-management-modules pour la décision du 17 octobre 2026.
+Les capacités pixs-agent et pzt sont déclarées ;
 deb-package, docker-image, runtime et reference-runtime sont alignées.
 Aucun code, test logiciel, dépendance installée, build ou artefact n'est produit.
 
-Les exigences déclarées couvrent PA, PZT, le module essentiel PBO, les quatre
-binaires, les deux paquets Debian et Docker à trois binaires PA. Elles précisent
+Les exigences déclarées couvrent PA, PZT, `pixs.agent`, `pixs.pzt`, les trois
+binaires PA et PZT, les deux paquets Debian et Docker à deux binaires PA plus PZT. Elles précisent
 les périmètres de deb-package, docker-image, runtime et reference-runtime ;
 artifact-publication conserve ses garanties. La corrélation de release ne rend
 pas identiques les contenus PA, PBO/PFO et Docker sans fonctions de session.
@@ -14936,7 +14964,7 @@ hors en-têtes de version remplacés par ce relevé.
 | PZT | Références | TECHNICAL.md |
 | PA | Synthèse consolidée des décisions validées | PROJECT.md |
 | PA | Méthode de finalisation validée | TECHNICAL.md |
-| PA | Positionnement des trois composants | PROJECT.md |
+| PA | Positionnement des trois composants — titre source historique | PROJECT.md §43.2, désormais quatre composants |
 | PA | Besoin exprimé | PROJECT.md |
 | PA | Composition et catalogue des capacités | TECHNICAL.md |
 | PA | Capacités réseau PZT fondées sur WireGuard | TECHNICAL.md |
@@ -14977,9 +15005,9 @@ binaires et de la composition PBO sont adaptées à la décision ultérieure.
 | Contrats et configuration | Formats, versions compatibles, états de suivi, frontières d'application et traitement des conflits ou applications partielles. |
 | Identités | Références, mappings DigitalIdentity, enrôlement et preuves d'assurance propres aux rôles. |
 | Attestation TPM du PA | A10c–A10f validés : déclencheurs, profils distincts, mesures ciblées et transition bornée des références signées/versionnées ; absence de preuve bloquante. Clés, formats, durées, références approuvées, mises à jour, liaisons PA–VM/conteneur–hôte et matrices d'admission à qualifier. |
-| Intégration PA | Séquencement des sept modes avec les services ZTP, dont `pzt-daemon` sans délai et son articulation avec l'initialisation minimale, sessions, budgets d'arrêt, qualification Python/C et états techniques locaux. |
+| Intégration PA/PZT | Séquencement des six modes PA et du mode PZT avec les services ZTP, dont `pzt-daemon` sans délai et son articulation avec l'initialisation minimale, sessions, budgets d'arrêt, qualification Python/C et états techniques locaux. |
 | Amorçage et secours local | Transport local ZTP, initialisation, réparations internes au PA et blocage du contrôle PBO–PA lorsque ZTP local est indisponible. |
-| Module ZTP côté PBO | Identifiant canonique, contrats, découpage des sous-modules, protection du lifecycle et accès local de reprise ; configuration/visualisation/supervision/monitoring via PBO local ou distant pour tout profil utilisant ZTP. |
+| Module pixs.pzt côté PBO | Identifiant validé ; contrats concrets, découpage des sous-modules, protection du lifecycle et accès local de reprise ; configuration/visualisation/supervision/monitoring via PBO local ou distant pour tout profil utilisant ZTP. |
 | Exploitation | Objectifs chiffrés, périmètres de sauvegarde, restauration, privilèges système, limites et quotas par profil. |
 
 ### 45.3 Modalités restantes PA
@@ -15000,7 +15028,7 @@ conteneur, une durée ou une plateforme supplémentaire.
 | Multi-instance | Autorité par ressource, délégations, concurrence et résolution des conflits. |
 | Réseau | Transports PZT distants et locaux, enrôlement, justificatifs, fraîcheur et propagation des révocations. |
 | Amorçage PZT | Procédure de provisionnement, preuves, références de secrets et ordre d'initialisation sans communication PBO–PA hors PZT. |
-| Pilotage PBO | Identifiants des composants, contrats avec le module officiel PZT, sous-modules et contributions PFO. |
+| Pilotage PBO | Identifiants pixs.agent/pixs.pzt validés ; contrats concrets, sous-modules et contributions PFO restant à qualifier. |
 | API agent | Formats des instructions, mandats, plans, résultats, états et garanties de compatibilité. |
 | Persistance PA | Provider, schéma et garanties des états techniques locaux, limites, rétention, restauration et comportement après corruption. |
 | Reprise PZT | Adaptateur du profil local PZT, protections, opérations de réparation et procédure opérateur si PZT est entièrement indisponible. |
@@ -15198,24 +15226,22 @@ Les garanties de la présente révision s'articulent également avec
 [installation-provisioning](openspec/specs/installation-provisioning/spec.md)
 et [secrets-providers](openspec/specs/secrets-providers/spec.md).
 
-Les exigences propres à Pixs Agent restent à traduire dans une évolution
-OpenSpec explicitement autorisée. Cette étape devra traiter les frontières
-avec les profils `web`, `worker` et `scheduler`, ainsi que les états techniques
-locaux éventuellement nécessaires à l'agent, sans affaiblir les garanties
-existantes. Le présent document n'ajoute pas implicitement un profil au
-runtime Pixs Backoffice.
+Les exigences de PA, PZT et des modules pixs.agent/pixs.pzt sont désormais
+formalisées dans les capacités OpenSpec canoniques et dans le change
+separate-pa-pzt-and-pbo-management-modules. Les profils web/worker/scheduler,
+les états techniques PA/PZT et les distributions sont alignés ; aucun profil
+ou processus supplémentaire n'est activé implicitement.
 
-La suite est la définition des modalités techniques encore ouvertes et du
-catalogue initial, puis la préparation OpenSpec explicitement autorisée avant
-toute implémentation. Les principes validés de ce cadrage et les responsabilités
-du cadrage PZT sont conservés ; aucun choix technique ne peut créer un canal
-PBO–PA hors PZT. Cette révision ne modifie ni le code existant ni les
-spécifications OpenSpec du projet.
+La suite concerne les contrats concrets, interfaces, preuves d'identité,
+catalogues et modalités techniques encore ouvertes, puis leur réalisation sous
+mandat distinct et leur qualification. Les choix validés sont conservés ; aucun
+canal PBO–PA hors PZT n'est admis. Cette révision modifie uniquement documentation
+et spécifications, sans code, test runtime, build, déploiement ni publication.
 
 ### 45.8 Historique hérité du cadrage PZT
 
 Historique documentaire, non normatif : les états ci-dessous ne rouvrent
-pas les choix validés et ne remplacent pas le découpage PA à quatre binaires.
+pas les choix validés et ne remplacent pas la séparation PA/PZT du 17 octobre 2026.
 
 | Version | Date | Évolution |
 | --- | --- | --- |
@@ -15228,7 +15254,7 @@ pas les choix validés et ne remplacent pas le découpage PA à quatre binaires.
 ### 45.9 Historique hérité du cadrage PA
 
 Historique documentaire, non normatif : les états ci-dessous ne rouvrent
-pas les choix validés et ne remplacent pas le découpage PA à quatre binaires.
+pas les choix validés et ne remplacent pas la séparation PA/PZT du 17 octobre 2026.
 
 | Version | Date | Évolution |
 | --- | --- | --- |
