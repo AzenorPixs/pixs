@@ -1,0 +1,137 @@
+{
+  "date": "2026-10-17",
+  "lot": "N05",
+  "id": "add-p0-post-restore-reconciliation-and-readmission",
+  "authorization": "Validation explicite du développeur : préparer les trois changes dédiés N03/N04/N05 et préparer N06 dédié.",
+  "implementation_authorized": false,
+  "canonical_sync_authorized": false,
+  "requirements": [
+    {
+      "capability": "backup-disaster-recovery",
+      "ordinal": 2,
+      "title": "Périmètres de sauvegarde distincts",
+      "source": "openspec/specs/backup-disaster-recovery/spec.md",
+      "line": 17,
+      "source_sha256": "3b129f2e8fd899d2e1992296d7c5c6a93b2336873335584fa837270ce4545954",
+      "block_sha256": "9d1195962d63ef9e4efd5dc9642a2107918499a469bf98c057066a1f74865749"
+    },
+    {
+      "capability": "backup-disaster-recovery",
+      "ordinal": 3,
+      "title": "Restauration cohérente et réapplication des gouvernances",
+      "source": "openspec/specs/backup-disaster-recovery/spec.md",
+      "line": 26,
+      "source_sha256": "3b129f2e8fd899d2e1992296d7c5c6a93b2336873335584fa837270ce4545954",
+      "block_sha256": "0b8fd9f3dd2f2faa545eccf59d768c9f3ffb35081f677995177faad6592005f4"
+    },
+    {
+      "capability": "backup-disaster-recovery",
+      "ordinal": 4,
+      "title": "Tests de restauration isolés et preuves",
+      "source": "openspec/specs/backup-disaster-recovery/spec.md",
+      "line": 35,
+      "source_sha256": "3b129f2e8fd899d2e1992296d7c5c6a93b2336873335584fa837270ce4545954",
+      "block_sha256": "7f67fdc6ed622c4145d438a22920930a433a182ba3264c3c00b36b16ca72620c"
+    },
+    {
+      "capability": "backup-disaster-recovery",
+      "ordinal": 5,
+      "title": "Restauration destructive autorisée et auditée",
+      "source": "openspec/specs/backup-disaster-recovery/spec.md",
+      "line": 44,
+      "source_sha256": "3b129f2e8fd899d2e1992296d7c5c6a93b2336873335584fa837270ce4545954",
+      "block_sha256": "5e716cbd51422d412f6b7bebee8f712c9811c2188a0438e776c0cb48f1c7f276"
+    },
+    {
+      "capability": "authentication",
+      "ordinal": 3,
+      "title": "Sessions bornées et révocation propagée",
+      "source": "openspec/specs/authentication/spec.md",
+      "line": 28,
+      "source_sha256": "d00e24b225c0074754110258c91d66bc0b2d5c4f1784f1c91cdbaa3905aa4e0a",
+      "block_sha256": "1d3b3299648245b56cd0bab5522b2f529e2075f25b8d22c31004e7239b46f485"
+    },
+    {
+      "capability": "identity-assurance",
+      "ordinal": 4,
+      "title": "Fraîcheur, révocation et récupération sans élévation implicite",
+      "source": "openspec/specs/identity-assurance/spec.md",
+      "line": 37,
+      "source_sha256": "61ad48e4c2899ed6a270d36e09609d7c62fbae58c97179ba42acbc41ae0654e6",
+      "block_sha256": "c01e822766c131b90074e5da431397c6e9cff43743ad634b74a6bc1fd9e26fc6"
+    },
+    {
+      "capability": "jobs",
+      "ordinal": 1,
+      "title": "Exécution asynchrone demandée par le Super Admin",
+      "source": "openspec/specs/jobs/spec.md",
+      "line": 8,
+      "source_sha256": "6e5c0e3a2dbef7670a6a129821d110188fc2efb283334b1a4ebfda74a80ed421",
+      "block_sha256": "6a1904fe009572382d825f8e9cc76507feb88c8dd3b5a52e408de4796c9d4dc6"
+    },
+    {
+      "capability": "jobs",
+      "ordinal": 4,
+      "title": "Autorisation réévaluée à l'exécution",
+      "source": "openspec/specs/jobs/spec.md",
+      "line": 40,
+      "source_sha256": "6e5c0e3a2dbef7670a6a129821d110188fc2efb283334b1a4ebfda74a80ed421",
+      "block_sha256": "fa4d5fe2e8f662c87cc5c21d903dbaaedae2a9b5ffbc0f095d0c7d650e122b3f"
+    },
+    {
+      "capability": "jobs",
+      "ordinal": 5,
+      "title": "Idempotence et corrélation des travaux",
+      "source": "openspec/specs/jobs/spec.md",
+      "line": 49,
+      "source_sha256": "6e5c0e3a2dbef7670a6a129821d110188fc2efb283334b1a4ebfda74a80ed421",
+      "block_sha256": "403f548803b35d73e26be71b95ca36bd317e784a651a936ab428d92b3bedc30b"
+    },
+    {
+      "capability": "runtime",
+      "ordinal": 4,
+      "title": "Processus stateless et coordination persistante",
+      "source": "openspec/specs/runtime/spec.md",
+      "line": 38,
+      "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+      "block_sha256": "e5dfd480d86924852088f6125f56aaf781527152725b6b151ac992db52328df8"
+    },
+    {
+      "capability": "runtime",
+      "ordinal": 5,
+      "title": "Lease du scheduler avec clôture de péremption",
+      "source": "openspec/specs/runtime/spec.md",
+      "line": 52,
+      "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+      "block_sha256": "594faead2822eba8e988c15dfff2f133cab3dd90f595fabc0f759137c8013489"
+    },
+    {
+      "capability": "runtime",
+      "ordinal": 6,
+      "title": "Arrêt, drain et reprise contrôlés",
+      "source": "openspec/specs/runtime/spec.md",
+      "line": 61,
+      "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+      "block_sha256": "9a08798424feabe0e8b0b1f323da14f0f65163ec204c5a594aaa2432cb810847"
+    },
+    {
+      "capability": "data-lifecycle",
+      "ordinal": 5,
+      "title": "Tombstones contre la résurrection",
+      "source": "openspec/specs/data-lifecycle/spec.md",
+      "line": 52,
+      "source_sha256": "a3498cc4d3622d569fc9e3f8251a5c5324a9b3d1c612fe014618146297083426",
+      "block_sha256": "f170911722f6bacebb91d354c8ff5f19ad8367e76358843b088e6d48994bac6f"
+    },
+    {
+      "capability": "resilience",
+      "ordinal": 3,
+      "title": "Révocation et diagnostic des compromissions",
+      "source": "openspec/specs/resilience/spec.md",
+      "line": 26,
+      "source_sha256": "b32b0eff946a12be7ee217c5bc2ffe19b763fe015b0dcb4b46c9e8254f43d1f3",
+      "block_sha256": "83f4cf05abc44394b6102b27b104b6f92cbd310698122c995bb0b407eb3927bc"
+    }
+  ],
+  "tasks_unchecked": 10
+}

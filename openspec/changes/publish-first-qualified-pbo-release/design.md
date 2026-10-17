@@ -18,7 +18,7 @@ Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les stru
 
 ## Architecture proposée
 
-Associer canal expérimental local, version, provenance, inventaire, composition et artefact immuable. Vérifier signature/empreinte/révocation avant installation et mise à niveau ; autorités et matériaux de confiance distincts. Déclarer support/limites et corréler la recette C17 au paquet C18. Publication seulement sur instruction explicite ultérieure.
+Associer canal expérimental local, version, provenance, inventaire, composition et artefact immuable. Consommer les vérificateurs et matériaux publics de confiance fournis en amont par N03 ; vérifier les résultats liés aux octets qualifiés sans attendre C19 pour rendre les contrôles disponibles. Déclarer support/limites et corréler la recette C17 au paquet C18. Publication seulement sur instruction explicite ultérieure.
 
 ## Alternatives et frontière de conception
 
@@ -26,7 +26,7 @@ Privilégier les mécanismes et dépendances existants. Une implémentation loca
 
 ## Décisions bloquantes avant réalisation
 
-Identités/autorités de signature, mécanisme de provenance/inventaire et support ; aucun secret, signature ou publication pendant la préparation.
+Les identités/autorités et mécanismes de confiance sont arrêtés en amont via N03 ; C19 consolide version/support et décision finale de publication sans modifier implicitement l’identité qualifiée. Aucun secret, signature ou publication pendant la préparation.
 
 Ce sont des barrières de conception explicites, pas des questions supposées résolues. Elles n’empêchent pas la préparation documentaire ; elles empêchent de présenter le dossier comme entièrement prêt à coder. Les arbitrages PA/PZT suivent TECHNICAL §45.4 lorsqu’ils entrent dans son périmètre.
 
@@ -52,3 +52,34 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 ## Hors profil
 
 PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+
+## Dépendances après audit transversal P0
+
+[C17](../qualify-first-pbo-composition/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N03](../add-p0-artifact-trust-and-preinstallation-verification/proposal.md).
+
+Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.
+
+
+## Revue transversale P0 du 17 octobre 2026
+
+Analyse de préparation sans implémentation ; les critères ci-dessous complètent la recette future et ne constituent pas des résultats exécutés. Les décisions de technologie et de paramètres restent ouvertes avant code.
+
+### T01 — Confiance avant première installation
+
+C19 réalise tardivement les vérifications nécessaires avant installation par C17. N03 dédié validé ; déplacer les contrats/vérificateurs précoces, conserver publication finale C19.
+
+Contrôles à intégrer : Canal interdit et signature absente/expirée/révoquée refusés avant installation ; Révocation vérifiable publication indisponible ; Paquet qualifié immuable et révalidation si octets ou identité changent.
+
+### T13 — Première livraison et origines de mise à niveau
+
+Une première version n’a pas nécessairement d’origine distribuée supportée ; un numéro source ancien ne prouve pas une migration autorisée. Déclarer les origines réellement supportées dans C16/C19 ; cas sans origine explicite et sauts non prouvés refusés.
+
+Contrôles à intégrer : Installation vierge distincte d’une mise à niveau ; Interruption de migration et contraction prématurée refusées ; Retour arrière seulement si matrice accepte schéma/données ; Aucun downgrade automatique.
+
+### T17 — Reproductibilité, versions et dossier de livraison
+
+Les pins observés et unités vertes ne valent pas qualification officielle du graphe ou du paquet ; signatures finales ne doivent pas modifier l’objet déjà qualifié. Contrôles officiels/compatibilité avant build puis sur l’artefact final ; aucune version actualisée ou dépendance installée pendant l’audit.
+
+Contrôles à intégrer : Deux builds contrôlés et graphe identique ; Identité de l’artefact de recette égale à celle livrée ; Budgets/support déclarés avec preuves et limites ; Strict global exit réel conservé, warnings non masqués.
+
+Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.

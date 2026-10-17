@@ -47,3 +47,9 @@ Chaque exigence/scénario applicable dispose d’un verdict et d’une preuve ac
 ## Barrière de conception
 
 Versions actuelles et métadonnées officielles à vérifier avant qualification ; politique des quatre avertissements stricts existants à traiter sans masquer exit 1 ni réécrire le canon hors demande.
+
+## Dépendances après audit transversal P0
+
+[C04](../integrate-runtime-authorization-and-super-admin/proposal.md), [C06](../add-protected-core-http-commands-and-queries/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C12](../complete-shared-ui-i18n-and-accessibility/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md), [N06](../add-minimal-p0-contract-conformance-kit/proposal.md).
+
+Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

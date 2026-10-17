@@ -40,3 +40,16 @@ Schéma/version des commandes, stockage propriétaire, identités des cibles, ga
 Acteur ordinaire refusé ; tenant non accordé ; replay idempotent ; incident concurrent/obsolète ; provider obligatoire ou optionnel ; réconciliation après perte de réponse et crash ; blocage des admissions et reprises ; absence de fausse readiness ; réactivation autorisée et preuve de non-transfert du privilège.
 
 Les primitives pures et les tests unitaires existants ne remplacent pas ces recettes runtime. Les dépendances de contrat sont C03/C04/C05/C07/C09/C15 ; l’artefact C18 puis C17 doivent porter les preuves correspondantes.
+
+
+## Revue transversale P0 du 17 octobre 2026
+
+Analyse de préparation sans implémentation ; les critères ci-dessous complètent la recette future et ne constituent pas des résultats exécutés. Les décisions de technologie et de paramètres restent ouvertes avant code.
+
+### T03 — Réadmission après état restauré
+
+La restauration cohérente de données ne prouve ni fraîcheur de révocations/incidents ni admissibilité des effets différés. N05 dédié et delta ciblé validés ; faits nécessaires et revalidation détaillée à définir avant code.
+
+Contrôles à intégrer : Snapshot antérieur à révocation/rotation/incident ; Effet déjà engagé dont réponse perdue ; Marqueur externe incohérent ; Interruption puis reprise de réconciliation sans réémission automatique.
+
+Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.

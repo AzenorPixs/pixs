@@ -90,3 +90,14 @@ Contrôler packaging, installation et compatibilité du kit sur cibles déclaré
 | [sdk-ecosystem #3](../../../openspec/specs/sdk-ecosystem/spec.md#L26) | ND | Validateurs publics et fixtures synthétiques ; publication bloquée si secret/donnée de production, navigateur sans persistance par défaut. |
 
 Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+
+## Dépendances après audit transversal P0
+
+[C07](../activate-reference-runtime-composition/proposal.md), [C17](../qualify-first-pbo-composition/proposal.md), [O21](../generate-typescript-python-public-sdks/proposal.md), [N06](../add-minimal-p0-contract-conformance-kit/proposal.md).
+
+Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.
+
+
+## Frontière avec le kit minimal P0
+
+[N06](../add-minimal-p0-contract-conformance-kit/proposal.md) fournit les validateurs/suites et le parcours d’exemple indispensables au premier P0 avant C17. O22 réutilise ce socle et conserve SDK, CLI et parcours complets sélectionnables ; son absence ne retire pas les obligations minimales P0.

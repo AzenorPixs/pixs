@@ -113,3 +113,10 @@ Les décisions ouvertes de C00–C19 restent dans leurs conceptions et dans [C00
 | N02 frontière native/hors ligne | « Coffre natif séparé des données hors ligne (recommandé) » | [Deltas proposés](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) pour native-clients/offline-first ; aucune synchronisation ni coffre implémenté. |
 
 L’audit des 94 NE est terminé statiquement ; il remplace la barrière « audit de présence encore nécessaire » pour ces seules lignes. Les choix de providers, ressources, mécanismes, seuils et garanties de reprise listés par les conceptions restent à revoir avant leur code. Les 31 conceptions approfondies précisent maintenant contrats, autorité, effets, pannes et critères. Aucun autre change supplémentaire n’est démontré nécessaire par cet audit borné ; une nouvelle découverte ou un autre profil pourra modifier cet inventaire sur validation.
+
+
+## Validations de l’audit transversal P0
+
+Le développeur a validé le 17 octobre 2026 « Préparer les trois changes dédiés (recommandé) » pour [N03](../add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md), y compris la rédaction des deltas N04/N05, puis « Préparer N06 dédié (recommandé) » pour [le kit minimal](../add-minimal-p0-contract-conformance-kit/proposal.md).
+
+La validation couvre la préparation et la répartition de responsabilités exposées par les propositions d’audit. Elle n’autorise ni implémentation, ni intégration au canon, ni choix d’outil/serveur/proxy/coffre/algorithme, ni clé réelle, installation, restauration, publication ou archive. Les 17 parcours complètent les dossiers existants ; aucun autre nouveau périmètre n’est arbitré implicitement. Le [rapport transversal](audit-transversal-p0.md) distingue les décisions résolues et les barrières avant code.

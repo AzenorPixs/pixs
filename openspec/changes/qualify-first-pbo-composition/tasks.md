@@ -9,7 +9,7 @@ Ces tâches décrivent une réalisation future non autorisée par la demande de 
 
 ## 2. Réalisation future
 
-- [ ] 2.1 Arrêter matrice d’applicabilité et suites versionnées des contrats/providers retenus.
+- [ ] 2.1 Consommer les suites minimales versionnées de N06 et arrêter la matrice d’applicabilité des contrats/providers retenus pour la recette du paquet.
 - [ ] 2.2 Qualifier le graphe Django/Python/de dépendances selon sources officielles et règles du projet, sans installation forcée.
 - [ ] 2.3 Exécuter séparément unités, PG réel, conformité, deux navigateurs et parcours manuels sur l’artefact C18.
 - [ ] 2.4 Produire preuves/attestations authentifiées corrélées au paquet ; rapporter strict OpenSpec natif et tout scénario non exécuté/échoué.

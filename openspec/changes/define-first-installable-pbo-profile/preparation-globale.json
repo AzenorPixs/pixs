@@ -1,7 +1,7 @@
 {
   "date": "2026-10-17",
-  "authorization": "Audit explicite des 94 exigences NE et approfondissement sans implémentation ; création dédiée N01 et politique de coffre N02 validées explicitement par le développeur le 17 octobre 2026.",
-  "scope": "100 changes de l’inventaire initial + N01 urgence PBO + N02 clarification native/offline, soit 102 préparés.",
+  "authorization": "Audit transversal P0 sans implémentation ; préparation dédiée de N03/N04/N05 et rédaction des deltas N04/N05 validées explicitement, N06 dédié validé explicitement le 17 octobre 2026.",
+  "scope": "100 changes de l’inventaire initial + N01/N02 après audit NE + N03/N04/N05/N06 après audit transversal, soit 106 préparés.",
   "inventory": "reports/p0-coverage-2026-10-16/inventaire-global.json",
   "inventory_sha256": "27e4a9a2e80716bb785725475d5c577b1f3e25e6a7139347da21934e05623cd1",
   "canonical_and_reference_sha256_at_start": {
@@ -506,6 +506,7 @@
     "C00",
     "C01",
     "C02",
+    "N03",
     "C05",
     "C03",
     "C07",
@@ -540,6 +541,7 @@
     "C13",
     "C16",
     "N01",
+    "N04",
     "O01",
     "O02",
     "O03",
@@ -560,7 +562,8 @@
     "B05",
     "B06",
     "B07",
-    "C18",
+    "N05",
+    "N06",
     "O09",
     "O12",
     "O13",
@@ -574,7 +577,7 @@
     "B02",
     "B03",
     "B08",
-    "C17",
+    "C18",
     "O14",
     "PA05",
     "PA06",
@@ -582,20 +585,21 @@
     "Z08",
     "B09",
     "B10",
-    "C19",
-    "O22",
-    "O31",
-    "O32",
+    "C17",
     "PA07",
     "Z14",
     "Z19",
     "B11",
-    "O29",
-    "O30",
+    "C19",
+    "O22",
+    "O31",
+    "O32",
     "PA08",
     "Z15",
     "Z17",
     "Z20",
+    "O29",
+    "O30",
     "Z16",
     "Z21",
     "Z22",
@@ -668,7 +672,10 @@
         "C05"
       ],
       "status": "PREPARE_PRECEDEMMENT",
-      "implementation_authorized": false
+      "implementation_authorized": false,
+      "activation_conditions": [
+        "Hôte intermédiaire sans readiness P0 tant que les obligations et preuves de conformité vérifiées manquent ; N06 fournit les suites et C17 qualifie ensuite le paquet final. Aucune dépendance ferme inverse vers N06/C17."
+      ]
     },
     {
       "lot": "Z12",
@@ -4551,7 +4558,10 @@
         "C14",
         "C15",
         "C16",
-        "N01"
+        "N01",
+        "N03",
+        "N04",
+        "N05"
       ],
       "status": "PREPARE_PRECEDEMMENT",
       "implementation_authorized": false
@@ -5944,7 +5954,11 @@
         "C15",
         "C16",
         "C18",
-        "N01"
+        "N01",
+        "N03",
+        "N04",
+        "N05",
+        "N06"
       ],
       "status": "PREPARE_PRECEDEMMENT",
       "implementation_authorized": false
@@ -6864,7 +6878,8 @@
       "family": "P0",
       "dependencies": [
         "C17",
-        "C18"
+        "C18",
+        "N03"
       ],
       "status": "PREPARE_PRECEDEMMENT",
       "implementation_authorized": false
@@ -6876,7 +6891,8 @@
       "dependencies": [
         "C07",
         "C17",
-        "O21"
+        "O21",
+        "N06"
       ],
       "status": "PREPARE",
       "implementation_authorized": false,
@@ -10665,6 +10681,620 @@
       "validation_date": "2026-10-17",
       "open_design_barrier": "Revue des contrats, providers, paramètres et preuves du profil avant réalisation ; aucune implémentation autorisée.",
       "audit_ne_reference": "openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json"
+    },
+    {
+      "lot": "N03",
+      "id": "add-p0-artifact-trust-and-preinstallation-verification",
+      "family": "P0",
+      "dependencies": [
+        "C00"
+      ],
+      "status": "PREPARE_APRES_VALIDATION_EXPLICITE",
+      "implementation_authorized": false,
+      "native_spec_delta_expected": false,
+      "requirements": [
+        {
+          "capability": "artifact-publication",
+          "ordinal": 1,
+          "title": "Canaux comme contextes de confiance distincts",
+          "source": "openspec/specs/artifact-publication/spec.md",
+          "line": 8,
+          "source_sha256": "7888cada73c3beff836fe2bd6dd6a62b166af317e7036680fb6a1f9e248a5b1f",
+          "block_sha256": "fb34871b99ae2ea04784ecb606d6d800b85f645ca0c3213130280a597c985af5"
+        },
+        {
+          "capability": "artifact-publication",
+          "ordinal": 2,
+          "title": "Immuabilité et corrélation des corrections",
+          "source": "openspec/specs/artifact-publication/spec.md",
+          "line": 17,
+          "source_sha256": "7888cada73c3beff836fe2bd6dd6a62b166af317e7036680fb6a1f9e248a5b1f",
+          "block_sha256": "105ca5ef276c50e7c1a9f33d80a8a3a2a4bd004ead4c682fabcd395d8d9afcea"
+        },
+        {
+          "capability": "artifact-publication",
+          "ordinal": 3,
+          "title": "Identité vérifiable avant installation",
+          "source": "openspec/specs/artifact-publication/spec.md",
+          "line": 26,
+          "source_sha256": "7888cada73c3beff836fe2bd6dd6a62b166af317e7036680fb6a1f9e248a5b1f",
+          "block_sha256": "3e74d63e29cc8f7432c96c306ef9ac55e429777bd6d5abd7d1c1a761f5e712a1"
+        },
+        {
+          "capability": "artifact-publication",
+          "ordinal": 4,
+          "title": "Signature, provenance et inventaire bloquants",
+          "source": "openspec/specs/artifact-publication/spec.md",
+          "line": 35,
+          "source_sha256": "7888cada73c3beff836fe2bd6dd6a62b166af317e7036680fb6a1f9e248a5b1f",
+          "block_sha256": "e66bb0bffd8abf550a02c12a23d41feb003877ff7a2bac57b0636927de5c292b"
+        },
+        {
+          "capability": "artifact-publication",
+          "ordinal": 5,
+          "title": "Autorités distinctes et gestion des clés",
+          "source": "openspec/specs/artifact-publication/spec.md",
+          "line": 44,
+          "source_sha256": "7888cada73c3beff836fe2bd6dd6a62b166af317e7036680fb6a1f9e248a5b1f",
+          "block_sha256": "36836bcd99c916864939fd3a80c61d0085c2c31b9c63a0543b4663d77f0beb07"
+        },
+        {
+          "capability": "security",
+          "ordinal": 2,
+          "title": "Profil de sécurité déclaré par composant",
+          "source": "openspec/specs/security/spec.md",
+          "line": 17,
+          "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+          "block_sha256": "adc7ce84625ce309d732c4c5b4f15998a79f96c6ad75618b4b487ed5c657b48a"
+        },
+        {
+          "capability": "security",
+          "ordinal": 3,
+          "title": "Échec fermé sans mode permissif",
+          "source": "openspec/specs/security/spec.md",
+          "line": 26,
+          "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+          "block_sha256": "0ed9f6927ce6ba8ad334019bd7f14fdaf451dc998a939bb1b2aaa6f695746891"
+        },
+        {
+          "capability": "security",
+          "ordinal": 4,
+          "title": "Diagnostics sans exposition sensible",
+          "source": "openspec/specs/security/spec.md",
+          "line": 37,
+          "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+          "block_sha256": "f7d40a3d99f2d2b949ef838091079c43f957584fafae2709ca7f9e05c5aae570"
+        },
+        {
+          "capability": "deb-package",
+          "ordinal": 1,
+          "title": "Paquet corrélé à la release",
+          "source": "openspec/specs/deb-package/spec.md",
+          "line": 8,
+          "source_sha256": "46730b2c3505085325539b6ae2386806e5b59bb19aa46adf5f4571335d016e64",
+          "block_sha256": "4814b1542e54b645342f1773e468de4a8156ac2b0aebe79deea42cf252656ad6"
+        },
+        {
+          "capability": "deb-package",
+          "ordinal": 4,
+          "title": "Mise à niveau du paquet sous validation",
+          "source": "openspec/specs/deb-package/spec.md",
+          "line": 40,
+          "source_sha256": "46730b2c3505085325539b6ae2386806e5b59bb19aa46adf5f4571335d016e64",
+          "block_sha256": "cbe6a5dc642be7046b4afca4b9606d1f976debcd766bd115e82e80cc9f5a1516"
+        },
+        {
+          "capability": "deb-package",
+          "ordinal": 5,
+          "title": "Aucune installation de code distant implicite",
+          "source": "openspec/specs/deb-package/spec.md",
+          "line": 49,
+          "source_sha256": "46730b2c3505085325539b6ae2386806e5b59bb19aa46adf5f4571335d016e64",
+          "block_sha256": "78ac5efb458ef5437088416514375a3b594f350f3f2bb5367a64449dc7658bc8"
+        }
+      ],
+      "open_design_barrier": "Technologies, paramètres et contrats détaillés à revoir avant réalisation ; deltas N04/N05 proposés, sans synchronisation.",
+      "validation_date": "2026-10-17",
+      "audit_reference": "openspec/changes/define-first-installable-pbo-profile/audit-transversal-p0.json"
+    },
+    {
+      "lot": "N04",
+      "id": "define-p0-web-serving-and-security-boundary",
+      "family": "P0",
+      "dependencies": [
+        "C03",
+        "C06",
+        "C07",
+        "C11",
+        "C15"
+      ],
+      "status": "PREPARE_APRES_VALIDATION_EXPLICITE",
+      "implementation_authorized": false,
+      "native_spec_delta_expected": true,
+      "requirements": [
+        {
+          "capability": "reference-runtime",
+          "ordinal": 1,
+          "title": "Pile de référence unique",
+          "source": "openspec/specs/reference-runtime/spec.md",
+          "line": 10,
+          "source_sha256": "4bbbc0451013b7139f3898b4a5aebd592ab1c50b6aa6cce4e1246957e4052351",
+          "block_sha256": "c28b68d3bc53dfbf958a3a23517a3f5d1984452420b076776582a114bb8ea933"
+        },
+        {
+          "capability": "reference-runtime",
+          "ordinal": 3,
+          "title": "Absence de sélection cachée",
+          "source": "openspec/specs/reference-runtime/spec.md",
+          "line": 35,
+          "source_sha256": "4bbbc0451013b7139f3898b4a5aebd592ab1c50b6aa6cce4e1246957e4052351",
+          "block_sha256": "cfb6b68cc61a0aaeff813cc54fa1a605c83ac2ca7abfebaf1fdf8c5d6eccd023"
+        },
+        {
+          "capability": "runtime",
+          "ordinal": 1,
+          "title": "Profils distincts d'un même artefact",
+          "source": "openspec/specs/runtime/spec.md",
+          "line": 8,
+          "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+          "block_sha256": "ae9d9ce43cbc52cf0aa0f791a396e81f20d6ede62310f87a3cef94248d3cf952"
+        },
+        {
+          "capability": "runtime",
+          "ordinal": 3,
+          "title": "Exposition minimale par défaut",
+          "source": "openspec/specs/runtime/spec.md",
+          "line": 29,
+          "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+          "block_sha256": "f5930086a06431cb6b87ff9f3e77768ebf67b72d406620eacc20f0b9097d6329"
+        },
+        {
+          "capability": "runtime",
+          "ordinal": 6,
+          "title": "Arrêt, drain et reprise contrôlés",
+          "source": "openspec/specs/runtime/spec.md",
+          "line": 61,
+          "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+          "block_sha256": "9a08798424feabe0e8b0b1f323da14f0f65163ec204c5a594aaa2432cb810847"
+        },
+        {
+          "capability": "api",
+          "ordinal": 2,
+          "title": "Contrats OpenAPI versionnés par majeure",
+          "source": "openspec/specs/api/spec.md",
+          "line": 18,
+          "source_sha256": "58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152",
+          "block_sha256": "aeb4d01f8a28a8113572c7fcbe877685d2929daef167e882cf5c69b2752408b1"
+        },
+        {
+          "capability": "api",
+          "ordinal": 3,
+          "title": "Enveloppes stables et erreurs typées",
+          "source": "openspec/specs/api/spec.md",
+          "line": 27,
+          "source_sha256": "58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152",
+          "block_sha256": "0d0479f32122a3cc679e93295d6dde033d669679e54f47db9e5f94d7048fe755"
+        },
+        {
+          "capability": "api",
+          "ordinal": 4,
+          "title": "Périmètre canonique et autorisation à la frontière",
+          "source": "openspec/specs/api/spec.md",
+          "line": 38,
+          "source_sha256": "58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152",
+          "block_sha256": "f85cb6551cdd45dff685aea38b7144c0045f0495719e7f47147f6e03b962da12"
+        },
+        {
+          "capability": "initial-application-bootstrap",
+          "ordinal": 3,
+          "title": "Surface HTTP initiale minimale",
+          "source": "openspec/specs/initial-application-bootstrap/spec.md",
+          "line": 39,
+          "source_sha256": "688063fbafcd34535d87b7f4920d8e4952ff2ed3267bd5b442400a3d9f0fe3a4",
+          "block_sha256": "335764dec4327ef9e5eb72827bfd54caed92d8eb994f06e25e7feccab61dc342"
+        },
+        {
+          "capability": "initial-application-bootstrap",
+          "ordinal": 4,
+          "title": "Shell TanStack initial intégré",
+          "source": "openspec/specs/initial-application-bootstrap/spec.md",
+          "line": 54,
+          "source_sha256": "688063fbafcd34535d87b7f4920d8e4952ff2ed3267bd5b442400a3d9f0fe3a4",
+          "block_sha256": "185a9cc433ea7794986e56a0aeff26cf2a4c678ae162aa2cae2a20e423adcd9f"
+        },
+        {
+          "capability": "initial-application-bootstrap",
+          "ordinal": 5,
+          "title": "Profil de test intégré isolé",
+          "source": "openspec/specs/initial-application-bootstrap/spec.md",
+          "line": 68,
+          "source_sha256": "688063fbafcd34535d87b7f4920d8e4952ff2ed3267bd5b442400a3d9f0fe3a4",
+          "block_sha256": "4bb29321f88d6767ef2b230baa1622a3993a103b10d573958ed9a942eeedcb2d"
+        },
+        {
+          "capability": "security",
+          "ordinal": 1,
+          "title": "Exception applicative réservée au Super Admin",
+          "source": "openspec/specs/security/spec.md",
+          "line": 8,
+          "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+          "block_sha256": "9b13a208de202399693e73625ab2fa369289f0e0c5922ea5a1ff2fce1194e93b"
+        },
+        {
+          "capability": "security",
+          "ordinal": 3,
+          "title": "Échec fermé sans mode permissif",
+          "source": "openspec/specs/security/spec.md",
+          "line": 26,
+          "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+          "block_sha256": "0ed9f6927ce6ba8ad334019bd7f14fdaf451dc998a939bb1b2aaa6f695746891"
+        },
+        {
+          "capability": "security",
+          "ordinal": 4,
+          "title": "Diagnostics sans exposition sensible",
+          "source": "openspec/specs/security/spec.md",
+          "line": 37,
+          "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+          "block_sha256": "f7d40a3d99f2d2b949ef838091079c43f957584fafae2709ca7f9e05c5aae570"
+        }
+      ],
+      "open_design_barrier": "Technologies, paramètres et contrats détaillés à revoir avant réalisation ; deltas N04/N05 proposés, sans synchronisation.",
+      "validation_date": "2026-10-17",
+      "audit_reference": "openspec/changes/define-first-installable-pbo-profile/audit-transversal-p0.json"
+    },
+    {
+      "lot": "N05",
+      "id": "add-p0-post-restore-reconciliation-and-readmission",
+      "family": "P0",
+      "dependencies": [
+        "C01",
+        "C03",
+        "C04",
+        "C05",
+        "C08",
+        "C09",
+        "C10",
+        "C15",
+        "C16",
+        "N01"
+      ],
+      "status": "PREPARE_APRES_VALIDATION_EXPLICITE",
+      "implementation_authorized": false,
+      "native_spec_delta_expected": true,
+      "requirements": [
+        {
+          "capability": "backup-disaster-recovery",
+          "ordinal": 2,
+          "title": "Périmètres de sauvegarde distincts",
+          "source": "openspec/specs/backup-disaster-recovery/spec.md",
+          "line": 17,
+          "source_sha256": "3b129f2e8fd899d2e1992296d7c5c6a93b2336873335584fa837270ce4545954",
+          "block_sha256": "9d1195962d63ef9e4efd5dc9642a2107918499a469bf98c057066a1f74865749"
+        },
+        {
+          "capability": "backup-disaster-recovery",
+          "ordinal": 3,
+          "title": "Restauration cohérente et réapplication des gouvernances",
+          "source": "openspec/specs/backup-disaster-recovery/spec.md",
+          "line": 26,
+          "source_sha256": "3b129f2e8fd899d2e1992296d7c5c6a93b2336873335584fa837270ce4545954",
+          "block_sha256": "0b8fd9f3dd2f2faa545eccf59d768c9f3ffb35081f677995177faad6592005f4"
+        },
+        {
+          "capability": "backup-disaster-recovery",
+          "ordinal": 4,
+          "title": "Tests de restauration isolés et preuves",
+          "source": "openspec/specs/backup-disaster-recovery/spec.md",
+          "line": 35,
+          "source_sha256": "3b129f2e8fd899d2e1992296d7c5c6a93b2336873335584fa837270ce4545954",
+          "block_sha256": "7f67fdc6ed622c4145d438a22920930a433a182ba3264c3c00b36b16ca72620c"
+        },
+        {
+          "capability": "backup-disaster-recovery",
+          "ordinal": 5,
+          "title": "Restauration destructive autorisée et auditée",
+          "source": "openspec/specs/backup-disaster-recovery/spec.md",
+          "line": 44,
+          "source_sha256": "3b129f2e8fd899d2e1992296d7c5c6a93b2336873335584fa837270ce4545954",
+          "block_sha256": "5e716cbd51422d412f6b7bebee8f712c9811c2188a0438e776c0cb48f1c7f276"
+        },
+        {
+          "capability": "authentication",
+          "ordinal": 3,
+          "title": "Sessions bornées et révocation propagée",
+          "source": "openspec/specs/authentication/spec.md",
+          "line": 28,
+          "source_sha256": "d00e24b225c0074754110258c91d66bc0b2d5c4f1784f1c91cdbaa3905aa4e0a",
+          "block_sha256": "1d3b3299648245b56cd0bab5522b2f529e2075f25b8d22c31004e7239b46f485"
+        },
+        {
+          "capability": "identity-assurance",
+          "ordinal": 4,
+          "title": "Fraîcheur, révocation et récupération sans élévation implicite",
+          "source": "openspec/specs/identity-assurance/spec.md",
+          "line": 37,
+          "source_sha256": "61ad48e4c2899ed6a270d36e09609d7c62fbae58c97179ba42acbc41ae0654e6",
+          "block_sha256": "c01e822766c131b90074e5da431397c6e9cff43743ad634b74a6bc1fd9e26fc6"
+        },
+        {
+          "capability": "jobs",
+          "ordinal": 1,
+          "title": "Exécution asynchrone demandée par le Super Admin",
+          "source": "openspec/specs/jobs/spec.md",
+          "line": 8,
+          "source_sha256": "6e5c0e3a2dbef7670a6a129821d110188fc2efb283334b1a4ebfda74a80ed421",
+          "block_sha256": "6a1904fe009572382d825f8e9cc76507feb88c8dd3b5a52e408de4796c9d4dc6"
+        },
+        {
+          "capability": "jobs",
+          "ordinal": 4,
+          "title": "Autorisation réévaluée à l'exécution",
+          "source": "openspec/specs/jobs/spec.md",
+          "line": 40,
+          "source_sha256": "6e5c0e3a2dbef7670a6a129821d110188fc2efb283334b1a4ebfda74a80ed421",
+          "block_sha256": "fa4d5fe2e8f662c87cc5c21d903dbaaedae2a9b5ffbc0f095d0c7d650e122b3f"
+        },
+        {
+          "capability": "jobs",
+          "ordinal": 5,
+          "title": "Idempotence et corrélation des travaux",
+          "source": "openspec/specs/jobs/spec.md",
+          "line": 49,
+          "source_sha256": "6e5c0e3a2dbef7670a6a129821d110188fc2efb283334b1a4ebfda74a80ed421",
+          "block_sha256": "403f548803b35d73e26be71b95ca36bd317e784a651a936ab428d92b3bedc30b"
+        },
+        {
+          "capability": "runtime",
+          "ordinal": 4,
+          "title": "Processus stateless et coordination persistante",
+          "source": "openspec/specs/runtime/spec.md",
+          "line": 38,
+          "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+          "block_sha256": "e5dfd480d86924852088f6125f56aaf781527152725b6b151ac992db52328df8"
+        },
+        {
+          "capability": "runtime",
+          "ordinal": 5,
+          "title": "Lease du scheduler avec clôture de péremption",
+          "source": "openspec/specs/runtime/spec.md",
+          "line": 52,
+          "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+          "block_sha256": "594faead2822eba8e988c15dfff2f133cab3dd90f595fabc0f759137c8013489"
+        },
+        {
+          "capability": "runtime",
+          "ordinal": 6,
+          "title": "Arrêt, drain et reprise contrôlés",
+          "source": "openspec/specs/runtime/spec.md",
+          "line": 61,
+          "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+          "block_sha256": "9a08798424feabe0e8b0b1f323da14f0f65163ec204c5a594aaa2432cb810847"
+        },
+        {
+          "capability": "data-lifecycle",
+          "ordinal": 5,
+          "title": "Tombstones contre la résurrection",
+          "source": "openspec/specs/data-lifecycle/spec.md",
+          "line": 52,
+          "source_sha256": "a3498cc4d3622d569fc9e3f8251a5c5324a9b3d1c612fe014618146297083426",
+          "block_sha256": "f170911722f6bacebb91d354c8ff5f19ad8367e76358843b088e6d48994bac6f"
+        },
+        {
+          "capability": "resilience",
+          "ordinal": 3,
+          "title": "Révocation et diagnostic des compromissions",
+          "source": "openspec/specs/resilience/spec.md",
+          "line": 26,
+          "source_sha256": "b32b0eff946a12be7ee217c5bc2ffe19b763fe015b0dcb4b46c9e8254f43d1f3",
+          "block_sha256": "83f4cf05abc44394b6102b27b104b6f92cbd310698122c995bb0b407eb3927bc"
+        }
+      ],
+      "open_design_barrier": "Technologies, paramètres et contrats détaillés à revoir avant réalisation ; deltas N04/N05 proposés, sans synchronisation.",
+      "validation_date": "2026-10-17",
+      "audit_reference": "openspec/changes/define-first-installable-pbo-profile/audit-transversal-p0.json"
+    },
+    {
+      "lot": "N06",
+      "id": "add-minimal-p0-contract-conformance-kit",
+      "family": "P0",
+      "dependencies": [
+        "C06",
+        "C07",
+        "C09",
+        "C10",
+        "C11",
+        "C14",
+        "N01"
+      ],
+      "status": "PREPARE_APRES_VALIDATION_EXPLICITE",
+      "implementation_authorized": false,
+      "native_spec_delta_expected": false,
+      "requirements": [
+        {
+          "capability": "testing",
+          "ordinal": 1,
+          "title": "Trois niveaux de vérification distincts",
+          "source": "openspec/specs/testing/spec.md",
+          "line": 8,
+          "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+          "block_sha256": "8bd293063511d9ff7c4e776d91f7b343192d9b7ad3654f1060f2ba0866743e16"
+        },
+        {
+          "capability": "testing",
+          "ordinal": 2,
+          "title": "Kit de conformité et composant d'exemple",
+          "source": "openspec/specs/testing/spec.md",
+          "line": 17,
+          "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+          "block_sha256": "ff6ff6ed413bc587bd7f4420c4d84bc5d78f3ed21ebc0419cb4a65928eb5e7af"
+        },
+        {
+          "capability": "testing",
+          "ordinal": 3,
+          "title": "Suites de conformité versionnées par contrat",
+          "source": "openspec/specs/testing/spec.md",
+          "line": 30,
+          "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+          "block_sha256": "1a25f001ea6e86cc778df2ec2938ccb06868648d5b1702000d191653c4c631c9"
+        },
+        {
+          "capability": "testing",
+          "ordinal": 4,
+          "title": "Garanties obligatoires séparées des capacités optionnelles",
+          "source": "openspec/specs/testing/spec.md",
+          "line": 39,
+          "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+          "block_sha256": "0310541d7ae00ce5d4425cb1235794b54133d8de93060c47e76a5acc04cdfa38"
+        },
+        {
+          "capability": "testing",
+          "ordinal": 5,
+          "title": "Reproductibilité sur la topologie de référence",
+          "source": "openspec/specs/testing/spec.md",
+          "line": 48,
+          "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+          "block_sha256": "3b2d50452802a83d20b35dec44cd60cd7109aa0c54aaca3bcb541088cadba393"
+        },
+        {
+          "capability": "testing",
+          "ordinal": 6,
+          "title": "Preuves sans secret ni donnée de production",
+          "source": "openspec/specs/testing/spec.md",
+          "line": 57,
+          "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+          "block_sha256": "d9ae4d21e57d739e7b642389b1085eccff510000f3a51fdb8f674d17f68d439c"
+        },
+        {
+          "capability": "testing",
+          "ordinal": 7,
+          "title": "Conformité de la composition frontend récursive",
+          "source": "openspec/specs/testing/spec.md",
+          "line": 66,
+          "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+          "block_sha256": "99bd959f22eec7645e810ce689df821fbd8fd6c00a706a82d3ec898d4fa2f54e"
+        },
+        {
+          "capability": "testing",
+          "ordinal": 9,
+          "title": "Exécution navigateur headless des unités frontend web",
+          "source": "openspec/specs/testing/spec.md",
+          "line": 89,
+          "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+          "block_sha256": "121a020f91da796da68634e9f74a654ebc2160b8922ae90a777a642f3d3fe310"
+        },
+        {
+          "capability": "developer-experience",
+          "ordinal": 1,
+          "title": "Parcours local reproductible",
+          "source": "openspec/specs/developer-experience/spec.md",
+          "line": 10,
+          "source_sha256": "9008a4c9affc2e6dc13c7247fd375c349a8d85fa2733878756dd27373ad8e4b1",
+          "block_sha256": "b45270b1c563fd91ab6dac69a17fa2f9900135da725ba6a514b57831ead40ec3"
+        },
+        {
+          "capability": "developer-experience",
+          "ordinal": 2,
+          "title": "Génération sans activation implicite",
+          "source": "openspec/specs/developer-experience/spec.md",
+          "line": 21,
+          "source_sha256": "9008a4c9affc2e6dc13c7247fd375c349a8d85fa2733878756dd27373ad8e4b1",
+          "block_sha256": "fb6bbb0c534e9654b9398a8deaa1d50f88a9660b643add706e86b1f9d6781443"
+        },
+        {
+          "capability": "developer-experience",
+          "ordinal": 3,
+          "title": "Diagnostics sans fuite",
+          "source": "openspec/specs/developer-experience/spec.md",
+          "line": 32,
+          "source_sha256": "9008a4c9affc2e6dc13c7247fd375c349a8d85fa2733878756dd27373ad8e4b1",
+          "block_sha256": "a19297abcb17cfb95ef8f1184c29593ba5021dbf67aad9cda6db576fc2f95f5b"
+        },
+        {
+          "capability": "compatibility",
+          "ordinal": 4,
+          "title": "Compatibilité déclarative distincte de la conformité comportementale",
+          "source": "openspec/specs/compatibility/spec.md",
+          "line": 35,
+          "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+          "block_sha256": "6f1dbd556c95ad7580d69321e958607ff5637f4fe9fa93039be48950e37f198e"
+        },
+        {
+          "capability": "compatibility",
+          "ordinal": 7,
+          "title": "Preuve de conformité externe",
+          "source": "openspec/specs/compatibility/spec.md",
+          "line": 66,
+          "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+          "block_sha256": "11285e5cc634b5ce7cd0dfbb799e9b74605e4dbb190236bbf818f66dcc5c3014"
+        },
+        {
+          "capability": "compatibility",
+          "ordinal": 8,
+          "title": "Liaison exacte des attestations de conformité",
+          "source": "openspec/specs/compatibility/spec.md",
+          "line": 81,
+          "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+          "block_sha256": "33c3fa3e85c831743eabeb52148db096221550c9a01dec19e2d2ccafc1d82d8a"
+        },
+        {
+          "capability": "compatibility",
+          "ordinal": 9,
+          "title": "Couverture des attestations avant activation",
+          "source": "openspec/specs/compatibility/spec.md",
+          "line": 98,
+          "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+          "block_sha256": "16b888bb93121ea57b7b6b945dceaf7dcdf2ee90a110ae466c5a81eae7948e17"
+        },
+        {
+          "capability": "compatibility",
+          "ordinal": 10,
+          "title": "Responsabilités de l'appelant et du noyau pour les preuves",
+          "source": "openspec/specs/compatibility/spec.md",
+          "line": 123,
+          "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+          "block_sha256": "ccd92ea763cd173102f957271fa30762a4237c94f12cf0e0e1e26cc37bc9afec"
+        },
+        {
+          "capability": "compatibility",
+          "ordinal": 11,
+          "title": "Matrice P0 limitée aux dimensions connues",
+          "source": "openspec/specs/compatibility/spec.md",
+          "line": 137,
+          "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+          "block_sha256": "ad2b8f58badac5c81089f0f5b2936104fc072ca61f40016ab6174cd2dfdf8cfc"
+        },
+        {
+          "capability": "providers",
+          "ordinal": 3,
+          "title": "Conformité contractuelle vérifiable",
+          "source": "openspec/specs/providers/spec.md",
+          "line": 26,
+          "source_sha256": "5aceaa82194cfc9802dcf6ef1bd9e4fc35b18b5156d1b29685e41d23689a7fd7",
+          "block_sha256": "7046ab2e235a0968b96b5602f609cbd079489bd3a8e28ab2b655ad5c7d0f626f"
+        },
+        {
+          "capability": "reference-composition",
+          "ordinal": 1,
+          "title": "Capacités obligatoires du P0",
+          "source": "openspec/specs/reference-composition/spec.md",
+          "line": 10,
+          "source_sha256": "7c4d7b603f35f02f6d2ba0eb10dd202793ec288fee0c65a5ff15d244446233ff",
+          "block_sha256": "375a06791634e2eea1e55ef2e183d75489ba8e306c283659eeda381b23f913e6"
+        },
+        {
+          "capability": "reference-composition",
+          "ordinal": 3,
+          "title": "Preuve reproductible",
+          "source": "openspec/specs/reference-composition/spec.md",
+          "line": 33,
+          "source_sha256": "7c4d7b603f35f02f6d2ba0eb10dd202793ec288fee0c65a5ff15d244446233ff",
+          "block_sha256": "ab553efe6c54a415ee9b8e42bbb9e9d009d3681dce99c2210ada04af4ef236b4"
+        }
+      ],
+      "open_design_barrier": "Technologies, paramètres et contrats détaillés à revoir avant réalisation ; deltas N04/N05 proposés, sans synchronisation.",
+      "validation_date": "2026-10-17",
+      "audit_reference": "openspec/changes/define-first-installable-pbo-profile/audit-transversal-p0.json"
     }
   ],
   "implementation_started": false,
@@ -10751,9 +11381,13 @@
     "X01",
     "Q01",
     "N01",
-    "N02"
+    "N02",
+    "N03",
+    "N04",
+    "N05",
+    "N06"
   ],
-  "new_changes_prepared_count": 82,
+  "new_changes_prepared_count": 86,
   "preparation_complete": true,
   "selection_or_implementation_approved_by_preparation": false,
   "coordination_files_intentionally_updated": [
@@ -11080,7 +11714,13 @@
         "E07"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C06",
+        "C11",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "api--1167fe559e",
@@ -11109,7 +11749,13 @@
         "E07"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C06",
+        "C11",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "api--f87d87b639",
@@ -11138,7 +11784,13 @@
         "E07"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C06",
+        "C11",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "architecture-decisions--6e6f0336b2",
@@ -11268,7 +11920,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "artifact-publication--1195d98fd8",
@@ -11299,7 +11959,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "artifact-publication--f5b8dd1ec0",
@@ -11330,7 +11998,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "artifact-publication--c70d9c0574",
@@ -11361,7 +12037,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "artifact-publication--013527f8f2",
@@ -11392,7 +12076,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "audit--ae1230502f",
@@ -12121,7 +12813,13 @@
         "E05"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C03",
+        "C04",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "authorization--e378c36702",
@@ -13573,7 +14271,13 @@
         "E09"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C10",
+        "C16",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "backup-disaster-recovery--9ee9ed7e58",
@@ -13602,7 +14306,13 @@
         "E09"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C10",
+        "C16",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "backup-disaster-recovery--1e46e77399",
@@ -13631,7 +14341,13 @@
         "E09"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C10",
+        "C16",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "backup-disaster-recovery--74c052b2a1",
@@ -13660,7 +14376,13 @@
         "E09"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C10",
+        "C16",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "bulk-operations--cd148551a7",
@@ -15577,7 +16299,14 @@
         "E02"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C16",
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "compatibility--ce270cc4d9",
@@ -15663,7 +16392,12 @@
         "E02"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "compatibility--e8bc285362",
@@ -15691,7 +16425,12 @@
         "E02"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "compatibility--9b54823fb7",
@@ -15727,7 +16466,12 @@
         "E02"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "compatibility--664ecf79cc",
@@ -15757,7 +16501,14 @@
         "E02"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C16",
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "compatibility--4d2b07019a",
@@ -15785,7 +16536,12 @@
         "E02"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "component-model--ff3cefc661",
@@ -16839,7 +17595,14 @@
         "E09"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C05",
+        "C10",
+        "C16",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "data-lifecycle--d469fe16e2",
@@ -17009,7 +17772,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "deb-package--785dd390d2",
@@ -17102,7 +17873,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "deb-package--88b918c6b9",
@@ -17133,7 +17912,15 @@
         "E18"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "deb-package--9112fb78b5",
@@ -17573,7 +18360,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "O22",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "developer-experience--88eeec99d2",
@@ -17604,7 +18398,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "O22",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "developer-experience--29852b7822",
@@ -17635,7 +18436,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "O22",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "directory-projections--c5293cebe9",
@@ -19882,7 +20690,13 @@
         "E05"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C03",
+        "C04",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "identity-assurance--d803416968",
@@ -20462,7 +21276,14 @@
         "E01"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C08",
+        "C17",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "initial-application-bootstrap--fee31f0f7a",
@@ -20492,7 +21313,14 @@
         "E01"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C08",
+        "C17",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "initial-application-bootstrap--b6bd1dca11",
@@ -20519,7 +21347,12 @@
         "E07"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C17",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "installation-provisioning--4a0fff40a0",
@@ -20953,7 +21786,13 @@
         "E10"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C06",
+        "C09",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "jobs--02c3976a9b",
@@ -21040,7 +21879,13 @@
         "E10"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C06",
+        "C09",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "jobs--a30f5da8d5",
@@ -21069,7 +21914,13 @@
         "E10"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C06",
+        "C09",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "jobs--0dc2276581",
@@ -23659,7 +24510,14 @@
         "E12"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C11",
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "providers--f7b3714610",
@@ -29209,7 +30067,14 @@
         "E01"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C08",
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "reference-composition--8751304f03",
@@ -29269,7 +30134,14 @@
         "E01"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C08",
+        "C17",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "reference-runtime--1f1a506747",
@@ -29304,7 +30176,15 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C00",
+        "C07",
+        "C14",
+        "C17",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "reference-runtime--331ed5d98d",
@@ -29366,7 +30246,15 @@
         "E15"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C00",
+        "C07",
+        "C14",
+        "C17",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "reference-runtime--65c1a330a5",
@@ -30278,9 +31166,11 @@
       "current_lots": [
         "N01",
         "C15",
-        "C17"
+        "C17",
+        "N05"
       ],
-      "audit_reference": "audit-ne-94.json"
+      "audit_reference": "audit-ne-94.json",
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "runtime--06d301034b",
@@ -30311,7 +31201,14 @@
         "E14"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C09",
+        "C15",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "runtime--78a31e1e04",
@@ -30373,7 +31270,14 @@
         "E14"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C09",
+        "C15",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "runtime--ac837ae1af",
@@ -30408,7 +31312,14 @@
         "E14"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C09",
+        "C15",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "runtime--aa30f320bb",
@@ -30439,7 +31350,14 @@
         "E14"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C09",
+        "C15",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "runtime--34367f8ae0",
@@ -30470,7 +31388,15 @@
         "E14"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C07",
+        "C09",
+        "C15",
+        "N04",
+        "N05"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "runtime--cc587c5666",
@@ -31146,7 +32072,15 @@
         "E11"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C04",
+        "C05",
+        "C06",
+        "C13",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "security--ad06b86893",
@@ -31177,7 +32111,15 @@
         "E11"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C04",
+        "C05",
+        "C06",
+        "C13",
+        "N03"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "security--ff309a211e",
@@ -31208,7 +32150,16 @@
         "E11"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C04",
+        "C05",
+        "C06",
+        "C13",
+        "N03",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "security--14e7b5018b",
@@ -31239,7 +32190,16 @@
         "E11"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C04",
+        "C05",
+        "C06",
+        "C13",
+        "N03",
+        "N04"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "service-objectives--274a08a5d0",
@@ -31576,7 +32536,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "Q01",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "testing--b553810d1f",
@@ -31607,7 +32574,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "Q01",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "testing--8240234124",
@@ -31638,7 +32612,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "Q01",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "testing--ec900517c4",
@@ -31669,7 +32650,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "Q01",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "testing--ea8ece8809",
@@ -31700,7 +32688,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "Q01",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "testing--f0b3bab690",
@@ -31731,7 +32726,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "Q01",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "testing--2632c92c48",
@@ -31762,7 +32764,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "Q01",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "testing--19ab684105",
@@ -31830,7 +32839,14 @@
         "E13"
       ],
       "requires_audit_before_creation_for_ne": false,
-      "implementation_change_automatically_required": false
+      "implementation_change_automatically_required": false,
+      "current_lots": [
+        "C12",
+        "C17",
+        "Q01",
+        "N06"
+      ],
+      "transversal_audit_reference": "audit-transversal-p0.json"
     },
     {
       "requirement_id": "themes--7c61c29ead",
@@ -31996,33 +33012,43 @@
   "decisions_register": "openspec/changes/define-first-installable-pbo-profile/arbitrages-preparation-globale.md",
   "additional_human_decision_needed_for_document_preparation": false,
   "final_checks": {
-    "active_changes": 102,
+    "active_changes": 106,
+    "P0_changes": 25,
     "archives": 135,
-    "total_changes": 237,
-    "archive_ratio_percent": 56.96,
-    "unchecked_tasks": 1012,
+    "total_changes": 241,
+    "archive_ratio_percent": 56.02,
+    "unchecked_tasks": 1052,
     "checked_tasks": 0,
     "canonical_counts": {
       "capabilities": 78,
       "requirements": 717,
       "scenarios": 812
     },
-    "audit_requirements_exact": 94,
-    "audit_scenarios_referenced": 96,
-    "source_files_unchanged": 409,
-    "source_file_list_unchanged": true,
-    "canonical_unchanged": 78,
+    "proposed_only": {
+      "added_requirements": 13,
+      "modified_existing_requirements": 2,
+      "net_added_scenarios": 25,
+      "new_capabilities": 0
+    },
+    "projection_not_current_canon": {
+      "capabilities": 78,
+      "requirements": 730,
+      "scenarios": 837
+    },
     "DAG_acyclic": true,
-    "all_modified_files_in_scope": true,
-    "utf8_lf": true,
+    "canonical_unchanged": 78,
+    "indexed_source_files_unchanged": 409,
+    "source_file_list_unchanged": true,
     "local_links_exist": true,
+    "utf8_lf": true,
     "git_diff_check_exit": 0,
-    "functional_qualification": false,
     "implementation": false,
+    "canonical_sync": false,
+    "functional_status_changes": 0,
     "verification_status": "VERIFIE",
     "native_changes_validation_exit": 0,
     "native_global_validation_exit": 1,
-    "existing_unit_tests_passed": 124,
+    "existing_unit_tests_passed": 95,
     "completed_tasks": 0
   },
   "authorization_before_audit": "Préparer les 80 dossiers restants de l’inventaire, sans implémentation ; demander validation si une décision empêche leur périmètre documentaire.",
@@ -32152,5 +33178,57 @@
     "implementation": false,
     "new_validation_needed_for_preparation": false,
     "durable_validation": "openspec/changes/define-first-installable-pbo-profile/validation-audit-ne-94.json"
+  },
+  "authorization_before_transversal_audit": "Audit explicite des 94 exigences NE et approfondissement sans implémentation ; création dédiée N01 et politique de coffre N02 validées explicitement par le développeur le 17 octobre 2026.",
+  "final_checks_before_transversal_audit": {
+    "active_changes": 102,
+    "archives": 135,
+    "total_changes": 237,
+    "archive_ratio_percent": 56.96,
+    "unchecked_tasks": 1012,
+    "checked_tasks": 0,
+    "canonical_counts": {
+      "capabilities": 78,
+      "requirements": 717,
+      "scenarios": 812
+    },
+    "audit_requirements_exact": 94,
+    "audit_scenarios_referenced": 96,
+    "source_files_unchanged": 409,
+    "source_file_list_unchanged": true,
+    "canonical_unchanged": 78,
+    "DAG_acyclic": true,
+    "all_modified_files_in_scope": true,
+    "utf8_lf": true,
+    "local_links_exist": true,
+    "git_diff_check_exit": 0,
+    "functional_qualification": false,
+    "implementation": false,
+    "verification_status": "VERIFIE",
+    "native_changes_validation_exit": 0,
+    "native_global_validation_exit": 1,
+    "existing_unit_tests_passed": 124,
+    "completed_tasks": 0
+  },
+  "audit_transversal_revision": {
+    "date": "2026-10-17",
+    "report": "reports/audit-transversal-p0-2026-10-17/RAPPORT.md",
+    "durable_audit": "openspec/changes/define-first-installable-pbo-profile/audit-transversal-p0.json",
+    "journeys_reviewed": 17,
+    "canonical_references_verified": 717,
+    "existing_P0_mapped_requirements_before_audit": 351,
+    "other_mapped_requirements_before_audit": 366,
+    "functional_status_changes": 0,
+    "new_changes": [
+      "N03",
+      "N04",
+      "N05",
+      "N06"
+    ],
+    "new_proposed_requirements": 4,
+    "implementation": false,
+    "canonical_sync": false,
+    "human_decision_needed_for_document_preparation": false,
+    "durable_validation": "openspec/changes/define-first-installable-pbo-profile/validation-audit-transversal-p0.json"
   }
 }

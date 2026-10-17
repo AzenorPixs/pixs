@@ -55,3 +55,28 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 ## Hors profil
 
 PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+
+
+## Revue transversale P0 du 17 octobre 2026
+
+Analyse de préparation sans implémentation ; les critères ci-dessous complètent la recette future et ne constituent pas des résultats exécutés. Les décisions de technologie et de paramètres restent ouvertes avant code.
+
+### T03 — Réadmission après état restauré
+
+La restauration cohérente de données ne prouve ni fraîcheur de révocations/incidents ni admissibilité des effets différés. N05 dédié et delta ciblé validés ; faits nécessaires et revalidation détaillée à définir avant code.
+
+Contrôles à intégrer : Snapshot antérieur à révocation/rotation/incident ; Effet déjà engagé dont réponse perdue ; Marqueur externe incohérent ; Interruption puis reprise de réconciliation sans réémission automatique.
+
+### T12 — Effacement et restauration des dérivés présents
+
+Un snapshot peut précéder l’effacement ; un tombstone présent seulement dans le même snapshot ne prouve pas l’absence de résurrection. Préciser source des effacements applicables et preuve avant exposition dans C10/C16/N05 ; refuser la garantie si faits absents.
+
+Contrôles à intégrer : Restauration après effacement confirmé ; Hold/retenue et rétention selon canon ; Aucun export/demande exigeant implicitement tout Bulk ou stockage objet.
+
+### T13 — Première livraison et origines de mise à niveau
+
+Une première version n’a pas nécessairement d’origine distribuée supportée ; un numéro source ancien ne prouve pas une migration autorisée. Déclarer les origines réellement supportées dans C16/C19 ; cas sans origine explicite et sauts non prouvés refusés.
+
+Contrôles à intégrer : Installation vierge distincte d’une mise à niveau ; Interruption de migration et contraction prématurée refusées ; Retour arrière seulement si matrice accepte schéma/données ; Aucun downgrade automatique.
+
+Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.

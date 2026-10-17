@@ -4,7 +4,7 @@ Ce document décrit le projet Pixs dans son ensemble.
 
 ## 1. Objet
 
-Pixs est un framework applicatif modulaire destiné à servir de socle commun pour construire plusieurs applications et services métiers.
+Pixs l'Application Universselle est un framework applicatif modulaire destiné à servir de socle commun pour construire plusieurs applications et services métiers.
 
 Pixs repose principalement sur :
 
@@ -2517,7 +2517,7 @@ Pixs est spécifié par capacités. Cette section et la [synthèse du README](RE
 
 Le canon dans [openspec/specs/](openspec/specs/) recense **78 capacités, 717 exigences et 812 scénarios**. Ce comptage porte sur les spécifications canoniques : les deltas proposés dans les changes ouverts ne sont pas comptés avant leur intégration.
 
-Chaque exigence est reliée à un statut, des références, un écart ou une limite identifié et des lots proposés. La [correspondance globale](openspec/changes/define-first-installable-pbo-profile/couverture-preparation-globale.md) donne accès aux exigences et aux dossiers préparés. La matrice statique du 16 octobre 2026 reste conservée. L’[audit du 17 octobre des 94 exigences NE](openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json) ajoute une surcouche de suivi : 10 appuis partiels et 84 couvertures non démontrées dans les sources consultées. Les 623 autres exigences ne sont pas réauditées ici :
+Chaque exigence est reliée à un statut, des références, un écart ou une limite identifié et des lots proposés. La [correspondance globale](openspec/changes/define-first-installable-pbo-profile/couverture-preparation-globale.md) donne accès aux exigences et aux dossiers préparés. La matrice statique du 16 octobre 2026 reste conservée. L’[audit du 17 octobre des 94 exigences NE](openspec/changes/define-first-installable-pbo-profile/audit-ne-94.json) ajoute une surcouche de suivi : 10 appuis partiels et 84 couvertures non démontrées dans les sources consultées. Leur statut fonctionnel n’est pas réévalué par l’audit transversal suivant :
 
 | Statut de suivi | Exigences | Signification |
 | --- | ---: | --- |
@@ -2531,11 +2531,11 @@ L’analyse est statique : présence de code, tests disponibles et archivage ne 
 
 #### Plan de la première composition installable
 
-Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances et critères de sortie pour le premier P0. Ils sont maintenant matérialisés en changes préparés. Le [plan global](openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md) contient désormais **102 changes préparés**, après validation de N01 et N02 :
+Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances et critères de sortie pour le premier P0. Ils sont maintenant matérialisés en changes préparés. Le [plan global](openspec/changes/define-first-installable-pbo-profile/plan-global-preparation.md) contient désormais **106 changes préparés**, après validation de N01/N02 puis N03–N06 :
 
 | Périmètre | Changes ouverts |
 | --- | ---: |
-| Premier P0, C00–C19 et N01 urgence PBO | 21 |
+| Premier P0, C00–C19, N01 et N03–N06 | 25 |
 | Pixs Agent | 9 |
 | PZT actif et contrats techniques | 26 |
 | Compléments Bulk | 11 |
@@ -2543,7 +2543,7 @@ Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances 
 | Clarification native/hors ligne N02 | 1 |
 | Distribution Docker | 1 |
 | Recette étendue | 1 |
-| **Total** | **102** |
+| **Total** | **106** |
 
 Les dossiers hors premier P0 ne sont pas tous requis pour une installation P0 : leur sélection dépend du profil et de ses dépendances obligatoires. Leur préparation ne les active pas et ne vaut pas autorisation de les implémenter. Les décisions encore ouvertes figurent dans le [registre de conception et de qualification](openspec/changes/define-first-installable-pbo-profile/arbitrages-preparation-globale.md).
 
@@ -2552,12 +2552,16 @@ Les premières priorités sont :
 1. Confirmer le profil de première livraison décrit par [C00](openspec/changes/define-first-installable-pbo-profile/proposal.md) et l’applicabilité des obligations PZT/DNS. Les modules essentiels restent présents côté PBO même sans réseau actif.
 2. Livrer les secrets runtime, les primitives Core persistantes et l’audit durable, puis l’authentification et l’autorisation intégrées : C01, C02, C05, puis C03 et C04.
 3. Relier API, composition réelle, installation, traitements persistants et gouvernance : C06–C10, selon leurs dépendances.
-4. Compléter interface modulaire, langues, thèmes, accessibilité, administration, modules essentiels, exploitation et restauration : C11–C16. Intégrer aussi la procédure d’urgence N01, distincte de la maintenance ordinaire, avant construction et recette.
-5. Construire le paquet Debian C18, qualifier la composition distribuée en C17, puis vérifier son identité de distribution et préparer la publication en C19.
+4. Compléter interface modulaire, langues, thèmes, accessibilité, administration, modules essentiels, exploitation et restauration : C11–C16. Intégrer aussi N01 urgence, N04 entrée web et N05 réadmission après restauration selon leurs contrats, avant construction et recette.
+5. Fournir les vérifications de confiance N03 avant installation, construire le paquet Debian C18, puis qualifier la composition distribuée en C17 avec le kit minimal N06. C19 conserve support, preuves finales et préparation de publication, sans modification implicite de l’artefact qualifié.
 
-Au présent relevé, les **1 012 tâches de réalisation sont non cochées**. Le [rapport d’audit et ses contrôles](reports/audit-ne-94-2026-10-17/RAPPORT.md) couvre 31 conceptions existantes approfondies, les deux nouveaux dossiers et les dépendances révisées. Les contrôles stricts actuels valident les 102 changes ; le strict global reste en exit 1, avec quatre avertissements de longueur préexistants dans deux capacités. Les 124 tests unitaires existants exécutés sont purs et synthétiques : ils ne qualifient pas les services optionnels ni la composition installable. La [validation antérieure des 100 dossiers](openspec/changes/define-first-installable-pbo-profile/validation-globale.md) reste une preuve historique.
+Au présent relevé, les **1 052 tâches de réalisation sont non cochées**. L’[audit transversal P0](openspec/changes/define-first-installable-pbo-profile/audit-transversal-p0.md) documente 17 parcours/interfaces, la vérification des références des 717 exigences et quatre nouveaux changes validés : N03 confiance avant installation, N04 entrée web, N05 réadmission après restauration et N06 kit minimal de conformité. Le rattachement préalable de 351 exigences à des lots P0 et de 366 à d’autres lots ne suffit pas à prouver leur applicabilité ou leur couverture ; les clauses conditionnelles restent à vérifier par rôle. Ce contrôle ne constitue pas un nouvel audit fonctionnel exhaustif des 623 exigences hors ancien périmètre NE.
 
-N01 décrit la réalisation future de l’obligation existante de révocation/quarantaine d’urgence PBO. N02 propose de distinguer le coffre sécurisé natif des projections, caches et files hors ligne sans secrets ni jetons ; ses deltas ne sont pas synchronisés dans le canon. Les autres écarts de cet audit sont couverts par des lots déjà préparés. Providers, plateformes, paramètres et garanties encore ouverts restent à valider avant réalisation.
+Les contrôles stricts actuels valident les **106 changes** ; le strict global reste en exit 1 avec les quatre avertissements de longueur préexistants. Les **95 tests unitaires existants exécutés pendant l’audit transversal** vérifient des primitives et validateurs ; ils ne qualifient pas la composition installable. Les [contrôles locaux](reports/audit-transversal-p0-2026-10-17/RAPPORT.md) conservent commandes, résultats et limites. Les validations antérieures des 100 puis 102 dossiers et les 124 unités de l’audit NE restent des preuves historiques distinctes.
+
+Les compteurs canoniques ci-dessus ont été revérifiés dans les fichiers de cadrage. Les deltas ouverts C00/N02/N04/N05 proposent **13 exigences ajoutées, 2 exigences existantes modifiées et 25 scénarios supplémentaires nets**, sans nouvelle capacité. Si tous étaient intégrés sans modification, la projection serait de **78 capacités, 730 exigences et 837 scénarios** ; elle ne remplace pas le canon courant **78/717/812**. Aucun delta n’est synchronisé par ces audits.
+
+Les décisions de providers, serveur/session/transport, schémas détaillés, paramètres, budgets, support et mécanismes de confiance restent à valider avant réalisation. Les autres écarts transversaux complètent les dossiers propriétaires existants ; aucune option PA, réseau PZT, Docker, SDK complet, Bulk ou client natif n’est activée implicitement.
 
 #### Ratio d’avancement affiché dans le README
 
@@ -2568,7 +2572,7 @@ total = changes archivés + changes ouverts
 avancement OpenSpec (%) = 100 × changes archivés / total
 ```
 
-Au 17 octobre 2026 : **135 archivés + 102 ouverts = 237 changes**, soit **56,96 %** après arrondi à deux décimales. Les archivés sont les dossiers de changes sous `openspec/changes/archive/` ; les ouverts sont les dossiers directement sous `openspec/changes/`, hors `archive` et dossiers techniques masqués.
+Au 17 octobre 2026 : **135 archivés + 106 ouverts = 241 changes**, soit **56,02 %** après arrondi à deux décimales. Les archivés sont les dossiers de changes sous `openspec/changes/archive/` ; les ouverts sont les dossiers directement sous `openspec/changes/`, hors `archive` et dossiers techniques masqués.
 
 Ce ratio est un indicateur global non pondéré de clôture des changes. Il inclut les archives documentaires, les contrats préparatoires et les capacités hors premier P0 ; il ne mesure ni l’effort restant, ni la proportion de fonctions utilisables, ni la qualification de cette composition. Il peut diminuer lorsque de nouveaux changes sont créés. Une valeur de 100 % ne dispense jamais des critères de livraison, des tests et des preuves de qualification. En l’absence de changes, afficher « non calculable », sans annoncer 100 %.
 
