@@ -3,8 +3,8 @@
 Version : 0.5
 
 Généré automatiquement par Debian Installeur Unifié (DIU).
-Début du relevé (UTC) : 2026-10-17T07:37:16Z
-Environnement d'exécution DIU : PHYSICAL
+Début du relevé (UTC) : 2026-10-18T18:07:33Z
+Environnement d'exécution DIU : PROXMOX
 
 Les sondes système concernent le contexte d'exécution DIU.
 Les outils DevOps sont interrogés avec les binaires indiqués dans leurs rubriques.
@@ -119,7 +119,7 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
 
 # PostgreSQL Serveur
 
-  * 16.15
+  * 16.14
   * 127.0.0.1:5432
   * Les variables PostgreSQL sont chargées depuis project.env
   * PG_HOST PG_PORT PG_DATABASE PG_USERNAME PG_PASSWORD
