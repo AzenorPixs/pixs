@@ -1278,6 +1278,8 @@ L'autorisation est évaluée à la mise en file puis réévaluée à l'exécutio
 
 Les erreurs métier non rejouables sont orientées vers `FAILED`, `CANCELLED` ou `DEAD_LETTER` selon le contrat. Les erreurs techniques temporaires peuvent utiliser un backoff et un nombre maximal de tentatives. Une reprise manuelle ou une replanification doit être explicitement autorisée, corrélée et auditée.
 
+Le profil préparatoire `JobDeduplicationReferenceV1` et ses limites sont définis dans `openspec/specs/jobs/spec.md`. Sa validation purement structurelle ne réalise aucune déduplication persistante et ne remplace pas les garanties runtime des Jobs.
+
 ## 24. Notifications
 
 Le flux générique d'une notification est :
