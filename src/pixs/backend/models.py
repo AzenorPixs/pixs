@@ -6,6 +6,13 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from pixs.backend.bulk_admission_identity_record import BulkAdmissionIdentityRecord
+from pixs.backend.bulk_command_idempotency_record import BulkCommandIdempotencyRecord  # noqa: E402,F401
+from pixs.backend.bulk_event_envelope_record import BulkEventEnvelopeRecord  # noqa: E402,F401
+from pixs.backend.bulk_inbox_receipt_record import BulkInboxReceiptRecord  # noqa: E402,F401
+from pixs.backend.bulk_validation_report_record import BulkValidationReportRecord  # noqa: E402,F401
+from pixs.backend.bulk_export_manifest_record import BulkExportManifestRecord  # noqa: E402,F401
+from pixs.backend.bulk_outbox_publication_record import BulkOutboxPublicationRecord  # noqa: E402,F401
 from pixs.backend.bulk_operation_record import BulkOperationRecord
 from pixs.backend import bulk_runtime_records as _bulk_runtime_records
 from pixs.kernel.jobs import JobState

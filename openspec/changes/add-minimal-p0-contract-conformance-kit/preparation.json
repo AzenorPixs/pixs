@@ -1,0 +1,191 @@
+{
+  "date": "2026-10-17",
+  "lot": "N06",
+  "id": "add-minimal-p0-contract-conformance-kit",
+  "authorization": "Validation explicite du développeur : préparer les trois changes dédiés N03/N04/N05 et préparer N06 dédié.",
+  "implementation_authorized": false,
+  "canonical_sync_authorized": false,
+  "requirements": [
+    {
+      "capability": "testing",
+      "ordinal": 1,
+      "title": "Trois niveaux de vérification distincts",
+      "source": "openspec/specs/testing/spec.md",
+      "line": 8,
+      "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+      "block_sha256": "8bd293063511d9ff7c4e776d91f7b343192d9b7ad3654f1060f2ba0866743e16"
+    },
+    {
+      "capability": "testing",
+      "ordinal": 2,
+      "title": "Kit de conformité et composant d'exemple",
+      "source": "openspec/specs/testing/spec.md",
+      "line": 17,
+      "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+      "block_sha256": "ff6ff6ed413bc587bd7f4420c4d84bc5d78f3ed21ebc0419cb4a65928eb5e7af"
+    },
+    {
+      "capability": "testing",
+      "ordinal": 3,
+      "title": "Suites de conformité versionnées par contrat",
+      "source": "openspec/specs/testing/spec.md",
+      "line": 30,
+      "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+      "block_sha256": "1a25f001ea6e86cc778df2ec2938ccb06868648d5b1702000d191653c4c631c9"
+    },
+    {
+      "capability": "testing",
+      "ordinal": 4,
+      "title": "Garanties obligatoires séparées des capacités optionnelles",
+      "source": "openspec/specs/testing/spec.md",
+      "line": 39,
+      "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+      "block_sha256": "0310541d7ae00ce5d4425cb1235794b54133d8de93060c47e76a5acc04cdfa38"
+    },
+    {
+      "capability": "testing",
+      "ordinal": 5,
+      "title": "Reproductibilité sur la topologie de référence",
+      "source": "openspec/specs/testing/spec.md",
+      "line": 48,
+      "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+      "block_sha256": "3b2d50452802a83d20b35dec44cd60cd7109aa0c54aaca3bcb541088cadba393"
+    },
+    {
+      "capability": "testing",
+      "ordinal": 6,
+      "title": "Preuves sans secret ni donnée de production",
+      "source": "openspec/specs/testing/spec.md",
+      "line": 57,
+      "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+      "block_sha256": "d9ae4d21e57d739e7b642389b1085eccff510000f3a51fdb8f674d17f68d439c"
+    },
+    {
+      "capability": "testing",
+      "ordinal": 7,
+      "title": "Conformité de la composition frontend récursive",
+      "source": "openspec/specs/testing/spec.md",
+      "line": 66,
+      "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+      "block_sha256": "99bd959f22eec7645e810ce689df821fbd8fd6c00a706a82d3ec898d4fa2f54e"
+    },
+    {
+      "capability": "testing",
+      "ordinal": 9,
+      "title": "Exécution navigateur headless des unités frontend web",
+      "source": "openspec/specs/testing/spec.md",
+      "line": 89,
+      "source_sha256": "5e0c976821f8623c976d43125c7d5738fbf100b9fae1a112d45894e9fdc7a148",
+      "block_sha256": "121a020f91da796da68634e9f74a654ebc2160b8922ae90a777a642f3d3fe310"
+    },
+    {
+      "capability": "developer-experience",
+      "ordinal": 1,
+      "title": "Parcours local reproductible",
+      "source": "openspec/specs/developer-experience/spec.md",
+      "line": 10,
+      "source_sha256": "9008a4c9affc2e6dc13c7247fd375c349a8d85fa2733878756dd27373ad8e4b1",
+      "block_sha256": "b45270b1c563fd91ab6dac69a17fa2f9900135da725ba6a514b57831ead40ec3"
+    },
+    {
+      "capability": "developer-experience",
+      "ordinal": 2,
+      "title": "Génération sans activation implicite",
+      "source": "openspec/specs/developer-experience/spec.md",
+      "line": 21,
+      "source_sha256": "9008a4c9affc2e6dc13c7247fd375c349a8d85fa2733878756dd27373ad8e4b1",
+      "block_sha256": "fb6bbb0c534e9654b9398a8deaa1d50f88a9660b643add706e86b1f9d6781443"
+    },
+    {
+      "capability": "developer-experience",
+      "ordinal": 3,
+      "title": "Diagnostics sans fuite",
+      "source": "openspec/specs/developer-experience/spec.md",
+      "line": 32,
+      "source_sha256": "9008a4c9affc2e6dc13c7247fd375c349a8d85fa2733878756dd27373ad8e4b1",
+      "block_sha256": "a19297abcb17cfb95ef8f1184c29593ba5021dbf67aad9cda6db576fc2f95f5b"
+    },
+    {
+      "capability": "compatibility",
+      "ordinal": 4,
+      "title": "Compatibilité déclarative distincte de la conformité comportementale",
+      "source": "openspec/specs/compatibility/spec.md",
+      "line": 35,
+      "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+      "block_sha256": "6f1dbd556c95ad7580d69321e958607ff5637f4fe9fa93039be48950e37f198e"
+    },
+    {
+      "capability": "compatibility",
+      "ordinal": 7,
+      "title": "Preuve de conformité externe",
+      "source": "openspec/specs/compatibility/spec.md",
+      "line": 66,
+      "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+      "block_sha256": "11285e5cc634b5ce7cd0dfbb799e9b74605e4dbb190236bbf818f66dcc5c3014"
+    },
+    {
+      "capability": "compatibility",
+      "ordinal": 8,
+      "title": "Liaison exacte des attestations de conformité",
+      "source": "openspec/specs/compatibility/spec.md",
+      "line": 81,
+      "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+      "block_sha256": "33c3fa3e85c831743eabeb52148db096221550c9a01dec19e2d2ccafc1d82d8a"
+    },
+    {
+      "capability": "compatibility",
+      "ordinal": 9,
+      "title": "Couverture des attestations avant activation",
+      "source": "openspec/specs/compatibility/spec.md",
+      "line": 98,
+      "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+      "block_sha256": "16b888bb93121ea57b7b6b945dceaf7dcdf2ee90a110ae466c5a81eae7948e17"
+    },
+    {
+      "capability": "compatibility",
+      "ordinal": 10,
+      "title": "Responsabilités de l'appelant et du noyau pour les preuves",
+      "source": "openspec/specs/compatibility/spec.md",
+      "line": 123,
+      "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+      "block_sha256": "ccd92ea763cd173102f957271fa30762a4237c94f12cf0e0e1e26cc37bc9afec"
+    },
+    {
+      "capability": "compatibility",
+      "ordinal": 11,
+      "title": "Matrice P0 limitée aux dimensions connues",
+      "source": "openspec/specs/compatibility/spec.md",
+      "line": 137,
+      "source_sha256": "aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544",
+      "block_sha256": "ad2b8f58badac5c81089f0f5b2936104fc072ca61f40016ab6174cd2dfdf8cfc"
+    },
+    {
+      "capability": "providers",
+      "ordinal": 3,
+      "title": "Conformité contractuelle vérifiable",
+      "source": "openspec/specs/providers/spec.md",
+      "line": 26,
+      "source_sha256": "5aceaa82194cfc9802dcf6ef1bd9e4fc35b18b5156d1b29685e41d23689a7fd7",
+      "block_sha256": "7046ab2e235a0968b96b5602f609cbd079489bd3a8e28ab2b655ad5c7d0f626f"
+    },
+    {
+      "capability": "reference-composition",
+      "ordinal": 1,
+      "title": "Capacités obligatoires du P0",
+      "source": "openspec/specs/reference-composition/spec.md",
+      "line": 10,
+      "source_sha256": "7c4d7b603f35f02f6d2ba0eb10dd202793ec288fee0c65a5ff15d244446233ff",
+      "block_sha256": "375a06791634e2eea1e55ef2e183d75489ba8e306c283659eeda381b23f913e6"
+    },
+    {
+      "capability": "reference-composition",
+      "ordinal": 3,
+      "title": "Preuve reproductible",
+      "source": "openspec/specs/reference-composition/spec.md",
+      "line": 33,
+      "source_sha256": "7c4d7b603f35f02f6d2ba0eb10dd202793ec288fee0c65a5ff15d244446233ff",
+      "block_sha256": "ab553efe6c54a415ee9b8e42bbb9e9d009d3681dce99c2210ada04af4ef236b4"
+    }
+  ],
+  "tasks_unchecked": 10
+}

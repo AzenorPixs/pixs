@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-17
+# Préparation de la réalisation du canon existant ; aucun nouveau comportement normatif prévu.
+skip_specs: true

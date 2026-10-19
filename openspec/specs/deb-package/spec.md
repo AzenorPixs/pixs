@@ -7,7 +7,7 @@ Le paquet Debian est un mode de livraison d'une release Pixs : il installe l'art
 
 ### Requirement: Paquet corrélé à la release
 
-Chaque paquet MUST identifier sa release, son périmètre de composition, ses manifests, contrats, compatibilités et garanties. Il MUST rester corrélable aux autres artefacts de cette release pour les capacités communes. Cette corrélation MUST NOT imposer un contenu binaire identique entre le paquet PA, le paquet PBO/PFO et l’image sans fonctions de session ; les noms et versions exactes restent à spécifier.
+Chaque paquet MUST identifier sa release, son périmètre de composition, ses manifests, contrats, compatibilités et garanties. Il MUST rester corrélable aux autres artefacts de cette release pour les capacités communes. Cette corrélation MUST NOT imposer un contenu binaire identique entre le paquet commun PA/PZT, le paquet PBO/PFO et l’image sans fonctions de session ; les noms et versions exactes restent à spécifier.
 
 #### Scenario: Version de paquet incohérente
 
@@ -17,7 +17,7 @@ Chaque paquet MUST identifier sa release, son périmètre de composition, ses ma
 #### Scenario: Deux paquets indépendants
 
 - **WHEN** la composition Debian cible est vérifiée
-- **THEN** le paquet PA et le paquet PBO/PFO restent distincts selon leurs exigences de composition
+- **THEN** le paquet commun PA/PZT et le paquet PBO/PFO restent distincts selon leurs exigences de composition
 
 ### Requirement: Configuration et secrets hors paquet
 
@@ -57,18 +57,40 @@ Le paquet MUST NOT, par défaut, télécharger, installer ou activer du code dis
 
 ### Requirement: Distribution Debian indépendante PA et PBO PFO
 
-La distribution Debian MUST comporter un paquet PBO/PFO et un paquet PA indépendant. Le paquet PBO/PFO MUST contenir le module essentiel PZT et MUST NOT embarquer les quatre binaires PA. L’installation PA seule MUST NOT requérir PBO/PFO locaux comme contenu embarqué ; les compatibilités et dépendances d’installation restent déclarées.
+La distribution Debian MUST conserver un paquet PBO/PFO et un paquet commun
+PA/PZT indépendant. PBO/PFO MUST contenir pixs.agent et le module essentiel
+pixs.pzt, sans les exécutables PA/PZT. Le paquet PA/PZT MUST NOT embarquer ni
+requérir PBO/PFO locaux comme contenu ; compatibilités et dépendances MUST
+rester déclarées. Les noms et versions de paquets restent à spécifier.
 
-#### Scenario: Distribution Debian indépendante PA et PBO PFO
+#### Scenario: Installation sans PBO local
 
-- **WHEN** PA est installé seul
-- **THEN** son paquet reste indépendant et peut joindre un PBO distant autorisé
+- **WHEN** PA/PZT est installé sans PBO/PFO locaux
+- **THEN** son paquet commun reste indépendant et ses échanges avec un PBO distant autorisé passent par PZT
 
-### Requirement: Quatre binaires dans le paquet PA
+### Requirement: Trois binaires PA et PZT dans le paquet commun
 
-Le paquet PA MUST livrer exactement les quatre exécutables définis par pixs-agent : démon système, événements de démarrage/arrêt de l’hôte, sessions utilisateur et exécution PZT. Il MUST conserver la séparation des modes et permissions ; noms/chemins et versions restent à spécifier.
+Le paquet commun PA/PZT MUST livrer exactement quatre exécutables : trois
+binaires PA définis par pixs-agent — démon système, événements de l'hôte,
+sessions utilisateur — et le binaire indépendant PZT défini par pzt. Leurs six
+modes PA et le mode PZT MUST conserver responsabilités, permissions et cycles
+de vie distincts. La séparation MUST NOT ajouter un paquet ou un exécutable.
 
-#### Scenario: Quatre binaires dans le paquet PA
+#### Scenario: Inspection du paquet commun
 
-- **WHEN** le paquet PA est vérifié
-- **THEN** les quatre binaires et leurs responsabilités sont identifiables sans PBO/PFO embarqués
+- **WHEN** le paquet PA/PZT est vérifié
+- **THEN** les trois binaires PA et PZT indépendant sont identifiables, sans PBO/PFO embarqués
+
+### Requirement: Première distribution PBO PFO du profil initial
+
+La première distribution du profil initial MUST être un paquet PBO/PFO indépendant incluant les modules de gestion `pixs.agent` et `pixs.pzt` ainsi que le module DNS essentiel, sans exécutable PA ni PZT embarqué. Son identité expérimentale locale MUST respecter signature, provenance, inventaire, intégrité et révocation exigés par artifact-publication.
+
+#### Scenario: Paquet expérimental non vérifiable
+
+- **WHEN** le paquet initial est local ou expérimental mais son identité de distribution ne peut être vérifiée
+- **THEN** il n’est pas installé ni publié comme release qualifiée
+
+#### Scenario: Exécution réseau demandée après installation
+
+- **WHEN** l’opérateur veut activer PZT après installation du paquet PBO/PFO seul
+- **THEN** la composition exige un composant PZT admissible et les garanties du profil réseau sélectionné avant cette activation

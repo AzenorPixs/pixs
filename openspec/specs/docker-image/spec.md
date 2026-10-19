@@ -17,7 +17,7 @@ La construction MUST être reproductible et l’image MUST identifier sa release
 #### Scenario: Binaire utilisateur dans l’image
 
 - **WHEN** la composition Docker inclut le binaire PA de sessions utilisateur
-- **THEN** cette composition est refusée selon l’exigence des trois binaires système PZT
+- **THEN** cette composition est refusée selon l’exigence des deux binaires PA système/événements et de PZT indépendant
 
 ### Requirement: Image sans état ni secret
 
@@ -55,14 +55,18 @@ Le conteneur MUST gérer le signal d'arrêt par un drain contrôlé jusqu'à un 
 - **WHEN** l'orchestrateur demande l'arrêt d'une instance en cours de traitement
 - **THEN** l'instance draine selon son contrat et l'état persistant permet la reprise sans double effet
 
-### Requirement: Composition image PBO PFO et trois binaires PA
+### Requirement: Composition image PBO PFO deux binaires PA et PZT
 
-L’image Pixs MUST toujours contenir PBO, PFO, le module essentiel PZT côté PBO et exactement trois binaires PA : démon système, événements système du conteneur et exécution PZT. Elle MUST NOT contenir le binaire utilisateur PA ni ses modes session-start, session-stop et session-daemon.
+L'image Pixs MUST toujours contenir PBO/PFO, pixs.agent, le module essentiel
+pixs.pzt, deux binaires PA — démon système et événements du conteneur — et le
+binaire indépendant PZT. Elle MUST NOT contenir le binaire utilisateur PA ni
+ses modes session-start, session-stop et session-daemon. La séparation PA/PZT
+MUST conserver trois exécutables hors PBO/PFO dans l'image.
 
-#### Scenario: Composition image PBO PFO et trois binaires PA
+#### Scenario: Inspection de l’image PA PZT
 
 - **WHEN** le contenu de l’image est inspecté
-- **THEN** PBO/PFO et trois binaires PA sont présents et le binaire utilisateur est absent
+- **THEN** PBO/PFO, pixs.agent, pixs.pzt, deux binaires PA et PZT sont présents et le binaire utilisateur PA est absent
 
 ### Requirement: Événements PA limités au conteneur
 

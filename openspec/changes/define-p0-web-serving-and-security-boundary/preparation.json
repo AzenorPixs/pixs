@@ -1,0 +1,137 @@
+{
+  "date": "2026-10-17",
+  "lot": "N04",
+  "id": "define-p0-web-serving-and-security-boundary",
+  "authorization": "Validation explicite du développeur : préparer les trois changes dédiés N03/N04/N05 et préparer N06 dédié.",
+  "implementation_authorized": false,
+  "canonical_sync_authorized": false,
+  "requirements": [
+    {
+      "capability": "reference-runtime",
+      "ordinal": 1,
+      "title": "Pile de référence unique",
+      "source": "openspec/specs/reference-runtime/spec.md",
+      "line": 10,
+      "source_sha256": "4bbbc0451013b7139f3898b4a5aebd592ab1c50b6aa6cce4e1246957e4052351",
+      "block_sha256": "c28b68d3bc53dfbf958a3a23517a3f5d1984452420b076776582a114bb8ea933"
+    },
+    {
+      "capability": "reference-runtime",
+      "ordinal": 3,
+      "title": "Absence de sélection cachée",
+      "source": "openspec/specs/reference-runtime/spec.md",
+      "line": 35,
+      "source_sha256": "4bbbc0451013b7139f3898b4a5aebd592ab1c50b6aa6cce4e1246957e4052351",
+      "block_sha256": "cfb6b68cc61a0aaeff813cc54fa1a605c83ac2ca7abfebaf1fdf8c5d6eccd023"
+    },
+    {
+      "capability": "runtime",
+      "ordinal": 1,
+      "title": "Profils distincts d'un même artefact",
+      "source": "openspec/specs/runtime/spec.md",
+      "line": 8,
+      "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+      "block_sha256": "ae9d9ce43cbc52cf0aa0f791a396e81f20d6ede62310f87a3cef94248d3cf952"
+    },
+    {
+      "capability": "runtime",
+      "ordinal": 3,
+      "title": "Exposition minimale par défaut",
+      "source": "openspec/specs/runtime/spec.md",
+      "line": 29,
+      "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+      "block_sha256": "f5930086a06431cb6b87ff9f3e77768ebf67b72d406620eacc20f0b9097d6329"
+    },
+    {
+      "capability": "runtime",
+      "ordinal": 6,
+      "title": "Arrêt, drain et reprise contrôlés",
+      "source": "openspec/specs/runtime/spec.md",
+      "line": 61,
+      "source_sha256": "0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11",
+      "block_sha256": "9a08798424feabe0e8b0b1f323da14f0f65163ec204c5a594aaa2432cb810847"
+    },
+    {
+      "capability": "api",
+      "ordinal": 2,
+      "title": "Contrats OpenAPI versionnés par majeure",
+      "source": "openspec/specs/api/spec.md",
+      "line": 18,
+      "source_sha256": "58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152",
+      "block_sha256": "aeb4d01f8a28a8113572c7fcbe877685d2929daef167e882cf5c69b2752408b1"
+    },
+    {
+      "capability": "api",
+      "ordinal": 3,
+      "title": "Enveloppes stables et erreurs typées",
+      "source": "openspec/specs/api/spec.md",
+      "line": 27,
+      "source_sha256": "58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152",
+      "block_sha256": "0d0479f32122a3cc679e93295d6dde033d669679e54f47db9e5f94d7048fe755"
+    },
+    {
+      "capability": "api",
+      "ordinal": 4,
+      "title": "Périmètre canonique et autorisation à la frontière",
+      "source": "openspec/specs/api/spec.md",
+      "line": 38,
+      "source_sha256": "58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152",
+      "block_sha256": "f85cb6551cdd45dff685aea38b7144c0045f0495719e7f47147f6e03b962da12"
+    },
+    {
+      "capability": "initial-application-bootstrap",
+      "ordinal": 3,
+      "title": "Surface HTTP initiale minimale",
+      "source": "openspec/specs/initial-application-bootstrap/spec.md",
+      "line": 39,
+      "source_sha256": "688063fbafcd34535d87b7f4920d8e4952ff2ed3267bd5b442400a3d9f0fe3a4",
+      "block_sha256": "335764dec4327ef9e5eb72827bfd54caed92d8eb994f06e25e7feccab61dc342"
+    },
+    {
+      "capability": "initial-application-bootstrap",
+      "ordinal": 4,
+      "title": "Shell TanStack initial intégré",
+      "source": "openspec/specs/initial-application-bootstrap/spec.md",
+      "line": 54,
+      "source_sha256": "688063fbafcd34535d87b7f4920d8e4952ff2ed3267bd5b442400a3d9f0fe3a4",
+      "block_sha256": "185a9cc433ea7794986e56a0aeff26cf2a4c678ae162aa2cae2a20e423adcd9f"
+    },
+    {
+      "capability": "initial-application-bootstrap",
+      "ordinal": 5,
+      "title": "Profil de test intégré isolé",
+      "source": "openspec/specs/initial-application-bootstrap/spec.md",
+      "line": 68,
+      "source_sha256": "688063fbafcd34535d87b7f4920d8e4952ff2ed3267bd5b442400a3d9f0fe3a4",
+      "block_sha256": "4bb29321f88d6767ef2b230baa1622a3993a103b10d573958ed9a942eeedcb2d"
+    },
+    {
+      "capability": "security",
+      "ordinal": 1,
+      "title": "Exception applicative réservée au Super Admin",
+      "source": "openspec/specs/security/spec.md",
+      "line": 8,
+      "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+      "block_sha256": "9b13a208de202399693e73625ab2fa369289f0e0c5922ea5a1ff2fce1194e93b"
+    },
+    {
+      "capability": "security",
+      "ordinal": 3,
+      "title": "Échec fermé sans mode permissif",
+      "source": "openspec/specs/security/spec.md",
+      "line": 26,
+      "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+      "block_sha256": "0ed9f6927ce6ba8ad334019bd7f14fdaf451dc998a939bb1b2aaa6f695746891"
+    },
+    {
+      "capability": "security",
+      "ordinal": 4,
+      "title": "Diagnostics sans exposition sensible",
+      "source": "openspec/specs/security/spec.md",
+      "line": 37,
+      "source_sha256": "c033c6fa6a6fc43d6e7e3295cd7dc7f554bbcbe0c12cb9baf0431acd6f7a685f",
+      "block_sha256": "f7d40a3d99f2d2b949ef838091079c43f957584fafae2709ca7f9e05c5aae570"
+    }
+  ],
+  "tasks_unchecked": 10
+}

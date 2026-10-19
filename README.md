@@ -1,8 +1,12 @@
 # Pixs
 
+**Version initiale — avancement OpenSpec : 59,14 %** — 152 changes archivés sur 257 au total, dont 105 ouverts. Relevé du 19 octobre 2026.
+
+Ce ratio suit les changes, sans mesurer leur taille ni remplacer une qualification fonctionnelle. [Méthode et suivi détaillé](PROJECT.md#34-openspec).
+
 > Un socle applicatif modulaire, sécurisé et API-first pour construire des applications et services métiers durables.
 
-Pixs est un framework applicatif conçu pour composer plusieurs applications et services métiers à partir de composants indépendants. Il sépare strictement le mécanisme du framework des fonctionnalités de domaine, afin de pouvoir faire évoluer une installation par ajout de modules, providers, extensions ou thèmes, sans modifier son noyau.
+Pixs l'Application Universsel est un framework applicatif conçu pour composer plusieurs applications et services métiers à partir de composants indépendants. Il sépare strictement le mécanisme du framework des fonctionnalités de domaine, afin de pouvoir faire évoluer une installation par ajout de modules, providers, extensions ou thèmes, sans modifier son noyau.
 
 ## État du projet
 
@@ -11,6 +15,16 @@ Le dépôt contient les cadrages, les spécifications OpenSpec et une implément
 Le dépôt ne publie pas encore de release, de paquet Debian ni d'image Docker utilisable. Les commandes et paramètres des jalons de développement ne constituent pas encore une interface de déploiement définitive. Les limites et parcours de ces jalons sont décrits dans [la documentation backend](src/pixs/backend/README.md) et [la documentation frontend](frontend/README.md).
 
 Cette documentation présente le périmètre cible du projet sans anticiper ces choix d'implémentation.
+
+## OpenSpec
+
+OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 764 exigences et 884 scénarios**, recensés au 19 octobre 2026.
+
+Les **105 changes ouverts sont préparés**, dont **23 pour le premier socle installable P0**. Les matrices historiques relient les exigences examinées au travail prévu, aux écarts et aux références disponibles ; elles ne constituent pas une évaluation fonctionnelle actuelle des 764 exigences. La séparation PA/PZT et les modules de gestion PBO sont intégrés au canon. Les deltas encore proposés restent distincts du canon courant.
+
+Le profil C00 a été adopté et archivé le 18 octobre 2026. C01 a été archivé le 19 octobre : il fournit le provider systemd et l’audit d’amorçage, avec une [qualification fonctionnelle bornée](openspec/changes/archive/2026-10-19-add-pbo-runtime-secret-provider/STATISTIQUES.md). Ces preuves historiques ne démontrent ni la reprise PostgreSQL C05/C08 ni une composition P0 installable et qualifiée.
+
+Les priorités sont de finaliser les données et la sécurité, l’installation et l’interface, puis les tests et la livraison. Le [suivi OpenSpec dans PROJECT.md](PROJECT.md#34-openspec) détaille les étapes et les décisions restantes. Cette synthèse et le ratio en tête de page sont à actualiser pendant toute la vie de Pixs, au fil des changes et de leurs preuves.
 
 ## En bref
 
@@ -21,33 +35,65 @@ Cette documentation présente le périmètre cible du projet sans anticiper ces 
 | Frontend | TanStack est la base de l'interface web. |
 | Réactivité | Electric est optionnel et intervient seulement lorsque la synchronisation est nécessaire. |
 | Identité et droits | `pixs.core` apporte utilisateurs, groupes, appartenances, ACL et permissions. |
+| Gestion des exécutants | `pixs.agent` gère PA hors PZT ; `pixs.pzt` gère l’exécutable réseau PZT indépendant. |
 | Authentification | Des providers indépendants peuvent fournir OIDC, SAML ou d'autres mécanismes. |
 | API | HTTP/REST et contrats OpenAPI versionnés sont l'interface publique principale. |
 
 ## Architecture
 
-```text
-Clients web et intégrations
-            │
-            ▼
-     API publiques versionnées
-            │
-            ▼
-       Django / Pixs
-            │
-   ┌────────┼─────────────────────────────────────┐
-   │        │                                     │
-   ▼        ▼                                     ▼
-Kernel   pixs.core                       Modules et sous-modules
-   │        │                                     │
-   │        └── identité, groupes, ACL            ├── règles métier
-   │                                              ├── données et migrations
-   ├── composition, lifecycle, contrats           ├── API et événements
-   └── configuration, services, extensions        └── interface et traductions
-            │
-            ▼
-      PostgreSQL — source de vérité
+```mermaid
+flowchart TB
+    U["PFO / clients / intégrations"]
+    subgraph H["Hôte local — PBO/PFO, PA et PZT"]
+        subgraph B["PBO — Django"]
+            M["Modules fonctionnels"]
+            A["pixs.agent — configuration, administration et supervision de PA hors PZT"]
+            Z["pixs.pzt — configuration, administration et supervision de PZT"]
+            C["pixs.core — identités, tenants et permissions"]
+            K["Kernel — composition et services génériques"]
+            M --> A
+            K -. "composition" .-> A
+            K -. "composition" .-> Z
+            A -. "contrats communs" .-> C
+            Z -. "contrats communs" .-> C
+        end
+        D[("PostgreSQL — source de vérité applicative")]
+        T["PZT local — exécutable indépendant"]
+        P["PA local — fonctions système et utilisateur selon profil"]
+        B --- D
+        A <-->|"Instructions, états et résultats via PZT"| T
+        Z <-->|"Contrôle sécurisé de PZT"| T
+        T <-->|"Échanges protégés"| P
+    end
+    U --> M
+    subgraph R1["Hôte distant A — sans PBO/PFO"]
+        T1["PZT distant A"]
+        P1["PA distant A"]
+        T1 <-->|"Échanges protégés"| P1
+    end
+    subgraph R2["Hôte distant B — avec PBO/PFO facultatifs"]
+        F2["PFO distant B"]
+        B2["PBO distant B — modules fonctionnels, pixs.agent et pixs.pzt"]
+        D2[("PostgreSQL distant B")]
+        T2["PZT distant B"]
+        P2["PA distant B"]
+        F2 --> B2
+        B2 --- D2
+        B2 <-->|"Contrats de gestion via PZT"| T2
+        T2 <-->|"Échanges protégés"| P2
+    end
+    T <-->|"Réseau PZT — relation autorisée"| T1
+    T <-->|"Réseau PZT — relation autorisée"| T2
 ```
+
+Ce schéma représente les relations logiques, sans fixer les endpoints ni les
+canaux entre processus. Sur un même environnement d'exécution, le profil
+local PZT utilise TLS mutuel ; entre environnements, les transports PZT
+qualifiés s'appliquent. Le même serveur physique ne fusionne pas les
+frontières des VM ou conteneurs. Un PBO distant peut gérer ses exécutants
+locaux et des exécutants distants uniquement dans les périmètres autorisés ;
+sa présence ne donne aucun droit automatique sur un autre PA ou PZT.
+PFO adresse toujours ses demandes à PBO. Aucun échange PBO–PA ne contourne PZT.
 
 Le Kernel reste minimal et agnostique : il fournit les mécanismes de composition, de dépendances, de cycle de vie, de services, d'événements, de configuration et d'extensions. Les comportements fonctionnels, y compris ceux de `pixs.core`, sont apportés par des modules.
 
@@ -83,13 +129,13 @@ Un composant déclare son identité, sa version, ses dépendances, ses capacité
 ## Exécution et déploiement cibles
 
 Pixs prévoit l’exécution directe pour le développement, deux paquets Debian
-indépendants — PBO/PFO et PA — et une image Docker contenant PBO/PFO et PA.
-Le paquet PA livre quatre binaires ; Docker livre les trois binaires système/PZT
+indépendants — PBO/PFO et PA/PZT — et une image Docker contenant PBO/PFO, PA et PZT.
+Le paquet PA/PZT livre trois binaires PA et un binaire PZT ; Docker livre deux binaires PA et PZT
 et exclut le binaire utilisateur et ses modes de session. Les garanties restent
 communes aux capacités déclarées de chaque composition.
 
 Le runtime applicatif PBO d’un même artefact peut être lancé selon un profil
-explicitement configuré ; les binaires PA ont leurs rôles distincts :
+explicitement configuré ; PA et PZT ont leurs cycles de vie distincts :
 
 - `web` reçoit le trafic applicatif ;
 - `worker` exécute les travaux asynchrones ;
@@ -100,8 +146,8 @@ En production, ces profils peuvent être exécutés séparément. Seul `web` est
 ### Image Docker
 
 L’image cible est reproductible, sans état et sans secret. Elle contient PBO,
-PFO et trois binaires PA : démon système, événements de démarrage/arrêt du
-conteneur et exécution PZT. Elle exclut le binaire utilisateur. PostgreSQL,
+PFO, deux binaires PA — démon système et événements de démarrage/arrêt du
+conteneur — et le binaire indépendant PZT. Elle exclut le binaire utilisateur PA. PostgreSQL,
 configuration effective, secrets et données persistantes restent externes.
 La présence d’un binaire ne vaut ni activation ni privilège d’exécution.
 
@@ -109,9 +155,9 @@ Le conteneur reçoit un unique profil d'exécution. Son système de fichiers ins
 
 ### Paquet Debian
 
-Le paquet PBO/PFO et le paquet PA sont indépendants. Ce dernier contient
-quatre binaires : démon système PA, événements de démarrage/arrêt de l’hôte,
-sessions utilisateur et exécution PZT. La configuration administrée reste
+Le paquet PBO/PFO et le paquet commun PA/PZT sont indépendants. Ce dernier contient
+quatre exécutables : trois binaires PA — démon système, événements de démarrage/arrêt
+de l’hôte et sessions utilisateur — et le binaire indépendant PZT. La configuration administrée reste
 séparée du code immuable et préservée lors des mises à niveau. Les noms et
 versions des paquets restent à spécifier.
 
@@ -119,17 +165,26 @@ Les services système ne sont que des adaptateurs d'exploitation : ils démarren
 
 ### Pixs Agent et PZT
 
-PZT est un module essentiel de PBO pour la configuration, la visualisation,
-la supervision et le monitoring du réseau. Lorsque PZT est activé et configuré,
-son exécution est toujours assurée par le binaire PZT dédié de PA, fondé sur
-WireGuard. Les capacités inspirées de NetBird sont redéveloppées dans Pixs.
-PA peut être installé sans PBO/PFO locaux et joindre un PBO distant autorisé ;
-tout échange PBO–PA passe par PZT, y compris sur le même hôte.
+Pixs comprend quatre composants : PBO, PFO, PA et PZT. Dans PBO, `pixs.agent`
+assure la configuration, l’administration et la supervision de toutes les fonctions
+PA hors PZT. Les modules fonctionnels restent propriétaires de leurs opérations
+et sollicitent PA par ses contrats publics, avec instructions, états et résultats.
+Le module officiel essentiel `pixs.pzt` assure la configuration, l’administration,
+la visualisation, la supervision et le monitoring de PZT. Il conserve ce rôle
+lorsque le réseau est désactivé.
+
+PZT est désormais un exécutable indépendant de PA, fondé sur WireGuard ;
+`pixs.agent` ne l’administre pas. Les capacités inspirées de NetBird sont
+redéveloppées dans Pixs. PA et PZT restent distribués ensemble ; ils peuvent
+fonctionner sans PBO/PFO locaux et joindre un PBO distant autorisé. Tous les
+échanges PBO–PA passent par PZT, y compris localement. Le contrôle PBO–PZT
+utilise les interfaces sécurisées de PZT, sans canal de substitution.
+
 Ces capacités sont cadrées dans PROJECT.md §43–§44, TECHNICAL.md §42–§45 et
-BUILD.md §46–§47 et désormais déclarées par [pixs-agent](openspec/specs/pixs-agent/spec.md)
-et [pzt](openspec/specs/pzt/spec.md). Nuitka est retenu pour les trois binaires
-système/utilisateur et Cython pour le binaire PZT. Seules les spécifications
-sont rédigées : implémentation, qualification et artefacts restent à réaliser.
+BUILD.md §46–§47 et déclarées par [pixs-agent](openspec/specs/pixs-agent/spec.md)
+et [pzt](openspec/specs/pzt/spec.md). Nuitka reste retenu pour les trois binaires
+PA et Cython pour PZT. Seules les spécifications sont rédigées : implémentation,
+qualification et artefacts restent à réaliser.
 
 ## Configuration de déploiement
 

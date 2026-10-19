@@ -2,29 +2,51 @@
 
 ## Purpose
 
-Pixs Agent est la couche d’exécution locale à quatre binaires, distincte du
+Pixs Agent est la couche d’exécution locale à trois binaires et six modes, distincte du
 runtime applicatif PBO/PFO. Cette capacité spécifie ses modes, droits,
-contrats, compilation et livraison cible ; elle ne déclare aucune implémentation.
+contrats, compilation, gestion PBO par pixs.agent et livraison cible. PZT est
+un exécutable indépendant défini par pzt, colivré avec PA. Aucune implémentation
+n’est déclarée par ces spécifications.
+
+
+```mermaid
+flowchart LR
+    A["PBO : pixs.agent"] <-->|"Gestion PA via PZT"| T["PZT indépendant"]
+    Z["PBO : pixs.pzt"] <-->|"Gestion PZT sécurisée"| T
+    T <-->|"Échanges protégés"| P["PA : trois binaires, six modes"]
+```
+
+Le schéma est logique ; les exigences ci-dessous fixent les responsabilités.
+Les profils locaux et distants, avec ou sans PBO/PFO sur l'hôte distant,
+sont définis par runtime. Les endpoints restent à qualifier.
 
 ## Requirements
 
-### Requirement: Quatre binaires et sept modes explicitement répartis
+### Requirement: Trois binaires PA et six modes distincts de PZT
 
-PA MUST comporter exactement quatre binaires dédiés : démon système pour system-daemon ; événements système pour system-start et system-stop ; sessions utilisateur pour session-start, session-stop et session-daemon ; exécution PZT pour pzt-daemon. Les noms d'exécutables, chemins et options CLI restent à spécifier. Le découpage MUST NOT créer un cinquième binaire pour le démon de session.
+PA MUST comporter exactement trois binaires : démon système pour system-daemon ;
+événements système pour system-start et system-stop ; sessions utilisateur pour
+session-start, session-stop et session-daemon. PZT et son mode pzt-daemon MUST
+rester un composant exécutable indépendant, colivré selon deb-package et
+docker-image. Le démon de session MUST NOT créer un binaire supplémentaire.
+Les chemins et options CLI restent à spécifier.
 
-#### Scenario: Quatre binaires et sept modes explicitement répartis
+#### Scenario: Répartition PA et PZT
 
-- **WHEN** une distribution PA complète décrit ses exécutables
-- **THEN** elle identifie les quatre responsabilités et les sept modes sans les confondre
+- **WHEN** la composition complète PA/PZT est décrite
+- **THEN** elle distingue trois binaires et six modes PA du binaire indépendant PZT et de son mode pzt-daemon
 
 ### Requirement: Compilation différenciée validée
 
-Les binaires démon système, événements système et sessions utilisateur MUST être compilés avec Nuitka ; le binaire PZT MUST être compilé avec Cython. La chaîne MUST partir des sources Python, générer du C puis des exécutables natifs avec runtime et dépendances déclarés. Versions exactes et compatibilité MUST être qualifiées avant construction ; cette décision MUST NOT installer une dépendance ni prouver un gain de performance.
+Les trois binaires PA MUST être compilés avec Nuitka ; le binaire indépendant
+PZT MUST suivre Cython selon pzt. Les chaînes MUST partir de Python via C avec
+runtime, dépendances et ABI déclarés et qualifiés avant construction. Cette
+décision MUST NOT installer un outil ni prouver un gain de performance.
 
-#### Scenario: Compilation différenciée validée
+#### Scenario: Compilation des composants distincts
 
-- **WHEN** la matrice de compilation est déclarée
-- **THEN** les trois premiers binaires utilisent Nuitka et celui de PZT utilise Cython
+- **WHEN** la matrice de compilation PA/PZT est déclarée
+- **THEN** les trois binaires PA utilisent Nuitka et PZT indépendant utilise Cython
 
 ### Requirement: Plateformes demandées et qualification progressive
 
@@ -55,12 +77,16 @@ Chaque capacité PA MUST déclarer identité, version, propriétaire, contrats, 
 
 ### Requirement: Démarrage système et session borné
 
-system-daemon et session-daemon MUST avoir des délais indépendants, configurables et non négatifs, des préconditions et attentes maximales déclarées. pzt-daemon MUST être lancé sans ces délais au démarrage du système ou du conteneur ; il MUST exécuter PZT seulement s'il est activé/configuré, sinon se fermer. L'arrêt pendant un délai MUST annuler le lancement différé. Une mesure temporelle de démarrage MUST NOT tenir lieu de validité d'autorisation.
+system-daemon et session-daemon MUST avoir des délais indépendants,
+configurables et non négatifs, des préconditions et attentes maximales déclarées.
+L'arrêt pendant un délai MUST annuler le lancement différé. Le démarrage du
+composant indépendant PZT MUST suivre pzt et MUST NOT être attribué à un mode PA.
+Une mesure de démarrage MUST NOT tenir lieu de validité d'autorisation.
 
-#### Scenario: Démarrage système et session borné
+#### Scenario: Arrêt pendant délai PA
 
-- **WHEN** le système s'arrête pendant le délai du démon système
-- **THEN** ce lancement est annulé sans modifier la validité des mandats
+- **WHEN** le système s’arrête pendant le délai du démon système
+- **THEN** ce lancement est annulé sans modifier la validité des mandats ni transférer la gestion de PZT à PA
 
 ### Requirement: Provisionnement distinct du canal de contrôle
 
@@ -163,12 +189,21 @@ PA MUST distinguer constat de dérive et correction. La surveillance MUST produi
 
 ### Requirement: Supervision PBO et collecte PA
 
-Configuration, visualisation, supervision et monitoring PZT MUST toujours relever de PBO. PA MUST collecter et remonter les mesures et états réellement observés via PZT. Vivacité, disponibilité, démarrage, diagnostic et résultat métier MUST rester distincts ; une mesure ancienne MUST être datée et MUST NOT devenir un état courant par absence de nouvelle information.
+Le module PBO pixs.agent MUST configurer, administrer et superviser toutes les
+fonctions PA hors PZT. PA MUST rapporter ses mesures, versions et états réels
+via PZT ; pixs.agent MUST distinguer état souhaité, appliqué, dernier état connu
+et résultat confirmé. La gestion réseau MUST rester dans pixs.pzt. Une mesure
+ancienne MUST être datée et MUST NOT devenir un état courant sans preuve.
 
-#### Scenario: Supervision PBO et collecte PA
+#### Scenario: Collecte PA interrompue
 
-- **WHEN** la collecte est interrompue alors que le dernier état était sain
-- **THEN** PBO signale les mesures périmées et ne déduit pas une disponibilité actuelle
+- **WHEN** la collecte PA est interrompue alors que le dernier état était sain
+- **THEN** pixs.agent signale les mesures périmées sans déduire une disponibilité actuelle
+
+#### Scenario: Gestion PZT exclue de pixs.agent
+
+- **WHEN** une configuration du composant réseau PZT est demandée
+- **THEN** la gestion relève de pixs.pzt et aucune mutation PZT n’est attribuée à pixs.agent
 
 ### Requirement: Maintenance et quarantaine sans nouveaux droits
 
@@ -197,14 +232,18 @@ Les interfaces CLI et les contributions PBO/PFO MUST utiliser les contrats publi
 - **WHEN** une action est présentée dans PFO
 - **THEN** son autorisation reste évaluée par PBO avant transmission éventuelle à PA via PZT
 
-### Requirement: Qualification des quatre binaires et de la composition
+### Requirement: Qualification des binaires PA et PZT et de la composition
 
-Chaque binaire livré MUST disposer de preuves correspondant à son OS/CPU, runtime embarqué, dépendances/ABI, modes et composition. Les critères R01–R68 du cadrage MUST être couverts par une matrice de recette ; les cas de session MUST être déclarés non applicables à Docker et leur absence contrôlée. Une compilation réussie MUST NOT tenir lieu de recette ni prouver un gain CPU/RAM.
+Chaque binaire PA ou PZT livré MUST disposer de preuves correspondant à son
+OS/CPU, runtime, dépendances/ABI, modes et composition. La matrice MUST conserver
+R01–R68 selon leurs rôles PA ou PZT et déclarer les cas de session non applicables
+à Docker avec absence contrôlée. Une compilation réussie MUST NOT tenir lieu
+de recette ou de mesure de performance.
 
-#### Scenario: Qualification des quatre binaires et de la composition
+#### Scenario: Compilation sans recette de plateforme
 
 - **WHEN** une compilation réussit sans recette Windows
-- **THEN** aucune compatibilité Windows qualifiée n'est annoncée
+- **THEN** aucune compatibilité Windows qualifiée n’est annoncée
 
 ### Requirement: Publications locales expérimentales et sécurité de distribution
 
@@ -217,16 +256,22 @@ La première livraison envisagée MUST rester locale sur canal expérimental, av
 
 ### Requirement: Paramètres ouverts et absence d'implémentation implicite
 
-Les noms/versions de paquets et exécutables, bibliothèques, formats non arrêtés, topologies, comptes, quotas manquants et seuils à mesurer MUST rester explicitement ouverts jusqu'à décision ou qualification appropriée. Les versions de Nuitka/Cython et leur graphe MUST être qualifiés avant installation. La rédaction de ces spécifications MUST NOT être présentée comme du code, un test runtime, une plateforme supportée ou un artefact livré.
+Les identifiants pixs.agent, pixs.pzt et le nom du composant/binaire PZT MUST
+être considérés validés. Noms/versions de paquets, noms de fichiers exécutables,
+chemins, CLI, bibliothèques, comptes, formats et valeurs non arrêtés MUST rester
+ouverts jusqu'à décision ou qualification. Les versions de Nuitka/Cython MUST
+être qualifiées avant installation. Cette rédaction MUST NOT valoir code,
+recette runtime, support de plateforme ou artefact livré.
 
 #### Scenario: Paramètres ouverts et absence d'implémentation implicite
 
 - **WHEN** seules les spécifications sont déclarées
 - **THEN** les états d'implémentation, qualification et publication restent explicitement non réalisés
 
-### Requirement: Matrice de recette PA complète par profil
+### Requirement: Matrice de recette PA PZT complète par profil
 
-La recette PA MUST couvrir R01–R68 selon les fonctions livrées. R05–R08 et R30
+La recette conjointe PA/PZT MUST couvrir R01–R68 selon les fonctions livrées et
+leur exécutant propriétaire. R05–R08 et R30
 MUST être justifiés non applicables à Docker ; l’absence du binaire utilisateur
 MUST y être contrôlée. Chaque résultat MUST être déclaré exécuté/réussi,
 exécuté/échoué, non exécuté, non disponible ou non applicable justifié,
@@ -252,7 +297,7 @@ sans test implicitement réalisé.
 | R14 | Rejeu, crash et redémarrage | La reprise respecte l'idempotence et distingue les effets dont le résultat est inconnu. |
 | R15 | Dérive détectée | Un constat traçable est produit ; aucune correction non autorisée n'est engagée. |
 | R16 | Configuration ou contrat incompatible | La capacité concernée reste inactive avec un diagnostic exploitable. |
-| R17 | Binaire compilé sur une cible supportée | Les modes livrés par les quatre binaires conservent leur comportement et les performances respectent les budgets validés ; dans Docker, les modes de session sont explicitement exclus. |
+| R17 | Binaire compilé sur une cible supportée | Les modes livrés par les trois binaires PA et PZT indépendant conservent leur comportement et les performances respectent les budgets validés ; dans Docker, les modes de session sont explicitement exclus. |
 | R18 | Inspection des artefacts et diagnostics | Aucun secret ni donnée personnelle interdite n'est présent. |
 | R19 | Arrêt forcé ou disparition brutale de session | L'agent ne prétend pas avoir exécuté un traitement de fermeture non observé. |
 | R20 | Mise à niveau du composant | Configuration et reprise compatibles ; A10f : références signées/versionnées, transition bornée, ensembles cohérents, retrait à échéance, refus du rejeu et des références révoquées, nouvelle preuve après modification des mesures ; rollback uniquement autorisé par la politique courante. |
@@ -281,11 +326,11 @@ sans test implicitement réalisé.
 | R43 | Arrêt contrôlé pendant une opération et livraison du résultat | Le séquencement conserve PZT dans le budget prévu et distingue exécution, résultat en attente et confirmation par PBO. |
 | R44 | Configuration reçue, concurrente ou partiellement appliquée | L'état souhaité reste distinct de l'état appliqué ; les conflits et interruptions sont explicites et aucune réussite n'est déduite de la réception. |
 | R45 | Référence temporelle d'autorisation non fiable | L'opération concernée est refusée ; les délais monotones ne servent pas de preuve de validité du mandat. |
-| R46 | Démarrage du système ou du conteneur avec `pzt-daemon` | Le mode démarre sans délai et assure la convergence et la réconciliation de PZT lorsque celui-ci est activé et configuré sur ce PA ; sinon, il se ferme. |
-| R47 | Backend WireGuard du profil retenu | PA pilote le backend qualifié, sans réimplémenter la cryptographie ; dépendances et privilèges correspondent au profil. |
+| R46 | Démarrage du système ou du conteneur avec `pzt-daemon` | Le mode démarre sans délai et assure la convergence et la réconciliation de PZT lorsque celui-ci est activé et configuré sur ce composant PZT ; sinon, il se ferme. |
+| R47 | Backend WireGuard du profil retenu | PZT pilote le backend qualifié, sans réimplémenter la cryptographie ; dépendances et privilèges correspondent au profil. |
 | R48 | Carte ou delta altéré, périmé, hors destinataire, dupliqué ou de base incompatible ; séquence manquante et reprise | La configuration invalide est refusée ; un doublon ne produit aucun double effet et ne prolonge aucune permission. Une base incompatible, un trou ou un historique hors rétention déclenche un état complet vérifié. La réconciliation contrôle l'état effectivement appliqué et ne réintroduit aucun droit expiré ou retiré ; les objectifs A05b restent opposables. |
 | R49 | AllowedIPs ou route présents sans permission du service | Les adapters nftables Linux et Windows Filtering Platform Windows appliquent les politiques PZT du profil et vérifient leur état ; les flux non autorisés sont bloqués, le tunnel ne donne pas accès aux services voisins et les ressources gérées restent distinctes des règles de l’opérateur. |
-| R50 | PBO, sessions et modes ponctuels utilisant le même PA | Le propriétaire des ressources réseau évite les écritures concurrentes ; aucune session ne reçoit de clé ou privilège système. |
+| R50 | PBO, PA et sessions utilisant le même composant PZT | Le propriétaire des ressources réseau évite les écritures concurrentes ; aucune session ne reçoit de clé ou privilège système. |
 | R51 | Admission automatisée, demande hors mandat ou preuves invalides, jeton expiré/révoqué/consommé, concurrence et reprise après crash | A11a : identité, contexte et preuves A10 vérifiés, aucune gestion ou exposition métier avant admission, arbitrage opérateur hors mandat sans dispense de preuve ; A11b : jeton à usage unique par instance, engagement atomique et reprise sans double identité ni consommation ; nouvelles admissions invalides refusées, secrets non exposés et retrait des pairs existants distinct. |
 | R52 | Échéance d'un pair éphémère encore présent, renouvellement concurrent, fin de charge, partition et restauration | A11c : échéance finie sans report sur présence ; renouvellement autorisé avant échéance avec contrôles courants, blocage/retrait sans résurrection après échéance ou retrait engagé ; nettoyage par génération avec audit/tombstones et suivi des échecs, aucune suppression de VM/conteneur/volume ; nouvelle admission avec nouveau jeton et preuves après retrait. |
 | R53 | Connectivité ICE/STUN, relais QUIC DATAGRAM et secours WSS | Signalisation protégée, sondes encadrées, candidats et mapping réel WireGuard vérifiés ; direct puis QUIC DATAGRAM et secours WSS selon la politique autorisée, sans contournement ni prolongation des droits. Support DATAGRAM, tailles, MTU, pertes, reprise et backends qualifiés ; le relais ne déchiffre pas WireGuard. Sans chemin admis, échec explicite. |
@@ -309,3 +354,28 @@ sans test implicitement réalisé.
 
 - **WHEN** la matrice de recette est produite pour l’image Docker
 - **THEN** les cas utilisateur exclus sont justifiés non applicables et l’absence du binaire est contrôlée
+
+### Requirement: Contrats publics de pixs.agent et propriété des opérations
+
+Les modules fonctionnels MUST solliciter PA via les contrats publics versionnés
+de pixs.agent et MUST conserver la propriété de leurs opérations et règles métier.
+pixs.agent MUST exposer les fonctions de gestion PA hors PZT et le suivi des
+instructions, états et résultats. Il MUST NOT absorber les opérations métier,
+le transport PZT ou les données privées d'un autre module.
+
+#### Scenario: Module sollicitant une opération PA
+
+- **WHEN** un module fonctionnel demande une opération système autorisée
+- **THEN** il utilise le contrat pixs.agent, garde ses règles métier et suit un résultat PA distinct de l'accusé de réception
+
+### Requirement: Interfaces de gestion PA au-dessus du socle
+
+pixs.agent MUST utiliser les mécanismes communs de composition et les contrats
+pixs.core d'identité et de permissions. Ses données de gestion, contrats,
+permissions, contributions frontend et lifecycle MUST être déclarés. Le Kernel et pixs.core MUST NOT porter une logique de gestion ou de transport
+spécifique à PA. Tous les échanges PBO–PA MUST passer par PZT, même localement.
+
+#### Scenario: Sollicitation locale via pixs.agent
+
+- **WHEN** le PBO et le PA partagent un environnement d'exécution
+- **THEN** pixs.agent utilise PZT et aucun canal local de substitution n'est ouvert

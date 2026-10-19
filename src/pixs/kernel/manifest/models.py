@@ -49,6 +49,7 @@ _TOP_ALLOWED = frozenset(
         "optional_dependencies",
         "provides",
         "implements",
+        "frontend",
     }
 )
 _DEPENDENCIES_ALLOWED = frozenset({"components", "capabilities", "contracts"})
@@ -58,6 +59,8 @@ _CAPABILITY_FIELDS = frozenset(
     {"id", "version", "contracts", "criticality", "fallback"}
 )
 _CONTRACT_FIELDS = frozenset({"id", "version"})
+_FRONTEND_ALLOWED = frozenset({"schema_version", "contributions"})
+_FRONTEND_OWNER_TYPES = frozenset({"MODULE", "SUBMODULE"})
 
 
 class ManifestValidationError(ValueError):
@@ -87,6 +90,18 @@ class ImplementedContract:
     version: str
 
 
+@dataclass(frozen=True, slots=True)
+class _FrontendManifestFacet:
+    """Facette privée immuable FrontendManifestFacet v1.
+
+    Porte la version de facette et le tuple des snapshots directement
+    renvoyés par le validateur public FCD, sans recopie des six champs.
+    """
+
+    schema_version: str
+    contributions: tuple[object, ...] = ()
+
+
 @dataclass(frozen=True)
 class ComponentManifest:
     """Représentation validée, immuable et non exécutable d'un manifest."""
@@ -104,6 +119,7 @@ class ComponentManifest:
     optional_dependency_contracts: tuple[str, ...] = ()
     provided_capabilities: tuple[ProvidedCapability, ...] = ()
     implemented_contracts: tuple[ImplementedContract, ...] = ()
+    frontend: _FrontendManifestFacet | None = None
 
 
 def _check_str(
@@ -169,6 +185,59 @@ def _check_constraint_list(
         else:
             valid.append(item)
     return tuple(valid)
+
+
+def _parse_frontend_facet(
+    data: Mapping[str, object],
+    comp_type: str | None,
+    comp_schema_version: str | None,
+    diagnostics: list[str],
+) -> _FrontendManifestFacet | None:
+    """Valide la facette v1 sur des snapshots sans hooks des valeurs brutes."""
+    if "frontend" not in data:
+        return None
+    value = data["frontend"]
+    if type(value) is not dict:
+        diagnostics.append("frontend : une table est attendue")
+        return None
+    raw = dict.copy(value)
+    if any(type(key) is not str for key in raw):
+        diagnostics.append("frontend : champs schema_version et contributions attendus")
+        return None
+    if set(raw) != _FRONTEND_ALLOWED:
+        diagnostics.append("frontend : champs schema_version et contributions attendus")
+        return None
+    if type(comp_schema_version) is not str or comp_schema_version != "1":
+        diagnostics.append("frontend : schéma de composant hors profil v1")
+        return None
+    if type(comp_type) is not str or comp_type not in _FRONTEND_OWNER_TYPES:
+        diagnostics.append("frontend : type de composant hors périmètre v1")
+        return None
+    facet_version = raw["schema_version"]
+    if type(facet_version) is not str or facet_version != "1":
+        diagnostics.append('frontend.schema_version : chaîne "1" attendue')
+        return None
+    contributions = raw["contributions"]
+    if type(contributions) is not list:
+        diagnostics.append("frontend.contributions : une liste est attendue")
+        return None
+    snapshot = tuple(contributions)
+    # Le validateur reste importé localement pour préserver le graphe du paquet.
+    from pixs.kernel.frontend_contribution_declarations import (
+        validate_frontend_contribution_declaration_v1,
+    )
+
+    validated: list[object] = []
+    valid = True
+    for index, item in enumerate(snapshot):
+        try:
+            validated.append(validate_frontend_contribution_declaration_v1(item))
+        except (TypeError, ValueError):
+            diagnostics.append(f"frontend.contributions[{index}] : contribution invalide")
+            valid = False
+    if not valid:
+        return None
+    return _FrontendManifestFacet(facet_version, tuple(validated))
 
 
 def _parse_dependencies_section(
@@ -364,6 +433,9 @@ def parse_manifest(data: Mapping[str, Any]) -> ComponentManifest:
     )
     provided = _parse_provides(data, diagnostics)
     implemented = _parse_implements(data, diagnostics)
+    frontend_facet = _parse_frontend_facet(
+        data, comp_type, schema_version, diagnostics
+    )
 
     if not diagnostics:
         implemented_ids = {contract.id for contract in implemented}
@@ -376,7 +448,29 @@ def parse_manifest(data: Mapping[str, Any]) -> ComponentManifest:
                     )
                     break
 
-    diagnostics.extend(check_content_guards(data))
+    if "frontend" not in data:
+        diagnostics.extend(check_content_guards(data))
+    else:
+        guard_data = {key: data[key] for key in data if key != "frontend"}
+        diagnostics.extend(check_content_guards(guard_data))
+        if frontend_facet is not None:
+            projection = {
+                "frontend": {
+                    "schema_version": frontend_facet.schema_version,
+                    "contributions": [
+                        {
+                            "type": item.type,
+                            "id": item.id,
+                            "entry": item.entry,
+                            "version": item.version,
+                            "requires": list(item.requires),
+                            "scope": item.scope,
+                        }
+                        for item in frontend_facet.contributions
+                    ],
+                }
+            }
+            diagnostics.extend(check_content_guards(projection))
 
     if diagnostics:
         raise ManifestValidationError(diagnostics)
@@ -397,4 +491,5 @@ def parse_manifest(data: Mapping[str, Any]) -> ComponentManifest:
         optional_dependency_contracts=optional_dependencies.get("contracts", ()),
         provided_capabilities=provided,
         implemented_contracts=implemented,
+        frontend=frontend_facet,
     )

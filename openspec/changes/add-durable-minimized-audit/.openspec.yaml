@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-17
+# Réalisation future du canon existant ; aucune évolution normative prévue.
+skip_specs: true

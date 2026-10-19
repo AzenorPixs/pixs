@@ -456,6 +456,20 @@ class BulkRuntimeRepository:
             return None
         return binding.as_values()
 
+    def get_latest_checkpoint(
+        self, *, operation_id: object, phase: object
+    ) -> dict | None:
+        """Lit le dernier checkpoint d'une phase sans modifier la progression."""
+        if not _is_text(operation_id) or not _is_phase(phase):
+            raise _invalid()
+        record = (
+            BulkCheckpointRecord.objects.using(self._using)
+            .filter(operation_id=operation_id, phase=phase)
+            .order_by("-revision")
+            .first()
+        )
+        return None if record is None else record.as_values()
+
     def create_schedule(self, *, values: object) -> dict:
         """Crée un ordonnancement pour un Job déjà lié, sous verrous uniformes."""
         snapshot = _exact_keys(values, _SCHEDULE_KEYS)
@@ -974,6 +988,32 @@ class BulkRuntimeRepository:
                 raise ConstraintRefused() from None
             unit.committed = True
             return expected + 1
+
+    def request_cancellation(
+        self,
+        *,
+        operation_id: object,
+        expected_revision: object,
+    ) -> int:
+        """Pose interne cancellation_requested apres autorisation superieure."""
+        if not _is_text(operation_id):
+            raise _invalid()
+        _require_incrementable_revision(expected_revision)
+        with transaction.atomic(using=self._using):
+            record = self._lock_operation(operation_id)
+            extension = self._lock_extension(operation_id)
+            if record.status in _TERMINAL_BULK:
+                raise TransitionRefused()
+            if extension.revision != expected_revision:
+                raise CasConflict()
+            rows = BulkOperationExecutionRecord.objects.using(
+                self._using
+            ).filter(
+                operation_id=operation_id, revision=expected_revision
+            ).update(cancellation_requested=True, revision=expected_revision + 1)
+            if rows != 1:
+                raise CasConflict()
+            return expected_revision + 1
 
     def apply_transition(
         self,

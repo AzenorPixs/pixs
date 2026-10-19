@@ -3,9 +3,21 @@
 ## Purpose
 
 PZT, également nommé ZTP dans les cadrages, est le réseau Pixs fondé sur
-WireGuard, exécuté par le binaire PZT de PA et géré par le module essentiel
-PZT de PBO. Cette capacité déclare les garanties et décisions validées,
+WireGuard, exécuté par le binaire indépendant PZT et géré par le module essentiel
+pixs.pzt de PBO. PZT est distinct de PA et reste distribué avec lui. Cette capacité déclare les garanties et décisions validées,
 sans activer le réseau ni qualifier les plateformes.
+
+
+```mermaid
+flowchart LR
+    A["PBO : pixs.agent"] <-->|"Gestion PA via PZT"| T["PZT indépendant"]
+    Z["PBO : pixs.pzt"] <-->|"Gestion PZT sécurisée"| T
+    T <-->|"Échanges protégés"| P["PA : trois binaires, six modes"]
+```
+
+Le schéma est logique ; les exigences ci-dessous fixent les responsabilités.
+Les profils locaux et distants, avec ou sans PBO/PFO sur l'hôte distant,
+sont définis par runtime. Les endpoints restent à qualifier.
 
 ## Requirements
 
@@ -18,14 +30,18 @@ PZT MUST utiliser WireGuard comme base logicielle du transport IP authentifié/c
 - **WHEN** un profil exige des permissions tunnel absentes
 - **THEN** un backend utilisateur ne les contourne pas et le profil n'est pas activé
 
-### Requirement: Module essentiel PBO et binaire PZT dédié
+### Requirement: Module essentiel pixs.pzt et exécutable PZT indépendant
 
-Toute composition cible PBO MUST inclure le module officiel essentiel PZT, au-dessus du Kernel et de pixs.core, par les mécanismes génériques de modules. Le réseau activé/configuré MUST toujours être exécuté par le binaire PZT de PA compilé avec Cython ; PBO MUST assurer configuration, visualisation, supervision et monitoring. Désactiver le réseau MUST NOT retirer le module essentiel de PBO.
+Toute composition cible PBO MUST inclure le module officiel essentiel pixs.pzt,
+au-dessus du Kernel et de pixs.core, par les mécanismes génériques. pixs.pzt
+MUST configurer, administrer, visualiser, superviser et monitorer PZT. Le réseau
+activé/configuré MUST être exécuté par le binaire indépendant PZT, compilé avec
+Cython. Désactiver le réseau MUST NOT retirer pixs.pzt de PBO.
 
-#### Scenario: Module essentiel PBO et binaire PZT dédié
+#### Scenario: Réseau désactivé et gestion conservée
 
 - **WHEN** PZT est désactivé dans un PBO
-- **THEN** le binaire réseau se ferme mais le module PBO de gestion reste composé
+- **THEN** le binaire réseau se ferme mais pixs.pzt demeure composé avec ses fonctions de gestion
 
 ### Requirement: Passage obligatoire PBO–PA par PZT
 
@@ -69,7 +85,7 @@ Les autorisations MUST être bornées, réutilisables seulement selon leur class
 
 #### Scenario: Expiration, révocation et protection indépendante
 
-- **WHEN** PA plante alors que WireGuard reste actif dans le noyau
+- **WHEN** l’exécutant PZT plante alors que WireGuard reste actif dans le noyau
 - **THEN** la protection indépendante ferme les accès dans le budget qualifié
 
 ### Requirement: IPv6 désactivable et configuration hôte préservée
@@ -170,6 +186,63 @@ PZT MUST disposer de recettes de contrat, sécurité, reprise, plateformes, tran
 
 - **WHEN** le change documentaire est archivé sans code
 - **THEN** PZT reste spécifié et non implémenté, sans recette runtime revendiquée
+
+### Requirement: Cycle de vie propre du composant PZT
+
+PZT MUST être un composant exécutable indépendant de PA, avec le mode
+pzt-daemon, ses comptes, clés, permissions et cycle de vie déclarés. Il MUST
+démarrer sans les délais des démons PA au démarrage du système ou du conteneur
+et exécuter le réseau seulement s'il est activé/configuré, sinon se fermer.
+La colivraison PA/PZT MUST NOT donner à PA la propriété des ressources réseau.
+
+#### Scenario: Démarrage PZT distinct des délais PA
+
+- **WHEN** le démon PA est différé mais PZT activé et configuré est admissible
+- **THEN** PZT démarre sans ce délai et conserve son rôle réseau indépendant
+
+#### Scenario: PZT non activé
+
+- **WHEN** le binaire PZT est présent dans le paquet ou l'image mais le réseau n'est pas activé/configuré
+- **THEN** il se ferme sans supprimer pixs.pzt ni annoncer un réseau disponible
+
+### Requirement: Contrôle de PZT et séparation de pixs.agent
+
+Les échanges de configuration, administration, supervision et monitoring du
+binaire PZT MUST relever des contrats publics sécurisés de pixs.pzt. pixs.agent
+MUST gérer PA hors PZT et consommer le transport PZT sans l'administrer. Un
+contrat de gestion MUST conserver cible, droits, validité et résultat observé ;
+il MUST NOT ouvrir de canal PBO–PZT ou PBO–PA hors des contrôles PZT.
+
+#### Scenario: Administration du réseau depuis PBO
+
+- **WHEN** un opérateur demande une modification PZT autorisée
+- **THEN** pixs.pzt porte la gestion et PZT exécute puis rapporte l'état réellement appliqué
+
+### Requirement: Frontières et identités PA PZT explicites
+
+Les profils MUST déclarer les interfaces PA–PZT, appelants, cibles, droits,
+isolation et liaisons d'identités et de preuves requises. PA et PZT MUST garder
+leurs identités, clés et états distincts. Une colivraison ou une attestation PA
+MUST NOT admettre automatiquement PZT, transférer un secret, un privilège ou
+supprimer une preuve d'identité, d'hôte ou d'intégrité exigée.
+
+#### Scenario: Colivraison sans admission du composant réseau
+
+- **WHEN** PA et PZT sont installés ensemble mais une preuve requise pour PZT n'est pas vérifiable
+- **THEN** le périmètre dépendant est bloqué sans identité partagée ni transfert implicite de droit
+
+### Requirement: Correspondance des rôles réseau dans les contrats intégrés
+
+Les contrats intégrés MUST conserver leurs références, valeurs et garanties.
+Leurs mentions héritées de PA comme exécutant ou propriétaire réseau PZT MUST
+désigner désormais PZT pour ces rôles. Les objets PA, sessions, hôte et preuves
+TPM MUST conserver leur portée propre, avec liaisons explicites. La séparation
+MUST NOT affaiblir admission, autorisation, révocation, attestation ou audit.
+
+#### Scenario: Lecture d'un contrat réseau antérieur à la séparation
+
+- **WHEN** une fiche héritée attribue à PA une écriture WireGuard ou un rôle de relais PZT
+- **THEN** l'exécutant est PZT et les identités PA, d'hôte et les preuves exigées restent vérifiées dans leur portée
 
 ### Requirement: Lecture normative des contrats de décision intégrés
 
@@ -1702,7 +1775,7 @@ droits et reprises respectent A05/A06 ; aucun chevauchement ou retrait connu
 n'est contourné par le transfert. Une ressource qui exige des preuves que
 ce profil ne peut fournir reste inaccessible.
 
-Les sept modes PA conservent leurs responsabilités A04a ; le rôle passerelle
+Les six modes PA et le mode PZT conservent leurs responsabilités A04a ; le rôle passerelle
 ne crée pas de mode supplémentaire ni de droits implicites sur l'hôte.
 Linux/Windows physiques et VM, Docker/LXC Proxmox conservent leur périmètre
 PA ; la capacité passerelle est déclarée et qualifiée séparément sur chaque
@@ -13174,3 +13247,30 @@ paramètres et qualification restent à préciser.
 - **WHEN** un profil revendique le traitement A12g et ses garanties dans un rôle déclaré
 - **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
 - **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+
+### Requirement: Gestion PZT et DNS du profil initial sans exécution réseau
+
+Dans le profil initial PBO/PFO sans réseau sélectionné, PBO MUST conserver les modules de gestion `pixs.agent` (PA hors PZT) et `pixs.pzt` (PZT), le module DNS essentiel et leurs fonctions de gestion sous contrats publics. Les états MUST distinguer configuration souhaitée, absence d’exécutant et état appliqué. Le système MUST NOT fabriquer une mesure réseau.
+
+#### Scenario: Service DNS non sélectionné
+
+- **WHEN** le module de gestion DNS est composé sans exécution sélectionnée du service DNS
+- **THEN** sa présence est vérifiable mais aucun serveur DNS disponible ni configuration réseau appliquée n’est annoncé
+
+### Requirement: Exécution PA non sélectionnée et absence de canal substitué
+
+Le profil initial sans exécution PA ou PZT sélectionnée MUST NOT engager d’échange PBO–PA ni activer implicitement PZT ou un service DNS. Toute sélection ultérieure MUST respecter les contrats PA/PZT applicables ; la proximité locale MUST NOT permettre un canal de substitution hors PZT.
+
+#### Scenario: Tentative de contrôle local sans PZT admissible
+
+- **WHEN** une opération nécessite un exécutant PA mais aucun transport PZT admissible n’est sélectionné
+- **THEN** l’opération est refusée sans repli par fichier, socket ou canal loopback hors PZT
+
+### Requirement: Applicabilité des contrats PZT dans le profil initial
+
+La qualification du profil MUST évaluer les clauses PZT selon leurs rôles et conditions, y compris la gestion PBO. Les exigences d’exécution non sélectionnées MUST rester conservées ; une obligation applicable non satisfaite MUST bloquer la qualification. La correspondance canonique PA/PZT conserve références, valeurs, garanties et portée des identités et preuves.
+
+#### Scenario: Clause obligatoire dans un contrat conditionnel
+
+- **WHEN** un contrat principalement exécutant contient une obligation applicable à la gestion PBO du profil
+- **THEN** cette obligation reste vérifiée et n’est pas exclue par le classement général du contrat

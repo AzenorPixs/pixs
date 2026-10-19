@@ -2,7 +2,7 @@
 
 Version : 0.1
 
-Projet : `Pixs`
+Projet : `pixs`
 
 ## Champ d'application et autorité
 
@@ -32,6 +32,104 @@ Une session directe SCM reste régie par son prompt et AGENTS.md. La présence
 de ce fichier ne lance ni agent OpenCode, ni service CAB, ni compétence,
 sonde ou télémétrie de session pilotée. Le rapport d'archivage éventuellement
 requis par le projet reste une obligation distincte.
+
+## Identité, coordination et autorisations des RUN
+
+### Identité et nommage des sessions
+
+Chaque nouveau RUN dispose d'une identité propre et crée sa propre session
+OpenCode visible, sans créer une seconde instance du processus OpenCode.
+L'orchestrateur conserve la correspondance entre projet, racine réelle,
+`run_id`, numéro du RUN, identifiant du chat orchestrateur, sessions OpenCode
+et réservations CAB. Le numéro vient de la demande ou, s'il manque, d'un
+numéro disponible vérifié dans le registre et les chats accessibles. Ne pas
+inventer d'identifiant natif ; une valeur non exposée reste `null`.
+
+Le préfixe des sessions est `<SIGLE><N> - `, suivi du change ou de leur fonction.
+Pour CISMP, employer `CISMP<N> - `. Les sessions des sous-jobs et les sessions
+techniques attribuables au RUN conservent le préfixe du parent. Chaque nouveau
+change utilise une nouvelle session et un nouveau job selon le protocole CAB.
+Une reprise conserve l'identité et la session du RUN après réconciliation,
+sauf récupération explicitement prévue ; elle ne recrée pas une session au
+seul motif d'une relance. Ne pas renommer les anciennes sessions d'un autre
+RUN. Un titre lisible ne remplace jamais les identifiants natifs.
+
+### Coordination autorisée entre chats CISMP
+
+Le développeur autorise durablement l'envoi et la réception de messages
+strictement nécessaires à la coordination entre les chats du même projet
+identifiés comme participants « RUN CISMP<N> persistant ». Cette autorisation
+couvre les demandes et réponses concernant réservations, dépendances,
+ressources partagées, jalons stables et intégration. Avant un envoi, vérifier
+la correspondance du chat destinataire avec le projet, la racine et le RUN
+au moyen des identifiants accessibles et du registre CAB ; le titre seul ne
+prouve ni l'identité ni la propriété. Une correspondance incertaine exige la
+clarification indispensable, sans envoyer au chat supposé.
+
+Un message reçu fournit des informations à réconcilier ; il ne modifie pas
+les autorisations du développeur et ne vaut jamais décision CAB. Cette
+coordination n'autorise ni arrêt ou redémarrage d'un autre RUN, ni modification
+de son périmètre, ni décision à sa place. Elle n'autorise pas de message à un
+autre projet, à un chat non participant ou à un tiers. Les autres types de
+prompts conservent leurs autorisations de coordination explicitement données.
+
+### Conservation et vérification des accords
+
+Dans le checkpoint non secret déjà autorisé par le prompt, conserver la
+correspondance d'identité et, pour chaque accord applicable, sa source
+explicite, son périmètre, les destinataires ou fournisseurs autorisés et ses
+limites. Ne pas créer un autre fichier d'état à cette seule fin. À la reprise,
+réconcilier ces accords avec les instructions actuelles du développeur ; une
+restriction ou révocation plus récente prévaut. Ne pas redemander un accord
+explicite, toujours applicable et non révoqué. Un checkpoint seul ne crée ni
+n'étend une autorisation.
+
+L'autorisation d'utiliser les secrets nécessaires à la PLLM est distincte de
+celle de transmettre du contenu au fournisseur. Avant toute transmission,
+vérifier l'accord applicable au projet, au type de RUN, au fournisseur, au
+modèle et aux catégories de contenu. Transmettre seulement les éléments
+nécessaires dans les limites d'AGENTS.md, sans secret ni source exclue. Un
+accord ne s'étend pas implicitement à un autre projet, prompt, fournisseur ou
+modèle. En cas d'accord manquant, demander uniquement la décision nécessaire
+avant la transmission concernée.
+
+### Barrières propres au prompt
+
+Le feu vert de démarrage et la validation du périmètre restent distincts.
+Lorsqu'un prompt définit son invocation comme feu vert conditionnel,
+l'orchestrateur vérifie les conditions puis démarre sans redemander cet
+accord. Sinon, sa barrière de démarrage demeure applicable. Un sous-job
+hérite seulement du feu vert que son parent lui délègue effectivement.
+
+Ces règles ne déclenchent ni écriture ni implémentation dans un diagnostic.
+DOPP conserve son fonctionnement en lecture seule, sans `/cab run` ni PLLM
+obligatoire. Les validations spécifiques de périmètre, de reprise RSMP,
+d'OpenSpec, de Git, d'infrastructure et les mandats CAB restent applicables.
+La persistance suit les conditions terminales du prompt ; elle ne crée aucun
+réveil automatique après interruption de l'orchestrateur.
+
+## Accord durable conditionnel de transmission — Pixs uniquement
+
+Cette clause accompagne la propagation du modèle de projet. Elle ne
+s'applique qu'au projet Pixs, d'identifiant projet `pixs`, effectivement
+identifié par sa racine réelle et ses cadrages. Son inclusion dans un projet
+ne remplace pas la vérification de cette identité ; elle n'autorise aucune
+transmission pour un autre projet. Ne pas déduire l'identité Pixs du seul titre
+d'un chat ou d'une session OpenCode.
+
+Sur validation explicite du développeur du 14 octobre 2026, les RUN CISMP de
+Pixs sont durablement autorisés à transmettre à OpenCode Go, modèle
+`muse-spark-1.3-contributor`, les cadrages, spécifications, extraits de code et
+tests strictement nécessaires au travail demandé, dans les limites d'AGENTS.md
+et sans aucun secret ni source exclue. Cet accord n'est pas étendu aux RUN
+indépendants d'un autre type de prompt, aux autres fournisseurs ou aux autres
+modèles. Les sous-jobs pilotés du RUN CISMP en héritent dans le même périmètre.
+
+L'orchestrateur conserve la référence et les limites de cet accord dans le
+checkpoint non secret du RUN, le vérifie avant transmission et ne le redemande
+pas à chaque RUN ou reprise tant qu'il reste applicable et non révoqué. Cet
+accord n'impose aucun niveau de raisonnement et ne remplace ni la vérification
+de la PLLM, ni les mandats CAB, ni les validations distinctes du développeur.
 
 ## Protocole de communication OpenCode ↔ CGPT via CAB
 
@@ -211,13 +309,13 @@ dans le contexte autorisé, sans lire de secret.
 | OpenCode | `GET /session/status?directory=...` | Sessions occupées ou inactives |
 | OpenCode | `GET /permission?directory=...` | Permissions natives à réconcilier |
 | Contrôleur CAB | `http://127.0.0.1:8788/status` | État technique, compteurs et gate |
-| Contrôleur CAB | `GET /job` | Contrat durable courant |
-| Contrôleur CAB | `POST /job/arm`, `POST /job/progress` | Armement et jalons prouvés |
+| Contrôleur CAB | `GET /runs/<run_id>/job` | Contrat durable courant |
+| Contrôleur CAB | `POST /runs/<run_id>/job/arm`, `POST /runs/<run_id>/job/progress` | Armement et jalons prouvés |
 | Contrôleur CAB | `POST /validation/request` | Notification par le broker |
 | Contrôleur CAB | `GET /decision/<requestId>`, `POST /decision/<requestId>` | Décision explicite corrélée |
 | Contrôleur CAB | `POST /broker/readiness` | Readiness publiée par le broker |
-| Contrôleur CAB | `POST /job/recover` | Récupération explicite en deux phases |
-| Contrôleur CAB | `POST /job/terminal-gate`, `POST /job/disarm` | Clôture contrôlée |
+| Contrôleur CAB | `POST /runs/<run_id>/job/recover` | Récupération explicite en deux phases |
+| Contrôleur CAB | `POST /runs/<run_id>/job/terminal-gate`, `POST /runs/<run_id>/job/disarm` | Clôture contrôlée |
 | Superviseur CAB | `http://127.0.0.1:8789/status` | État de supervision et dernière relance |
 
 Le SSE et les états HTTP ne remplacent pas un appel MCP réel de
@@ -231,7 +329,7 @@ Le SSE et les états HTTP ne remplacent pas un appel MCP réel de
    pilotées ; signaler un identifiant non exposé sans l'inventer.
 2. Vérifier la santé OpenCode et le MCP natif. La connexion CAB est gérée par
    OpenCode ; l'orchestrateur ne tue ni ne démarre directement le broker.
-3. Avant toute session persistante neuve, appliquer le protocole autorisé
+3. Avant une initialisation globale exclusive, appliquer le protocole autorisé
    de nouvelle session : propriété et inactivité prouvées, arrêt des seules
    ressources CAB, déconnexion native, purge bornée, puis reconnexion.
    Une reprise ordinaire du même RUN conserve ses preuves et son runtime.
@@ -258,7 +356,7 @@ système ni d'intervention sur un service existant.
 
 ## Contrat durable, mandat et preuve
 
-Exemple de contrat transmis à `POST /job/arm` :
+Exemple de contrat transmis à `POST /runs/<run_id>/job/arm` :
 
 ```json
 {
@@ -305,7 +403,7 @@ Un délai ne vaut ni refus terminal ni approbation ; il n'autorise pas la
 création d'une requête de remplacement ni le rejeu d'une opération prouvée.
 Une décision déjà consommée ne couvre jamais une nouvelle permission.
 
-Les jalons et le mandat courant sont transmis par `POST /job/progress`.
+Les jalons et le mandat courant sont transmis par `POST /runs/<run_id>/job/progress`.
 L'orchestrateur conserve les preuves natives hors des seules affirmations
 textuelles de l'agent : appels d'outils, réponses corrélées, sorties et codes
 de retour, contenu ou empreintes des fichiers autorisés et effets réellement
@@ -390,12 +488,12 @@ d'un échec du benchmark PLLM et ne suspend pas, à elle seule, le RUN.
 ## Récupération contrôlée de session dans le même RUN
 
 Après un écart refusé sans effet, interrompre l'ancienne session, traiter son
-rapport et clôturer le mandat courant avec `/job/progress`. Ne pas réarmer le
-job pour remplacer sa session : `/job/arm` reste immuable. Créer la candidate
+rapport et clôturer le mandat courant avec `/runs/<run_id>/job/progress`. Ne pas réarmer le
+job pour remplacer sa session : `/runs/<run_id>/job/arm` reste immuable. Créer la candidate
 par l'API native OpenCode dans le même `directory`, avec permissions natives
 `ask`, sans lui confier de travail métier.
 
-Utiliser `POST /job/recover` en deux phases. Le corps commun contient `jobId`,
+Utiliser `POST /runs/<run_id>/job/recover` en deux phases. Le corps commun contient `jobId`,
 `expectedSessionId` (ancienne session), `sessionId` (candidate), `recoveryId`
 inédit et `preflightRequestId` inédit ; ajouter `phase: "prepare"`, puis
 `phase: "complete"`. Le contrôleur vérifie par HTTP le contexte, MCP, les
@@ -417,85 +515,81 @@ OPEN. Les anciennes autorisations exécutables sont invalidées et l'historique
 non secret est conservé. Le superviseur suit désormais la session transférée.
 Un échec conserve le gel ; la récupération ordinaire ne purge pas le RUN et
 n'invente aucun gate terminal. La seule exception de purge est définie dans
-« Nouvelle session CAB après prévol de récupération divergent » ci-dessous.
+« Prévol de récupération divergent dans la même session » ci-dessous.
 Un redémarrage conserve ce gel mais ne recrée pas la décision ou la preuve
 locale du prévol : si elles sont perdues, la récupération reste refusée et
 nécessite une décision humaine. L'API ne remplace ni une session révoquée ni
 un prévol échoué par une nouvelle tentative implicite.
 
-## Nouvelle session CAB après prévol de récupération divergent
+## Prévol de récupération divergent dans la même session
 
-Après le feu vert de la session, l'orchestrateur déclenche sans nouvelle
-confirmation une nouvelle session CAB lorsqu'un prévol de récupération
-divergent ou incomplet est prouvé par les appels natifs, refusé avant
-exécution et sans effet observé ou inconnu. L'automatisation appartient à
-l'orchestrateur du RUN ; elle n'est jamais exécutée automatiquement par
-`/job/recover`, qui conserve son refus strict et son gel.
+Après un prévol divergent ou incomplet prouvé et refusé avant exécution sans
+effet, conserver la session candidate où le prévol a divergé, le même job,
+le RUN et le runtime. Ne créer aucune autre session ni aucun job de remplacement,
+ne purger aucun état et ne pas revenir à l'ancienne session révoquée.
+Le remplacement initial prévu par CISMP reste inchangé ; cette règle concerne
+les échecs du prévol dans sa candidate. OpenCode reste ouvert.
 
-L'exception couvre un champ prescrit absent ou altéré : `requestId`,
-`approval_id`, `change_id`, `session_id`, `directory`, `files`, `commands`,
-`title`, `summary`, `timeout_seconds` ou `interval_seconds`. Elle inclut une
-commande `true` au lieu de `/usr/bin/true`, un suffixe, un change divergent,
-ainsi qu'une demande malformée rejetée avant enregistrement. Il n'est pas
-nécessaire de cumuler deux écarts. Le mandat erroné reste refusé, sans
-normalisation ni exécution. Comparer les arguments natifs au mandat réellement
-prescrit ; un paramètre non prescrit ne devient pas une divergence inventée.
+Comparer les appels natifs au mandat réellement prescrit, notamment
+`requestId`, `approval_id`, `change_id`, `session_id`, `directory`, `files`,
+`commands`, `title`, `summary`, `timeout_seconds` et `interval_seconds`.
+Un champ omis, `true` au lieu de `/usr/bin/true`, un suffixe ou un change erroné
+reste refusé sans normalisation. Un paramètre non prescrit ne devient pas une
+divergence inventée. Un HTTP 409 seul ou un texte de l'agent ne prouve pas le
+refus sans effet. Après un délai MCP seul, interroger uniquement le même
+`approval_id` par `poll_approval` ou `get_approval`, sans nouvelle demande.
 
-Un HTTP 409 seul, un texte de l'agent ou un délai MCP seul ne suffit pas.
-Après un délai MCP ordinaire, interroger uniquement le même `approval_id`
-par `poll_approval` ou `get_approval`, sans nouvelle demande ni purge.
-Les preuves natives de l'écart, du refus et de l'absence d'effet restent
-obligatoires, y compris lorsque la demande n'a pas été enregistrée.
+Geler le travail, traiter les rapports, refuser les permissions divergentes,
+clôturer les demandes restantes sans les approuver et réconcilier les effets.
+Exiger santé, contexte, MCP connecté, sessions inactives, aucun mandat actif
+ou en attente, aucune permission non résolue et aucun effet inconnu.
+Une décision `approved`, consommée ou une preuve incertaine interdit retry.
 
-Geler le travail, traiter les rapports, réconcilier les effets et refuser les
-permissions divergentes ; clôturer les demandes restantes sans les approuver.
-Exiger la propriété du contexte, les sessions inactives, aucun mandat actif
-ou en attente, aucune permission non résolue et aucun effet inconnu. Un espace
-partagé avec un autre travail ou une preuve incertaine interdit la purge.
+Demander explicitement `POST /runs/<run_id>/job/recover` avec `phase: "retry"`, les mêmes
+`jobId`, `expectedSessionId`, `sessionId` candidate et `recoveryId`,
+`previousPreflightRequestId` égal à la réservation actuelle et un
+`preflightRequestId` inédit. Ne pas réarmer, désarmer ou abandonner le job pendant retry.
+Le contrôleur exige un refus natif `REJECTED` corrélé à la décision locale
+`rejected` non consommée, ou une erreur native MCP `-32602` avant enregistrement.
+Depuis CAB 1.0.2, après timeout de `request_validation`, `poll_approval` ou
+`get_approval` sur le même `approval_id` peut prouver ce refus. Vérifier dans
+l'ordre natif `requestId`, `approval_id`, `session_id`, `directory`, `change_id`,
+`files` et `commands` ; toutes les demandes enregistrées doivent être refusées.
+Un `PENDING` corrélé reste non terminal ; aucune nouvelle demande n'est admise
+avant retry. Une erreur générique, un timeout seul, un polling divergent,
+une commande ou un autre outil natif laisse le gel conservé et exige la
+réconciliation ou l'autorité indispensable.
 
-Préserver hors des cibles un checkpoint métier non secret : objectif, change
-attendu, jalons, écritures validées et preuves natives, prochaine action, motif
-de l'échec et chemins résolus. Arrêter les ressources CAB du contexte et
-déconnecter nativement le broker selon `references/session-reset.md`.
-L'abandon de ce seul job technique gelé est autorisé même avec gate OPEN, sans
-fabriquer un gate valide ni désarmer artificiellement le job. Ne pas fermer
-ou redémarrer OpenCode.
+Le contrôleur conserve les identifiants antérieurs et l'empreinte du préfixe
+des parties natives, sans contenu de message. Il vérifie ce préfixe à chaque
+retry et complete ; une preuve modifiée ou perdue interdit la transition.
+Le nouvel essai utilise des `requestId` et `approval_id` neufs ; les anciennes
+décisions restent intactes et ne sont jamais réutilisées. Une perte de preuves
+locales après redémarrage ne permet pas leur reconstruction implicite.
 
-Purger avec l'outil distribué les seuls espaces réellement résolus
-`<home OpenCode>/.opencode/state/cgpt-approval-bridge/` et
-`<racine projet>/.opencode/state/cgpt-approval-bridge/`, en tenant compte des
-chemins personnalisés. Les gardes de chemin et de verrou restent obligatoires.
-Approbations, journal, job et autres états techniques sont supprimés sans
-lecture, sauvegarde ou restauration ; checkpoint métier, sources, secrets,
-rapports et historiques natifs restent hors purge. Une purge partielle
-interdit le démarrage et exige l'autorité indispensable.
+Dans la même candidate, exiger exactement `/usr/bin/true`, sans suffixe, avec
+le `change_id` attendu, une décision explicite, une réponse MCP corrélée, une
+permission native unique, exit 0 puis `broker_readiness = READY` sans demande
+ni permission parasite. Appeler complete avec la nouvelle réservation et
+relire `/job` et `/status` avant tout mandat métier. Le superviseur reste gelé
+jusqu'à complete ; il suit ensuite cette candidate devenue session du job.
 
-Créer une nouvelle session CAB et un nouveau job technique, avec des
-identifiants de session, job, requête et approbation neufs. Le prévol de ce
-redémarrage exige exactement `/usr/bin/true`, sans suffixe, avec le
-`change_id` attendu du checkpoint, une décision explicite, une réponse MCP
-corrélée, une permission consommée une seule fois et exit 0. Exiger ensuite
-`broker_readiness = READY` sans demande ni permission parasite. Un nouveau
-prévol divergent interdit la reprise métier et relance cette procédure si
-les mêmes préconditions de sûreté sont à nouveau prouvées.
+Un nouvel écart sûr reprend cette procédure dans la même candidate, sans
+concurrence ni doublon d'une tentative non réconciliée, jusqu'au prévol exact
+ou arrêt explicite. Conserver le RUN en attente non terminale, le checkpoint
+métier non secret, numéro, identifiants, horodatages, cause, arguments attendus
+et observés et références des preuves natives. Maintenir le suivi à la cadence
+existante sans boucle serrée. Reprendre au premier jalon non prouvé, sans
+rejouer les écritures validées ni les autorisations consommées.
 
-Le RUN parent reste en attente non terminale pendant ces récupérations.
-Tracer chaque tentative dans le checkpoint : numéro, identifiants,
-horodatages, cause, arguments attendus et observés, références des preuves
-natives. Renouveler les tentatives sans limite jusqu'au prévol exact réussi
-ou à l'arrêt explicite du développeur, tant que les préconditions restent
-prouvées. Ne lancer aucune tentative simultanée ni dupliquer une tentative
-non réconciliée. Maintenir le suivi de progression à la cadence existante,
-sans boucle serrée. Ce seul échec ne termine pas le RUN parent.
 
-Réconcilier les fichiers et les preuves conservées, puis reprendre au premier
-jalon non prouvé, sans rejouer les écritures validées ni les autorisations
-consommées et sans réadopter l'ancien job ou ses décisions. Le RUN métier
-conserve son checkpoint externe ; la récupération ordinaire reste sans purge.
-Une preuve manquante ne vaut jamais succès et n'autorise aucun rejeu aveugle.
-Effet inconnu, propriété incertaine ou garde non établie imposent de demander
-l'autorité indispensable. Les permissions techniques de la plateforme restent
-applicables.
+Cette conservation s'applique à retry et ne retire jamais l'autorité d'un
+arrêt ciblé explicitement demandé par le développeur. Un tel arrêt reste
+distinct : réconcilier les effets et demandes, obtenir le gate `BLOQUÉ`,
+désarmer uniquement le job concerné et libérer sa réservation avec preuves,
+sans purge ni suppression des historiques. Une nouvelle session ou un nouveau
+job exige une autorisation explicite de reprise ; ne fermer ni redémarrer
+OpenCode, le broker ou les services communs des autres RUN.
 
 ## Compactage coordonné et continuité
 
@@ -525,9 +619,9 @@ La présence de STATISTIQUES.md, ses six sections, UTF-8/LF et les totaux
 doivent être prouvés pour chaque archive ; les mesures absentes sont N/A
 motivées. Un rapport échoué est repris sans réarchiver.
 
-Le gate local est demandé par `POST /job/terminal-gate` avec un état explicite
+Le gate local est demandé par `POST /runs/<run_id>/job/terminal-gate` avec un état explicite
 TERMINÉ ou BLOQUÉ. Un refus laisse le job ouvert avec sa cause. Un gate validé
-permet le désarmement du seul job correspondant, puis l'arrêt autorisé du
+permet le désarmement du seul job correspondant. Seulement après libération et quiescence de tous les RUN, il permet l'arrêt autorisé du
 superviseur avant le contrôleur. Le broker reste géré par OpenCode.
 
 Le compte rendu distingue résultat livré, préparation, attente, refus,
@@ -535,3 +629,140 @@ erreur et blocage. Il indique les opérations réellement exécutées, les
 limites de preuve, les fichiers touchés et le premier jalon restant.
 Une fin de tour, un délai, une réponse textuelle ou une relance technique
 ne remplace jamais un état terminal prouvé.
+
+## Pilotage concurrent CAB 1.0.0
+
+### CAB 1.0.0 — pilotage concurrent dans un contexte OpenCode commun
+
+Un processus OpenCode et un broker MCP stdio servent plusieurs sessions.
+Le contrôleur et le superviseur isolent leurs jobs par RUN. Le profil initial
+utilise un même répertoire ; les worktrees exigent une qualification distincte.
+
+#### Identité et sélection
+
+Le RUN parent conserve runId et ownerId pendant son cycle. Chaque change
+emploie une nouvelle session OpenCode et un jobId inédit. Consulter GET /runs
+et OpenSpec avant sélection. Un change présent n'est pas nécessairement pris
+en charge ; une réservation RESERVED appartient exclusivement à son RUN.
+
+Avant création ou préparation, soumettre POST /runs/reserve avec :
+
+```json
+{
+  "runId": "cismp-example",
+  "ownerId": "codex-example",
+  "sessionId": "ses_example",
+  "directory": "/racine/autorisee",
+  "changeId": "change-example",
+  "selectionKey": "capacite-exigence-version",
+  "resources": [{"key": "file:src/component.py", "mode": "write"}],
+  "dependsOn": []
+}
+```
+
+La clé de sélection représente l'intention avant création du change. Examiner
+les dépendances sémantiques, capacités OpenSpec, contrats, lectures, écritures,
+migrations, ports, builds et services partagés. Utiliser des clés file:,
+capability:, contract: ou resource:, avec mode read ou write. Les chemins sont
+relatifs et un répertoire couvre ses descendants. project:* en écriture réserve
+les effets inconnus à l'échelle du projet. Aucune indépendance n'est déduite
+des seuls fichiers. dependsOn identifie les changes livrés dans le registre ;
+Codex vérifie séparément les prérequis historiques établis hors registre.
+
+La réservation atomique retourne version et contextId. Un conflit ne donne
+aucune permission : sélectionner un autre candidat compatible ou attendre.
+Un RUN ne possède qu'un change réservé à la fois. Après libération contrôlée,
+le même RUN peut réserver son change suivant avec une nouvelle session et une
+version fraîche ; l'historique et les requestId restent conservés.
+
+#### Mandats et routage
+
+Les routes sont /runs/<runId>/status, /runs/<runId>/job/arm, progress, recover,
+terminal-gate, disarm et /runs/<runId>/decision/<requestId>. L'armement reprend
+exactement session, change et racine de la réservation ; strictCommands=true.
+Les décisions restent explicites, unitaires, corrélées et consommables une fois.
+
+Chaque request_validation inclut les champs habituels et run_id,
+reservation_version ; une commande déclare aussi resources. Un fichier exige
+une ressource file: en écriture. Une commande shell n'est pas analysée pour
+deviner ses effets. Codex examine son manifeste avant décision. Une réservation
+ne vaut jamais approbation. Garder les permissions natives ask et ne transmettre
+aucun outil mutable sans le mandat exact.
+
+broker_readiness accepte run_id. Les compteurs ciblés ne couvrent que ce RUN ;
+les défaillances du magasin, du journal ou du transport commun restent communes.
+Les requêtes et permissions d'une autre session ne sont ni consommées ni closes.
+Après redémarrage, une ancienne demande sans décision restaurable reste à
+réconcilier ; ne pas la rejouer, changer son identité ou inventer son résultat.
+
+#### Cycle, extension et intégration
+
+Le checkpoint est output/cismp/<run_id>/state.json pour CISMP et
+output/<prompt>/<run_id>/state.json pour les autres orchestrateurs. Un sous-job
+hérite de celui de son parent. Le registre CAB attribue les changes ; le
+checkpoint conserve les preuves et ne modifie jamais les réservations.
+
+Si le fichier scopé manque lors d'une reprise, lire l'ancien
+output/<prompt>-state.json en lecture seule, réconcilier RUN, propriété et
+preuves natives, puis migrer seulement ce RUN sans écraser l'état d'un autre.
+Un ancien job armé reste en mode historique sous les interfaces sans RUN
+jusqu'à clôture réconciliée ; l'ajout de RUN concurrents est alors refusé.
+Les anciennes permissions consommées ne sont jamais transposées.
+
+Avant élargissement, fermer le mandat courant puis POST /runs/<runId>/extend
+avec version et resources supplémentaires. Réutiliser la version retournée.
+Une extension conflictuelle suspend le nouveau périmètre sans toucher aux autres.
+
+Dans le répertoire partagé, chaque RUN déclare un jalon stable après ses
+validations locales par POST /runs/<runId>/ready avec version et evidence.
+L'intégration attend que tous les RUN réservés soient stables, sans mandat,
+récupération ou effet en attente. Les validations globales portent sur l'état
+combiné de ces changes stables ; chaque RUN conserve ses preuves locales.
+
+Pour publier dans la référence commune, obtenir POST /runs/<runId>/integration
+avec version et acquire=true. Revalider la base courante et les résultats
+combinés, synchroniser et archiver sous autorisations explicites, puis vérifier
+STATISTIQUES.md. Les opérations Git restent soumises à une autorisation distincte.
+Pendant l'exclusion, les nouvelles opérations des autres RUN sont suspendues.
+Le propriétaire peut déclarer project:* en lecture pour ses tests globaux.
+Libérer avec acquire=false, published (booléen) et, si true, evidence après
+publication prouvée ou abandon réconcilié. La version referenceVersion évolue
+à chaque libération ; les autres RUN attendent la réconciliation par POST
+/runs/<runId>/reconcile avec version, referenceVersion et evidence. Recontrôler
+les empreintes et validations affectées sans rejouer les effets déjà prouvés,
+puis utiliser la nouvelle version de réservation retournée. Une réservation
+avec écritures ne peut être livrée sans publication sous cette barrière.
+Ni CAB ni le superviseur ne valident les preuves à la place de Codex.
+
+Après gate individuel, désarmement et réconciliation, POST /runs/<runId>/release
+porte version, delivered (booléen) et evidence (références non secrètes des
+preuves). delivered=true exige un gate TERMINÉ, la livraison et le rapport
+prouvés. Une attente ou un effet inconnu ne libère jamais le change.
+
+Sans candidat disponible, distinguer attente de dépendance, conflit de ressources
+et absence de travail restant prouvée. Seul ce dernier constat, sans autre RUN
+actif ni exigence restante, permet une fin globale. Les sous-jobs rendent le
+contrôle au cycle parent et n'arrêtent pas l'infrastructure commune.
+
+#### Récupération, purge et arrêt
+
+Un démarrage rejoint l'infrastructure saine sans purge ni reconnexion globale.
+Une récupération conserve le RUN, le change, les preuves et la candidate après
+prévol divergent refusé sans effet ; utiliser prepare/retry/complete du même job.
+Après transfert, relire GET /runs pour la nouvelle version avant tout mandat.
+Une autre session réservée ne peut servir de candidate. Le prévol /usr/bin/true
+doit être couvert par un manifeste sans effet, par exemple une lecture de la
+capacité concernée ; il reste soumis à la décision CAB et à once.
+
+/cab stop cible le RUN et ne ferme pas OpenCode. Arrêter les services communs,
+déconnecter le broker, utiliser /instance/dispose ou purger exige la quiescence
+et la réconciliation de tous les RUN affectés. Le script de purge refuse un
+registre RESERVED ou invalide même si ses processus sont arrêtés. Le healthcheck
+ne redémarre aucun service ; une action de cycle de vie reste coordonnée.
+
+La sélection ne dépasse pas les spécifications et autorisations déjà validées.
+Les sondes et compactages restent attribués à chaque RUN ; les quotas partagés
+ne sont jamais présentés comme sa consommation exclusive sans preuve.
+CISM, CAISM et les prompts directs ne participent pas à ce pilotage et ne sont
+pas lancés en concurrence avec les sessions pilotées.
+<!-- CAB-CONCURRENT-END -->
