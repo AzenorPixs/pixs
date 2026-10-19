@@ -28,7 +28,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Dépendances
 
-- [define-first-installable-pbo-profile](../define-first-installable-pbo-profile/proposal.md).
+- [define-first-installable-pbo-profile](../archive/2026-10-18-define-first-installable-pbo-profile/proposal.md).
 - [add-runtime-observability-and-operations](../add-runtime-observability-and-operations/proposal.md).
 - [qualify-first-pbo-composition](../qualify-first-pbo-composition/proposal.md).
 

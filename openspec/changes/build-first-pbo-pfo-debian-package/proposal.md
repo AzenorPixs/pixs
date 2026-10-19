@@ -12,7 +12,7 @@ Construire le paquet PBO/PFO indépendant, incluant PZT essentiel mais aucun bin
 
 ### Capacités nouvelles
 
-Aucune évolution normative nouvelle n’est prévue : ce dossier prépare la réalisation des comportements déjà exigés par le canon et les précisions de profil proposées dans C00.
+Aucune évolution normative nouvelle n’est prévue : ce dossier prépare la réalisation des comportements déjà exigés par le canon et les précisions du profil C00 adoptées le 18 octobre 2026 et intégrées au canon.
 
 ### Capacités modifiées
 

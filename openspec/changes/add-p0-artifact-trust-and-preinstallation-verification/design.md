@@ -28,6 +28,6 @@ Aucun code produit, secret, compte, service, dépendance, migration, données r�
 
 ## Dépendances après audit transversal P0
 
-[C00](../define-first-installable-pbo-profile/proposal.md).
+[C00](../archive/2026-10-18-define-first-installable-pbo-profile/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

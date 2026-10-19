@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "change_id": "add-pbo-runtime-secret-provider",
+  "run_id": "cismp3-pixs-ab58d92936e94d41",
+  "coding_session_id": "ses_eafa73500ffeLMpuUnHlZObNId",
+  "scope": "Qualification fonctionnelle du transport systemd C01 et audit INSTALLER, sans disponibilité P0",
+  "harness_source": {
+    "path": "tests/integration/test_c01_systemd_harness.py",
+    "sha256": "f8da9bee9459685f525df067ea98c16222207937bf812eb8a3b52f5de50dc58e"
+  },
+  "execution": {
+    "actor": "Développeur, console root",
+    "case": "output/cismp/cismp3-pixs-ab58d92936e94d41/systemd-test/harness/01a15249-ce65-7436-b57a-bc1df2d6b615",
+    "native_agent_exit": null,
+    "native_agent_exit_cause": "Exécution manuelle ; sortie du terminal non instrumentée par OpenCode",
+    "result_owner_uid": 0,
+    "result_mode": "0644",
+    "rotation": {
+      "action": "rotate",
+      "completion": {
+        "event_id": "01a15249-d204-7ee4-bfbe-5e249b0204bf",
+        "event_sha256": "3792e267a85281016493176c088c944951d7cd853120a7221a91e7a396576154",
+        "journal_id": "01a15249-ce6f-7677-bc9c-ee4c9c20f2a3",
+        "sequence": 8
+      },
+      "new_invocation_hex": "07445dc51ead4e8b9564b7df0ed2e32e",
+      "old_invocation_hex": "2851aefa04354189b466b41bdba7a592",
+      "policy_version": "2",
+      "unit": "pixs-c01-c3-ab58d92936e94d41-consumer.service"
+    },
+    "revocation": {
+      "action": "revoke",
+      "completion": {
+        "event_id": "01a15249-d39e-7f64-aab0-023f7fd63d65",
+        "event_sha256": "9d75296f560e702e973f4abb67f7a083dad88279dcdeb679b6abfc5ca86060c1",
+        "journal_id": "01a15249-ce6f-7677-bc9c-ee4c9c20f2a3",
+        "sequence": 12
+      },
+      "new_invocation_hex": null,
+      "old_invocation_hex": "07445dc51ead4e8b9564b7df0ed2e32e",
+      "policy_version": "2-revoked-01a15249-d309-795e-9563-494dae32fc7d",
+      "unit": "pixs-c01-c3-ab58d92936e94d41-consumer.service"
+    },
+    "audit_records": 12
+  },
+  "independent_verification": {
+    "request_id": "c3-cmd-236584a2-effect",
+    "tool_id": "prt_1524b2233001sLxDRE04KSPu3H",
+    "message_id": "msg_1524b23f8001Fu3aqDvoYR3kuH",
+    "native_once": true,
+    "exit": 0,
+    "units_absent": [
+      "pixs-c01-c3-ab58d92936e94d41-consumer.service",
+      "pixs-c01-c3-ab58d92936e94d41-operator.service"
+    ],
+    "receipt_checks": "journal_id, event_id, sequence, event_sha256 et événements stricts relus ; v1/v2, acteurs et invocations recoupés"
+  },
+  "recovery": {
+    "case": "output/cismp/cismp3-pixs-ab58d92936e94d41/systemd-test/harness/01a15239-b6b6-7d07-ae75-ef14519c1e13",
+    "metadata_preserved": true,
+    "observed_state": "Unité transitoire identifiée, failed, MainPID=0 ; récupération puis absence prouvées"
+  },
+  "tests": {
+    "global": {
+      "count": 1945,
+      "exit": 0,
+      "request_id": "c3-cmd-937c55d8-effect",
+      "duration_s": 16.63
+    },
+    "targeted_repair": {
+      "count": 26,
+      "exit": 0,
+      "request_id": "c3-cmd-2f8722ff-effect"
+    },
+    "native_snapshot_read": {
+      "exit": 0,
+      "request_id": "c3-cmd-5034b3b4-effect"
+    },
+    "real_recovery_predicates": {
+      "exit": 0,
+      "request_id": "c3-cmd-ef5a11ac-effect"
+    }
+  },
+  "limits": [
+    "Données synthétiques publiques connues exclusivement",
+    "systemd-creds --with-key=null : transport fonctionnel seulement, aucune qualification confidentialité/authenticité",
+    "Aucune base, session Pixs, identité applicative ou autorité Super Admin créée",
+    "Reprise PostgreSQL C05/C08 et qualification paquet/P0 hors périmètre",
+    "fsync et verrouillage testés ; aucune qualification matérielle contre coupure de courant"
+  ],
+  "sync_plan": [
+    {
+      "path": "openspec/specs/audit/spec.md",
+      "baseline_sha256": "43d8dd9947fbac84c5decbf829825db577276853f5224e5bacc021c22bf4f513",
+      "delta_sha256": "cb0a7c816d4383fc757015581ad653d9d1898ce7769b80747f5b5b8d0030a091",
+      "added": 14,
+      "modified": 0,
+      "before_requirements": 18,
+      "after_requirements": 32,
+      "canonical_sha256": "074ea1a323e8cd6b4f4ad83fa796b75277268efbc0f791dbb6edfde1681cd47f"
+    },
+    {
+      "path": "openspec/specs/secrets-providers/spec.md",
+      "baseline_sha256": "8e134d9117ca775984f14c91fb75e042fdf7612b8f6f81a336be93b8673b1dff",
+      "delta_sha256": "f06bf1772817a8c4c5c3a90076c2477e5ef41c81553f5fbc424b0ed758675ae9",
+      "added": 8,
+      "modified": 0,
+      "before_requirements": 4,
+      "after_requirements": 12,
+      "canonical_sha256": "fa537fca310131c63fae0130d0b30699964c6fa08d709afacc6c5ed153b00b3b"
+    },
+    {
+      "path": "openspec/specs/reference-composition/spec.md",
+      "baseline_sha256": "ba853657b4bd7606e85e532c1a22770abe9ed659ce2c3dc73cfe045928885668",
+      "delta_sha256": "cfeb484e637ca7a2ea177614d56f194f64c244d6a6c511794883a9cdbe0ec27d",
+      "added": 2,
+      "modified": 0,
+      "before_requirements": 8,
+      "after_requirements": 10,
+      "canonical_sha256": "5c833175c3ed05b6951b4193aba6eaaa0fa3990b0e61c2ef51f41e7cc7fa92d7"
+    },
+    {
+      "path": "openspec/specs/initial-administration/spec.md",
+      "baseline_sha256": "200ce5a01e6d741d9021b2c78dd7f31efd7eeed566309168c0f3fbf468b5c4e5",
+      "delta_sha256": "19598056e2d0b2e115e028b9da65446658675d36a80eefc8f4c2636aec7a4691",
+      "added": 2,
+      "modified": 0,
+      "before_requirements": 14,
+      "after_requirements": 16,
+      "canonical_sha256": "a875dfd4e48cc2920ea38242b02c46aab386a7a77b645165d009d9fa47f4cc4a"
+    },
+    {
+      "path": "openspec/specs/authorization/spec.md",
+      "baseline_sha256": "87c9799579008033f39e47a579b8bf536f0d9c8973d678750a540a02ea63166f",
+      "delta_sha256": "f3ee19282d77fbc7f70693fd68962e5da40bce6b8f9a2bed1786a66a8696108f",
+      "added": 2,
+      "modified": 1,
+      "before_requirements": 7,
+      "after_requirements": 9,
+      "canonical_sha256": "427c3bc5776a640d2c944c7ccc21baebd85f0c92f258e3313d87b52fcdd779a1"
+    }
+  ],
+  "invariants_sha256": {
+    "src/pixs/kernel/audit_event.py": "99257d28c804cb53ba16c731cc1642006b549f23046ce53589fbbb8050a6f4af",
+    "src/pixs/kernel/config/resolution.py": "d12162b7902c7827a4ed79de71f3541b2035f3e2cb6bbd2bf39a38184dee2b23",
+    "src/pixs/backend/settings.py": "3d7451b909279968c215174a770470ceef23e7be9031e5ac9a8f997b33854c4a",
+    "src/pixs/backend/checks.py": "a30d86615657f7c0925b423f67bb8e66c616b0f1e1efbc7911bafcc5bd0471e3",
+    "src/pixs/backend/__init__.py": "b2f571b6c6b28f49e267c69411171066d3125939320b39afefebe342f7e7ad3e"
+  },
+  "coding_model": {
+    "model_id": "muse-spark-1.3-contributor",
+    "provider_id": "opencode-go",
+    "reasoning": "high",
+    "exact_model_version": null,
+    "opencode_version": "1.19.3"
+  }
+}

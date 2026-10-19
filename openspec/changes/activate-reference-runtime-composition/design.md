@@ -2,7 +2,7 @@
 
 ## Statut et périmètre autorisé
 
-PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 formalise le profil ; ses précisions normatives restent proposées tant qu’elles ne sont pas approuvées/adoptées.
+PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 a été adopté et archivé le 18 octobre 2026 ; ses précisions normatives sont intégrées au canon. Les arbitrages propres au présent change restent à lever avant réalisation.
 
 ## État actuel vérifié
 
@@ -35,7 +35,7 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [add-pbo-runtime-secret-provider](../add-pbo-runtime-secret-provider/proposal.md).
+- [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
 - [add-core-postgres-services](../add-core-postgres-services/proposal.md).
 - [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
 
@@ -90,4 +90,4 @@ Un rattachement à un lot P0 n’active pas tout le domaine : Bulk, LDAP, flags 
 
 Contrôles à intégrer : Absent représenté sans readiness fictive ; Contrat consommé réutilisé sans activer tout le catalogue ; Aucun code distant ni composant DEVELOPMENT en production ; Pas de promesse universelle de performance/HA.
 
-Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
+Voir [audit transversal durable](../archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.

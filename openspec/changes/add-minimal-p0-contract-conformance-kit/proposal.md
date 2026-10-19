@@ -16,7 +16,7 @@ Les deltas proposés restent dans le change ; aucune synchronisation ni archive 
 
 ## Dépendances et intégration
 
-Voir les responsabilités et conditions de [design.md](design.md) et le [plan global courant](../define-first-installable-pbo-profile/plan-global-preparation.md). Les producteurs précoces de contrats, les conditions d’activation et la recette finale restent distincts.
+Voir les responsabilités et conditions de [design.md](design.md) et le [plan global courant](../archive/2026-10-18-define-first-installable-pbo-profile/plan-global-preparation.md). Les producteurs précoces de contrats, les conditions d’activation et la recette finale restent distincts.
 
 ## Impact
 

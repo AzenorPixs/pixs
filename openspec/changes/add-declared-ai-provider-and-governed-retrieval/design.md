@@ -36,7 +36,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 ## Dépendances et interfaces
 
-- [add-pbo-runtime-secret-provider](../add-pbo-runtime-secret-provider/proposal.md).
+- [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
 - [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
 - [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
@@ -80,4 +80,4 @@ Une sortie modèle demeure donnée non fiable et proposition sans droit d’effe
 | [ai-agents #3](../../../openspec/specs/ai-agents/spec.md#L41) | ND | Tout effet proposé passe par une Command propriétaire autorisée ; outil non déclaré refusé. |
 | [ai-agents #4](../../../openspec/specs/ai-agents/spec.md#L53) | ND | Prompts et corpus versionnés, réservation O15 avant appel, arrêt au budget et coût réconcilié sans double imputation. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

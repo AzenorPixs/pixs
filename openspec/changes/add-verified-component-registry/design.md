@@ -78,4 +78,4 @@ N01 traite urgence PBO indépendamment de l’existence du catalogue ; O29 diffu
 | [component-registry #3](../../../openspec/specs/component-registry/spec.md#L36) | ND | Installation de version révoquée refusée ; retrait coordonné ; urgence runtime séparée en N01. |
 | [component-registry #4](../../../openspec/specs/component-registry/spec.md#L48) | ND | Sources et ordre explicites ; résolution reproductible, ambiguïté refusée. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

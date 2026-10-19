@@ -79,4 +79,4 @@ Arrêt et retour sont orchestrés/audités ; migration incompatible nécessite r
 | [progressive-deployment #3](../../../openspec/specs/progressive-deployment/spec.md#L34) | ND | Identité et contexte conservés ; aucun transfert implicite de données ou tenant. |
 | [progressive-deployment #4](../../../openspec/specs/progressive-deployment/spec.md#L45) | ND | Arrêt et retour compatible ou restauration autorisée ; aucun downgrade automatique de schéma incompatible. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

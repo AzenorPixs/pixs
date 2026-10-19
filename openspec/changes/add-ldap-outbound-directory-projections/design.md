@@ -29,6 +29,8 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
+Le [complément Core réversible](../add-reversible-core-directory-storage/design.md) propose un rôle distinct de stockage OpenLDAP autoritatif après migration. Le présent dossier reste limité à la projection sortante avec PostgreSQL référence ; il ne réalise ni le déplacement des ACL ni le retour de stockage. Les deux rôles ne sont pas actifs sur le même périmètre sous des autorités concurrentes.
+
 Composant/provider optionnel au-dessus du Kernel, déclaré par manifest et sélection explicite. Exposer uniquement ses contrats publics versionnés et écrire ses données via leur propriétaire. Conserver Django/PostgreSQL comme autorités, contexte tenant/scope, audit et gouvernance ; qualifier séparément dépendances, limites et mode dégradé. Ne pas imposer un provider, une bibliothèque ou une ressource métier encore non décidés.
 
 Périmètre propre à ce lot : Provider/mapping, événements après commit, retraits/convergence/idempotence ; PostgreSQL autoritatif.
@@ -96,4 +98,4 @@ Observer retard, erreurs, dernier état confirmé et retrait effectif ; connexio
 | [directory-projections #7](../../../openspec/specs/directory-projections/spec.md#L77) | ND | Reprise après panne et rejeu sans double effet ni perte silencieuse, avec version source. |
 | [directory-projections #8](../../../openspec/specs/directory-projections/spec.md#L87) | ND | Mesurer retard, échec, retrait et convergence ; acquittement seul ne vaut pas synchronisation. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

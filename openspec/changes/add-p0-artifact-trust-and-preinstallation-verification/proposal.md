@@ -16,7 +16,7 @@ Les deltas proposés restent dans le change ; aucune synchronisation ni archive 
 
 ## Dépendances et intégration
 
-Voir les responsabilités et conditions de [design.md](design.md) et le [plan global courant](../define-first-installable-pbo-profile/plan-global-preparation.md). Les producteurs précoces de contrats, les conditions d’activation et la recette finale restent distincts.
+Voir les responsabilités et conditions de [design.md](design.md) et le [plan global courant](../archive/2026-10-18-define-first-installable-pbo-profile/plan-global-preparation.md). Les producteurs précoces de contrats, les conditions d’activation et la recette finale restent distincts.
 
 ## Impact
 
@@ -24,6 +24,6 @@ Préparation documentaire du chemin P0 ; pas d’activation d’option extérieu
 
 ## Dépendances après audit transversal P0
 
-[C00](../define-first-installable-pbo-profile/proposal.md).
+[C00](../archive/2026-10-18-define-first-installable-pbo-profile/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

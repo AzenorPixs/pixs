@@ -2,7 +2,7 @@
 
 ## Statut et périmètre autorisé
 
-PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 formalise le profil ; ses précisions normatives restent proposées tant qu’elles ne sont pas approuvées/adoptées.
+PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 a été adopté et archivé le 18 octobre 2026 ; ses précisions normatives sont intégrées au canon. Les arbitrages propres au présent change restent à lever avant réalisation.
 
 ## État actuel vérifié
 
@@ -20,13 +20,19 @@ Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les stru
 
 Authentifier une DigitalIdentity par un provider explicitement approuvé, établir un contexte canonique et des sessions/jetons persistants bornés. Ne jamais rapprocher par courriel. L’authentification propre du Super Admin reste distincte de l’exemption de MFA ; le navigateur ne persiste pas de justificatif par défaut.
 
+### Raccordement au cadrage Auth du 19 octobre 2026
+
+C03 conserve ce chantier, au sein de `pixs.auth` essentiel indépendant de Core et appuyé par défaut sur PostgreSQL. Le [change d’architecture](../define-essential-autonomous-auth-module/design.md) porte les deltas proposés et le catalogue ; leur adoption précède la réalisation du profil. Le présent dossier ne crée ni nouveau delta ni code et conserve ses tâches non cochées.
+
+Core fournit l’identité et son état par contrat public ; Auth possède moyens, mappings d’authentification, contextes, politiques et sessions persistantes, avec migrations distinctes. Les moyens locaux modernes/MFA et l’enrôlement ont leurs dossiers complémentaires, sans dupliquer le moteur de sessions C03. L’installation standard ne contient aucun sous-module de source externe. Les services propres OpenLDAP/KDC et l’émission d’identité restent des capacités indépendantes non activées par défaut.
+
 ## Alternatives et frontière de conception
 
 Privilégier les mécanismes et dépendances existants. Une implémentation locale qui duplique les contrats, importe des tables privées ou sélectionne implicitement un provider est incompatible avec le cadrage. Toute technologie supplémentaire ou précision de comportement devra être justifiée avant réalisation ; la présence d’un paquet dans DEVOPS ne prouve ni sélection ni conformité.
 
 ## Décisions bloquantes avant réalisation
 
-Provider initial, choix sessions/cookies/Bearer par façade, rotation/révocation et durées. Ces arbitrages modifient sécurité et contrats : revue avant réalisation, sans valeurs arbitraires.
+Le choix de cadrage est le local autonome PostgreSQL par défaut dans `pixs.auth`. Restent les contrats et schémas Auth, bibliothèques qualifiées, choix sessions/cookies/Bearer par façade, rotation/révocation et durées. Ces arbitrages modifient sécurité et contrats : revue avant réalisation, sans valeurs arbitraires ; ils ne rouvrent pas le choix PostgreSQL.
 
 Ce sont des barrières de conception explicites, pas des questions supposées résolues. Elles n’empêchent pas la préparation documentaire ; elles empêchent de présenter le dossier comme entièrement prêt à coder. Les arbitrages PA/PZT suivent TECHNICAL §45.4 lorsqu’ils entrent dans son périmètre.
 
@@ -34,7 +40,8 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [add-pbo-runtime-secret-provider](../add-pbo-runtime-secret-provider/proposal.md).
+- [define-essential-autonomous-auth-module](../define-essential-autonomous-auth-module/proposal.md) : adoption des deltas du nouveau profil essentiel, sans réalisation implicite.
+- [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
 - [add-core-postgres-services](../add-core-postgres-services/proposal.md).
 
 - [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md) : dépendance renforcée après revue des obligations d’audit.
@@ -96,4 +103,4 @@ L’invalidation est prévue ; les réponses en vol, onglets et changements de s
 
 Contrôles à intégrer : Réponse du tenant précédent n’alimente pas la vue courante ; Déconnexion et révocation invalident contexte ; Identifiant/header fourni ne remplace pas le tenant canonique.
 
-Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
+Voir [audit transversal durable](../archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.

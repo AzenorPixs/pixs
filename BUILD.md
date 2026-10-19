@@ -126,6 +126,16 @@ Le build doit également valider le modèle de scopes déclaré par les composan
 
 Les providers d'authentification doivent déclarer leurs capacités, protocoles, issuers, audiences, méthodes, algorithmes, clés, claims obligatoires, mappings d'identifiants et niveaux d'assurance maximaux. Le build doit vérifier la cohérence de ces déclarations, l'unicité du triplet `(provider_id, issuer, subject)`, l'absence de confiance implicite et l'absence de credentials, tokens ou assertions brutes dans les manifests et artefacts.
 
+Le cadrage cible Auth du 19 octobre 2026 est préparé dans [define-essential-autonomous-auth-module](openspec/changes/define-essential-autonomous-auth-module/proposal.md), avec deltas proposés sans synchronisation du canon ni réalisation. Après adoption, la composition applicative et sa qualification incluront `pixs.auth` essentiel indépendant, son profil local autonome et PostgreSQL comme stockage par défaut. Les méthodes locales et l'enrôlement minimal seront disponibles selon politique, sans fournisseur externe ni service OpenLDAP/KDC obligatoire. Cette évolution de composition ne sera pas déduite des preuves historiques du paquet.
+
+Le profil standard exclura les sous-modules de sources externes LDAP, Kerberos, OIDC, SAML et autres ; leur installation nécessitera une sélection et un artefact déclaré. Les rôles émetteurs IdP, OpenLDAP propre et KDC propre auront une activation explicite, sans service ni écoute réseau lancé par leur seule disponibilité. Leurs sous-modules de gestion appartiendront à Auth, avec exécutants séparés de Django et dépendances produit installées uniquement selon le plan sélectionné. Aucune dépendance OS n'est ajoutée par ce cadrage documentaire.
+
+Le build et la recette distingueront tables/migrations Core et Auth dans PostgreSQL, secrets protégés et stockages techniques natifs des services gérés. Ils vérifieront l'absence de connecteurs externes dans le profil standard, l'autonomie locale, l'absence de confiance/repli implicite, la compatibilité des sous-modules et les limites de révocation. Le stockage PostgreSQL par défaut d'Auth n'impose aucun backend PostgreSQL à slapd ou au KDC. Versions, packaging, privilèges, domaines/realms, ports, transport et reprise devront être qualifiés avant distribution de ces services optionnels.
+
+Le sous-module optionnel `pixs.auth.directory.ad` et son [change de domaine AD propre](openspec/changes/add-auth-managed-active-directory/proposal.md) suivent la même séparation : PostgreSQL pour Auth par défaut, stockage technique du contrôleur déclaré, aucune activation ou adoption de domaine implicite. La recette vérifiera plateforme et compatibilité qualifiées, privilèges, cohérence annuaire/Kerberos/DNS et absence de collision avec les services autonomes. Aucun produit AD, système Windows, package ou dépendance supplémentaire n'est sélectionné ou installé par cette préparation.
+
+Le [stockage Core réversible PostgreSQL/OpenLDAP interne](openspec/changes/add-reversible-core-directory-storage/proposal.md) est une option postinstallation distincte de la projection LDAP. Après adoption des deltas, la recette de cette option devra prouver aller, modifications effectuées via Pixs sur LDAP et retour vers PostgreSQL courant, avec mêmes UUID, relations et décisions ACL. Elle vérifiera représentation complète, garanties de mutation, clôture des anciens écrivains, génération unique, copie/reprise et absence de repli périmé. PostgreSQL demeure requis pour les autres données déclarées ; le stockage Auth n'est pas déplacé par effet de cette sélection. Aucun déplacement de données ou changement d'infrastructure n'est exécuté par le présent cadrage.
+
 Le build doit valider les déclarations du moteur d'autorisation : identifiants et versions de politiques, composants propriétaires, selectors de sujets, ressources, actions et scopes, effets `DENY` ou `ALLOW`, conditions typées, obligations et périodes de validité. Il doit refuser toute politique ambiguë, non namespacée, cyclique, non bornée ou contenant du code exécutable. Les dépendances vers des implémentations privées et les PDP externes non déclarés doivent bloquer la composition.
 
 Le build doit valider les politiques de cycle de vie déclarées par les modules : séparation de l'état métier et des états de persistance, de rétention et de projection ; stratégie de suppression ; durée de rétention ; restauration ; conditions de purge ; legal holds ; cascade ; historique et synchronisation. Il doit vérifier que `RESTRICT` est la règle inter-modules par défaut, qu'une purge dispose d'un contrat de Job idempotent et qu'un tombstone ou journal d'effacement est prévu lorsque des projections, caches, synchronisations ou restaurations pourraient résurrectionner une donnée. Une politique ambiguë, incompatible avec les migrations ou permettant une cascade SQL implicite doit bloquer la composition.
@@ -307,7 +317,7 @@ La génération des SDK, du Developer Kit, de la CLI, des types et des exemples 
 
 La configuration effective des entitlements, politiques de quota, compteurs et réservations est fournie au runtime. Le build ne choisit pas de plan commercial, n'active pas d'entitlement de production et ne préinitialise aucune consommation. Les rôles `web`, `worker` et `scheduler` doivent utiliser les mêmes contrats et la même source persistante ou des providers explicitement compatibles ; un provider indisponible ne peut pas produire une décision positive implicite pour une opération protégée.
 
-La configuration effective offline-first est fournie au runtime et au client par une source validée. Le build ne précharge pas de réplique, de file de Commands, de bail d'accès offline ou de décision d'autorisation. La persistance locale du client peut survivre à un redémarrage lorsqu'elle est déclarée, mais elle reste distincte de la persistance autoritative de PostgreSQL ; aucun état nécessaire à l'autorité métier, à l'idempotence serveur ou à la reprise des Jobs ne doit dépendre du filesystem local d'un processus Pixs.
+La configuration effective offline-first est fournie au runtime et au client par une source validée. Le build ne précharge pas de réplique, de file de Commands, de bail d'accès offline ou de décision d'autorisation. La persistance locale du client peut survivre à un redémarrage lorsqu'elle est déclarée, mais elle reste distincte de la persistance de référence déclarée (PostgreSQL par défaut, OpenLDAP interne pour le périmètre Core explicitement migré) ; aucun état nécessaire à l'autorité métier, à l'idempotence serveur ou à la reprise des Jobs ne doit dépendre du filesystem local d'un processus Pixs.
 
 À la reconnexion, le runtime doit soumettre les Commands locales au backend et réévaluer l'identité, le `ScopeContext`, l'autorisation, l'entitlement, les quotas, la concurrence et la gouvernance. Le client peut signaler `OFFLINE` ou `STALE`, mais ne peut pas transformer une intention locale en succès métier. Les rôles `web`, `worker` et `scheduler` utilisent les mêmes contrats de synchronisation ; une perte de provider, une révocation ou un conflit doit produire un état contrôlé plutôt qu'une activation permissive.
 
@@ -330,6 +340,16 @@ Les informations nécessaires à l'idempotence des Commands — clé, empreinte 
 Les Jobs asynchrones et leurs états `PENDING`, `SCHEDULED`, `RUNNING`, `SUCCEEDED`, `RETRYING`, `FAILED`, `PAUSED`, `CANCELLED` ou `DEAD_LETTER` doivent être persistants lorsque leur reprise est nécessaire. Leur exécution ne doit pas dépendre uniquement de la durée de vie d'un processus ou d'un conteneur.
 
 Les états de Notification et les informations de déduplication doivent être persistants lorsqu'une reprise ou un diagnostic est nécessaire. Le packaging ne doit pas embarquer de provider de messagerie ou de secret de canal sans configuration runtime explicite.
+
+### 5.1 Protection et récupération des secrets avant production
+
+L’orientation validée le 19 octobre 2026 retient pour l’amorçage Debian local une protection systemd explicitement combinée `host+tpm2` lorsque la plateforme le permet. Les clés hôte/TPM, les credentials réels et le matériel de récupération restent hors des paquets, images et fixtures versionnées. Leur provisionnement relève d’une procédure runtime autorisée ; le build ne génère ni clé hôte ni secret de production.
+
+La qualification doit distinguer la preuve fonctionnelle C01, la preuve cryptographique de protection et la recette du produit distribué. Les essais futurs couvrent les deux facteurs, le refus sur autre machine ou données altérées, la politique de démarrage et ses mises à jour, puis une récupération isolée avec ancien hôte et TPM indisponibles. La réémission ou récupération protégée et le chiffrement sur le nouvel hôte doivent respecter les révocations courantes et les objectifs RPO/RTO. Le mode `null` du harnais C01 ne satisfait pas cette preuve ; un TPM manquant ou un secours non démontré ne doit pas déclencher de repli silencieux ni d’admission en production sous ce profil.
+
+Pour une composition distribuée sélectionnée, les validations distinguent le minimum local d’amorçage du coffre d’exploitation indépendant de la base métier Pixs. Elles couvrent droits par service, transport vérifié, credentials courts compatibles, expiration/révocation, panne sans fallback implicite, sauvegarde et restauration du coffre et de sa chaîne de déverrouillage sans dépendance circulaire. Aucune preuve n’annonce la protection d’une valeur déjà chargée contre un consommateur ou un hôte compromis.
+
+Les contrats et tâches sont préparés dans [la qualification host+tpm2 et de récupération](openspec/changes/qualify-pbo-bootstrap-secrets-host-tpm2/proposal.md) et [le coffre distribué](openspec/changes/add-distributed-runtime-secret-vault/proposal.md). Ces changes sont ouverts sans implémentation ni qualification exécutée à cette étape. Le premier complète les obligations d’installation/reprise et de preuve avant production ; le second n’active pas une composition distribuée et ne rend pas le coffre obligatoire pour le P0 initial local.
 
 ---
 
@@ -453,7 +473,7 @@ Les secrets Debian doivent être fournis par un mécanisme runtime approprié et
 
 Le paquet Debian ne doit contenir aucune base PostgreSQL préinitialisée représentant des données métier de production.
 
-PostgreSQL reste la source de vérité applicative indépendamment du mode de distribution.
+PostgreSQL reste le stockage applicatif par défaut indépendamment du mode de distribution. L'option postinstallation `core-storage` peut déplacer le périmètre Core vers l'OpenLDAP interne après migration réversible vérifiée ; elle ne retire pas PostgreSQL aux autres domaines. Le paquet ne peut pas activer cette option par une simple mise à niveau ou installation de dépendance.
 
 Le paquet peut fournir les mécanismes nécessaires à l'utilisation des migrations Pixs, mais les migrations restent gouvernées par l'architecture applicative et les spécifications correspondantes.
 
@@ -730,7 +750,7 @@ Le système de fichiers writable du conteneur doit être considéré comme éph�
 
 Les données métier ne doivent pas dépendre de la durée de vie du conteneur.
 
-PostgreSQL reste la source de vérité applicative.
+PostgreSQL reste le stockage applicatif par défaut. Un périmètre Core engagé vers l'OpenLDAP interne utilise son stockage persistant déclaré selon `core-storage` ; la recréation du conteneur ne modifie ni cette sélection ni sa génération et ne réactive pas une ancienne copie PostgreSQL.
 
 Les données persistantes relatives aux utilisateurs, identités numériques, comptes de service, méthodes d'authentification et révocations doivent rester dans les mécanismes de persistance prévus par Pixs. Elles ne doivent pas être stockées uniquement dans le système de fichiers éphémère du conteneur.
 
@@ -1332,10 +1352,12 @@ admissibles, la projection sortante sous autorité `PIXS`, les checkpoints, les
 retries, l'idempotence, les suppressions et tombstones. Ils doivent confirmer
 qu'une indisponibilité LDAP active le repli PostgreSQL et l'état `DEGRADED`,
 qu'une projection insuffisamment fraîche n'est pas lue après une mutation, et
-que LDAP ne peut ni importer une écriture Core, ni fournir une ACL, une
+que le rôle de projection LDAP ne peut ni importer une écriture Core, ni fournir une ACL, une
 décision d'autorisation, une révocation ou une authentification. Les fixtures,
 rapports et artefacts ne doivent contenir ni credential LDAP, ni DN de
 production, ni donnée personnelle réelle.
+
+La recette du rôle distinct de stockage Core OpenLDAP doit couvrir la conservation des utilisateurs, groupes et ACL avec leurs relations, l'aller PostgreSQL vers OpenLDAP, les mutations pendant cette période puis le retour vers PostgreSQL courant. Elle vérifie l'unicité de référence, les générations, les anciens écrivains, les retraits et l'absence de repli vers une copie périmée. Cette recette ne délègue ni l'évaluation ACL à slapd ni les secrets et sessions Auth au provider Core.
 
 Les tests du `RegionalPlacementProvider` doivent couvrir la résolution des régions logiques, le placement primaire, les réplicas, les régions de traitement, les sauvegardes, les clés, les transferts, les tombstones, la suppression, la restauration, la révocation et les limites de provider. Ils doivent vérifier la compatibilité de la `TenantPlacementPolicy`, l'absence de fuite entre tenants ou régions, la primaire unique, le fencing, l'epoch régional, la détection du split-brain et le refus d'une région non autorisée.
 

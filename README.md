@@ -1,6 +1,6 @@
 # Pixs
 
-**Version initiale — avancement OpenSpec : 55,79 %** — 135 changes archivés sur 242 au total, dont 107 ouverts. Relevé du 17 octobre 2026.
+**Version initiale — avancement OpenSpec : 56,88 %** — 153 changes archivés sur 269 au total, dont 116 ouverts. Relevé du 19 octobre 2026.
 
 Ce ratio suit les changes, sans mesurer leur taille ni remplacer une qualification fonctionnelle. [Méthode et suivi détaillé](PROJECT.md#34-openspec).
 
@@ -18,9 +18,21 @@ Cette documentation présente le périmètre cible du projet sans anticiper ces 
 
 ## OpenSpec
 
-OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 724 exigences et 824 scénarios**, recensés au 17 octobre 2026.
+OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 772 exigences et 892 scénarios**, recensés au 19 octobre 2026.
 
-Les **107 changes ouverts sont préparés**, dont **25 pour le premier socle installable P0**. Chaque exigence est reliée au travail prévu, aux écarts et aux références disponibles. Ce suivi est une analyse des documents et du code ; il ne prouve pas le bon fonctionnement du logiciel. Les audits de couverture et de parcours ont précisé les écarts, sans implémentation. La séparation PA/PZT et les modules de gestion PBO ont été intégrés au canon sur validation explicite ; leurs deltas en conservent la trace. Les autres ajouts proposés restent séparés du canon ci-dessus.
+L’inventaire recense **116 changes ouverts**, dont **27 rattachés au premier socle installable P0** : les 24 précédents et trois dossiers Auth proposés pour son extension. Le profil structurel [EntitlementSubjectType](openspec/changes/archive/2026-10-19-add-initial-entitlement-subject-type-v1/proposal.md), archivé le 19 octobre, reste distinct de la réalisation du moteur d’entitlements. Les matrices historiques relient les exigences examinées au travail prévu, aux écarts et aux références disponibles ; elles ne constituent pas une évaluation fonctionnelle actuelle des 772 exigences. La séparation PA/PZT et les modules de gestion PBO sont intégrés au canon. Les deltas encore proposés restent distincts du canon courant.
+
+Huit changes préparent [pixs.auth essentiel indépendant et autonome sur PostgreSQL par défaut](openspec/changes/define-essential-autonomous-auth-module/proposal.md), les méthodes locales/MFA, la forge d’identité, le rôle fournisseur d’identité, OpenLDAP propre, KDC propre, Active Directory propre (`pixs.auth.directory.ad`) et les sources externes installables séparément. Le [catalogue](openspec/changes/define-essential-autonomous-auth-module/design.md) précise sous-modules, frontières Core/Auth et dépendances. Ils proposent sept capacités nouvelles, 44 exigences ajoutées, une exigence modifiée et 67 scénarios supplémentaires nets ; leurs 73 tâches de réalisation restent non cochées. Aucun code ni service n’est produit et le canon courant reste inchangé.
+
+Un [complément de stockage Core réversible](openspec/changes/add-reversible-core-directory-storage/proposal.md) prépare le choix postinstallation PostgreSQL vers OpenLDAP interne puis le retour depuis les données LDAP courantes pour utilisateurs, groupes et ACL, avec leurs relations nécessaires. Il distingue stockage de référence et projection de consultation ; les décisions restent dans Pixs. Ses 12 exigences ajoutées, cinq modifiées, 16 scénarios supplémentaires nets et dix tâches de réalisation restent proposés, sans migration réelle ni synchronisation du canon.
+
+Le [registre consolidé des neuf changes](openspec/changes/define-essential-autonomous-auth-module/requirements.md) relie chaque déclaration à son dossier propriétaire et à ses deltas. Les 83 tâches de réalisation restent non cochées ; la préparation complète des documents n'annonce aucune disponibilité fonctionnelle.
+
+La [préparation C02 des primitives Core persistantes](openspec/changes/add-core-postgres-services/design.md) relie 72 exigences existantes à 89 références de scénarios et à 12 vérifications futures. Le [contrat documentaire R01 avec l’installateur C08](openspec/changes/add-installation-and-first-configuration/design.md) précise l’autorité d’amorçage, les refus et dix cas de recette, sans session préalable du compte futur ni permission métier déduite de C01. Ces rattachements et cas de recette ne s’ajoutent pas au canon et ne représentent pas des tests exécutés. D01–D04 restent adoptés en option A ; aucune implémentation ni production de code n’est autorisée par ces validations. Le [suivi détaillé](PROJECT.md#34-openspec) conserve les comptes et leurs limites.
+
+Le profil C00 a été adopté et archivé le 18 octobre 2026. C01 a été archivé le 19 octobre : il fournit le provider systemd et l’audit d’amorçage, avec une [qualification fonctionnelle bornée](openspec/changes/archive/2026-10-19-add-pbo-runtime-secret-provider/STATISTIQUES.md). Ces preuves historiques ne démontrent ni la reprise PostgreSQL C05/C08 ni une composition P0 installable et qualifiée.
+
+Deux changes documentaires préparent la [protection des secrets d’amorçage liée à l’hôte et au TPM2, avec récupération testée](openspec/changes/qualify-pbo-bootstrap-secrets-host-tpm2/proposal.md), et le [coffre indépendant pour les secrets d’exploitation distribués](openspec/changes/add-distributed-runtime-secret-vault/proposal.md). Ils n’ajoutent aucun code et ne synchronisent pas leurs deltas au canon. Le coffre reste conditionnel à la sélection d’une composition distribuée.
 
 Les priorités sont de finaliser les données et la sécurité, l’installation et l’interface, puis les tests et la livraison. Le [suivi OpenSpec dans PROJECT.md](PROJECT.md#34-openspec) détaille les étapes et les décisions restantes. Cette synthèse et le ratio en tête de page sont à actualiser pendant toute la vie de Pixs, au fil des changes et de leurs preuves.
 
@@ -29,12 +41,12 @@ Les priorités sont de finaliser les données et la sécurité, l’installation
 | Domaine | Choix d'architecture |
 | --- | --- |
 | Backend | Django porte les règles métier, transactions, commandes et API. |
-| Données | PostgreSQL est la source de vérité applicative. |
+| Données | PostgreSQL par défaut ; option proposée de migration postinstallation des utilisateurs, groupes et ACL vers OpenLDAP interne, avec retour vérifié vers PostgreSQL. |
 | Frontend | TanStack est la base de l'interface web. |
 | Réactivité | Electric est optionnel et intervient seulement lorsque la synchronisation est nécessaire. |
 | Identité et droits | `pixs.core` apporte utilisateurs, groupes, appartenances, ACL et permissions. |
 | Gestion des exécutants | `pixs.agent` gère PA hors PZT ; `pixs.pzt` gère l’exécutable réseau PZT indépendant. |
-| Authentification | Des providers indépendants peuvent fournir OIDC, SAML ou d'autres mécanismes. |
+| Authentification | Cible proposée : `pixs.auth` essentiel indépendant, local autonome sur PostgreSQL par défaut ; IdP et services propres OpenLDAP/KDC activables, sources externes installables séparément. |
 | API | HTTP/REST et contrats OpenAPI versionnés sont l'interface publique principale. |
 
 ## Architecture
@@ -55,7 +67,7 @@ flowchart TB
             A -. "contrats communs" .-> C
             Z -. "contrats communs" .-> C
         end
-        D[("PostgreSQL — source de vérité applicative")]
+        D[("PostgreSQL — stockage par défaut")]
         T["PZT local — exécutable indépendant"]
         P["PA local — fonctions système et utilisateur selon profil"]
         B --- D
@@ -122,7 +134,7 @@ Un composant déclare son identité, sa version, ses dépendances, ses capacité
 
 **Django stable courant.** Le projet devra suivre la dernière version stable officielle supportée par Django et adapter son code, son runtime et toutes ses dépendances à ses besoins. Chaque dépendance Python devra suivre sa dernière version compatible ; les versions ou plages imposées par Django auront priorité. Le [relevé horodaté et l'état de migration](TECHNICAL.md#411-politique-de-version-django) précisent la cible et les validations encore nécessaires.
 
-**Réactivité sous contrôle.** PostgreSQL et Django restent les autorités métier ; le client local et les mécanismes de synchronisation ne deviennent jamais une source de vérité.
+**Réactivité sous contrôle.** Django reste l'autorité métier et les données proviennent du stockage déclaré : PostgreSQL par défaut, ou OpenLDAP interne pour un périmètre Core explicitement migré. Le client local et les mécanismes de synchronisation ne deviennent jamais une source de vérité.
 
 ## Exécution et déploiement cibles
 

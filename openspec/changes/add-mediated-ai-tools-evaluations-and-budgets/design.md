@@ -79,7 +79,7 @@ Ajouter O15 comme dépendance ferme ; O24 fournit adapter/récupération, C05 au
 | [ai-agents #3](../../../openspec/specs/ai-agents/spec.md#L41) | ND | Tout effet proposé passe par une Command propriétaire autorisée ; outil non déclaré refusé. |
 | [ai-agents #4](../../../openspec/specs/ai-agents/spec.md#L53) | ND | Prompts et corpus versionnés, réservation O15 avant appel, arrêt au budget et coût réconcilié sans double imputation. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
 
 
 ## Dépendance issue de l’audit

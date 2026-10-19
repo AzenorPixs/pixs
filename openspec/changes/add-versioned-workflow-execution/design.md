@@ -78,4 +78,4 @@ Timers et reprises passent par C09 avec checkpoint et réconciliation des effets
 | [workflows #2](../../../openspec/specs/workflows/spec.md#L17) | ND | Droit/garde/version courants ; concurrence et refus sans mutation partielle. |
 | [workflows #3](../../../openspec/specs/workflows/spec.md#L26) | ND | État et opération durables, crash/rejeu sans transition doublée et effet externe inconnu réconcilié. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

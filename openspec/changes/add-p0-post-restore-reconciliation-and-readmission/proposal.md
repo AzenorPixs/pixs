@@ -16,7 +16,7 @@ Les deltas proposés restent dans le change ; aucune synchronisation ni archive 
 
 ## Dépendances et intégration
 
-Voir les responsabilités et conditions de [design.md](design.md) et le [plan global courant](../define-first-installable-pbo-profile/plan-global-preparation.md). Les producteurs précoces de contrats, les conditions d’activation et la recette finale restent distincts.
+Voir les responsabilités et conditions de [design.md](design.md) et le [plan global courant](../archive/2026-10-18-define-first-installable-pbo-profile/plan-global-preparation.md). Les producteurs précoces de contrats, les conditions d’activation et la recette finale restent distincts.
 
 ## Impact
 
@@ -24,6 +24,6 @@ Préparation documentaire du chemin P0 ; pas d’activation d’option extérieu
 
 ## Dépendances après audit transversal P0
 
-[C01](../add-pbo-runtime-secret-provider/proposal.md), [C03](../add-initial-authentication-and-sessions/proposal.md), [C04](../integrate-runtime-authorization-and-super-admin/proposal.md), [C05](../add-durable-minimized-audit/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md).
+[C01](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md), [C03](../add-initial-authentication-and-sessions/proposal.md), [C04](../integrate-runtime-authorization-and-super-admin/proposal.md), [C05](../add-durable-minimized-audit/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

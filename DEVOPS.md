@@ -1,10 +1,10 @@
 # DEVOPS.md — pixs
 
-Version : 0.5
+Version : 0.6
 
 Généré automatiquement par Debian Installeur Unifié (DIU).
-Début du relevé (UTC) : 2026-10-18T18:07:33Z
-Environnement d'exécution DIU : PROXMOX
+Début du relevé (UTC) : 2026-10-19T13:28:09Z
+Environnement d'exécution DIU : PHYSICAL
 
 Les sondes système concernent le contexte d'exécution DIU.
 Les outils DevOps sont interrogés avec les binaires indiqués dans leurs rubriques.
@@ -119,7 +119,7 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
 
 # PostgreSQL Serveur
 
-  * 16.14
+  * 16.15
   * 127.0.0.1:5432
   * Les variables PostgreSQL sont chargées depuis project.env
   * PG_HOST PG_PORT PG_DATABASE PG_USERNAME PG_PASSWORD
@@ -152,6 +152,12 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
 
   * 26.2.1
   * /home/devops/python/current/bin/pip3
+
+
+# Prompts
+
+  * Dossier des prompts : /home/devops/datas/prompts
+  * Index des prompts : /home/devops/datas/prompts/INDEX.md
 
 
 # Tests navigateurs extérieurs en mode headless

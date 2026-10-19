@@ -81,4 +81,4 @@ O18 est conditionnel aux profils comportant intentions hors ligne ; le mode en l
 | [realtime-collaboration #3](../../../openspec/specs/realtime-collaboration/spec.md#L36) | ND | Réévaluation avant rattrapage ; données révoquées absentes, O18 conditionnel aux intentions hors ligne. |
 | [realtime-collaboration #4](../../../openspec/specs/realtime-collaboration/spec.md#L47) | ND | Présence minimale expirant selon politique ; aucun contenu de document ou secret dans diagnostic. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

@@ -79,4 +79,4 @@ Exposer fraîcheur et état de reprise ; retard ou perte déclenche le comportem
 | [synchronization #2](../../../openspec/specs/synchronization/spec.md#L17) | ND | Filtrage à la source ; révocation/tenant/scope appliqués aux reprises et deltas sans confiance au client. |
 | [synchronization #3](../../../openspec/specs/synchronization/spec.md#L26) | ND | Version/fraîcheur/reprise déclarées ; perte/retard/resynchronisation contrôlés sans écriture directe depuis projection. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

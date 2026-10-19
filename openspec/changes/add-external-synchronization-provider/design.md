@@ -79,4 +79,4 @@ Réévaluer périmètre et secrets par références à chaque exécution/reprise
 | [external-synchronization #2](../../../openspec/specs/external-synchronization/spec.md#L23) | ND | Identité d’opération, checkpoint et réconciliation ; réponse perdue/rejeu sans double effet annoncé. |
 | [external-synchronization #3](../../../openspec/specs/external-synchronization/spec.md#L32) | ND | Réévaluation à chaque reprise, refus hors scope, diagnostic sans secret et effet inconnu explicite. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

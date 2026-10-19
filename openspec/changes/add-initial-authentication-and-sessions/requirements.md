@@ -1,6 +1,6 @@
 # Exigences de réalisation — C03
 
-Cette table est une référence au canon, sans delta et sans altération de ses exigences. Les textes complets et tous leurs scénarios restent applicables selon leurs conditions. Le profil C00 proposé ajoute les précisions de première livraison ; il ne supprime aucun MUST existant.
+Cette table est une référence au canon, sans delta et sans altération de ses exigences. Les textes complets et tous leurs scénarios restent applicables selon leurs conditions. Le profil C00 adopté le 18 octobre 2026 et intégré au canon apporte les précisions de première livraison ; il ne supprime aucun MUST existant.
 
 Les lignes et empreintes désignent l’instant de préparation ; une dérive impose une nouvelle lecture avant réalisation. La sélection ci-dessous part de la matrice et doit être affinée par clause, sans annoncer que tous les scénarios ont déjà été vérifiés.
 
@@ -44,3 +44,7 @@ Les lignes et empreintes désignent l’instant de préparation ; une dérive im
 ## Critère d’application du profil
 
 Le rôle ou la capacité doit être effectivement sélectionné pour revendiquer sa garantie. Les exigences transversales d’identité, d’autorisation, d’audit, de gouvernance et de reprise demeurent applicables aux fonctions réellement livrées. Aucun statut de la matrice ne vaut verdict fonctionnel actuel.
+
+## Raccordement aux propositions Auth du 19 octobre 2026
+
+Le [change d’architecture Auth](../define-essential-autonomous-auth-module/proposal.md) porte les deltas proposés pour `pixs.auth` essentiel indépendant, local autonome sur PostgreSQL par défaut. Ils ne sont pas intégrés à la matrice du canon ci-dessus et n’en modifient pas les empreintes. Les [méthodes locales/MFA](../add-auth-local-authenticators-and-mfa/proposal.md) et l’[enrôlement](../add-auth-identity-enrollment/proposal.md) complètent C03 sans dupliquer ses sessions. Avant réalisation, relier chaque scénario adopté aux preuves C03/C08/C17 et qualifier le périmètre réellement livré ; aucune recette n’est exécutée par ce raccordement.

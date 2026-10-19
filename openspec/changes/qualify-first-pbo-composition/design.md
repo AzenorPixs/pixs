@@ -2,7 +2,7 @@
 
 ## Statut et périmètre autorisé
 
-PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 formalise le profil ; ses précisions normatives restent proposées tant qu’elles ne sont pas approuvées/adoptées.
+PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 a été adopté et archivé le 18 octobre 2026 ; ses précisions normatives sont intégrées au canon. Les arbitrages propres au présent change restent à lever avant réalisation.
 
 ## État actuel vérifié
 
@@ -21,7 +21,11 @@ Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les stru
 
 Après C18, qualifier la composition réellement distribuée. Authentifier les preuves émises hors manifest par les suites versionnées ; distinguer unités, intégration réelle, conformité et manuel. Relier chaque scénario applicable à un verdict/version/artefact ; dimensions inconnues explicites, sans certificat global.
 
+Le [cadrage Auth du 19 octobre 2026](../define-essential-autonomous-auth-module/design.md) reste proposé sans synchronisation du canon. Après adoption, la recette du profil standard inclura `pixs.auth` essentiel indépendant, le local PostgreSQL sans réseau externe, méthodes locales/MFA et enrôlement minimal, révocation et secours propre. Elle vérifiera l’absence des connecteurs externes installés et de démarrage implicite d’OpenLDAP/KDC ou d’émission IdP. Les capacités optionnelles auront leurs qualifications distinctes. Aucun résultat historique n’est étendu à ce nouveau périmètre et aucune tâche de réalisation n’est cochée.
+
 ## Alternatives et frontière de conception
+
+La sélection de [core-storage](../add-reversible-core-directory-storage/design.md) ajoute une recette optionnelle distincte : PostgreSQL initial, migration utilisateurs/groupes/ACL et relations vers OpenLDAP interne, mutations via Pixs sur LDAP puis retour depuis l'état LDAP courant. Vérifier invariants, décisions ACL, générations, interruption/reprise et absence de repli périmé. Cette sélection ne retire pas PostgreSQL aux autres domaines et ne transforme pas la qualification du profil local initial en preuve de migration.
 
 Privilégier les mécanismes et dépendances existants. Une implémentation locale qui duplique les contrats, importe des tables privées ou sélectionne implicitement un provider est incompatible avec le cadrage. Toute technologie supplémentaire ou précision de comportement devra être justifiée avant réalisation ; la présence d’un paquet dans DEVOPS ne prouve ni sélection ni conformité.
 
@@ -91,7 +95,7 @@ Séparer PASS/FAIL/non exécuté et applicabilité motivée, avec écart, effet 
 | [service-objectives #2](../../../openspec/specs/service-objectives/spec.md#L21) | P | Rapport hors profil informatif ; aucune extrapolation d’un résultat ou d’une borne PZT à tout Pixs. |
 | [service-objectives #3](../../../openspec/specs/service-objectives/spec.md#L32) | ND | Campagne synthétique avec versions/charge/méthode, mesure/seuil/écart ; insatisfaction explicitement remontée. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
 
 ## Dépendances après audit transversal P0
 
@@ -152,4 +156,4 @@ Les pins observés et unités vertes ne valent pas qualification officielle du g
 
 Contrôles à intégrer : Deux builds contrôlés et graphe identique ; Identité de l’artefact de recette égale à celle livrée ; Budgets/support déclarés avec preuves et limites ; Strict global exit réel conservé, warnings non masqués.
 
-Voir [audit transversal durable](../define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
+Voir [audit transversal durable](../archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
