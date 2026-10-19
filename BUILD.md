@@ -331,6 +331,16 @@ Les Jobs asynchrones et leurs états `PENDING`, `SCHEDULED`, `RUNNING`, `SUCCEED
 
 Les états de Notification et les informations de déduplication doivent être persistants lorsqu'une reprise ou un diagnostic est nécessaire. Le packaging ne doit pas embarquer de provider de messagerie ou de secret de canal sans configuration runtime explicite.
 
+### 5.1 Protection et récupération des secrets avant production
+
+L’orientation validée le 19 octobre 2026 retient pour l’amorçage Debian local une protection systemd explicitement combinée `host+tpm2` lorsque la plateforme le permet. Les clés hôte/TPM, les credentials réels et le matériel de récupération restent hors des paquets, images et fixtures versionnées. Leur provisionnement relève d’une procédure runtime autorisée ; le build ne génère ni clé hôte ni secret de production.
+
+La qualification doit distinguer la preuve fonctionnelle C01, la preuve cryptographique de protection et la recette du produit distribué. Les essais futurs couvrent les deux facteurs, le refus sur autre machine ou données altérées, la politique de démarrage et ses mises à jour, puis une récupération isolée avec ancien hôte et TPM indisponibles. La réémission ou récupération protégée et le chiffrement sur le nouvel hôte doivent respecter les révocations courantes et les objectifs RPO/RTO. Le mode `null` du harnais C01 ne satisfait pas cette preuve ; un TPM manquant ou un secours non démontré ne doit pas déclencher de repli silencieux ni d’admission en production sous ce profil.
+
+Pour une composition distribuée sélectionnée, les validations distinguent le minimum local d’amorçage du coffre d’exploitation indépendant de la base métier Pixs. Elles couvrent droits par service, transport vérifié, credentials courts compatibles, expiration/révocation, panne sans fallback implicite, sauvegarde et restauration du coffre et de sa chaîne de déverrouillage sans dépendance circulaire. Aucune preuve n’annonce la protection d’une valeur déjà chargée contre un consommateur ou un hôte compromis.
+
+Les contrats et tâches sont préparés dans [la qualification host+tpm2 et de récupération](openspec/changes/qualify-pbo-bootstrap-secrets-host-tpm2/proposal.md) et [le coffre distribué](openspec/changes/add-distributed-runtime-secret-vault/proposal.md). Ces changes sont ouverts sans implémentation ni qualification exécutée à cette étape. Le premier complète les obligations d’installation/reprise et de preuve avant production ; le second n’active pas une composition distribuée et ne rend pas le coffre obligatoire pour le P0 initial local.
+
 ---
 
 # Partie I — Paquet Debian

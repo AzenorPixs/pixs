@@ -47,7 +47,7 @@ Expiration, fraîcheur maximale, rotation et révocation sont vérifiées avant 
 
 ### Requirement: Vocabulaire structurel préparatoire IdentityAssurance v1
 
-Le vocabulaire structurel préparatoire IdentityAssurance v1 MUST admettre exactement CLAIMED, VERIFIED et PROOFED. Toute autre valeur MUST être refusée. Sa représentation MUST NOT fournir de valeur par défaut, de classement ordinal, de mapping fournisseur ou de transition. Elle MUST NOT établir une preuve, calculer ou augmenter une assurance, authentifier, créer une session, accorder un accès, produire un audit ou persister une donnée. Les garanties existantes de séparation des dimensions et de non-surclassement MUST rester applicables.
+Le vocabulaire structurel préparatoire IdentityAssurance v1 MUST admettre exactement CLAIMED, VERIFIED et PROOFED. Toute autre valeur MUST être refusée. Sa représentation MUST NOT fournir de valeur par défaut, de classement ordinal, de mapping fournisseur ou de transition.
 
 #### Scenario: Valeurs fermées sans effet
 
@@ -63,3 +63,12 @@ Le vocabulaire structurel préparatoire IdentityAssurance v1 MUST admettre exact
 
 - **WHEN** Aucune valeur n’est fournie
 - **THEN** Le profil ne choisit aucun niveau par défaut
+
+### Requirement: Absence d'effets du vocabulaire IdentityAssurance v1
+
+La représentation IdentityAssurance v1 MUST NOT établir une preuve, calculer ou augmenter une assurance, authentifier, créer une session, accorder un accès, produire un audit ou persister une donnée. Les garanties existantes de séparation des dimensions et de non-surclassement MUST rester applicables.
+
+#### Scenario: Valeur représentée sans assurance calculée
+
+- **WHEN** une valeur du vocabulaire IdentityAssurance v1 est représentée
+- **THEN** aucune preuve, assurance calculée, authentification, session, permission, écriture d'audit ou persistance n'en découle
