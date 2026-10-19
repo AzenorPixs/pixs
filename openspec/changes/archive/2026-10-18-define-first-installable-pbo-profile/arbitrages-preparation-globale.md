@@ -1,0 +1,122 @@
+# Décisions et qualifications — préparation globale
+
+La création initiale des 80 dossiers n’avait nécessité aucun arbitrage supplémentaire : ce sont des propositions conditionnelles ancrées dans le canon existant. Les éléments ci-dessous sont des points de conception/qualification à traiter avant la réalisation concernée, **pas 80 validations à donner maintenant**.
+
+## Règle de tri
+
+1. Décision déjà validée (format, algorithme, valeur, alternative rejetée) : conserver ; la qualification ne la remplace pas.
+2. Résultat à mesurer/qualifier : définir plateforme/charge/méthode/preuve ; aucun résultat ou support inféré de DEVOPS.
+3. Choix réellement ouvert affectant sécurité, périmètre, compatibilité, exploitation ou ressources : présenter options, conséquences et recommandation avant réalisation. Pour PA/PZT, appliquer TECHNICAL §45.4, par lots de trois ; absence de réponse jamais assimilée à validation.
+
+## Dossiers de consolidation PA/PZT
+
+- **D1 — Plateformes et distribution :** OS/CPU/topologies, compilation/runtime/ABI, comptes et packaging. Nuitka/Cython et la séparation des quatre binaires sont déjà décidés.
+- **D2 — Contrats et sécurité :** identités, ancrages/provisioning, mappings, PKI, adapters et secours. WireGuard, formats/algorithmes et bornes validés dans les contrats ne sont pas remis au vote.
+- **D3 — Exploitation et recette :** charges, limites non fixées, RPO/RTO, méthodes de mesure et preuves. Les objectifs A05b et les budgets/rétentions validés sont conservés.
+
+## Points propres aux 80 dossiers
+
+| Lot | Dossier | Point à traiter avant réalisation |
+|---|---|---|
+| Z12 | [add-pzt-ca-hierarchy-rotation-and-recovery](../add-pzt-ca-hierarchy-rotation-and-recovery/design.md) | Profils de protection des CA, topologie, mécanismes d’exclusion et procédures de récupération ; algorithmes et durées validés restent opposables. |
+| PA01 | [add-pa-native-build-and-component-composition](../add-pa-native-build-and-component-composition/design.md) | Versions de Nuitka/Cython et graphe Python/ABI, format de distribution, noms des exécutables et architectures ; les outils eux-mêmes sont déjà décidés, leur installation n’est pas autorisée ici. |
+| PA02 | [add-pa-bootstrap-and-authority-binding](../add-pa-bootstrap-and-authority-binding/design.md) | Formats du provisionnement et ancrages, identité par relation, règles de conflit entre autorités ; aucune confiance par premier contact. |
+| Z03 | [add-pzt-authoritative-control-and-signed-receipts](../add-pzt-authoritative-control-and-signed-receipts/design.md) | Topologie et seuils de durabilité, mécanisme d’exclusion/promotion et interfaces des signataires ; préserver PostgreSQL autoritatif et les choix JWS/Ed25519 existants. |
+| Z13 | [add-pzt-offline-root-backup-and-recovery](../add-pzt-offline-root-backup-and-recovery/design.md) | Supports/lieux et procédures opérateur qualifiés, moyens complets de récupération ; aucun matériau de clé lu ou écrit pendant cette préparation. |
+| PA03 | [add-pa-system-session-lifecycle](../add-pa-system-session-lifecycle/design.md) | Adapters de démarrage/session, comptes/permissions et budgets encore ouverts par cible ; conserver pzt-daemon sans délai et les sept modes validés. |
+| Z02 | [add-pzt-network-mandates-and-fail-closed-revocation](../add-pzt-network-mandates-and-fail-closed-revocation/design.md) | Affectation des communications aux classes, mécanismes de protection/retrait et preuves d’état courant ; conserver les objectifs A05b déjà validés. |
+| Z09 | [add-pzt-service-identities-and-tpm-attestation](../add-pzt-service-identities-and-tpm-attestation/design.md) | Matrice d’admission TPM/vTPM, références/mesures et mappings d’identités ; posture déclarée ne prouve pas attestation. |
+| O06 | [add-bounded-business-rule-evaluation](../add-bounded-business-rule-evaluation/design.md) | DSL borné et résultats explicables, schémas des propriétaires ; la règle métier n’accorde aucune permission. |
+| Z06 | [add-pzt-public-control-contracts-and-state-streams](../add-pzt-public-control-contracts-and-state-streams/design.md) | Schémas et versions des messages, endpoints/permissions et implémentation de la table administrée ; ne pas rouvrir les choix HTTP/JSON, WebSocket/SSE et deltas typés. |
+| Z18 | [add-pzt-isolated-time-helper-and-ipc](../add-pzt-isolated-time-helper-and-ipc/design.md) | Interfaces IPC natives et identité de l’auxiliaire, preuves de fin effective ; formats et plafonds IPC/CPU/RAM/recréation déjà validés restent intacts. |
+| O05 | [add-versioned-workflow-execution](../add-versioned-workflow-execution/design.md) | DSL/contrats de définition, instances et migration compatible ; aucun changement silencieux de version d’instance. |
+| O10 | [add-scim-provisioning-through-owner-commands](../add-scim-provisioning-through-owner-commands/design.md) | Provider SCIM, authentification/mapping et politiques de désactivation ; pas d’écriture directe Core ni rôle implicite. |
+| O15 | [add-entitlements-and-atomic-quota-reservations](../add-entitlements-and-atomic-quota-reservations/design.md) | Schémas de politiques et unités de compte/réservation, concurrence et retour ; classification serveur et échec fermé. |
+| O21 | [generate-typescript-python-public-sdks](../generate-typescript-python-public-sdks/design.md) | Générateur et contrat de diffusion des SDK, versions et dépendances ; réutiliser uniquement les contrats publics réellement exposés. |
+| Z11 | [add-pzt-operational-certificate-renewal](../add-pzt-operational-certificate-renewal/design.md) | Mécanismes d’émission, distribution et preuves de retrait ; durées, chevauchements, renouvellement et clé retenue ne sont pas remis au vote. |
+| Z25 | [add-pzt-pa-admission-and-ephemeral-peer-generation](../add-pzt-pa-admission-and-ephemeral-peer-generation/design.md) | Matrice d’admission, stockage atomique jetons/générations et nettoyage ; aucune nouvelle identité par rejeu ou ancien snapshot. |
+| B01 | [complete-bulk-owner-admission-and-import-mapping](../complete-bulk-owner-admission-and-import-mapping/design.md) | Propriétaires réels, mappings versionnés et ports d’autorité/gouvernance ; vérifier les obligations non prises en charge avant d’ouvrir une exécution. |
+| O01 | [add-selected-object-storage-provider](../add-selected-object-storage-provider/design.md) | Provider concret, contrat/version et classes de stockage/rétention ; aucune dépendance ou bibliothèque nouvelle implicitement choisie. |
+| O03 | [add-authorized-search-projections](../add-authorized-search-projections/design.md) | Provider de recherche et déclarations de cohérence/fraîcheur ; filtrage et confidentialité à la source avant pagination. |
+| O04 | [add-derived-distributed-cache-provider](../add-derived-distributed-cache-provider/design.md) | Provider cache, partitionnement/TTL/anti-avalanche à déclarer ; aucune autorité de permission, d’idempotence ou de Job en cache. |
+| O07 | [add-external-synchronization-provider](../add-external-synchronization-provider/design.md) | Provider, direction, mappings, conflits et checkpoints ; aucune écriture privée de modèle hors Command propriétaire. |
+| O08 | [add-ldap-outbound-directory-projections](../add-ldap-outbound-directory-projections/design.md) | Provider/mapping LDAP et ressources gouvernées ; la projection est sortante et PostgreSQL reste autoritatif. |
+| O11 | [add-notification-preferences-and-selected-channels](../add-notification-preferences-and-selected-channels/design.md) | Canaux/providers, préférences/consentements applicables et modèles localisés ; aucun envoi n’est autorisé par cette préparation. |
+| O16 | [add-selected-reactive-synchronization](../add-selected-reactive-synchronization/design.md) | Ressources réactives et provider sélectionnés ; Electric seulement si retenu, aucune source de vérité client. |
+| O17 | [add-offline-eligible-local-projections](../add-offline-eligible-local-projections/design.md) | Éligibilité et catégories de données locales, chiffrement/protection et politique de purge ; pas de secret/jeton persistant par défaut. |
+| O20 | [add-governed-reporting-analytics](../add-governed-reporting-analytics/design.md) | Projections propriétaires, couche sémantique et exports retenus ; pas de nouveau référentiel métier autoritatif. |
+| O23 | [add-native-client-contract-and-session-support](../add-native-client-contract-and-session-support/design.md) | Plateformes/types de client et stockage de session qualifiés ; options offline seulement sélectionnées, pas imposées au client en ligne. |
+| O24 | [add-declared-ai-provider-and-governed-retrieval](../add-declared-ai-provider-and-governed-retrieval/design.md) | Provider/modèle et finalités/récupérations autorisées ; aucun accès fournisseur ni transmission de données pendant la préparation. |
+| O27 | [add-tenant-regional-placement-and-routing](../add-tenant-regional-placement-and-routing/design.md) | Topologie/régions, politiques tenant et transfert/résidence ; appliquer l’exception Super Admin dans son seul périmètre. |
+| Z01 | [add-pzt-wireguard-local-transport-and-filtering](../add-pzt-wireguard-local-transport-and-filtering/design.md) | Backends/interactions système Linux/Windows, transport local PZT/mTLS et permissions par profil ; les choix WireGuard et absence de contournement sont acquis. |
+| Z04 | [add-pzt-private-address-plan-and-ipv6-lifecycle](../add-pzt-private-address-plan-and-ipv6-lifecycle/design.md) | Périmètres et schémas d’allocation, contrôle des collisions et adapters de retrait ; préserver réglage IPv6 et décisions déjà prises. |
+| B04 | [complete-bulk-owner-conflict-strategies](../complete-bulk-owner-conflict-strategies/design.md) | Contrats de conflit et concurrence propres à chaque propriétaire ; les vocabulaires existants ne constituent pas une implémentation. |
+| B05 | [integrate-bulk-private-object-storage](../integrate-bulk-private-object-storage/design.md) | Provider objet réel et contrat d’intégrité/rétention via O01 ; conserver les primitives privées déjà livrées. |
+| B06 | [add-bulk-authorized-export-and-revocable-results](../add-bulk-authorized-export-and-revocable-results/design.md) | Projection/export par propriétaire et formats/résultats applicables ; réautorisation et révocation effectives, sans URL permissive par défaut. |
+| B07 | [integrate-bulk-inbox-outbox-and-publication](../integrate-bulk-inbox-outbox-and-publication/design.md) | Publisher/transport sélectionné, confirmation et réconciliation ; aucune promesse exactly-once ou broker externe imposé. |
+| O02 | [add-governed-document-repository-adapter](../add-governed-document-repository-adapter/design.md) | Référentiel/provider et modes retenus, mappings et garanties de conflit ; audit de l’existant avant création de code. |
+| O09 | [add-directory-read-freshness-and-postgres-fallback](../add-directory-read-freshness-and-postgres-fallback/design.md) | Limites déclarées de fraîcheur et contrat de consultation ; réévaluation/filtrage Pixs même lors du repli PostgreSQL. |
+| O12 | [add-durable-notification-delivery-and-deduplication](../add-durable-notification-delivery-and-deduplication/design.md) | Contrat de déduplication persistante, conservation et lettres mortes ; NotificationDeduplicationReferenceV1 doit être réutilisé. |
+| O13 | [add-feature-flag-administration-and-audit](../add-feature-flag-administration-and-audit/design.md) | Contrats d’administration et source versionnée, droits/audit et garde Super Admin ; aucune affectation dans les artefacts. |
+| O18 | [add-offline-intents-and-server-reconciliation](../add-offline-intents-and-server-reconciliation/design.md) | Stratégies de conflits par ressource et protocole de réconciliation ; intentions provisoires jusqu’au verdict serveur. |
+| O25 | [add-mediated-ai-tools-evaluations-and-budgets](../add-mediated-ai-tools-evaluations-and-budgets/design.md) | Catalogue d’outils, médiation/permissions et protocole d’évaluation/budgets ; résultat modèle sans pouvoir d’autorisation. |
+| O26 | [add-audit-integrity-and-verifiable-exports](../add-audit-integrity-and-verifiable-exports/design.md) | Mécanisme d’intégrité, stockage et preuves d’export/rétention ; choix non fixé par le canon à soumettre avant réalisation. |
+| O28 | [add-regional-authority-failover](../add-regional-authority-failover/design.md) | Autorité, exclusion/bascule et cohérence des dérivés ; aucun cerveau partagé ni transfert non autorisé. |
+| PA04 | [add-pa-authorized-instruction-execution](../add-pa-authorized-instruction-execution/design.md) | Catalogue exact des opérations, schémas d’instructions/mandats et preuves de postconditions ; aucun shell arbitraire ou compensation hors plan. |
+| Z07 | [add-pzt-path-discovery-and-encrypted-relays](../add-pzt-path-discovery-and-encrypted-relays/design.md) | Providers/interfaces de découverte/relais, placement/résidence et profils MTU/charge ; direct, QUIC DATAGRAM et secours WSS restent les choix validés. |
+| Z10 | [add-pzt-tls-policy-and-bounded-cipher-migration](../add-pzt-tls-policy-and-bounded-cipher-migration/design.md) | Interfaces d’application/reconnexion et qualification des unités de migration ; conserver TLS 1.3 sans 0-RTT et toutes bornes/chiffrements déjà validés. |
+| B02 | [add-bulk-atomic-import-execution](../add-bulk-atomic-import-execution/design.md) | Définir le contrat transactionnel propriétaire de l’import global ; ne pas requalifier ATOMIC_PER_CHUNK/REJECT déjà livré en ATOMIC. |
+| B03 | [add-bulk-best-effort-import-execution](../add-bulk-best-effort-import-execution/design.md) | Préciser les unités et résultats BEST_EFFORT dans les limites du canon ; aucune validation partielle assimilée à un effet confirmé. |
+| B08 | [integrate-bulk-worker-jobs-and-cancellation](../integrate-bulk-worker-jobs-and-cancellation/design.md) | Branchement worker et unités de reprise/annulation, acteur et configuration courants ; les baux Bulk ne deviennent pas le bail scheduler. |
+| O14 | [integrate-feature-flag-runtime-convergence](../integrate-feature-flag-runtime-convergence/design.md) | Convergence/invalidation par rôle et versions attendues ; reprendre cohortes/repli/expiration existants sans refaire l’algorithme. |
+| O19 | [add-authorized-realtime-collaboration](../add-authorized-realtime-collaboration/design.md) | Premières ressources collaboratives, modèle de session et adapter ; aucun choix CRDT/OT avant ces ressources. |
+| PA05 | [add-pa-desired-applied-configuration-and-drift](../add-pa-desired-applied-configuration-and-drift/design.md) | Contrats et schémas de configuration/retour d’état, référentiels de dérive et politique d’application ; observation distincte d’autorisation de corriger. |
+| PA06 | [add-pa-durable-technical-state-and-offline-recovery](../add-pa-durable-technical-state-and-offline-recovery/design.md) | Stockage technique admissible, durabilité et corruption/restauration, opérations hors ligne éligibles ; aucun état métier autoritatif local. |
+| Z05 | [add-pzt-managed-dns-service-and-pa-adapters](../add-pzt-managed-dns-service-and-pa-adapters/design.md) | Schémas/API du module DNS, placement des PA serveurs, bibliothèques et état appliqué ; DoT, caches, choix des serveurs, suffixes et alias suivent les décisions sources. |
+| Z08 | [add-pzt-gateway-and-controlled-failover-profile](../add-pzt-gateway-and-controlled-failover-profile/design.md) | Profil passerelle, ressources cibles et contrôles de convergence ; activation seulement après qualification du socle Z26 hors passerelle. |
+| B09 | [expose-bulk-versioned-http-api](../expose-bulk-versioned-http-api/design.md) | Routes/schémas/API majeures et conditions d’exposition ; annoncer seulement les modes effectivement qualifiés. |
+| B10 | [complete-bulk-validation-reports-and-recovery-proofs](../complete-bulk-validation-reports-and-recovery-proofs/design.md) | Accès/stockage/rétention des rapports et checkpoints, preuves d’intégrité/reprise ; structures et formats existants à préserver. |
+| O22 | [complete-developer-kit-and-cli-workflows](../complete-developer-kit-and-cli-workflows/design.md) | Parcours et surface CLI/kit sélectionnés, suites versionnées et exemples ; génération distincte d’activation. |
+| O31 | [qualify-selected-performance-budgets](../qualify-selected-performance-budgets/design.md) | Objectifs par profil, méthode/seuil/période/charge ; aucune valeur universelle inventée ni optimisation avant mesure. |
+| O32 | [complete-extension-trust-and-isolation-adapters](../complete-extension-trust-and-isolation-adapters/design.md) | Extensions et niveaux effectivement sélectionnés, adapter d’isolation/API limitées ; DEVELOPMENT interdit en production. |
+| PA07 | [add-pa-supervision-maintenance-and-quarantine](../add-pa-supervision-maintenance-and-quarantine/design.md) | Contrats de collecte/management, portées de maintenance et ressources par profil ; aucune réparation engagée par une lecture de diagnostic. |
+| Z14 | [add-pzt-monotonic-witness-and-key-sanitation](../add-pzt-monotonic-witness-and-key-sanitation/design.md) | Interfaces de l’ancrage monotone, preuves de continuité/perte et méthode d’assainissement qualifiée ; pas de conservation volontaire des anciennes protections. |
+| Z19 | [add-pzt-durable-helper-state-and-writer-exclusion](../add-pzt-durable-helper-state-and-writer-exclusion/design.md) | Stockage/adapters OS, publication atomique, verrou stable et preuve de continuité ; limites et schémas source conservés. |
+| B11 | [qualify-complete-bulk-runtime](../qualify-complete-bulk-runtime/design.md) | Matrice complète modes/propriétaires/PG et scénario par contrat B01–B14 ; profils déjà livrés en régression, pas en réimplémentation. |
+| O29 | [add-verified-component-registry](../add-verified-component-registry/design.md) | Sources/canaux du catalogue, contrats de retrait/révocation ; aucune installation ou activation depuis ce dossier. |
+| O30 | [add-health-gated-progressive-deployment](../add-health-gated-progressive-deployment/design.md) | Stratégies et fenêtres de coexistence, seuils health et routage ; rollback soumis à compatibilité prouvée. |
+| PA08 | [qualify-pa-platforms-and-r01-r68-matrix](../qualify-pa-platforms-and-r01-r68-matrix/design.md) | Matrice OS/CPU/topologie/bureaux/vTPM et scénarios applicables ; les plateformes demandées ne deviennent pas supportées sans preuve. |
+| Z15 | [add-pzt-evidence-dossier-and-bounded-validation](../add-pzt-evidence-dossier-and-bounded-validation/design.md) | Codec/schémas et stockage des pièces, qualification des plafonds et ressources ; SHA-384/Base64url et format décidés sont conservés. |
+| Z17 | [add-pzt-qualified-time-and-freshness-decisions](../add-pzt-qualified-time-and-freshness-decisions/design.md) | Adapters natifs de temps/qualité et preuves d’incertitude par plateforme ; aucune précision supposée ni horloge modifiée. |
+| Z20 | [add-pzt-bounded-telemetry-export-and-retention](../add-pzt-bounded-telemetry-export-and-retention/design.md) | Adapter/exporteur et stockage de télémétrie, qualification des ressources ; cadences/rétentions/plafonds/alertes décidés restent opposables. |
+| Z16 | [add-pzt-proof-admission-and-attempt-reconciliation](../add-pzt-proof-admission-and-attempt-reconciliation/design.md) | Modèle persistant cycles/tentatives/marqueurs et mécanisme de réconciliation ; conserver délais et conditions de retrait validés sans nouvelle grâce. |
+| Z21 | [add-pzt-telemetry-purge-jobs-and-leases](../add-pzt-telemetry-purge-jobs-and-leases/design.md) | Schéma/curseur de purge et réconciliation transactionnelle, providers et preuve de fencing ; toutes cadences/tailles/durées validées restent applicables. |
+| Z22 | [add-pzt-canonical-purge-manifests-and-integrity](../add-pzt-canonical-purge-manifests-and-integrity/design.md) | Codec fermé et JCS qualifié, preuve d’intégrité/confinement et stratégie de stockage ; ne pas élargir les plafonds ou réécrire les originaux. |
+| Z23 | [add-pzt-controlled-manifest-incident-rearm](../add-pzt-controlled-manifest-incident-rearm/design.md) | Commande/dossiers et transaction de réarmement, opérateur admissible et preuve de réconciliation ; conserver durées/versions/limites existantes. |
+| Z24 | [add-pzt-rearm-status-stream-and-reconciliation](../add-pzt-rearm-status-stream-and-reconciliation/design.md) | Interfaces du canal mutualisé et réconciliation de statut ; fenêtre de rejeu et autorité courante déjà spécifiées. |
+| Z26 | [qualify-active-pzt-contracts-and-profiles](../qualify-active-pzt-contracts-and-profiles/design.md) | Composition de recette, OS/CPU/providers/charges et scénarios applicables ; passage au profil passerelle seulement après première qualification du socle. |
+| PA09 | [build-and-publish-independent-pa-debian-package](../build-and-publish-independent-pa-debian-package/design.md) | Noms/versions/comptes/permissions du paquet, compatibilité PBO distant et recette des artefacts ; signature/publication nécessiteront leur autorisation propre. |
+| X01 | [build-and-qualify-pixs-docker-image](../build-and-qualify-pixs-docker-image/design.md) | Base/outils/architecture, rôles/comptes/supervision et permissions du profil ; trois binaires PA seulement, pas de binaire utilisateur. |
+| Q01 | [qualify-selected-extended-pixs-compositions](../qualify-selected-extended-pixs-compositions/design.md) | Profils sélectionnés, critères d’applicabilité et versions exactes ; les dépendances de cible globale ne forcent pas toutes les options dans un profil réduit. |
+
+## Articulation avec le premier P0
+
+Les décisions ouvertes de C00–C19 restent dans leurs conceptions et dans [C00](design.md). La préparation globale n’approuve pas un provider de secrets, un mécanisme de session, une autorité de signature ou une nouvelle dépendance. Une demande de réalisation devra préciser son périmètre ; la préparation seule n’autorise pas le codage.
+
+
+
+## Arbitrages validés pendant l’audit du 17 octobre 2026
+
+| Décision | Validation explicite | Effet limité à la préparation |
+|---|---|---|
+| N01 urgence PBO | « Créer le change dédié (recommandé) » | [Change dédié](../add-pbo-security-quarantine-and-revocation/proposal.md), séparé de la maintenance C15 ; prérequis de C18/C17. |
+| N02 frontière native/hors ligne | « Coffre natif séparé des données hors ligne (recommandé) » | [Deltas proposés](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) pour native-clients/offline-first ; aucune synchronisation ni coffre implémenté. |
+
+L’audit des 94 NE est terminé statiquement ; il remplace la barrière « audit de présence encore nécessaire » pour ces seules lignes. Les choix de providers, ressources, mécanismes, seuils et garanties de reprise listés par les conceptions restent à revoir avant leur code. Les 31 conceptions approfondies précisent maintenant contrats, autorité, effets, pannes et critères. Aucun autre change supplémentaire n’est démontré nécessaire par cet audit borné ; une nouvelle découverte ou un autre profil pourra modifier cet inventaire sur validation.
+
+
+## Validations de l’audit transversal P0
+
+Le développeur a validé le 17 octobre 2026 « Préparer les trois changes dédiés (recommandé) » pour [N03](../add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md), y compris la rédaction des deltas N04/N05, puis « Préparer N06 dédié (recommandé) » pour [le kit minimal](../add-minimal-p0-contract-conformance-kit/proposal.md).
+
+La validation couvre la préparation et la répartition de responsabilités exposées par les propositions d’audit. Elle n’autorise ni implémentation, ni intégration au canon, ni choix d’outil/serveur/proxy/coffre/algorithme, ni clé réelle, installation, restauration, publication ou archive. Les 17 parcours complètent les dossiers existants ; aucun autre nouveau périmètre n’est arbitré implicitement. Le [rapport transversal](audit-transversal-p0.md) distingue les décisions résolues et les barrières avant code.

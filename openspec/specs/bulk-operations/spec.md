@@ -546,6 +546,40 @@ Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses 
 - **WHEN** le port retourne DENY ou UNAVAILABLE après application des règles canoniques
 - **THEN** aucune action demandée n’est exécutée et aucun contexte exploitable n’est fourni
 
+### Requirement: Résolution de gouvernance GovernanceResolutionV1 fermée
+
+La réponse GovernanceResolutionV1 MUST respecter les six clés, types, décisions et garanties de l'annexe correspondante, avec résolution effective et capture immuable. Une validation structurelle seule MUST NOT établir cette résolution.
+
+#### Scenario: Résolution positive
+
+- **WHEN** le port composé résout effectivement politique, classification et obligations pour l'autorité courante
+- **THEN** la résolution est RESOLVED avec contexte serveur lié, politique, profil et obligations explicites capturés immuables
+
+#### Scenario: Refus fermé
+
+- **WHEN** la gouvernance refuse pour l'autorité courante
+- **THEN** la résolution est DENY avec resolved_context, policy, profile et obligations à None, sans contexte exploitable ni repli
+
+#### Scenario: Indisponible ou exception
+
+- **WHEN** le port composé est indisponible ou lève une exception
+- **THEN** la résolution est UNAVAILABLE avec les quatre données résolues à None, sans détail brut ni transfert d'exception
+
+#### Scenario: Structure ou type étranger refusé
+
+- **WHEN** une clé manque ou est inconnue, ou le candidat, une clé ou une valeur n'a pas le type exact attendu
+- **THEN** la résolution est refusée avant comportement, parsing ou I/O, sans écho de valeur ni invocation étrangère
+
+#### Scenario: Obligations non résolues
+
+- **WHEN** les obligations ne sont pas effectivement résolues en tuple exact
+- **THEN** aucune lecture, transfert ou mutation n'est autorisée ; un tuple vide exige une absence explicitement résolue, jamais un défaut
+
+#### Scenario: Contexte divergent refusé
+
+- **WHEN** le contexte résolu ne correspond pas au sujet, tenant, périmètre et contexte de l'autorité courante
+- **THEN** la résolution est refusée sans repli ni contexte exploitable
+
 ### Requirement: Runtime Bulk v1 B05 — Parsing et mapping
 
 Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses B05 et les annexes de données logiques correspondantes ci-dessous. Ces règles MUST NOT modifier les profils préparatoires livrés.
@@ -574,6 +608,26 @@ Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses 
 - **WHEN** une demande tente de passer de COMPLETED à RUNNING
 - **THEN** la transition est refusée sans réinitialiser progression, checkpoint ou échéance
 
+#### Scenario: Demande d’annulation autorisée sans terminalisation
+
+- **WHEN** une autorité serveur courante autorise CANCEL sur une opération non terminale avec la révision attendue courante
+- **THEN** la demande persiste uniquement cancellation_requested et la révision suivante, sans changer progression, checkpoint, échéance, Job ou schedule et sans prétendre annuler une unité déjà engagée
+
+#### Scenario: Demande refusée sans altération concurrente
+
+- **WHEN** l’autorité CANCEL refuse ou reste indisponible, ou que la primitive refuse une opération terminale ou une révision périmée
+- **THEN** la demande est refusée sans altérer l’opération ni ses effets engagés, et aucune requête SQL Bulk ne précède l’autorisation serveur
+
+#### Scenario: Transition d’annulation serveur autorisée et coopérative
+
+- **WHEN** une autorité serveur courante autorise CANCEL pour une opération non terminale dont le flag cancellation_requested est True et la révision attendue courante
+- **THEN** la transition persiste uniquement CANCELLED et la révision suivante sous les verrous et la matrice canoniques, conserve les effets déjà engagés et tous les autres champs, et interdit de nouvelles unités protégées
+
+#### Scenario: Transition d’annulation refusée sans altération
+
+- **WHEN** l’autorité CANCEL refuse ou reste indisponible, le flag n’est pas True, la révision est périmée ou l’opération est terminale
+- **THEN** la transition est refusée sans altération de l’opération ni de ses effets, aucune requête SQL Bulk ne précède l’autorité serveur et aucun retry ou rebase automatique n’est réalisé
+
 ### Requirement: Runtime Bulk v1 B07 — Modes et conflits
 
 Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses B07 et les annexes de données logiques correspondantes ci-dessous. Ces règles MUST NOT modifier les profils préparatoires livrés.
@@ -587,6 +641,21 @@ Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses 
 
 - **WHEN** un module ne garantit pas la transaction requise pour ATOMIC
 - **THEN** le mode est refusé avant mutation sans fallback vers BEST_EFFORT
+
+#### Scenario: Validation seule après flux complet prouvé
+
+- **WHEN** un import VALIDATE_ONLY présente un flux qualifié complet avec intégrité vérifiée et fermeture réussie avant tout appel propriétaire
+- **THEN** le rapport, la progression et le checkpoint finaux sont établis sous gardes actuelles avec applied_rows à zéro et sans exécution propriétaire
+
+#### Scenario: Interruption sans validation complète prétendue
+
+- **WHEN** une limite, une annulation ou une perte de bail interrompt la validation
+- **THEN** aucune validation complète ni mutation ni persistance forcée n'est prétendue et l'état reste explicite à réconcilier
+
+#### Scenario: Chunk ATOMIC_PER_CHUNK REJECT engagé sans rejou
+
+- **WHEN** une opération IMPORT ATOMIC_PER_CHUNK REJECT à validation complète prouvée applique un chunk sous autorité EXECUTE et gouvernance RESOLVED actuelles, avec participation propriétaire PostgreSQL déclarée au même alias et unité protégée même thread et même transaction
+- **THEN** le chunk est engagé avec checkpoint et outbox requise dans la même transaction, les chunks déjà engagés sont conservés, aucun rejou n'est compté comme nouvel effet et un rejet propriétaire ou conflit REJECT annule le chunk courant entier sans mutation partielle
 
 ### Requirement: Runtime Bulk v1 B12 — Export et résultats
 
@@ -657,7 +726,7 @@ Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk
 - Les ports MUST provenir de composants déclarés et composés côté serveur ; le payload MUST NOT fournir de callback, code, provider, credentials ou contexte d’autorité.
 - Le port d’autorisation MUST être consulté à l’admission, avant exécution/reprise, avant chaque unité mutatrice et à l’accès au résultat ; DENY et UNAVAILABLE MUST refuser l’action sans repli.
 - Le port d’autorisation MUST résoudre acteur, tenant et scope depuis l’autorité serveur et appliquer les exceptions canoniques existantes sans les transférer au worker.
-- La gouvernance MUST être résolue avant lecture, transfert ou mutation ; les secrets et charges interdites MUST NOT entrer dans un fichier de résultat, diagnostic, événement ou journal.
+- La gouvernance MUST être résolue par GovernanceResolutionV1 avant lecture, transfert ou mutation ; les secrets et charges interdites MUST NOT entrer dans un fichier de résultat, diagnostic, événement ou journal.
 - Une capacité technique non implémentée, un schéma invalide ou une garantie transactionnelle absente MUST produire un refus explicite ; une dérogation métier MUST NOT fabriquer cette capacité.
 - Une décision ALLOW MUST fournir les références serveur résolues du sujet, tenant, périmètre et contexte ; DENY ou UNAVAILABLE MUST NOT fournir de contexte exploitable.
 
@@ -1027,6 +1096,27 @@ Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk
 ]
 ```
 
+### Schéma logique GovernanceResolutionV1
+
+```json
+[
+  ["resolution_version", "str exacte", "1.0.0 uniquement"],
+  ["decision", "str exacte RESOLVED | DENY | UNAVAILABLE", "aucun défaut"],
+  ["resolved_context", "dict exact ServerContextRefsV1 | None", "lié à l'autorité courante sur RESOLVED ; None sur DENY/UNAVAILABLE"],
+  ["policy", "dict exact à trois clés | None", "obligatoire sur RESOLVED ; None sur DENY/UNAVAILABLE"],
+  ["profile", "DataGovernanceProfile exact | None", "profil existant à quinze champs sur RESOLVED ; None sur DENY/UNAVAILABLE"],
+  ["obligations", "tuple exact de str opaques | None", "explicite sur RESOLVED ; None sur DENY/UNAVAILABLE"]
+]
+```
+
+- La réponse MUST être un dict exact aux six clés explicites, avec resolution_version exactement 1.0.0 ; les types des clés puis des valeurs MUST être contrôlés avant comportement, parsing, comparaison ou I/O, selon les règles runtime B02.
+- RESOLVED MUST provenir d'une résolution effective du port déclaré et composé côté serveur ; les quatre données résolues MUST être explicites et non None, et resolved_context MUST correspondre aux quatre références de l'autorité courante.
+- policy MUST porter exactement policy_reference str opaque, policy_version SemVer complète et limits respectant intégralement PolicyV1 existant ; les limites numériques MUST NOT être inventées ou fournies par défaut.
+- profile MUST réutiliser le DataGovernanceProfile existant à quinze champs sans modifier ses profils préparatoires : profile_version, data_asset_id, owner_component, source_of_truth, data_classes, confidentiality, personal_data, purpose_refs, retention_policy, deletion_policy, residency_constraints, authorized_consumers, processor_refs, export_policy et lineage. Sa seule validation structurelle MUST NOT prouver une résolution.
+- obligations MUST être un tuple exact de str exacts opaques non vides, sans normalisation ; un tuple vide MUST exprimer une absence effectivement résolue par le serveur et MUST NOT résulter d'un défaut.
+- DENY et UNAVAILABLE MUST porter resolved_context, policy, profile et obligations à None ; un contexte exploitable ou un repli MUST NOT être produit. Une exception de port MUST être refusée sans détail brut ni transfert d'exception.
+- Les valeurs résolues MUST être capturées immuables avant usage, sans alias mutable du fournisseur. Le payload MUST NOT fournir callback, code, provider, credentials ou contexte d'autorité, ni transformer un profil structurel ou une référence opaque en preuve de résolution.
+
 ### Schéma logique MappingDescriptorV1
 
 ```json
@@ -1296,7 +1386,7 @@ Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk
   [
     "GovernancePort",
     "resolve(contexte_serveur, contrat, références)",
-    "politique immuable versionnée, classification et obligations résolues ; refus fermé sinon"
+    "GovernanceResolutionV1 : politique immuable versionnée, classification et obligations résolues ; refus fermé sinon"
   ],
   [
     "ObjectStoragePort",

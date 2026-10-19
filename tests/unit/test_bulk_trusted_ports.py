@@ -90,6 +90,16 @@ class _Audit:
         raise AssertionError("no fictitious audit append")
 
 
+class _Publisher:
+    def publish_declared_event(self, *args, **kwargs):
+        raise AssertionError("publisher must not be executed")
+
+
+class _Download:
+    def authorize_then_issue_temporary_reference(self, *args, **kwargs):
+        raise AssertionError("le téléchargement ne doit pas être exécuté")
+
+
 def _kwargs(authority=None, resolver=None):
     return {
         "authority_adapter": _Authority() if authority is None else authority,
@@ -122,6 +132,7 @@ class BulkTrustedPortsTests(unittest.TestCase):
             "declare_bulk_mapping_descriptor", "compose_bulk_trusted_ports",
             "validate_governance_contract", "validate_owner_command_contract",
             "validate_owner_projection_contract", "validate_audit_contract",
+            "validate_publisher_contract", "validate_download_contract",
         })
         authority, resolver = _Authority(), _Resolver()
         bundle, _ = _compose(authority, resolver)
@@ -438,6 +449,547 @@ class BulkTrustedPortsTests(unittest.TestCase):
         self.assertEqual(snapshot.as_values(), _authority())
         self.assertEqual(getters, [])
         self.assertEqual(len(authority.calls), 1)
+
+
+    def test_publisher_contract_accepts_python_methods_without_invocation(self):
+        self.assertEqual(ports.validate_publisher_contract(_Publisher()), [])
+        calls = []
+        class Attached:
+            pass
+        def publish_declared_event(*args, **kwargs):
+            calls.append("executed")
+            raise AssertionError("publisher must not be executed")
+        attached = Attached()
+        attached.publish_declared_event = publish_declared_event
+        self.assertEqual(ports.validate_publisher_contract(attached), [])
+        attached.publish_declared_event = publish_declared_event.__get__(attached, Attached)
+        self.assertEqual(ports.validate_publisher_contract(attached), [])
+        self.assertEqual(calls, [])
+
+    def test_publisher_contract_refuses_foreign_methods_without_echo(self):
+        class ForeignCallable:
+            def __call__(self, *args, **kwargs):
+                raise AssertionError("foreign callable executed")
+            def __str__(self):
+                raise AssertionError("foreign value formatted")
+            def __repr__(self):
+                raise AssertionError("foreign value represented")
+        class ForeignPublisher:
+            publish_declared_event = ForeignCallable()
+        class BuiltinPublisher:
+            publish_declared_event = len
+        class TextPublisher:
+            publish_declared_event = "LEAK-MARKER"
+        for component in (None, object(), _Audit(), _Publisher,
+                          ForeignPublisher(), BuiltinPublisher(), TextPublisher()):
+            diagnostics = ports.validate_publisher_contract(component)
+            self.assertIs(type(diagnostics), list)
+            self.assertEqual(len(diagnostics), 1)
+            for diagnostic in diagnostics:
+                self.assertIs(type(diagnostic), Diagnostic)
+                self.assertEqual(diagnostic.step, VALIDATE)
+                self.assertTrue(diagnostic.element.startswith("bulk_publisher_port."))
+                self.assertNotIn("LEAK-MARKER", str(diagnostic))
+
+    def test_publisher_contract_never_executes_dynamic_lookup_or_descriptor(self):
+        calls = []
+        class PropertyPublisher:
+            @property
+            def publish_declared_event(self):
+                calls.append("property")
+                raise AssertionError("dynamic property")
+        class DynamicPublisher:
+            def __getattr__(self, name):
+                calls.append("getattr")
+                raise AssertionError("dynamic getattr")
+        class Descriptor:
+            def __get__(self, instance, owner):
+                calls.append("descriptor")
+                raise AssertionError("dynamic descriptor")
+        class DescriptorPublisher:
+            publish_declared_event = Descriptor()
+        for component in (PropertyPublisher(), DynamicPublisher(), DescriptorPublisher()):
+            self.assertTrue(ports.validate_publisher_contract(component))
+        self.assertEqual(calls, [])
+
+    def test_publisher_contract_preserves_existing_decorator_capture_policy(self):
+        class StaticPublisher:
+            @staticmethod
+            def publish_declared_event(*args, **kwargs):
+                raise AssertionError("static publisher executed")
+        class ClassPublisher:
+            @classmethod
+            def publish_declared_event(cls, *args, **kwargs):
+                raise AssertionError("class publisher executed")
+        for component in (StaticPublisher(), ClassPublisher()):
+            self.assertTrue(ports.validate_publisher_contract(component))
+
+    def test_download_contract_accepts_python_methods_without_invocation(self):
+        self.assertEqual(ports.validate_download_contract(_Download()), [])
+        calls = []
+        class Attached:
+            pass
+        def authorize_then_issue_temporary_reference(*args, **kwargs):
+            calls.append("executed")
+            raise AssertionError("le téléchargement ne doit pas être exécuté")
+        attached = Attached()
+        attached.authorize_then_issue_temporary_reference = authorize_then_issue_temporary_reference
+        self.assertEqual(ports.validate_download_contract(attached), [])
+        attached.authorize_then_issue_temporary_reference = authorize_then_issue_temporary_reference.__get__(attached, Attached)
+        self.assertEqual(ports.validate_download_contract(attached), [])
+        self.assertEqual(calls, [])
+
+    def test_download_contract_refuses_foreign_methods_without_echo(self):
+        class ForeignCallable:
+            def __call__(self, *args, **kwargs):
+                raise AssertionError("appel étranger exécuté")
+            def __str__(self):
+                raise AssertionError("valeur étrangère formatée")
+            def __repr__(self):
+                raise AssertionError("valeur étrangère représentée")
+        class ForeignDownload:
+            authorize_then_issue_temporary_reference = ForeignCallable()
+        class BuiltinDownload:
+            authorize_then_issue_temporary_reference = len
+        class TextDownload:
+            authorize_then_issue_temporary_reference = "LEAK-MARKER"
+        for component in (None, object(), _Audit(), _Download,
+                          ForeignDownload(), BuiltinDownload(), TextDownload()):
+            diagnostics = ports.validate_download_contract(component)
+            self.assertIs(type(diagnostics), list)
+            self.assertEqual(len(diagnostics), 1)
+            for diagnostic in diagnostics:
+                self.assertIs(type(diagnostic), Diagnostic)
+                self.assertEqual(diagnostic.step, VALIDATE)
+                self.assertTrue(diagnostic.element.startswith("bulk_download_port."))
+                self.assertNotIn("LEAK-MARKER", str(diagnostic))
+
+    def test_download_contract_never_executes_dynamic_lookup_or_descriptor(self):
+        calls = []
+        class PropertyDownload:
+            @property
+            def authorize_then_issue_temporary_reference(self):
+                calls.append("property")
+                raise AssertionError("propriété dynamique exécutée")
+        class DynamicDownload:
+            def __getattr__(self, name):
+                calls.append("getattr")
+                raise AssertionError("accès dynamique exécuté")
+        class Descriptor:
+            def __get__(self, instance, owner):
+                calls.append("descriptor")
+                raise AssertionError("descripteur dynamique exécuté")
+        class DescriptorDownload:
+            authorize_then_issue_temporary_reference = Descriptor()
+        for component in (PropertyDownload(), DynamicDownload(), DescriptorDownload()):
+            self.assertTrue(ports.validate_download_contract(component))
+        self.assertEqual(calls, [])
+
+    def test_download_contract_preserves_existing_decorator_capture_policy(self):
+        class StaticDownload:
+            @staticmethod
+            def authorize_then_issue_temporary_reference(*args, **kwargs):
+                raise AssertionError("méthode statique de téléchargement exécutée")
+        class ClassDownload:
+            @classmethod
+            def authorize_then_issue_temporary_reference(cls, *args, **kwargs):
+                raise AssertionError("méthode de classe de téléchargement exécutée")
+        for component in (StaticDownload(), ClassDownload()):
+            self.assertTrue(ports.validate_download_contract(component))
+
+
+class _GovernanceResolve3:
+    def __init__(self, response=None, fail=False):
+        self.calls = []
+        self.response = response
+        self.fail = fail
+
+    def resolve(self, context, contract, references):
+        self.calls.append((context, contract, references))
+        if self.fail:
+            raise _ProviderFailure()
+        return self.response
+
+
+def _valid_profile():
+    return ports.DataGovernanceProfile(
+        profile_version="1.0.0",
+        data_asset_id="asset-test",
+        owner_component="owner-test",
+        source_of_truth="truth-test",
+        data_classes=frozenset({"classe-test"}),
+        confidentiality=ports.ConfidentialityLevel.INTERNAL,
+        personal_data=ports.PersonalDataLevel.NONE,
+        purpose_refs=frozenset({"finalite-test"}),
+        retention_policy="retention-test",
+        deletion_policy="deletion-test",
+        residency_constraints=frozenset({"residence-test"}),
+        authorized_consumers=frozenset({"conso-test"}),
+        processor_refs=frozenset({"proc-test"}),
+        export_policy="export-test",
+        lineage="lignee-test",
+    )
+
+
+def _valid_limits():
+    from unit.test_bulk_execution_values import _valid_policy
+
+    return _valid_policy()
+
+
+def _resolved_response(policy_ref="policy-test", policy_ver="1.0.0", obligations=("obligation-test",)):
+    context = _context()
+    limits = _valid_limits()
+    return {
+        "resolution_version": "1.0.0",
+        "decision": "RESOLVED",
+        "resolved_context": dict(context),
+        "policy": {
+            "policy_reference": policy_ref,
+            "policy_version": policy_ver,
+            "limits": limits,
+        },
+        "profile": _valid_profile(),
+        "obligations": tuple(obligations) if obligations is not None else None,
+    }
+
+
+def _compose_gov(governance):
+    kwargs = _kwargs()
+    kwargs["governance_adapter"] = governance
+    return ports.compose_bulk_trusted_ports(**kwargs), kwargs
+
+
+class GovernanceResolutionTests(unittest.TestCase):
+    def _authority_snapshot(self):
+        from pixs.backend.bulk_runtime_contracts import _build_authority_assessment_snapshot
+
+        return _build_authority_assessment_snapshot(_authority())
+
+    def test_resolved_valid_single_call_no_alias(self):
+        gov = _GovernanceResolve3(response=None)
+        composed, _ = _compose_gov(gov)
+        snapshot = self._authority_snapshot()
+        contract = _mapping()
+        references = ("policy-test", "1.0.0")
+        gov.response = _resolved_response()
+        result, diags = composed.resolve_governance(
+            server_context=object(),
+            authority_snapshot=snapshot,
+            governance_contract=dict(contract),
+            governance_references=tuple(references),
+        )
+        self.assertEqual(diags, [])
+        self.assertIsNotNone(result)
+        self.assertEqual(len(gov.calls), 1)
+        ctx, cont, refs = gov.calls[0]
+        self.assertEqual(len(gov.calls[0]), 3)
+        self.assertEqual(refs, references)
+        before = result.as_values()
+        gov.response["resolved_context"]["subject_id"] = "mute"
+        gov.response["policy"]["limits"]["max_rows"] = 1
+        gov.response["obligations"] = ("mute",)
+        object.__setattr__(gov.response["profile"], "data_asset_id", "mute")
+        after = result.as_values()
+        self.assertEqual(before, after)
+        self.assertEqual(after["resolved_context"]["subject_id"], "actor-test")
+        self.assertEqual(after["obligations"], ("obligation-test",))
+
+    def test_empty_tuple_accepted_none_refused(self):
+        gov = _GovernanceResolve3()
+        composed, _ = _compose_gov(gov)
+        snapshot = self._authority_snapshot()
+        gov.response = _resolved_response(obligations=())
+        result, diags = composed.resolve_governance(
+            server_context=object(),
+            authority_snapshot=snapshot,
+            governance_contract=_mapping(),
+            governance_references=("policy-test", "1.0.0"),
+        )
+        self.assertEqual(diags, [])
+        self.assertIsNotNone(result)
+        self.assertEqual(result.obligations, ())
+        gov2 = _GovernanceResolve3(response=_resolved_response(obligations=None))
+        composed2, _ = _compose_gov(gov2)
+        result2, diags2 = composed2.resolve_governance(
+            server_context=object(),
+            authority_snapshot=snapshot,
+            governance_contract=_mapping(),
+            governance_references=("policy-test", "1.0.0"),
+        )
+        self.assertIsNone(result2)
+        self.assertTrue(diags2)
+
+    def test_deny_unavailable_closed_exception_never_formatted(self):
+        for decision in ("DENY", "UNAVAILABLE"):
+            gov = _GovernanceResolve3(
+                response={
+                    "resolution_version": "1.0.0",
+                    "decision": decision,
+                    "resolved_context": None,
+                    "policy": None,
+                    "profile": None,
+                    "obligations": None,
+                }
+            )
+            composed, _ = _compose_gov(gov)
+            result, diags = composed.resolve_governance(
+                server_context=object(),
+                authority_snapshot=self._authority_snapshot(),
+                governance_contract=_mapping(),
+                governance_references=("policy-test", "1.0.0"),
+            )
+            self.assertIsNone(result)
+            self.assertTrue(diags)
+            self.assertEqual(len(gov.calls), 1)
+        gov_fail = _GovernanceResolve3(fail=True)
+        composed_fail, _ = _compose_gov(gov_fail)
+        result_fail, diags_fail = composed_fail.resolve_governance(
+            server_context=object(),
+            authority_snapshot=self._authority_snapshot(),
+            governance_contract=_mapping(),
+            governance_references=("policy-test", "1.0.0"),
+        )
+        self.assertIsNone(result_fail)
+        self.assertTrue(diags_fail)
+
+    def test_divergent_context_each_field(self):
+        base = _context()
+        for field in ("subject_id", "tenant_id", "perimeter_reference", "context_reference"):
+            divergent = dict(base)
+            divergent[field] = "autre-test"
+            gov = _GovernanceResolve3(
+                response=_resolved_response(),
+            )
+            gov.response["resolved_context"] = divergent
+            composed, _ = _compose_gov(gov)
+            result, diags = composed.resolve_governance(
+                server_context=object(),
+                authority_snapshot=self._authority_snapshot(),
+                governance_contract=_mapping(),
+                governance_references=("policy-test", "1.0.0"),
+            )
+            self.assertIsNone(result)
+            self.assertTrue(diags)
+
+    def test_limits_closed_types(self):
+        valid = _resolved_response()
+        cases = []
+        bad_unknown = _resolved_response()
+        bad_unknown["policy"] = dict(bad_unknown["policy"])
+        bad_unknown["policy"]["limits"] = dict(bad_unknown["policy"]["limits"])
+        bad_unknown["policy"]["limits"]["cle-inconnue"] = 1
+        cases.append(bad_unknown)
+        bad_missing = _resolved_response()
+        bad_missing["policy"] = dict(bad_missing["policy"])
+        limited = dict(bad_missing["policy"]["limits"])
+        limited.pop("max_rows")
+        bad_missing["policy"]["limits"] = limited
+        cases.append(bad_missing)
+        bad_bool = _resolved_response()
+        bad_bool["policy"] = dict(bad_bool["policy"])
+        bad_bool["policy"]["limits"] = dict(bad_bool["policy"]["limits"])
+        bad_bool["policy"]["limits"]["max_rows"] = True
+        cases.append(bad_bool)
+        bad_tuple_lists = _resolved_response()
+        bad_tuple_lists["policy"] = dict(bad_tuple_lists["policy"])
+        bad_tuple_lists["policy"]["limits"] = dict(bad_tuple_lists["policy"]["limits"])
+        bad_tuple_lists["policy"]["limits"]["retry_delays_seconds"] = (1, 2)
+        cases.append(bad_tuple_lists)
+        bad_list_on_int = _resolved_response()
+        bad_list_on_int["policy"] = dict(bad_list_on_int["policy"])
+        bad_list_on_int["policy"]["limits"] = dict(bad_list_on_int["policy"]["limits"])
+        bad_list_on_int["policy"]["limits"]["max_rows"] = [1]
+        cases.append(bad_list_on_int)
+        bad_int_on_list = _resolved_response()
+        bad_int_on_list["policy"] = dict(bad_int_on_list["policy"])
+        bad_int_on_list["policy"]["limits"] = dict(bad_int_on_list["policy"]["limits"])
+        bad_int_on_list["policy"]["limits"]["retry_delays_seconds"] = 1
+        cases.append(bad_int_on_list)
+        for hostile in cases:
+            gov = _GovernanceResolve3(response=hostile)
+            composed, _ = _compose_gov(gov)
+            result, diags = composed.resolve_governance(
+                server_context=object(),
+                authority_snapshot=self._authority_snapshot(),
+                governance_contract=_mapping(),
+                governance_references=("policy-test", "1.0.0"),
+            )
+            self.assertIsNone(result)
+            self.assertTrue(diags)
+
+    def test_hostile_response_no_parse_before_type_reject(self):
+        import pixs.backend.bulk_trusted_ports as trusted
+
+        def build_cases():
+            valid = _resolved_response()
+            cases = []
+            foreign_profile = dict(valid)
+            foreign_profile["profile"] = _Hostile()
+            cases.append(foreign_profile)
+            hostile_obligations = dict(valid)
+            hostile_obligations["obligations"] = (_Hostile(),)
+            cases.append(hostile_obligations)
+            hostile_str_field = dict(valid)
+            bad_profile = _valid_profile()
+            object.__setattr__(bad_profile, "data_asset_id", _Hostile())
+            hostile_str_field["profile"] = bad_profile
+            cases.append(hostile_str_field)
+            hostile_collection = dict(valid)
+            good_profile = _valid_profile()
+            object.__setattr__(
+                good_profile, "data_classes", frozenset({"classe-test", _ForeignStr("hostile-test")})
+            )
+            hostile_collection["profile"] = good_profile
+            cases.append(hostile_collection)
+            unknown_key = dict(valid)
+            unknown_policy = dict(unknown_key["policy"])
+            unknown_limits = dict(unknown_policy["limits"])
+            unknown_limits["cle-inconnue"] = 1
+            unknown_policy["limits"] = unknown_limits
+            unknown_key["policy"] = unknown_policy
+            cases.append(unknown_key)
+            missing_key = dict(valid)
+            missing_policy = dict(missing_key["policy"])
+            missing_limits = dict(missing_policy["limits"])
+            missing_limits.pop("max_rows")
+            missing_policy["limits"] = missing_limits
+            missing_key["policy"] = missing_policy
+            cases.append(missing_key)
+            bool_on_int = dict(valid)
+            bool_policy = dict(bool_on_int["policy"])
+            bool_limits = dict(bool_policy["limits"])
+            bool_limits["max_rows"] = True
+            bool_policy["limits"] = bool_limits
+            bool_on_int["policy"] = bool_policy
+            cases.append(bool_on_int)
+            tuple_for_list = dict(valid)
+            tuple_policy = dict(tuple_for_list["policy"])
+            tuple_limits = dict(tuple_policy["limits"])
+            tuple_limits["retry_delays_seconds"] = (1, 2)
+            tuple_policy["limits"] = tuple_limits
+            tuple_for_list["policy"] = tuple_policy
+            cases.append(tuple_for_list)
+            return cases
+
+        for hostile_response in build_cases():
+            gov = _GovernanceResolve3()
+            composed, _ = _compose_gov(gov)
+            snapshot = self._authority_snapshot()
+            p_policy = mock.patch.object(
+                trusted, "validate_bulk_policy_values", side_effect=AssertionError("validation sémantique prématurée")
+            )
+            p_profile = mock.patch.object(
+                trusted, "validate_data_governance_profile", side_effect=AssertionError("validation sémantique prématurée")
+            )
+            p_context = mock.patch.object(
+                trusted, "validate_server_context_refs_values", side_effect=AssertionError("validation sémantique prématurée")
+            )
+            p_semver = mock.patch.object(
+                trusted, "_is_complete_semver", side_effect=AssertionError("analyse prématurée")
+            )
+            started = []
+            started_mocks = []
+
+            def arming_resolve(context, contract, references, _patchers=(p_policy, p_profile, p_context, p_semver), _started=started, _gov=gov, _resp=hostile_response):
+                for patcher in _patchers:
+                    started_mocks.append(patcher.start())
+                    _started.append(patcher)
+                _gov.calls.append((context, contract, references))
+                return _resp
+
+            gov.resolve = arming_resolve
+            try:
+                result, diags = composed.resolve_governance(
+                    server_context=object(),
+                    authority_snapshot=snapshot,
+                    governance_contract=_mapping(),
+                    governance_references=("policy-test", "1.0.0"),
+                )
+            finally:
+                for patcher in reversed(started):
+                    patcher.stop()
+            self.assertIsNone(result)
+            self.assertTrue(diags)
+            self.assertEqual(len(gov.calls), 1)
+            self.assertEqual(len(started_mocks), 4)
+            for spy in started_mocks:
+                spy.assert_not_called()
+
+    def test_delay_lists_captured_without_alias(self):
+        gov = _GovernanceResolve3()
+        composed, _ = _compose_gov(gov)
+        snapshot = self._authority_snapshot()
+        gov.response = _resolved_response()
+        result, diags = composed.resolve_governance(
+            server_context=object(),
+            authority_snapshot=snapshot,
+            governance_contract=_mapping(),
+            governance_references=("policy-test", "1.0.0"),
+        )
+        self.assertEqual(diags, [])
+        self.assertIsNotNone(result)
+        before = result.as_values()
+        gov.response["policy"]["limits"]["retry_delays_seconds"].append(999)
+        gov.response["policy"]["limits"]["publish_retry_delays_seconds"].append(999)
+        after = result.as_values()
+        self.assertEqual(before, after)
+        self.assertEqual(len(gov.calls), 1)
+
+    def test_authority_hostile_no_port_call(self):
+        from pixs.backend.bulk_runtime_contracts import (
+            _AuthorityAssessmentSnapshot,
+            _ServerContextRefsSnapshot,
+        )
+
+        gov = _GovernanceResolve3(response=_resolved_response())
+        composed, _ = _compose_gov(gov)
+        hostile_snapshot = _AuthorityAssessmentSnapshot(decision=_Hostile(), resolved_context=None)
+        result, diags = composed.resolve_governance(
+            server_context=object(),
+            authority_snapshot=hostile_snapshot,
+            governance_contract=_mapping(),
+            governance_references=("policy-test", "1.0.0"),
+        )
+        self.assertIsNone(result)
+        self.assertTrue(diags)
+        self.assertEqual(gov.calls, [])
+        hostile_context = _ServerContextRefsSnapshot(
+            subject_id=_Hostile(),
+            tenant_id="tenant-test",
+            perimeter_reference="perimeter-test",
+            context_reference="context-test",
+        )
+        hostile_snapshot2 = _AuthorityAssessmentSnapshot(decision="ALLOW", resolved_context=hostile_context)
+        result2, diags2 = composed.resolve_governance(
+            server_context=object(),
+            authority_snapshot=hostile_snapshot2,
+            governance_contract=_mapping(),
+            governance_references=("policy-test", "1.0.0"),
+        )
+        self.assertIsNone(result2)
+        self.assertTrue(diags2)
+        self.assertEqual(gov.calls, [])
+
+    def test_foreign_contract_references_no_port(self):
+        gov = _GovernanceResolve3(response=_resolved_response())
+        composed, _ = _compose_gov(gov)
+        snapshot = self._authority_snapshot()
+        for contract, references in [
+            (_ForeignDict({"a": "b"}), ("policy-test", "1.0.0")),
+            ({"inconnue": "x"}, ("policy-test", "1.0.0")),
+            (_mapping(), ("policy-test",)),
+            (_mapping(), _ForeignTuple(("policy-test", "1.0.0"))),
+        ]:
+            result, diags = composed.resolve_governance(
+                server_context=object(),
+                authority_snapshot=snapshot,
+                governance_contract=contract,
+                governance_references=references,
+            )
+            self.assertIsNone(result)
+            self.assertTrue(diags)
+        self.assertEqual(gov.calls, [])
 
 
 if __name__ == "__main__":

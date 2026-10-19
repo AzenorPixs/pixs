@@ -249,3 +249,211 @@ Ce profil MUST NOT effectuer de filtrage frontend ni de lecture des données mé
 
 - **WHEN** le profil source-filter-plan-v1 est vérifié sur ports et doubles mémoire
 - **THEN** ces tests ne prouvent ni P0 global ni filtrage SQL effectif et les obligations de l'adaptateur futur restent applicables
+
+### Requirement: Structure préparatoire AuditDecisionProjectionV1
+
+Le Core MUST définir AuditDecisionProjectionV1 comme une représentation mémoire immuable à slots avec exactement decision_event et audit_event, tous deux explicites sans défaut. Les objets MUST être conservés par identité, sans copie, conversion ni normalisation. Le Kernel MUST rester indépendant du PDP.
+
+#### Scenario: Deux objets originaux conservés
+
+- **WHEN** un appelant de confiance fournit les deux événements exacts
+- **THEN** la représentation conserve les mêmes objets et ne produit aucun événement
+
+
+### Requirement: Types exacts des événements de la projection audit v1
+
+decision_event MUST être un pixs.core.authz.ports.AuditEvent exact et audit_event un pixs.kernel.audit_event.AuditEvent exact. Le profil et ses objets imbriqués MUST être contrôlés par type exact avant accès aux attributs étrangers. bool, sous-classes et objets hostiles MUST être refusés sans appel à leurs méthodes.
+
+#### Scenario: Objets étrangers refusés avant accès
+
+- **WHEN** un objet étranger ou une sous-classe est fourni à la place du profil ou de ses événements
+- **THEN** il est refusé sans accès à ses attributs ni appel à ses méthodes
+
+
+### Requirement: Sous-ensemble PDP complet de la projection audit v1
+
+decision_id, subject_id, resource_id, action_id et correlation_id MUST être des str exactes non vides, opaques et non normalisées. context MUST être un ScopeContext exact validé par validate_structure sur le même objet. Toute donnée incomplète MUST être refusée sans placeholder ni résolution de référence.
+
+#### Scenario: Décision incomplète refusée
+
+- **WHEN** un identifiant requis est absent, vide ou de type interdit, ou le contexte est absent ou structurellement invalide
+- **THEN** la validation refuse la projection sans fabriquer la donnée manquante
+
+
+### Requirement: Effet et motif cohérents de la projection audit v1
+
+effect MUST être un membre exact de Effect. reason_code MUST être une str exacte égale à ALLOWED pour Effect.ALLOW et DENIED pour Effect.DENY. La projection MUST conserver les valeurs et les résultats des contrats PDP existants.
+
+#### Scenario: Deux correspondances fermées
+
+- **WHEN** la décision porte ALLOW/ALLOWED ou DENY/DENIED
+- **THEN** la paire est admissible sans modifier la décision
+
+#### Scenario: Motif incohérent refusé
+
+- **WHEN** le motif ne correspond pas exactement à son effet
+- **THEN** la projection est refusée sans coercition
+
+
+### Requirement: Version de politique et instant explicites de la projection audit v1
+
+policy_version MUST être un tuple exact non None conservé dans le même objet décision, sans copie ni interprétation de son contenu comme SemVer. evaluated_at MUST être un datetime.datetime exact dont tzinfo is datetime.timezone.utc. None, une sous-classe ou un autre tzinfo MUST être refusé sans callback ni lecture d’horloge.
+
+#### Scenario: Version ou instant incomplet refusé
+
+- **WHEN** la version ou l’instant est absent ou ne satisfait pas les types exacts
+- **THEN** la validation refuse la projection sans valeur par défaut
+
+#### Scenario: Version politique indépendante
+
+- **WHEN** la projection est valide
+- **THEN** le tuple politique demeure dans la décision originale sans devenir la version du composant
+
+
+### Requirement: Validation de l’événement générique fourni pour la projection audit v1
+
+L’événement générique fourni MUST être validé sur le même objet par validate_audit_event, sans réécriture ni duplication des grammaires date ou SemVer. occurred_at MUST être fourni par l’appelant, jamais généré depuis evaluated_at. Après cette validation, occurred_at MUST représenter le même instant UTC que evaluated_at.
+
+#### Scenario: Instant divergent refusé
+
+- **WHEN** les deux horodatages valides représentent des instants différents
+- **THEN** la projection est refusée sans ajuster les horodatages
+
+#### Scenario: Notations UTC équivalentes
+
+- **WHEN** les deux horodatages valides représentent le même instant UTC
+- **THEN** la comparaison accepte leur équivalence sans normaliser la chaîne fournie
+
+
+### Requirement: Correspondances métier de la projection audit v1
+
+Dans audit_event, actor_reference MUST égaler decision_event.subject_id, resource_id MUST égaler decision_event.resource_id et action MUST égaler decision_event.action_id, par égalité exacte des chaînes opaques. result MUST égaler effect.value, soit ALLOW ou DENY, et reason_or_error MUST égaler reason_code, soit ALLOWED ou DENIED.
+
+#### Scenario: Cible ou résultat divergent refusé
+
+- **WHEN** une des correspondances acteur, ressource, action, résultat ou motif diverge
+- **THEN** la projection est refusée sans modifier les deux événements
+
+
+### Requirement: Correspondance tenant de la projection audit v1
+
+Pour un contexte TENANT valide, audit_event.tenant_reference MUST égaler exactement context.tenant_id. Pour un contexte PLATFORM valide, audit_event.tenant_reference MUST être None explicite. La projection MUST NOT inférer un tenant ni déduire un privilège du contexte.
+
+#### Scenario: Tenant exact requis
+
+- **WHEN** un contexte TENANT est fourni
+- **THEN** seule la référence exacte du tenant est admissible
+
+#### Scenario: Plateforme sans tenant
+
+- **WHEN** un contexte PLATFORM est fourni
+- **THEN** une référence tenant non None est refusée sans déduire de privilège
+
+
+### Requirement: Corrélation et causalité de la projection audit v1
+
+audit_event.correlation_ids MUST contenir exactement la chaîne decision_event.correlation_id et audit_event.causation_ids MUST contenir exactement la chaîne decision_event.decision_id. Les tuples fournis par l’appelant MUST préserver ordre, doublons et autres références. La validation MUST NOT ajouter automatiquement de référence.
+
+#### Scenario: Référence requise absente
+
+- **WHEN** la corrélation ou la causalité requise est absente de son tuple
+- **THEN** la projection est refusée sans compléter le tuple
+
+#### Scenario: Ordre et références conservés
+
+- **WHEN** les références requises sont présentes avec des doublons et autres références valides
+- **THEN** les tuples originaux restent inchangés
+
+
+### Requirement: Métadonnées indépendantes de la projection audit v1
+
+event_id, resource_type, component_id et component_version MUST être fournis explicitement dans l’événement générique. event_id MUST rester indépendant, sans génération ni copie automatique de decision_id. component_id et component_version MUST NOT être déduits de policy_version. Les contrats existants de ces champs MUST rester inchangés.
+
+#### Scenario: Métadonnées sans inférence
+
+- **WHEN** des métadonnées requises sont absentes ou invalides
+- **THEN** la projection est refusée sans les fabriquer depuis la décision
+
+
+### Requirement: Diagnostics et pureté de la projection audit v1
+
+La validation MUST produire des diagnostics VALIDATE statiques, frais, triés et dédupliqués, sans valeur brute, str ou repr d’un objet étranger. Une structure valide MUST produire une liste vide. Les exceptions inattendues MUST se propager. La validation MUST NOT effectuer d’IO, appeler de callback, lire d’horloge ou modifier un objet.
+
+#### Scenario: Refus sans écho ni effet
+
+- **WHEN** une structure, un champ ou une correspondance est invalide
+- **THEN** les diagnostics restent statiques sans valeur brute ni effet externe
+
+#### Scenario: Erreur inattendue non masquée
+
+- **WHEN** un validateur public soulève une exception inattendue
+- **THEN** elle se propage sans être transformée en réussite ou silence
+
+### Requirement: Validation préalable de la projection audit avant invocation v1
+
+Le Core MUST proposer l'opération distincte invoke_audit_projection(projection, sink) avec deux entrées explicites : une AuditDecisionProjectionV1 et un AuditSink PDP fourni par un appelant backend de confiance. L'opération MUST appeler validate_audit_decision_projection sur la même projection avant tout accès au port. Une projection invalide MUST produire False sans appeler sink.record.
+
+#### Scenario: Projection invalide refusée avant le port
+
+- **WHEN** la validation de la projection produit des diagnostics, notamment pour un profil ou événement étranger ou hostile
+- **THEN** l'opération retourne False sans accéder au port ni appeler record et sans contourner les contrôles de types de la projection
+
+
+### Requirement: Erreurs du validateur de projection audit propagées v1
+
+Une exception inattendue du validateur MUST se propager.
+
+#### Scenario: Erreur inattendue du validateur propagée
+
+- **WHEN** le validateur public de projection soulève une exception inattendue
+- **THEN** l'exception se propage et aucun appel au port n'a lieu
+
+
+### Requirement: Invocation unique du port pour une projection audit valide v1
+
+Une projection valide MUST conduire à exactement un appel de sink.record avec le decision_event original, conservé par identité, sans copie, conversion ou enregistrement implicite de l'audit_event générique. Cette opération MUST NOT modifier la construction ou la validation pure de la projection.
+
+#### Scenario: Projection valide transmise une fois
+
+- **WHEN** une projection valide et un port explicite sont fournis
+- **THEN** le port reçoit exactement une fois le même objet decision_event et aucun événement générique n'est enregistré par l'opération
+
+
+### Requirement: Acquittement booléen exact du port audit v1
+
+invoke_audit_projection MUST retourner un bool exact. Son résultat MUST être True uniquement lorsque le retour observé de record est True exact. False, None, 1 ou toute autre valeur MUST produire False sans conversion ni appel aux méthodes de cette valeur.
+
+#### Scenario: Retour True exact reconnu
+
+- **WHEN** l'unique appel du port retourne True exact
+- **THEN** l'opération retourne True sans autre appel ni effet ajouté
+
+#### Scenario: Autre retour refusé sans coercition
+
+- **WHEN** l'unique appel du port retourne False, None, 1 ou un objet arbitraire
+- **THEN** l'opération retourne False sans appeler les méthodes du retour ni relancer record
+
+
+### Requirement: Exceptions du port audit sans relance v1
+
+Une exception ordinaire lors de l'accès ou de l'appel du port MUST produire False sans exposition de son contenu ni relance. Les interruptions dérivées directement de BaseException MUST NOT être masquées.
+
+#### Scenario: Exception du port sans relance
+
+- **WHEN** l'accès ou l'appel du port soulève une exception ordinaire
+- **THEN** l'opération retourne False sans exposer l'exception ni relancer l'opération
+
+#### Scenario: Interruption système propagée
+
+- **WHEN** l'accès ou l'appel du port soulève une interruption dérivée directement de BaseException
+- **THEN** l'interruption se propage sans être transformée en acquittement ou refus silencieux
+
+
+### Requirement: Frontières de l'invocation du port audit v1
+
+L'opération MUST NOT lire d'horloge, exécuter un accès ressource, enregistrer un état de déduplication, modifier un objet fourni ou être branchée implicitement dans authorize ou plan_filter. Leurs signatures, décisions, obligations et règles Super Admin MUST rester inchangées.
+
+#### Scenario: Deux invocations explicites distinctes
+
+- **WHEN** l'appelant invoque deux fois l'opération avec la même projection valide
+- **THEN** chaque invocation effectue son unique appel explicite, sans garantie globale de déduplication ou d'exécution unique entre invocations

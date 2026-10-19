@@ -131,10 +131,10 @@ _CHILD = textwrap.dedent(
         assert config.name == "pixs.backend"
         assert config.label == "backend"
         assert Record._meta.app_label == "backend"
-        assert [model.__name__ for model in apps.get_models()] == [
-            "FeatureFlagSourceSnapshotRecord",
-            "JobRecord",
-        ]
+        registered_models = {model.__name__: model for model in apps.get_models()}
+        assert {"FeatureFlagSourceSnapshotRecord", "JobRecord"} <= registered_models.keys()
+        assert registered_models["FeatureFlagSourceSnapshotRecord"] is Record
+        assert registered_models["JobRecord"] is apps.get_model("backend", "JobRecord")
         assert [field.name for field in Record._meta.fields] == [
             "configuration_version",
             "snapshot",

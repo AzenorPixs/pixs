@@ -13,7 +13,7 @@ Sources Pixs
      │
      ├── build
      │     ├── paquet Debian PBO/PFO
-     │     ├── paquet Debian PA indépendant — quatre binaires
+     │     ├── paquet Debian PA/PZT indépendant — trois binaires PA et PZT
      │     └── image Docker
      │
      └── exécution directe
@@ -337,9 +337,9 @@ Les états de Notification et les informations de déduplication doivent être p
 
 ## 6. Objectif du paquet Debian
 
-La distribution Debian sépare un paquet PBO/PFO et un paquet PA indépendant
-sur un système Debian compatible. Le paquet PA contient exactement les quatre
-binaires définis au §46. Les garanties génériques de cette partie s’appliquent
+La distribution Debian sépare un paquet PBO/PFO et un paquet commun PA/PZT
+sur un système Debian compatible. Le paquet PA/PZT contient trois binaires PA
+et le binaire indépendant PZT définis au §46. Les garanties génériques de cette partie s’appliquent
 à chaque paquet dans son périmètre déclaré.
 
 Il doit permettre au gestionnaire de paquets de connaître et gérer l'installation de Pixs sans transformer le packaging Debian en nouvelle couche fonctionnelle de l'application.
@@ -606,8 +606,8 @@ La structure définitive du Dockerfile sera spécifiée avant implémentation.
 
 ## 17. Contenu de l'image
 
-L'image runtime contient toujours PBO, PFO et les trois binaires PA système/PZT
-précisés au §46. Le binaire utilisateur et ses fonctions de session en sont
+L'image runtime contient toujours PBO, PFO, les deux binaires PA système/événements
+et le binaire indépendant PZT précisés au §46. Le binaire utilisateur et ses fonctions de session en sont
 exclus ; les autres dépendances sont limitées à celles nécessaires au runtime.
 
 Elle ne doit notamment pas embarquer inutilement :
@@ -671,7 +671,7 @@ L'entrypoint doit propager correctement les signaux et permettre au processus ap
 L'entrypoint doit sélectionner un seul profil applicatif PBO explicitement
 configuré parmi web, worker et scheduler, ou refuser une configuration ambiguë.
 Il ne doit pas lancer implicitement plusieurs de ces rôles de production ni
-exécuter une migration destructive au démarrage. Les trois binaires PA présents
+exécuter une migration destructive au démarrage. Les deux binaires PA et PZT présents
 dans l'image ne démarrent que selon le profil déclaré : leur supervision,
 leurs droits, signaux et budgets sont qualifiés séparément, notamment lorsque
 PZT est activé. Un regroupement applicatif de développement reste explicite.
@@ -1530,7 +1530,7 @@ reproductible de leur vérification, ou un diagnostic explicite lorsque le profi
 ne les satisfait pas. Aucun seuil chiffré universel ne doit être inventé par la
 chaîne de build.
 
-## 46. Distribution des binaires PA
+## 46. Distribution des binaires PA et PZT
 
 La publication cible distingue deux paquets Debian indépendants et une image
 Docker Pixs. Le nom des paquets et des exécutables, les chemins, versions,
@@ -1540,25 +1540,27 @@ deb-package et docker-image ; construction, qualification et publication restent
 
 | Artefact | Contenu obligatoire | Contenu exclu |
 | --- | --- | --- |
-| Paquet Debian PBO/PFO | PBO, PFO et module essentiel PZT côté PBO | Les quatre binaires PA, distribués dans leur paquet indépendant |
-| Paquet Debian PA | Exactement quatre binaires PA : démon système, événements système de l'hôte, sessions utilisateur, exécution PZT | PBO et PFO comme dépendances embarquées |
-| Image Docker Pixs | PBO, PFO, module essentiel PZT et exactement trois binaires PA : démon système, événements du conteneur, exécution PZT | Binaire utilisateur PA et ses modes session-start, session-stop et session-daemon |
+| Paquet Debian PBO/PFO | PBO, PFO, `pixs.agent` et module essentiel `pixs.pzt` | Les trois binaires PA et le binaire PZT, colivrés séparément de PBO/PFO |
+| Paquet Debian commun PA/PZT | Trois binaires PA : démon système, événements de l'hôte, sessions utilisateur ; plus le binaire indépendant PZT | PBO et PFO comme dépendances embarquées |
+| Image Docker Pixs | PBO, PFO, `pixs.agent`, `pixs.pzt`, deux binaires PA : démon système et événements du conteneur ; plus PZT | Binaire utilisateur PA et ses modes session-start, session-stop et session-daemon |
 
-La séparation porte sur les quatre exécutables PA, sans limiter les bibliothèques
-runtime nécessaires et déclarées. Les noms définitifs ne sont pas fixés ici.
-Un PA installé seul peut joindre un PBO distant autorisé, sans installation
-locale de PBO/PFO. Les compatibilités de version et les éventuelles dépendances
-d'installation sont déclarées ; l'indépendance des paquets ne supprime pas
-l'obligation d'un PA admissible pour exécuter PZT activé.
+La séparation validée le 17 octobre 2026 conserve quatre exécutables dans le
+paquet PA/PZT et trois dans Docker. Les binaires système/utilisateur relèvent
+de PA ; le binaire réseau PZT a son identité et son lifecycle propres.
+Les bibliothèques runtime nécessaires restent déclarées. PZT est le nom du
+composant réseau ; noms de fichiers, chemins et noms de paquets restent à spécifier.
+PA et PZT sont colivrés et peuvent être installés sans PBO/PFO locaux pour
+joindre un PBO distant autorisé. L'activation PZT exige un exécutant PZT
+admissible ; elle ne réintègre pas le binaire PZT dans PA.
 
-La présence du module essentiel PZT ne lance pas le réseau automatiquement.
+La présence du module essentiel `pixs.pzt` ne lance pas le réseau automatiquement.
 L'activation exige configuration, identité, preuves, droits et binaire PZT
 admissibles. PZT désactivé : son binaire se ferme selon le contrat de mode ;
 le module PBO de configuration et de supervision demeure composé.
 
-L'image est complète en contenu PBO/PFO/PA, sans exécution implicite de tous
+L'image est complète en contenu PBO/PFO/PA/PZT, sans exécution implicite de tous
 ses processus. Un conteneur garde un profil applicatif PBO explicite parmi
-web, worker et scheduler. Les processus PA et leur supervision sont déclarés
+web, worker et scheduler. Les processus PA et PZT et leur supervision sont déclarés
 séparément par le profil ; toute cohabitation est explicite, bornée et qualifiée
 avec comptes, ressources, readiness et propagation des signaux distincts.
 Tous les échanges PBO–PA restent sous PZT, même dans le même conteneur.
@@ -1580,11 +1582,31 @@ la compatibilité et la rétention des données s'appliquent à chaque artefact.
 Cette section décrit la publication cible ; aucun paquet, image ou binaire
 n'est construit ou publié par cette intégration.
 
+
+### 46.0 Composition des distributions
+
+```mermaid
+flowchart TB
+    S["Sources Pixs — composants PBO/PFO, PA et PZT"]
+    S --> B["Paquet Debian PBO/PFO — pixs.agent et pixs.pzt"]
+    S --> A["Paquet Debian commun PA/PZT — indépendant de PBO/PFO"]
+    S --> D["Image Docker Pixs"]
+    A --> A1["Trois binaires PA, dont sessions utilisateur"]
+    A --> A2["PZT indépendant"]
+    D --> D1["PBO/PFO — pixs.agent et pixs.pzt"]
+    D --> D2["Deux binaires PA — système et événements du conteneur"]
+    D --> D3["PZT indépendant — sans binaire utilisateur PA"]
+```
+
+Il s'agit de la composition cible, sans build réalisé ni processus activé.
+Un hôte distant peut recevoir seulement PA/PZT ou également PBO/PFO ; ces deux
+cas ne changent ni le contenu des artefacts ni les autorisations de gestion.
+
 ### 46.1 Compilation et objectifs de performance
 
 La chaîne cible part des sources Python, génère du C puis produit les
-quatre binaires natifs PA pour chaque cible complète supportée ; le profil
-Docker ne distribue que les trois binaires système/PZT. Les dépendances runtime
+trois binaires natifs PA et le binaire PZT pour chaque cible complète supportée ;
+le profil Docker distribue les deux binaires PA système/événements et PZT. Les dépendances runtime
 et bibliothèques natives nécessaires sont inventoriées. L'autonomie visée
 est une installation sans Pixs Frontoffice ni Pixs Backoffice, avec un runtime
 embarqué si nécessaire pour éviter un interpréteur Python installé séparément.
@@ -1668,12 +1690,13 @@ Les profils de déploiement sont déclarés et qualifiés séparément :
 
 | Profil | Cadre d'exploitation |
 | --- | --- |
-| PA seul sur un hôte ou dans un conteneur | Installation indépendante de PBO et PFO, avec relations distantes autorisées via PZT. |
+| PA/PZT sans PBO/PFO locaux | Colivraison indépendante de PBO et PFO, avec relations distantes autorisées via PZT. |
+| Hôte distant avec PBO/PFO, PA et PZT | PBO/PFO facultatifs sur les hôtes distants ; `pixs.agent` et `pixs.pzt` y gèrent leurs exécutants locaux ou distants selon des relations explicitement autorisées. |
 | PBO et PA sur le même hôte | Comptes et frontières de privilèges explicites ; tous les échanges PBO–PA passent par PZT. |
 | PBO et PA dans des conteneurs séparés | Réseaux, identités, persistance et permissions déclarés ; échanges via PZT. |
 | PBO et PA dans un conteneur commun | Profil explicitement composé avec supervision, comptes, signaux et limites propres ; échanges via PZT. |
 
-La première qualification couvre PA seul et le cohébergement sur un hôte.
+La première qualification couvre PA/PZT sans PBO local et le cohébergement sur un hôte.
 Le conteneur commun ne résulte pas d'un lancement implicite de plusieurs rôles
 PBO ; son support exige un profil et un adaptateur validés, cohérents avec
 `BUILD.md`. Il ne modifie pas les contrats des rôles `web`, `worker` et
@@ -1727,9 +1750,9 @@ opposables, les autres valeurs sont à proposer et mesurer par profil.
 
 | Contrôle de distribution | Résultat attendu à la future recette |
 | --- | --- |
-| Debian PBO/PFO | PBO/PFO et module essentiel PZT présents ; binaires PA livrés séparément |
-| Debian PA | Quatre binaires par responsabilité, sans PBO/PFO embarqués ; sept modes répartis selon PROJECT.md §43 |
-| Docker | PBO/PFO et trois binaires PA système/PZT présents ; binaire et fonctions de session absents |
+| Debian PBO/PFO | PBO/PFO, `pixs.agent` et module essentiel `pixs.pzt` présents ; exécutables PA/PZT colivrés séparément |
+| Debian PA/PZT | Trois binaires PA et PZT indépendant, sans PBO/PFO embarqués ; six modes PA et un mode PZT |
+| Docker | PBO/PFO, deux binaires PA système/événements et PZT présents ; binaire et fonctions de session PA absents |
 | Activation PZT | Le binaire PZT exécute le réseau activé/configuré ; arrêt explicite sinon, sans perte du module essentiel PBO |
 | Cohabitation PBO/PA | Échanges sous PZT, isolation des comptes et droits, signaux et arrêt borné ; aucune exécution de rôle implicite |
 | Compatibilité et mises à niveau | Chaque artefact est identifiable et vérifié ; états techniques, mandats, clés et révocations préservés sans résurrection |
@@ -1802,7 +1825,7 @@ considérée comme un résultat de recette.
 - Une posture déclarée ne constitue pas une attestation TPM ; une preuve
   requise non vérifiable bloque l'accès selon le profil.
 - Un flux déjà établi cesse après révocation dans le délai déclaré, y compris
-  si PA plante et que le noyau conserve une interface active.
+  si PZT plante et que le noyau conserve une interface active.
 - Une configuration réseau partielle ou concurrente reste diagnostiquable
   et n'ouvre aucune fenêtre permissive.
 - Une passerelle ne donne pas accès à ses services locaux ; les ressources
@@ -1815,10 +1838,10 @@ considérée comme un résultat de recette.
   même avant la disponibilité du transport WireGuard courant.
 
 - Une instance autonome fonctionne sans autorité Pixs extérieure.
-- Le PA exécute ZTP conformément à sa configuration et à ses mandats.
+- Le binaire indépendant PZT exécute ZTP conformément à sa configuration et à ses mandats.
 - Le mode `pzt-daemon` démarre sans délai au démarrage du système ou du
   conteneur et assure la convergence et la réconciliation de ZTP si celui-ci
-  est activé et configuré sur ce PA ; sinon, il se ferme. Les délais de
+  est activé et configuré sur ce composant PZT ; sinon, il se ferme. Les délais de
   system-daemon et de session-daemon restent respectés.
 - Une instruction de contrôle ou de configuration reçue depuis le PBO sans
   permission valide est refusée par le PA.
@@ -1887,7 +1910,7 @@ et identités sont synthétiques, sans secret ni donnée de production.
 | Plateformes PA | Linux/Windows physiques et VM, Docker/LXC Proxmox ; noyau effectif, backends et privilèges par profil, clones, snapshots, migration et preuves TPM/vTPM. |
 | Carte réseau et admission | Visibilité limitée, versions, destinataire, ruptures de séquence, enrôlements concurrents, admission A11a sous mandat avec contrôles de preuves et contexte, refus hors mandat ; A11b : usage unique par instance, engagement atomique, reprise sans double identité ni consommation et secrets non exposés ; A11c : échéance finie, renouvellement autorisé, concurrence et nettoyage par génération sans résurrection. |
 | DNS et adressage | Collisions, chevauchements, réponses et caches par contexte, identité attendue et retrait des noms ou routes invalidés. |
-| Posture et expiration locale | Origine et fraîcheur des preuves, évolution en session et blocage après crash de PA avec tunnels persistants. |
+| Posture et expiration locale | Origine et fraîcheur des preuves, évolution en session et blocage après crash de PZT avec tunnels persistants. |
 | Passerelles du profil ultérieur | Accès aux ressources distinct des services locaux, sources conservées sans NAT, principale avec secours et une seule active par périmètre de routage cohérent ; retours convergents, basculement autorisé, reprise sans mandat obsolète, dernier segment et effets sur les sessions qualifiés. |
 | Autorités | A12a/A12b : engagement unique/idempotent et outbox, décisions critiques répliquées durablement avant confirmation, réponse perdue et reprise sans double effet, perte des copies et partition bloquantes pour nouvelles confirmations, promotion après exclusion/couverture du candidat ; paramètres à qualifier. A12c : signature habilitée individuelle et reçu lié à engagement/mandat/époque, contrôle de confiance et révocation ; format JSON/JWS compact A12d A validé le 6 octobre 2026 ; Ed25519 A12e B validé le 6 octobre 2026. |
 | Autorisations | Révocation en session, expiration, dérive temporelle, invalidation des caches et instructions en attente. |
@@ -1897,7 +1920,7 @@ et identités sont synthétiques, sans secret ni donnée de production.
 | Compatibilité | Coexistence des versions supportées, transition bornée des références A10f signées/versionnées, ensembles de mesures cohérents, retrait à échéance, mise à niveau, migration et rollback explicitement autorisé sans réactivation de référence révoquée. |
 | Isolation | Services sur transport partagé selon A10a, identités liées aux opérations, refus de l'usurpation et du contournement local ou distant, révocation ciblée ; frontières VM/conteneurs, tenants, scopes, branches, groupes de coopération, privilèges et visibilité de la découverte. |
 | Distribution | Packaging Debian et Docker, configuration runtime, secrets externes, persistance, signaux et arrêt contrôlé. |
-| Intégration PA | Sept modes d'exécution, dont `pzt-daemon` sans délai pour la convergence et la réconciliation de ZTP si activé et configuré sur ce PA, sinon fermeture ; provisionnement, initialisation minimale ZTP distincte des démons différés, fermeture bornée, sessions concurrentes, absence de PBO/PFO local, chaîne Python/C et états techniques de reprise. |
+| Intégration PA/PZT | Six modes PA et le mode PZT `pzt-daemon` sans délai pour la convergence et la réconciliation de ZTP si activé et configuré sur ce composant PZT, sinon fermeture ; provisionnement, initialisation minimale ZTP distincte des démons différés, fermeture bornée, sessions concurrentes, absence de PBO/PFO local, chaîne Python/C et états techniques de reprise. |
 | Transport local | PBO et PA cohébergés, chiffrement et contrôles ZTP, refus des canaux hors ZTP, amorçage et reprise sans chemin distant. |
 | Interface PBO | Parcours dans Chromium et Firefox headless déclarés dans DEVOPS.md, clavier, technologies d'assistance, traductions, Light/Dark et responsive. |
 | Objectifs de service | Latence, débit, ressources, révocation, convergence et reprise selon les seuils et méthodes du profil. |
@@ -1931,7 +1954,7 @@ contrats et seuils nécessaires seront fixés avant la recette correspondante.
 | R14 | Rejeu, crash et redémarrage | La reprise respecte l'idempotence et distingue les effets dont le résultat est inconnu. |
 | R15 | Dérive détectée | Un constat traçable est produit ; aucune correction non autorisée n'est engagée. |
 | R16 | Configuration ou contrat incompatible | La capacité concernée reste inactive avec un diagnostic exploitable. |
-| R17 | Binaire compilé sur une cible supportée | Les modes livrés par les quatre binaires conservent leur comportement et les performances respectent les budgets validés ; dans Docker, les modes de session sont explicitement exclus. |
+| R17 | Binaire compilé sur une cible supportée | Les modes livrés par les trois binaires PA et PZT indépendant conservent leur comportement et les performances respectent les budgets validés ; dans Docker, les modes de session sont explicitement exclus. |
 | R18 | Inspection des artefacts et diagnostics | Aucun secret ni donnée personnelle interdite n'est présent. |
 | R19 | Arrêt forcé ou disparition brutale de session | L'agent ne prétend pas avoir exécuté un traitement de fermeture non observé. |
 | R20 | Mise à niveau du composant | Configuration et reprise compatibles ; A10f : références signées/versionnées, transition bornée, ensembles cohérents, retrait à échéance, refus du rejeu et des références révoquées, nouvelle preuve après modification des mesures ; rollback uniquement autorisé par la politique courante. |
@@ -1960,11 +1983,11 @@ contrats et seuils nécessaires seront fixés avant la recette correspondante.
 | R43 | Arrêt contrôlé pendant une opération et livraison du résultat | Le séquencement conserve PZT dans le budget prévu et distingue exécution, résultat en attente et confirmation par PBO. |
 | R44 | Configuration reçue, concurrente ou partiellement appliquée | L'état souhaité reste distinct de l'état appliqué ; les conflits et interruptions sont explicites et aucune réussite n'est déduite de la réception. |
 | R45 | Référence temporelle d'autorisation non fiable | L'opération concernée est refusée ; les délais monotones ne servent pas de preuve de validité du mandat. |
-| R46 | Démarrage du système ou du conteneur avec `pzt-daemon` | Le mode démarre sans délai et assure la convergence et la réconciliation de PZT lorsque celui-ci est activé et configuré sur ce PA ; sinon, il se ferme. |
-| R47 | Backend WireGuard du profil retenu | PA pilote le backend qualifié, sans réimplémenter la cryptographie ; dépendances et privilèges correspondent au profil. |
+| R46 | Démarrage du système ou du conteneur avec `pzt-daemon` | Le mode démarre sans délai et assure la convergence et la réconciliation de PZT lorsque celui-ci est activé et configuré sur ce composant PZT ; sinon, il se ferme. |
+| R47 | Backend WireGuard du profil retenu | PZT pilote le backend qualifié, sans réimplémenter la cryptographie ; dépendances et privilèges correspondent au profil. |
 | R48 | Carte ou delta altéré, périmé, hors destinataire, dupliqué ou de base incompatible ; séquence manquante et reprise | La configuration invalide est refusée ; un doublon ne produit aucun double effet et ne prolonge aucune permission. Une base incompatible, un trou ou un historique hors rétention déclenche un état complet vérifié. La réconciliation contrôle l'état effectivement appliqué et ne réintroduit aucun droit expiré ou retiré ; les objectifs A05b restent opposables. |
 | R49 | AllowedIPs ou route présents sans permission du service | Les adapters nftables Linux et Windows Filtering Platform Windows appliquent les politiques PZT du profil et vérifient leur état ; les flux non autorisés sont bloqués, le tunnel ne donne pas accès aux services voisins et les ressources gérées restent distinctes des règles de l’opérateur. |
-| R50 | PBO, sessions et modes ponctuels utilisant le même PA | Le propriétaire des ressources réseau évite les écritures concurrentes ; aucune session ne reçoit de clé ou privilège système. |
+| R50 | PBO, PA et sessions utilisant le même composant PZT | Le propriétaire des ressources réseau évite les écritures concurrentes ; aucune session ne reçoit de clé ou privilège système. |
 | R51 | Admission automatisée, demande hors mandat ou preuves invalides, jeton expiré/révoqué/consommé, concurrence et reprise après crash | A11a : identité, contexte et preuves A10 vérifiés, aucune gestion ou exposition métier avant admission, arbitrage opérateur hors mandat sans dispense de preuve ; A11b : jeton à usage unique par instance, engagement atomique et reprise sans double identité ni consommation ; nouvelles admissions invalides refusées, secrets non exposés et retrait des pairs existants distinct. |
 | R52 | Échéance d'un pair éphémère encore présent, renouvellement concurrent, fin de charge, partition et restauration | A11c : échéance finie sans report sur présence ; renouvellement autorisé avant échéance avec contrôles courants, blocage/retrait sans résurrection après échéance ou retrait engagé ; nettoyage par génération avec audit/tombstones et suivi des échecs, aucune suppression de VM/conteneur/volume ; nouvelle admission avec nouveau jeton et preuves après retrait. |
 | R53 | Connectivité ICE/STUN, relais QUIC DATAGRAM et secours WSS | Signalisation protégée, sondes encadrées, candidats et mapping réel WireGuard vérifiés ; direct puis QUIC DATAGRAM et secours WSS selon la politique autorisée, sans contournement ni prolongation des droits. Support DATAGRAM, tailles, MTU, pertes, reprise et backends qualifiés ; le relais ne déchiffre pas WireGuard. Sans chemin admis, échec explicite. |

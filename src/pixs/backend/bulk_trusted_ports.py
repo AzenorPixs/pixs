@@ -6,14 +6,16 @@ production ni état global mutable. La composition est partielle : elle ne
 peut annoncer un runtime de production prêt. Tous les états de déclaration
 (mapping_descriptors, owner_declarations) sont fournis explicitement à la
 composition, capturés et fixés par instance ; aucun registre global n'est
-inventé ni muté. Les méthodes déclaratives des ports optionnels (gouvernance,
-commande et projection de propriétaire, audit) ne sont jamais invoquées dans
-ce lot : seule leur structure Python explorable statiquement est validée,
-sans immuabilité arbitraire de provider ni atomicité transactionnelle déduite.
-Les références du contexte serveur et les réponses de ports ne sont jamais
-une preuve d'authentification de production ; un refus produit uniquement des
-diagnostics statiques triés et dédupliqués, sans valeur fournie, sans
-référence de contexte exploitable et sans second appel ni repli.
+inventé ni muté. Les méthodes déclaratives des ports optionnels de commande,
+projection de propriétaire et audit ne sont jamais invoquées dans ce lot :
+seule leur structure Python explorable statiquement est validée, sans
+immuabilité arbitraire de provider ni atomicité transactionnelle déduite.
+La méthode resolve du port de gouvernance composé est invoquée une seule fois
+par resolve_governance, sans repli ni défaut ; la composition elle-même reste
+sans invocation. Les références du contexte serveur et les réponses de ports
+ne sont jamais une preuve d'authentification de production ; un refus produit
+uniquement des diagnostics statiques triés et dédupliqués, sans valeur
+fournie, sans référence de contexte exploitable et sans second appel ni repli.
 """
 
 from __future__ import annotations
@@ -22,23 +24,37 @@ import inspect
 from dataclasses import dataclass
 from types import FunctionType, MappingProxyType, MethodType
 
+from pixs.backend.bulk_execution_values import (
+    _POLICY_INT_FIELDS,
+    _POLICY_KEYS,
+    _POLICY_LIST_FIELDS,
+    validate_bulk_policy_values,
+)
 from pixs.backend.bulk_runtime_contracts import (
     _AuthorityAssessmentSnapshot,
     _ContractRefused,
     _MappingDescriptorSnapshot,
     _MAPPING_KEYS,
     _MAPPING_SCOPE,
+    _ServerContextRefsSnapshot,
+    _build_authority_assessment_snapshot,
+    _build_mapping_descriptor_snapshot,
+    _build_server_context_refs_snapshot,
     _exact_mapping,
     _tuple_of_exact_str,
     _bindings_type_refusals,
     _OPAQUE_RULE,
-    _build_authority_assessment_snapshot,
-    _build_mapping_descriptor_snapshot,
     _is_complete_semver,
     _is_opaque_text,
     _pack,
     _refusal,
     validate_mapping_descriptor_values,
+    validate_server_context_refs_values,
+)
+from pixs.kernel.data_governance import ConfidentialityLevel, PersonalDataLevel
+from pixs.kernel.data_governance_profile import (
+    DataGovernanceProfile,
+    validate_data_governance_profile,
 )
 from pixs.kernel.diagnostics import Diagnostic
 
@@ -49,6 +65,8 @@ __all__ = [
     "validate_owner_command_contract",
     "validate_owner_projection_contract",
     "validate_audit_contract",
+    "validate_publisher_contract",
+    "validate_download_contract",
 ]
 
 _ACTIONS = frozenset({"ADMIT", "EXECUTE", "CANCEL", "READ_RESULT"})
@@ -56,9 +74,12 @@ _ACTIONS = frozenset({"ADMIT", "EXECUTE", "CANCEL", "READ_RESULT"})
 _CHECK_SCOPE = "bulk_trusted_ports.check_authority"
 _RESOLVE_SCOPE = "bulk_trusted_ports.resolve_mapping"
 _GOVERNANCE_SCOPE = "bulk_governance_port"
+_GOVERNANCE_RESOLVE_SCOPE = "bulk_trusted_ports.resolve_governance"
 _OWNER_COMMAND_SCOPE = "bulk_owner_command_port"
 _OWNER_PROJECTION_SCOPE = "bulk_owner_projection_port"
 _AUDIT_SCOPE = "bulk_audit_port"
+_PUBLISHER_SCOPE = "bulk_publisher_port"
+_DOWNLOAD_SCOPE = "bulk_download_port"
 _COMPOSE_AUTHORITY_SCOPE = "bulk_authority_port"
 _COMPOSE_RESOLVER_SCOPE = "bulk_mapping_resolver"
 
@@ -72,6 +93,8 @@ _OWNER_PROJECTION_METHODS = (
     "iterate_projection",
 )
 _AUDIT_METHODS = ("append_minimized",)
+_PUBLISHER_METHODS = ("publish_declared_event",)
+_DOWNLOAD_METHODS = ("authorize_then_issue_temporary_reference",)
 
 _MAPPING_DECLARATIONS_REFUSAL = "déclarations de mapping refusées en composition"
 _OWNER_DECLARATIONS_REFUSAL = "déclarations de propriétaires refusées en composition"
@@ -92,6 +115,27 @@ _CONTEXT_RULE = "contexte résolu serveur valide attendu"
 _NOT_DECLARED_RULE = "mapping non déclaré côté serveur attendu"
 _DIVERGENT_RULE = "mapping résolu identique à la déclaration serveur immuable attendu"
 
+_GOVERNANCE_KEYS = (
+    "resolution_version",
+    "decision",
+    "resolved_context",
+    "policy",
+    "profile",
+    "obligations",
+)
+_GOVERNANCE_VERSION = "1.0.0"
+_GOVERNANCE_DECISIONS = frozenset({"RESOLVED", "DENY", "UNAVAILABLE"})
+_GOVERNANCE_POLICY_KEYS = ("policy_reference", "policy_version", "limits")
+_GOVERNANCE_CONTEXT_KEYS = (
+    "subject_id",
+    "tenant_id",
+    "perimeter_reference",
+    "context_reference",
+)
+_GOVERNANCE_UNAVAILABLE_RULE = "port de gouvernance indisponible sans contexte exploitable ni repli"
+_GOVERNANCE_REFUSED_RULE = "gouvernance refusée sans contexte exploitable"
+_GOVERNANCE_DIVERGENT_RULE = "contexte gouvernance identique à l'autorité courante attendu"
+
 
 class _CompositionRefused(ValueError):
     """Refus statique de composition ; aucun message ne porte de valeur fournie."""
@@ -103,6 +147,207 @@ class _OwnerDeclarationSnapshot:
     contract_version: str
     declared_codes: tuple[str, ...]
     declared_fields: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class _GovernancePolicySnapshot:
+    policy_reference: str
+    policy_version: str
+    _limits_frozen: MappingProxyType
+
+    def as_values(self) -> dict:
+        frozen = dict(self._limits_frozen)
+        owned: dict = {}
+        for key, value in frozen.items():
+            if type(value) is list:
+                owned[key] = list(value)
+            elif type(value) is tuple:
+                owned[key] = list(value)
+            else:
+                owned[key] = value
+        return {
+            "policy_reference": self.policy_reference,
+            "policy_version": self.policy_version,
+            "limits": owned,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class _GovernanceResolutionSnapshot:
+    resolution_version: str
+    decision: str
+    resolved_context: _ServerContextRefsSnapshot | None
+    policy: _GovernancePolicySnapshot | None
+    profile: DataGovernanceProfile | None
+    obligations: tuple[str, ...] | None
+
+    def as_values(self) -> dict:
+        if self.resolved_context is None:
+            context_values = None
+        else:
+            context_values = self.resolved_context.as_values()
+        if self.policy is None:
+            policy_values = None
+        else:
+            policy_values = self.policy.as_values()
+        if self.profile is None:
+            profile_values = None
+        else:
+            current = self.profile
+            profile_values = DataGovernanceProfile(
+                profile_version=current.profile_version,
+                data_asset_id=current.data_asset_id,
+                owner_component=current.owner_component,
+                source_of_truth=current.source_of_truth,
+                data_classes=frozenset(current.data_classes),
+                confidentiality=current.confidentiality,
+                personal_data=current.personal_data,
+                purpose_refs=frozenset(current.purpose_refs),
+                retention_policy=current.retention_policy,
+                deletion_policy=current.deletion_policy,
+                residency_constraints=frozenset(current.residency_constraints),
+                authorized_consumers=frozenset(current.authorized_consumers),
+                processor_refs=frozenset(current.processor_refs),
+                export_policy=current.export_policy,
+                lineage=current.lineage,
+            )
+        if self.obligations is None:
+            obligations_values = None
+        else:
+            obligations_values = tuple(self.obligations)
+        return {
+            "resolution_version": self.resolution_version,
+            "decision": self.decision,
+            "resolved_context": context_values,
+            "policy": policy_values,
+            "profile": profile_values,
+            "obligations": obligations_values,
+        }
+
+
+def _expected_authority_context(
+    snapshot: object,
+) -> tuple[dict | None, list[Diagnostic]]:
+    if type(snapshot) is not _AuthorityAssessmentSnapshot:
+        return None, [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "authority_snapshot", _CONTEXT_RULE)]
+    decision = snapshot.decision
+    if type(decision) is not str:
+        return None, [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "authority_snapshot.decision", _STR_RULE)]
+    if decision != "ALLOW":
+        return None, [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "authority_snapshot", _CONTEXT_RULE)]
+    context = snapshot.resolved_context
+    if type(context) is not _ServerContextRefsSnapshot:
+        return None, [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "authority_snapshot", _CONTEXT_RULE)]
+    for field in _GOVERNANCE_CONTEXT_KEYS:
+        if type(getattr(context, field)) is not str:
+            return (
+                None,
+                [_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"authority_snapshot.{field}", _STR_RULE)],
+            )
+    return context.as_values(), []
+
+
+def _mapping_contract_typed(contract: object) -> tuple[dict | None, list[Diagnostic]]:
+    values, shape = _exact_mapping(
+        contract, _GOVERNANCE_RESOLVE_SCOPE, _MAPPING_KEYS, "neuf clés exactes attendues"
+    )
+    if values is None:
+        return None, shape
+    for name in ("mapping_reference", "mapping_version", "owner_reference", "variant", "format"):
+        if type(values[name]) is not str:
+            return None, [_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"governance_contract.{name}", _STR_RULE)]
+    for name in ("source_fields", "target_fields", "required_source_fields", "field_bindings"):
+        if type(values[name]) is not tuple:
+            return (
+                None,
+                [_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"governance_contract.{name}", "tuple exact attendu")],
+            )
+    for name in ("source_fields", "target_fields", "required_source_fields"):
+        for item in values[name]:
+            if type(item) is not str:
+                return (
+                    None,
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"governance_contract.{name}", _STR_RULE)],
+                )
+    for pair in values["field_bindings"]:
+        if type(pair) is not tuple or len(pair) != 2:
+            return (
+                None,
+                [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance_contract.field_bindings", "couples tuple exacts attendus")],
+            )
+        if type(pair[0]) is not str or type(pair[1]) is not str:
+            return (
+                None,
+                [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance_contract.field_bindings", _STR_RULE)],
+            )
+    return values, []
+
+
+def _governance_references_typed(
+    references: object,
+) -> tuple[tuple[str, str] | None, list[Diagnostic]]:
+    if type(references) is not tuple or len(references) != 2:
+        return None, [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance_references", "tuple exact de deux str attendu")]
+    if type(references[0]) is not str or type(references[1]) is not str:
+        return None, [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance_references", _STR_RULE)]
+    return (references[0], references[1]), []
+
+
+def _profile_types_only(candidate: object) -> list[Diagnostic]:
+    if type(candidate) is not DataGovernanceProfile:
+        return [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "profile", "profil de gouvernance exact attendu")]
+    for name in (
+        "profile_version",
+        "data_asset_id",
+        "owner_component",
+        "source_of_truth",
+        "retention_policy",
+        "deletion_policy",
+        "export_policy",
+        "lineage",
+    ):
+        if type(getattr(candidate, name)) is not str:
+            return [_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"profile.{name}", _STR_RULE)]
+    for name in (
+        "data_classes",
+        "purpose_refs",
+        "residency_constraints",
+        "authorized_consumers",
+        "processor_refs",
+    ):
+        if type(getattr(candidate, name)) is not frozenset:
+            return [_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"profile.{name}", "frozenset exact attendu")]
+        for item in tuple(getattr(candidate, name)):
+            if type(item) is not str:
+                return [_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"profile.{name}", _STR_RULE)]
+    if type(candidate.confidentiality) is not ConfidentialityLevel:
+        if not any(member is candidate.confidentiality for member in ConfidentialityLevel):
+            return [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "profile.confidentiality", _STR_RULE)]
+    if type(candidate.personal_data) is not PersonalDataLevel:
+        if not any(member is candidate.personal_data for member in PersonalDataLevel):
+            return [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "profile.personal_data", _STR_RULE)]
+    return []
+
+
+def _limits_types_only(limits: object) -> list[Diagnostic]:
+    values, shape = _exact_mapping(
+        limits,
+        f"{_GOVERNANCE_RESOLVE_SCOPE}.policy.limits",
+        _POLICY_KEYS,
+        "vingt-quatre clés exactes attendues",
+    )
+    if values is None:
+        return shape
+    for name in _POLICY_INT_FIELDS:
+        if type(values[name]) is not int:
+            return [_refusal(f"{_GOVERNANCE_RESOLVE_SCOPE}.policy.limits", name, "int exact attendu")]
+    for name in _POLICY_LIST_FIELDS:
+        if type(values[name]) is not list:
+            return [_refusal(f"{_GOVERNANCE_RESOLVE_SCOPE}.policy.limits", name, "liste exacte attendue")]
+        for item in values[name]:
+            if type(item) is not int:
+                return [_refusal(f"{_GOVERNANCE_RESOLVE_SCOPE}.policy.limits", name, "éléments int exacts attendus")]
+    return []
 
 
 @dataclass(frozen=True, slots=True)
@@ -230,6 +475,403 @@ class _BulkTrustedPorts:
             return (None, _pack([_refusal(_RESOLVE_SCOPE, "mapping", _DIVERGENT_RULE)]))
         return (declared, [])
 
+    def resolve_governance(
+        self,
+        *,
+        server_context: object,
+        authority_snapshot: object,
+        governance_contract: object,
+        governance_references: object,
+    ) -> tuple[_GovernanceResolutionSnapshot | None, list[Diagnostic]]:
+        """Résolution effective GovernanceResolutionV1 par appel unique, sans repli.
+
+        Les entrées sont bornées : contrat MappingDescriptorV1 neuf clés et
+        références tuple exact de deux str policy_reference et policy_version.
+        Le contrat et les références ne constituent jamais une preuve.
+        """
+        if self._governance_port is None:
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance", _GOVERNANCE_UNAVAILABLE_RULE)]
+                ),
+            )
+        expected_context, authority_refusals = _expected_authority_context(authority_snapshot)
+        if expected_context is None:
+            return (None, _pack(authority_refusals))
+        contract_typed, contract_type_refusals = _mapping_contract_typed(governance_contract)
+        if contract_typed is None:
+            return (None, _pack(contract_type_refusals))
+        references_typed, references_type_refusals = _governance_references_typed(
+            governance_references
+        )
+        if references_typed is None:
+            return (None, _pack(references_type_refusals))
+        contract_owned = {
+            "mapping_reference": contract_typed["mapping_reference"],
+            "mapping_version": contract_typed["mapping_version"],
+            "owner_reference": contract_typed["owner_reference"],
+            "variant": contract_typed["variant"],
+            "format": contract_typed["format"],
+            "source_fields": tuple(contract_typed["source_fields"]),
+            "target_fields": tuple(contract_typed["target_fields"]),
+            "required_source_fields": tuple(contract_typed["required_source_fields"]),
+            "field_bindings": tuple(
+                (pair[0], pair[1]) for pair in contract_typed["field_bindings"]
+            ),
+        }
+        if validate_mapping_descriptor_values(contract_owned):
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance_contract", "MappingDescriptorV1 valide attendu")]
+                ),
+            )
+        if not _is_opaque_text(references_typed[0]):
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance_references", _OPAQUE_RULE)]),
+            )
+        if not _is_opaque_text(references_typed[1]):
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance_references", _OPAQUE_RULE)]),
+            )
+        if not _is_complete_semver(references_typed[1]):
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance_references", "version SemVer complète exacte attendue")]
+                ),
+            )
+        if validate_server_context_refs_values(dict(expected_context)):
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "authority_snapshot", _CONTEXT_RULE)]
+                ),
+            )
+        references_owned = (references_typed[0], references_typed[1])
+        return self._resolve_governance_owned(
+            server_context=server_context,
+            expected_context=expected_context,
+            contract_owned=contract_owned,
+            references_owned=references_owned,
+        )
+
+    def _resolve_governance_owned(
+        self,
+        *,
+        server_context: object,
+        expected_context: object,
+        contract_owned: object,
+        references_owned: object,
+    ) -> tuple[_GovernanceResolutionSnapshot | None, list[Diagnostic]]:
+        """Invocation unique et validation profonde complète, commune B01/B04."""
+        resolve_fn = _capture_python_method(self._governance_port, "resolve")
+        if resolve_fn is None:
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "governance", _GOVERNANCE_UNAVAILABLE_RULE)]
+                ),
+            )
+        try:
+            response = resolve_fn(server_context, contract_owned, references_owned)
+        except Exception:
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "decision", _GOVERNANCE_UNAVAILABLE_RULE)]
+                ),
+            )
+        values, shape_refusals = _exact_mapping(
+            response,
+            _GOVERNANCE_RESOLVE_SCOPE,
+            _GOVERNANCE_KEYS,
+            "six clés exactes attendues",
+        )
+        if values is None:
+            return (None, _pack(shape_refusals))
+        if type(values["resolution_version"]) is not str:
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "resolution_version", _STR_RULE)]),
+            )
+        if type(values["decision"]) is not str:
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "decision", _STR_RULE)]),
+            )
+        raw_context = values["resolved_context"]
+        if raw_context is not None and type(raw_context) is not dict:
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "resolved_context", "dict exact ou None attendu")]),
+            )
+        raw_policy = values["policy"]
+        if raw_policy is not None and type(raw_policy) is not dict:
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "policy", "dict exact ou None attendu")]),
+            )
+        raw_profile = values["profile"]
+        if raw_profile is not None and type(raw_profile) is not DataGovernanceProfile:
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "profile", "profil de gouvernance exact ou None attendu")]),
+            )
+        raw_obligations = values["obligations"]
+        if raw_obligations is not None and type(raw_obligations) is not tuple:
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "obligations", "tuple exact ou None attendu")]),
+            )
+        if raw_context is not None:
+            context_typed, context_shape = _exact_mapping(
+                raw_context,
+                f"{_GOVERNANCE_RESOLVE_SCOPE}.resolved_context",
+                _GOVERNANCE_CONTEXT_KEYS,
+                "quatre clés exactes attendues",
+            )
+            if context_typed is None:
+                return (None, _pack(context_shape))
+            for field in _GOVERNANCE_CONTEXT_KEYS:
+                if type(context_typed[field]) is not str:
+                    return (
+                        None,
+                        _pack(
+                            [_refusal(f"{_GOVERNANCE_RESOLVE_SCOPE}.resolved_context", field, _STR_RULE)]
+                        ),
+                    )
+        if raw_policy is not None:
+            policy_typed, policy_shape = _exact_mapping(
+                raw_policy,
+                f"{_GOVERNANCE_RESOLVE_SCOPE}.policy",
+                _GOVERNANCE_POLICY_KEYS,
+                "trois clés exactes attendues",
+            )
+            if policy_typed is None:
+                return (None, _pack(policy_shape))
+            if type(policy_typed["policy_reference"]) is not str:
+                return (
+                    None,
+                    _pack([_refusal(f"{_GOVERNANCE_RESOLVE_SCOPE}.policy", "policy_reference", _STR_RULE)]),
+                )
+            if type(policy_typed["policy_version"]) is not str:
+                return (
+                    None,
+                    _pack([_refusal(f"{_GOVERNANCE_RESOLVE_SCOPE}.policy", "policy_version", _STR_RULE)]),
+                )
+            if type(policy_typed["limits"]) is not dict:
+                return (
+                    None,
+                    _pack([_refusal(f"{_GOVERNANCE_RESOLVE_SCOPE}.policy", "limits", "dict exact attendu")]),
+                )
+            limits_type_refusals = _limits_types_only(policy_typed["limits"])
+            if limits_type_refusals:
+                return (None, _pack(limits_type_refusals))
+        if raw_profile is not None:
+            profile_type_refusals = _profile_types_only(raw_profile)
+            if profile_type_refusals:
+                return (None, _pack(profile_type_refusals))
+        if raw_obligations is not None:
+            for item in tuple(raw_obligations):
+                if type(item) is not str:
+                    return (
+                        None,
+                        _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "obligations", _STR_RULE)]),
+                    )
+        if values["resolution_version"] != _GOVERNANCE_VERSION:
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "resolution_version", "1.0.0 exact attendu")]
+                ),
+            )
+        if values["decision"] not in _GOVERNANCE_DECISIONS:
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "decision", "membre RESOLVED, DENY ou UNAVAILABLE attendu")]
+                ),
+            )
+        if values["decision"] in ("DENY", "UNAVAILABLE"):
+            for field in ("resolved_context", "policy", "profile", "obligations"):
+                if values[field] is not None:
+                    return (
+                        None,
+                        _pack(
+                            [_refusal(_GOVERNANCE_RESOLVE_SCOPE, field, "None attendu pour DENY ou UNAVAILABLE")]
+                        ),
+                    )
+            if values["decision"] == "DENY":
+                return (
+                    None,
+                    _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "decision", _GOVERNANCE_REFUSED_RULE)]),
+                )
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "decision", _GOVERNANCE_UNAVAILABLE_RULE)]
+                ),
+            )
+        for field in ("resolved_context", "policy", "profile", "obligations"):
+            if values[field] is None:
+                return (
+                    None,
+                    _pack(
+                        [_refusal(_GOVERNANCE_RESOLVE_SCOPE, field, "valeur non None attendue pour RESOLVED")]
+                    ),
+                )
+        context_owned = dict(context_typed)
+        policy_owned = {
+            "policy_reference": policy_typed["policy_reference"],
+            "policy_version": policy_typed["policy_version"],
+            "limits": dict(policy_typed["limits"]),
+        }
+        for key, value in tuple(policy_owned["limits"].items()):
+            if type(value) is list:
+                policy_owned["limits"][key] = list(value)
+        obligations_owned = tuple(raw_obligations)
+        source_profile = raw_profile
+        profile_owned = DataGovernanceProfile(
+            profile_version=source_profile.profile_version,
+            data_asset_id=source_profile.data_asset_id,
+            owner_component=source_profile.owner_component,
+            source_of_truth=source_profile.source_of_truth,
+            data_classes=frozenset(source_profile.data_classes),
+            confidentiality=source_profile.confidentiality,
+            personal_data=source_profile.personal_data,
+            purpose_refs=frozenset(source_profile.purpose_refs),
+            retention_policy=source_profile.retention_policy,
+            deletion_policy=source_profile.deletion_policy,
+            residency_constraints=frozenset(source_profile.residency_constraints),
+            authorized_consumers=frozenset(source_profile.authorized_consumers),
+            processor_refs=frozenset(source_profile.processor_refs),
+            export_policy=source_profile.export_policy,
+            lineage=source_profile.lineage,
+        )
+        for field in _GOVERNANCE_CONTEXT_KEYS:
+            if not _is_opaque_text(context_owned[field]):
+                return (
+                    None,
+                    _pack(
+                        [
+                            _refusal(
+                                f"{_GOVERNANCE_RESOLVE_SCOPE}.resolved_context",
+                                field,
+                                _OPAQUE_RULE,
+                            )
+                        ]
+                    ),
+                )
+        if not _is_opaque_text(policy_owned["policy_reference"]):
+            return (
+                None,
+                _pack(
+                    [_refusal(f"{_GOVERNANCE_RESOLVE_SCOPE}.policy", "policy_reference", _OPAQUE_RULE)]
+                ),
+            )
+        if not _is_complete_semver(policy_owned["policy_version"]):
+            return (
+                None,
+                _pack(
+                    [
+                        _refusal(
+                            f"{_GOVERNANCE_RESOLVE_SCOPE}.policy",
+                            "policy_version",
+                            "version SemVer complète exacte attendue",
+                        )
+                    ]
+                ),
+            )
+        if validate_server_context_refs_values(context_owned):
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "resolved_context", _CONTEXT_RULE)]
+                ),
+            )
+        for field in _GOVERNANCE_CONTEXT_KEYS:
+            if context_owned[field] != expected_context[field]:
+                return (
+                    None,
+                    _pack(
+                        [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "resolved_context", _GOVERNANCE_DIVERGENT_RULE)]
+                    ),
+                )
+        if validate_bulk_policy_values(policy_owned["limits"]):
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "policy.limits", "PolicyV1 exacte valide attendue")]),
+            )
+        if policy_owned["policy_reference"] != references_owned[0]:
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "policy.policy_reference", _GOVERNANCE_DIVERGENT_RULE)]
+                ),
+            )
+        if policy_owned["policy_version"] != references_owned[1]:
+            return (
+                None,
+                _pack(
+                    [_refusal(_GOVERNANCE_RESOLVE_SCOPE, "policy.policy_version", _GOVERNANCE_DIVERGENT_RULE)]
+                ),
+            )
+        for field in (
+            "profile_version", "data_asset_id", "owner_component", "source_of_truth",
+            "retention_policy", "deletion_policy", "export_policy", "lineage",
+        ):
+            if not _is_opaque_text(getattr(profile_owned, field)):
+                return (None, _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"profile.{field}", _OPAQUE_RULE)]))
+        for field in (
+            "data_classes", "purpose_refs", "residency_constraints",
+            "authorized_consumers", "processor_refs",
+        ):
+            for value in getattr(profile_owned, field):
+                if not _is_opaque_text(value):
+                    return (None, _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, f"profile.{field}", _OPAQUE_RULE)]))
+        if validate_data_governance_profile(profile_owned):
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "profile", "profil de gouvernance exact valide attendu")]),
+            )
+        for item in obligations_owned:
+            if not _is_opaque_text(item):
+                return (
+                    None,
+                    _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "obligations", _OPAQUE_RULE)]),
+                )
+        try:
+            context_snapshot = _build_server_context_refs_snapshot(context_owned)
+        except (_ContractRefused, KeyError, TypeError):
+            return (
+                None,
+                _pack([_refusal(_GOVERNANCE_RESOLVE_SCOPE, "resolved_context", _CONTEXT_RULE)]),
+            )
+        frozen_limits: dict = {}
+        for key, value in policy_owned["limits"].items():
+            if type(value) is list:
+                frozen_limits[key] = tuple(value)
+            else:
+                frozen_limits[key] = value
+        policy_snapshot = _GovernancePolicySnapshot(
+            policy_reference=policy_owned["policy_reference"],
+            policy_version=policy_owned["policy_version"],
+            _limits_frozen=MappingProxyType(dict(frozen_limits)),
+        )
+        snapshot = _GovernanceResolutionSnapshot(
+            resolution_version=_GOVERNANCE_VERSION,
+            decision="RESOLVED",
+            resolved_context=context_snapshot,
+            policy=policy_snapshot,
+            profile=profile_owned,
+            obligations=obligations_owned,
+        )
+        return (snapshot, [])
+
 
 def _capture_python_method(component: object, name: str) -> object | None:
     if type(component) is type:
@@ -286,6 +928,16 @@ def validate_owner_projection_contract(component: object) -> list[Diagnostic]:
 def validate_audit_contract(component: object) -> list[Diagnostic]:
     """Structure du port d'audit ; aucune méthode invoquée."""
     return _structural_refusals(component, _AUDIT_METHODS, _AUDIT_SCOPE)
+
+
+def validate_publisher_contract(component: object) -> list[Diagnostic]:
+    """Structure du port publisher ; aucune méthode invoquée."""
+    return _structural_refusals(component, _PUBLISHER_METHODS, _PUBLISHER_SCOPE)
+
+
+def validate_download_contract(component: object) -> list[Diagnostic]:
+    """Structure du port de téléchargement ; aucune méthode invoquée."""
+    return _structural_refusals(component, _DOWNLOAD_METHODS, _DOWNLOAD_SCOPE)
 
 
 def declare_bulk_mapping_descriptor(
