@@ -36,7 +36,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 ## Dépendances et interfaces
 
-- [define-first-installable-pbo-profile](../define-first-installable-pbo-profile/proposal.md).
+- [define-first-installable-pbo-profile](../archive/2026-10-18-define-first-installable-pbo-profile/proposal.md).
 - [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
 
 

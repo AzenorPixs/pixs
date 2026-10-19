@@ -78,4 +78,4 @@ C16 fournit sauvegarde/restauration compatibles, sans RPO/RTO supposé. Preuves 
 | [regional-residency #3](../../../openspec/specs/regional-residency/spec.md#L27) | ND | Identité puis tenant/scope puis placement ; région client non autoritative, tous dérivés soumis à politique. |
 | [regional-residency #4](../../../openspec/specs/regional-residency/spec.md#L36) | ND | Secours autorisé, compatibilité et fencing/époque durable ; ancien primaire privé d’écriture avant confirmation. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

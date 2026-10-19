@@ -79,4 +79,4 @@ Conserver version et référence d’évaluation, avec corpus de non-régression
 | [business-rules #3](../../../openspec/specs/business-rules/spec.md#L39) | ND | Aucune écriture inter-module ; chaque effet passe par la Command autorisée et transactionnelle du propriétaire. |
 | [business-rules #4](../../../openspec/specs/business-rules/spec.md#L51) | ND | Corpus par version et explication corrélée consultable selon droit sans contexte sensible complet. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

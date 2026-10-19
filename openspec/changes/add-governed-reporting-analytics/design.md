@@ -79,4 +79,4 @@ Réutiliser C09/C10 ; O01 seulement si sortie stockée en objet Pixs. Ne pas exi
 | [reporting-analytics #3](../../../openspec/specs/reporting-analytics/spec.md#L32) | ND | Filtrage avant agrégation, résidence appliquée et calcul inter-tenant non autorisé refusé. |
 | [reporting-analytics #4](../../../openspec/specs/reporting-analytics/spec.md#L44) | ND | Droits réévalués à exécution et téléchargement ; révocation rendant résultat inaccessible ; objet seulement si retenu. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

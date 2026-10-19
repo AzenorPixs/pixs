@@ -79,4 +79,4 @@ O01 est conditionnel au choix d’un stockage objet Pixs ; un simple référenti
 | [document-repositories #2](../../../openspec/specs/document-repositories/spec.md#L17) | ND | Médiation propriétaire et contrôle avant effet ; contournement direct refusé. |
 | [document-repositories #3](../../../openspec/specs/document-repositories/spec.md#L28) | ND | Mappings versionnés, conflit explicite et reprise idempotente sans résolution silencieuse. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

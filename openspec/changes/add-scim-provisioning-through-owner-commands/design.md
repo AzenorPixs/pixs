@@ -80,4 +80,4 @@ Autoriser chaque mutation, minimiser réponses/audit, refuser périmètre ambigu
 | [scim-provisioning #3](../../../openspec/specs/scim-provisioning/spec.md#L33) | ND | Identité externe stable, mapping versionné ; rejeu sans doublon et désactivation distincte de suppression irréversible. |
 | [scim-provisioning #4](../../../openspec/specs/scim-provisioning/spec.md#L45) | ND | Contexte fixé serveur ; refus hors tenant ; secrets absents des réponses/journaux et audit minimisé. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

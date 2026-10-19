@@ -89,7 +89,7 @@ Contrôler packaging, installation et compatibilité du kit sur cibles déclaré
 | [sdk-ecosystem #2](../../../openspec/specs/sdk-ecosystem/spec.md#L17) | ND | Identité/tenant/scope/corrélation/idempotence propagés ; pagination/async/Bulk/erreurs sans faux succès. |
 | [sdk-ecosystem #3](../../../openspec/specs/sdk-ecosystem/spec.md#L26) | ND | Validateurs publics et fixtures synthétiques ; publication bloquée si secret/donnée de production, navigateur sans persistance par défaut. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
 
 ## Dépendances après audit transversal P0
 

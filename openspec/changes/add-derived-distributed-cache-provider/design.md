@@ -79,4 +79,4 @@ En panne, repli vers source si contrat le permet, concurrence bornée et diagnos
 | [distributed-cache #3](../../../openspec/specs/distributed-cache/spec.md#L33) | ND | Génération/version et invalidation rejouable ; retard ne ressuscitant pas une valeur supprimée. |
 | [distributed-cache #4](../../../openspec/specs/distributed-cache/spec.md#L45) | ND | Panne/péremption/reprise testées avec concurrence bornée et aucune réponse permissive. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

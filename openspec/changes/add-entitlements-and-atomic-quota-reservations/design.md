@@ -80,4 +80,4 @@ Commands et jobs réévaluent au point d’effet et à reprise. L’exception ca
 | [quotas-entitlements #3](../../../openspec/specs/quotas-entitlements/spec.md#L26) | ND | Check/reserve/commit/release atomiques, idempotents, persistants ; concurrence/reprise/annulation sans double imputation. |
 | [quotas-entitlements #4](../../../openspec/specs/quotas-entitlements/spec.md#L37) | ND | Contrôle avant effet et reprise, indisponibilité refusée selon canon, réponse stable et audit minimisé. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

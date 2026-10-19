@@ -77,4 +77,4 @@ Purger/invalider selon révocation et cycle de données ; réconcilier une répo
 | [offline-first #2](../../../openspec/specs/offline-first/spec.md#L17) | ND | Rejeu idempotent, état provisoire visible, droits/version/règles courants vérifiés avant confirmation. |
 | [offline-first #3](../../../openspec/specs/offline-first/spec.md#L28) | ND | Conflit par ressource, purge et révocation testées ; coffre natif séparé sans copie cache/projection/file. |
 
-Voir [audit individuel et limites des preuves](../define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.

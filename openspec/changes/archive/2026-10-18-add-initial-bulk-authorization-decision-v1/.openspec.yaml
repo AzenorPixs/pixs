@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-18
+# Vocabulaire passif reprenant decision AuthorityAssessmentV1/AuthorityPort existante ; aucun nouveau comportement normatif.
+skip_specs: true
