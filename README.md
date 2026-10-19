@@ -1,6 +1,6 @@
 # Pixs
 
-**Version initiale — avancement OpenSpec : 59,14 %** — 152 changes archivés sur 257 au total, dont 105 ouverts. Relevé du 19 octobre 2026.
+**Version initiale — avancement OpenSpec : 58,85 %** — 153 changes archivés sur 260 au total, dont 107 ouverts. Relevé du 19 octobre 2026.
 
 Ce ratio suit les changes, sans mesurer leur taille ni remplacer une qualification fonctionnelle. [Méthode et suivi détaillé](PROJECT.md#34-openspec).
 
@@ -18,11 +18,15 @@ Cette documentation présente le périmètre cible du projet sans anticiper ces 
 
 ## OpenSpec
 
-OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 764 exigences et 884 scénarios**, recensés au 19 octobre 2026.
+OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 772 exigences et 892 scénarios**, recensés au 19 octobre 2026.
 
-Les **105 changes ouverts sont préparés**, dont **23 pour le premier socle installable P0**. Les matrices historiques relient les exigences examinées au travail prévu, aux écarts et aux références disponibles ; elles ne constituent pas une évaluation fonctionnelle actuelle des 764 exigences. La séparation PA/PZT et les modules de gestion PBO sont intégrés au canon. Les deltas encore proposés restent distincts du canon courant.
+L’inventaire recense **107 changes ouverts**, dont **24 pour le premier socle installable P0**, y compris le complément de protection des secrets avant production. Le profil structurel [EntitlementSubjectType](openspec/changes/archive/2026-10-19-add-initial-entitlement-subject-type-v1/proposal.md), archivé le 19 octobre, reste distinct de la réalisation du moteur d’entitlements. Les matrices historiques relient les exigences examinées au travail prévu, aux écarts et aux références disponibles ; elles ne constituent pas une évaluation fonctionnelle actuelle des 772 exigences. La séparation PA/PZT et les modules de gestion PBO sont intégrés au canon. Les deltas encore proposés restent distincts du canon courant.
+
+La [préparation C02 des primitives Core persistantes](openspec/changes/add-core-postgres-services/design.md) relie 72 exigences existantes à 89 références de scénarios et à 12 vérifications futures. Le [contrat documentaire R01 avec l’installateur C08](openspec/changes/add-installation-and-first-configuration/design.md) précise l’autorité d’amorçage, les refus et dix cas de recette, sans session préalable du compte futur ni permission métier déduite de C01. Ces rattachements et cas de recette ne s’ajoutent pas au canon et ne représentent pas des tests exécutés. D01–D04 restent adoptés en option A ; aucune implémentation ni production de code n’est autorisée par ces validations. Le [suivi détaillé](PROJECT.md#34-openspec) conserve les comptes et leurs limites.
 
 Le profil C00 a été adopté et archivé le 18 octobre 2026. C01 a été archivé le 19 octobre : il fournit le provider systemd et l’audit d’amorçage, avec une [qualification fonctionnelle bornée](openspec/changes/archive/2026-10-19-add-pbo-runtime-secret-provider/STATISTIQUES.md). Ces preuves historiques ne démontrent ni la reprise PostgreSQL C05/C08 ni une composition P0 installable et qualifiée.
+
+Deux changes documentaires préparent la [protection des secrets d’amorçage liée à l’hôte et au TPM2, avec récupération testée](openspec/changes/qualify-pbo-bootstrap-secrets-host-tpm2/proposal.md), et le [coffre indépendant pour les secrets d’exploitation distribués](openspec/changes/add-distributed-runtime-secret-vault/proposal.md). Ils n’ajoutent aucun code et ne synchronisent pas leurs deltas au canon. Le coffre reste conditionnel à la sélection d’une composition distribuée.
 
 Les priorités sont de finaliser les données et la sécurité, l’installation et l’interface, puis les tests et la livraison. Le [suivi OpenSpec dans PROJECT.md](PROJECT.md#34-openspec) détaille les étapes et les décisions restantes. Cette synthèse et le ratio en tête de page sont à actualiser pendant toute la vie de Pixs, au fil des changes et de leurs preuves.
 

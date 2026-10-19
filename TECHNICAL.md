@@ -97,6 +97,10 @@ Le provider ne peut établir qu'un niveau d'assurance couvert par sa configurati
 
 ## 4. Articulation avec OpenSpec et choix techniques ouverts
 
+Les orientations de conception C02 D01–D04 sont adoptées en option A le 19 octobre 2026 : réutilisation de `PixsCoreConfig` et du label `pixs_core` pour les modèles/migrations Core dédiés, contrats versionnés par domaine, transactions Django avec contraintes PostgreSQL et verrous ciblés déterministes, politique restrictive avant classification et suppression logique par défaut des ressources métier. La [conception C02](openspec/changes/add-core-postgres-services/design.md) précise propriété, interfaces et preuves attendues. Les schémas physiques, signatures, paramètres de politique et recettes restent à détailler dans ces orientations ; les éléments ouverts ci-dessous ne rouvrent pas ces choix acquis. Cette adoption est exclusivement documentaire et n’autorise aucune implémentation, production de code ou migration ; les contrats purs et le canon restent inchangés.
+
+Le [complément documentaire R01 de C08](openspec/changes/add-installation-and-first-configuration/design.md) précise la preuve de l’opérateur pré-session, la décision liée au plan d’installation et les écritures Core contrôlées par C02. Le compte à créer n’est pas un acteur déjà authentifié ; C03/C04 fournissent le sujet et l’autorisation conformes au canon sans exiger une session existante de ce compte. UID 0, les credentials PostgreSQL, les saisies de mot de passe ou un reçu C01 ne suffisent pas. C01 conserve ses seules actions techniques ; le journal C01 ne remplace pas l’audit des mutations Core. Preuves, plan et installation sont liés, les effets sont fermés et la reprise distingue rollback, commit confirmé et issue inconnue. Si un mécanisme ne peut satisfaire le canon, la branche reste refusée jusqu’à clarification autorisée, sans exception locale inventée. R01 documente les informations et critères attendus ; il ne sélectionne aucun provider ni n’autorise du code.
+
 Les spécifications OpenSpec actives définissent les exigences normatives applicables aux domaines ci-dessous. La présente liste ne les duplique pas : elle recense les choix techniques concrets qui restent volontairement ouverts pour l'implémentation ou qui devront être précisés par une évolution OpenSpec si leur décision modifie un comportement normatif :
 
 * l'intégration persistante du profil identité minimal v1 défini par `openspec/specs/core/spec.md` et les sections 1 à 3 ci-dessus ;
@@ -1172,6 +1176,28 @@ Le contrat `SecretProvider` doit rester indépendant du mécanisme de stockage. 
 Un secret doit être chargé au runtime, validé avant l'activation ou le passage à `ready` lorsque nécessaire, et ne doit apparaître dans aucun log, trace, audit, message d'erreur, manifest ou artefact. La rotation doit être supportée lorsque le provider et le composant consommateur le permettent.
 
 Le runtime doit éviter de conserver les secrets plus longtemps que nécessaire et doit limiter leur exposition aux composants autorisés.
+
+### 21.1 Protection des secrets d’amorçage PBO
+
+Orientation validée le 19 octobre 2026 : pour le profil Debian local, conserver le transport C01 `LoadCredentialEncrypted` et protéger les sources persistantes par le mode explicitement combiné `host+tpm2`, lorsque la plateforme est compatible. Cette spécialisation ne change pas l’indépendance du contrat `SecretProvider` ni les choix des autres profils. Les contrôles d’identité native, de politique, de validité, d’audit, d’arrêt attesté, de rotation et de révocation C01 restent applicables.
+
+Le mode combiné nécessite le TPM d’origine et la clé hôte de l’installation. L’absence de TPM compatible ne doit pas déclencher un repli automatique vers `host` seul ou `null` ; une autre protection nécessite un choix et une qualification distincts. Le type de TPM physique/transmis/vTPM, les versions, la protection de la clé hôte, la politique de mesures de démarrage et sa transition lors des mises à jour doivent être déclarés et qualifiés. Aucun PCR, chemin de production ou mécanisme de secours n’est réputé choisi par les fixtures C01.
+
+La récupération doit être testée avec l’ancien hôte et son TPM indisponibles : réémission ou récupération protégée indépendante, puis chiffrement pour les facteurs du nouvel hôte et réadmission des références et consommateurs. Copier les ciphertexts et la clé hôte ne suffit pas à prouver cette reprise. Le secours doit être protégé séparément de ses clés d’ouverture, avec autorité, accès, rétention et RPO/RTO déclarés, sans secret dans le dépôt ou les preuves. Les effets d’un changement de secret de signature ou d’accès base relèvent de leurs contrats propriétaires ; une sauvegarde ne réactive pas une version révoquée.
+
+Le chiffrement au repos ne démontre pas une résistance à un hôte ou consommateur compromis pouvant lire les valeurs en mémoire. La protection des dumps, du swap et des diagnostics ainsi que les limites du vTPM font partie de la revue de déploiement. Le harnais C01 en mode `null` a qualifié un transport fonctionnel ; il ne qualifie pas ces garanties cryptographiques de production.
+
+Le change [qualify-pbo-bootstrap-secrets-host-tpm2](openspec/changes/qualify-pbo-bootstrap-secrets-host-tpm2/proposal.md) prépare les deltas de `secrets-providers`, `backup-disaster-recovery` et `reference-composition`, sans code ni essai matériel pendant cette étape.
+
+### 21.2 Coffre des secrets d’exploitation distribués
+
+Pour une composition distribuée explicitement sélectionnée, les quelques secrets locaux nécessaires à l’amorçage sont distingués des secrets d’exploitation gérés par un coffre dédié indépendant de la base métier Pixs. L’ouverture, l’autorisation initiale et la récupération de ce coffre ne doivent pas dépendre d’un secret disponible seulement dans la base dont il fournit l’accès. Son stockage et sa chaîne de déverrouillage disposent de leurs propres protections, accès et procédures de reprise.
+
+Chaque service reçoit une identité de workload et les seuls droits nécessaires à ses références, finalités et périmètres. Les credentials courts compatibles, le renouvellement sous politique courante, la révocation bornée et l’audit minimisé restent obligatoires selon le canon. Un jeton administrateur global partagé n’est pas une identité d’exploitation acceptable. L’identité du serveur et la confidentialité/intégrité du transport sont vérifiées ; aucune clé d’ouverture du coffre n’est placée dans la base métier, l’artefact ou les journaux.
+
+Une panne du coffre bloque les nouvelles résolutions obligatoires. Les credentials déjà remis ne restent utilisables que dans leurs bornes et avec les garanties de révocation prouvées, sans prolongation par cache ni repli implicite vers LDAP, une table métier ou un fichier en clair. Disponibilité, sauvegarde et restauration isolée du coffre, récupération des clés, RPO/RTO et effets des révocations sont qualifiés avant admission du profil concerné.
+
+Le produit, sa version, son backend, la méthode d’authentification et de protection des clés, les durées et la topologie restent à décider avant réalisation. OpenBao est une référence d’étude, pas un choix imposé. Le change [add-distributed-runtime-secret-vault](openspec/changes/add-distributed-runtime-secret-vault/proposal.md) prépare les deltas de `secrets-providers` et `reference-composition`. Cette préparation n’active aucun profil distribué et n’ajoute pas de coffre obligatoire au P0 initial local. Les garanties restent à implémenter et qualifier ; les deltas ne sont pas synchronisés au canon à cette étape.
 
 ## 22. Lifecycle des composants
 

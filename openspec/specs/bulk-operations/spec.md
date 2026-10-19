@@ -87,16 +87,25 @@ La validation de BulkJobLink v1 MUST porter uniquement sur son type exact et les
 deux références déclarées, en contrôlant les types avant toute comparaison. Elle
 MUST produire des diagnostics statiques VALIDATE, triés et dédupliqués, sans
 reproduire les valeurs ni invoquer les comportements d'un objet étranger.
-Elle MUST NOT résoudre une référence, effectuer une entrée/sortie, ni établir
-l'existence, la légitimité, l'autorisation, la cardinalité globale, l'unicité globale,
-la corrélation, la causalité, le périmètre, la déduplication ou la persistance.
-Les exigences générales BulkOperation et Jobs restent intégralement applicables ;
-ce profil ne constitue pas leur implémentation complète.
 
 #### Scenario: Lien structurel invalide refusé
 
 - **WHEN** la représentation est d'un type étranger, un champ n'est pas une str exacte non vide, ou les deux références sont égales
 - **THEN** la validation produit des diagnostics statiques sans écho des valeurs, effet ni garantie runtime
+
+### Requirement: Absence de garanties runtime de BulkJobLink v1
+
+La validation de BulkJobLink v1 MUST NOT résoudre une référence, effectuer une
+entrée/sortie, ni établir l'existence, la légitimité, l'autorisation, la cardinalité
+globale, l'unicité globale, la corrélation, la causalité, le périmètre, la
+déduplication ou la persistance. Les exigences générales BulkOperation et Jobs
+restent intégralement applicables ; ce profil ne constitue pas leur implémentation
+complète.
+
+#### Scenario: Lien valide sans preuve runtime
+
+- **WHEN** un lien BulkJobLink v1 satisfait les contrôles structurels
+- **THEN** ce résultat n'exécute aucune résolution ni entrée/sortie et ne démontre aucune des garanties runtime exclues du profil
 
 ### Requirement: Entête structurel préparatoire BulkOperationHeader v1
 
@@ -142,14 +151,24 @@ normalisation. Cette validation de forme MUST NOT décider une compatibilité de
 La validation MUST refuser un objet de type étranger au profil avant tout accès à ses
 attributs, puis contrôler les types des champs avant parsing ou comparaison. Elle MUST
 produire des diagnostics statiques VALIDATE triés et dédupliqués, sans écho des valeurs
-ni invocation de comportement étranger. Elle MUST NOT effectuer d'entrée/sortie, résoudre
-des références, prouver existence ou autorisation, persister, rattacher des Jobs, évaluer
-une compatibilité, exécuter un import/export ou remplacer les exigences générales BulkOperation.
+ni invocation de comportement étranger.
 
 #### Scenario: Structure invalide diagnostiquée sans effet
 
 - **WHEN** le profil, une référence, une variante ou une version a une structure interdite
 - **THEN** des diagnostics statiques sont produits sans effet ni garantie runtime
+
+### Requirement: Absence d'effets runtime de BulkOperationHeader v1
+
+La validation de BulkOperationHeader v1 MUST NOT effectuer d'entrée/sortie, résoudre
+des références, prouver existence ou autorisation, persister, rattacher des Jobs,
+évaluer une compatibilité, exécuter un import/export ou remplacer les exigences
+générales BulkOperation.
+
+#### Scenario: Entête valide sans exécution métier
+
+- **WHEN** un entête BulkOperationHeader v1 satisfait les contrôles structurels
+- **THEN** aucune opération runtime exclue du profil n'est exécutée et les exigences générales BulkOperation restent applicables
 
 ### Requirement: Profil structurel préparatoire BulkOperationStatus v1
 
@@ -184,17 +203,26 @@ substitution ou valeur par défaut MUST NOT être admise.
 La validation MUST refuser tout objet de type étranger au profil avant d'accéder à
 ses attributs, puis vérifier les types des champs avant toute comparaison. Elle
 MUST produire des diagnostics statiques VALIDATE triés et dédupliqués, sans écho
-des valeurs ni invocation de comportement étranger. Elle MUST NOT effectuer
-d'entrée/sortie, résoudre une référence, prouver une existence ou une autorisation,
-rattacher des Jobs, persister, décider une transition, un ordre ou une terminalité,
-mesurer une progression ni exécuter un import/export. Les exigences générales
-BulkOperation restent intégralement applicables ; ce profil ne constitue pas leur
-implémentation complète.
+des valeurs ni invocation de comportement étranger.
 
 #### Scenario: Objet étranger refusé avant ses hooks
 
 - **WHEN** le candidat est d'un type étranger, y compris un sous-type du profil
 - **THEN** la validation produit un diagnostic statique sans accéder à ses attributs ni produire d'effet
+
+### Requirement: Absence d'effets runtime de BulkOperationStatus v1
+
+La validation de BulkOperationStatus v1 MUST NOT effectuer d'entrée/sortie,
+résoudre une référence, prouver une existence ou une autorisation, rattacher des
+Jobs, persister, décider une transition, un ordre ou une terminalité, mesurer une
+progression ni exécuter un import/export. Les exigences générales BulkOperation
+restent intégralement applicables ; ce profil ne constitue pas leur implémentation
+complète.
+
+#### Scenario: Statut valide sans décision de lifecycle
+
+- **WHEN** un statut BulkOperationStatus v1 satisfait les contrôles structurels
+- **THEN** aucune transition, progression ni autre opération runtime exclue du profil n'est décidée ou exécutée
 
 ### Requirement: Profil structurel préparatoire BulkScopeLink v1
 
