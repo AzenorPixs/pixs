@@ -9,7 +9,7 @@ Ces tâches décrivent une réalisation future non autorisée par la demande de 
 
 ## 2. Réalisation future
 
-- [ ] 2.1 Spécifier les décisions de confiance et le provider retenu, sans imposer OIDC/SAML non sélectionnés.
+- [ ] 2.1 Décliner le provider local autonome de pixs.auth sur PostgreSQL par défaut après adoption des deltas Auth ; préciser confiance et contrats sans installer de source externe ni activer IdP/OpenLDAP/KDC implicitement.
 - [ ] 2.2 Implémenter connexion/déconnexion et contextes/sessions bornés liés aux identités persistantes.
 - [ ] 2.3 Traiter rotation, réutilisation et révocation des identités/sessions/confiances.
 - [ ] 2.4 Tester authentification propre du Super Admin, absence de MFA obligatoire au démarrage/secours, expirations et refus.

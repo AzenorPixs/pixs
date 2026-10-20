@@ -10,15 +10,15 @@ Pixs repose principalement sur :
 
 ```text
 Backend             : Django
-Source de vérité    : PostgreSQL
+Stockage par défaut : PostgreSQL ; option Core OpenLDAP interne réversible
 Frontend            : TanStack
 Réactivité / Sync   : Electric lorsque nécessaire
 Identité minimale   : utilisateurs et groupes via pixs.core
 Autorisation        : ACL et permissions via pixs.core
-Authentification    : providers indépendants, notamment OIDC et SAML
+Authentification    : pixs.auth essentiel indépendant, autonome sur PostgreSQL
 ```
 
-PostgreSQL constitue la source de vérité applicative de Pixs.
+PostgreSQL constitue la source de vérité applicative par défaut de Pixs. Le complément proposé au §19.1 permet de déplacer le stockage Core concerné vers l'OpenLDAP interne après installation, puis de revenir à PostgreSQL par migration vérifiée ; il ne déplace pas les autres données applicatives.
 
 Django porte les règles métier, les commandes, les transactions, les API et l'orchestration applicative.
 
@@ -28,9 +28,9 @@ Electric fournit, lorsque nécessaire, les mécanismes de synchronisation et de 
 
 `pixs.core`, module obligatoire immédiatement au-dessus du Kernel, fournit les primitives fonctionnelles de très bas niveau communes à toute installation Pixs : utilisateurs, groupes, appartenances, ACL et permissions associées.
 
-Les annuaires, systèmes externes, protocoles d'authentification, moteurs de stockage, moteurs de recherche et autres intégrations ne font pas partie du socle fonctionnel obligatoire : ils sont apportés par des modules, providers ou extensions.
+Le cadrage cible du 19 octobre 2026 retient `pixs.auth` comme module essentiel indépendant de `pixs.core`, avec une authentification locale autonome s'appuyant par défaut sur PostgreSQL. Les deltas correspondants restent proposés dans [define-essential-autonomous-auth-module](openspec/changes/define-essential-autonomous-auth-module/proposal.md), sans synchronisation du canon ni implémentation.
 
-OIDC et SAML sont des exemples de providers d'authentification ; aucun provider concret n'est privilégié architecturalement.
+Les annuaires, KDC et systèmes externes ne sont pas nécessaires à cette autonomie. `pixs.auth` peut fournir l'identité à d'autres applications et gérer ses propres services OpenLDAP, KDC et Active Directory (`pixs.auth.directory.ad`) par sous-modules optionnels. Les connecteurs vers des sources externes, notamment LDAP, Kerberos, OIDC et SAML, sont des sous-modules à installer explicitement, absents de l'installation standard. Les moteurs de stockage, recherche et autres intégrations conservent leurs contrats et providers optionnels.
 
 Pixs doit être :
 
@@ -114,6 +114,8 @@ Toute fonctionnalité Pixs doit être fournie par un module.
 Le Core n'est pas une exception architecturale.
 
 `pixs.core` est un module Pixs fondamental et obligatoire, marqué comme requis par le système de modules.
+
+Le cadrage cible rend aussi `pixs.auth` essentiel dans les compositions applicatives, avec dépendance vers les contrats publics Core. Son provider local PostgreSQL est sélectionné par le profil standard ; les services d'annuaire et les sources externes restent des capacités séparées. Les deltas proposés sont regroupés au §34.
 
 Principe :
 
@@ -740,7 +742,7 @@ La persistance locale est limitée par la gouvernance des données. `PUBLIC` et 
 
 Un changement de tenant ou de scope, une déconnexion, une expiration, une révocation, une suppression ou un tombstone doit invalider ou purger les projections et Commands locales concernées selon la politique de cycle de vie. Les réservations de quota, entitlements et permissions ne sont pas acquises localement ; elles sont réévaluées et éventuellement réservées côté serveur lors de la soumission. Les imports, exports, opérations bulk, purges et actions sensibles restent désactivés hors ligne par défaut.
 
-Le socle stabilise les contrats et les points d'extension offline-first sans imposer Electric, une base navigateur, un service worker ou un provider local particulier. L'implémentation d'un provider de réplication, d'un stockage local sécurisé et des parcours UX reste conditionnelle à chaque capacité ; elle ne doit pas élargir le Kernel ni modifier les garanties de la source de vérité PostgreSQL.
+Le socle stabilise les contrats et les points d'extension offline-first sans imposer Electric, une base navigateur, un service worker ou un provider local particulier. L'implémentation d'un provider de réplication, d'un stockage local sécurisé et des parcours UX reste conditionnelle à chaque capacité ; elle ne doit pas élargir le Kernel ni modifier les garanties du stockage de référence déclaré, PostgreSQL par défaut et OpenLDAP interne pour le seul périmètre Core explicitement migré.
 
 La définition de ces contrats, versions et frontières de sécurité est prioritaire afin de ne pas fermer les possibilités futures des API et des modèles. L'activation fonctionnelle et le support offline d'une ressource restent une décision ultérieure, soumise à la conformité de la capacité, de sa gouvernance, de son provider local et de sa stratégie de conflit.
 
@@ -829,10 +831,10 @@ Pixs couvre notamment :
 * la collaboration temps réel et l'édition concurrente déclarées ;
 * les projections de reporting et d'analytique gouvernées ;
 * les fournisseurs de secrets, leur rotation et leur révocation ;
-* l'authentification par providers, notamment OIDC et SAML ;
+* `pixs.auth` essentiel indépendant, authentification locale autonome PostgreSQL, MFA et sous-modules d'identité et d'annuaire ;
 * le provisionnement SCIM optionnel des identités et groupes ;
 * le backend Django ;
-* PostgreSQL comme source de vérité applicative ;
+* PostgreSQL comme stockage applicatif par défaut et la migration Core réversible vers l'OpenLDAP interne selon le §19.1 ;
 * le frontend TanStack ;
 * Electric pour les besoins de synchronisation et de réactivité ;
 * l'API-first ;
@@ -873,7 +875,7 @@ flowchart TB
             A -. "contrats communs" .-> C
             Z -. "contrats communs" .-> C
         end
-        D[("PostgreSQL — source de vérité applicative")]
+        D[("PostgreSQL — stockage par défaut")]
         T["PZT local — exécutable indépendant"]
         P["PA local — fonctions système et utilisateur selon profil"]
         B --- D
@@ -956,13 +958,13 @@ Django
 PostgreSQL
 ```
 
-## 6. PostgreSQL — source de vérité applicative
+## 6. PostgreSQL — stockage applicatif par défaut
 
-PostgreSQL constitue la source de vérité applicative de Pixs.
+PostgreSQL constitue la source de vérité applicative par défaut de Pixs. Le choix postinstallation du §19.1 peut engager l'OpenLDAP interne comme stockage de référence du périmètre Core migré, sans déplacer les autres domaines applicatifs.
 
 Les états métier de référence de Pixs doivent être conservés dans PostgreSQL sauf spécification explicitement contraire d'une capacité spécialisée.
 
-En particulier, les primitives `User`, `Group`, `Membership`, `ACL` et `Permission` fournies par `pixs.core` sont persistées dans PostgreSQL.
+Les primitives `User`, `Group`, `Membership`, `ACL` et `Permission` fournies par `pixs.core` sont initialement persistées dans PostgreSQL. Le provider Core sélectionné après une migration vérifiée porte les données et relations du périmètre engagé ; Core conserve leurs contrats, identifiants et invariants. Le retour OpenLDAP vers PostgreSQL reprend l'état courant, sans simple réactivation d'une ancienne copie.
 
 Les entités persistées par Pixs utilisent des UUIDv7 comme identifiants internes stables. Un identifiant OIDC, SAML, LDAP ou fourni par une autre intégration ne peut pas devenir implicitement la clé interne de l'entité Pixs.
 
@@ -1219,7 +1221,7 @@ pixs.core
 
 Les utilisateurs, identités numériques, groupes, tenants, appartenances, scopes racines, rôles et ACL sont donc natifs dans Pixs dès la composition minimale, sans être intégrés au Kernel lui-même. La capacité de multi-tenancy peut fonctionner en mode mono-tenant, mais ses frontières et invariants restent disponibles dès la première version. Les types de scopes enfants restent apportés par les modules qui en possèdent le modèle métier.
 
-PostgreSQL constitue la source de vérité de ces primitives. L'identité numérique est le référentiel authentifiable de Pixs. Des modules spécialisés peuvent enrichir les utilisateurs, identités numériques ou comptes de service, mais ne doivent pas créer une seconde identité de référence concurrente sans spécification explicite.
+PostgreSQL constitue le stockage de référence initial de ces primitives. L'option du §19.1 permet de migrer un périmètre Core cohérent vers l'OpenLDAP interne puis de revenir à PostgreSQL, sans changer la propriété logique Core ni créer de références concurrentes. L'identité numérique reste le référentiel authentifiable ; les enrichissements de modules spécialisés utilisent ses contrats publics.
 
 Le Core ne doit pas devenir un second Kernel : il contient des primitives fonctionnelles communes, tandis que le Kernel reste limité aux mécanismes du framework.
 
@@ -1485,7 +1487,7 @@ Core Identity / Authorization Primitives
 └── Permission
 ```
 
-PostgreSQL constitue la source de vérité de ces primitives.
+PostgreSQL constitue leur stockage de référence par défaut. Après migration Core autorisée et vérifiée selon le §19.1, l'OpenLDAP interne porte le périmètre engagé jusqu'à un retour PostgreSQL lui aussi vérifié. L'évaluation des droits reste assurée par Pixs, quel que soit ce stockage.
 
 Les scopes racines sont fournis par `pixs.core`. Les scopes enfants (`Organization`, `Workspace`, `Project` ou autre type namespacé) sont apportés par les modules qui en possèdent le modèle métier ; ils restent rattachés à un tenant et à un parent unique.
 
@@ -1541,7 +1543,7 @@ Aucune synchronisation bidirectionnelle implicite ne doit être supposée.
 
 Une projection LDAP peut être sélectionnée comme capacité optionnelle de
 consultation des seules `DigitalIdentity`, `Group` et `Membership` de
-`pixs.core`. PostgreSQL demeure leur source de vérité : toutes les écritures
+`pixs.core`. Dans ce rôle de projection, PostgreSQL demeure leur source de vérité : toutes les écritures
 passent par Django et une Command autorisée, puis sont projetées vers LDAP de
 manière sortante, idempotente et traçable. La consultation passe par le
 contrat Core, préfère LDAP lorsqu'il est disponible et suffisamment frais, et
@@ -1550,20 +1552,51 @@ explicitement `DEGRADED` et diagnostiquable. LDAP ne porte ni ACL, ni
 permission, ni décision d'autorisation, ni mécanisme de révocation, ni
 authentification par cette capacité.
 
+### 19.1 Choix postinstallation du stockage Core — proposition du 19 octobre 2026
+
+Par défaut, les utilisateurs, groupes et ACL sont stockés dans PostgreSQL. Le [change de stockage réversible](openspec/changes/add-reversible-core-directory-storage/proposal.md) propose de sélectionner ensuite l'OpenLDAP interne géré par Pixs comme stockage de référence, avec migration dans les deux sens. Le retour vers PostgreSQL reprend les données LDAP courantes, y compris les modifications réalisées depuis l'aller ; il ne réactive pas simplement l'ancienne copie.
+
+Cette option est distincte de la projection de consultation du §19. Core demeure propriétaire logique des données et Django porte les Commands ; le provider sélectionné porte leur stockage physique. Le plan inclut les relations nécessaires aux invariants, identités, appartenances, permissions, versions et révocations applicables. Les ACL Pixs peuvent être stockées dans LDAP sans devenir les ACL techniques slapd : leur évaluation reste dans le moteur Pixs.
+
+Le plan doit préserver identifiants et sémantique des droits, vérifier la copie et les relations, maîtriser les écritures concurrentes et engager une génération unique de stockage avant reprise. L'aller et le retour ont les mêmes garanties de reprise, audit et conservation des retraits. Une panne LDAP ne déclenche pas de repli vers une copie PostgreSQL périmée. Les sessions et justificatifs Auth, les secrets et les autres données applicatives ne sont pas déplacés implicitement.
+
+Les contraintes et deltas canoniques existants restent inchangés tant que la proposition n'est pas adoptée. Les mentions de PostgreSQL comme source Core dans les cadrages et dossiers précédents décrivent le profil par défaut ; cette option explicite borne leur évolution. Elle ne sélectionne ni AD ni LDAP externe comme stockage Core. Les garanties transactionnelles et les interactions entre Core LDAP et données PostgreSQL doivent être qualifiées avant réalisation. Aucun code ni migration de données n'est produit.
+
 ## 20. Authentification
 
-L'authentification constitue une capacité indépendante des utilisateurs/groupes de référence et de l'autorisation, mais s'appuie sur l'identité numérique comme référentiel authentifiable.
+### 20.1 Module essentiel autonome et frontières
+
+Le cadrage cible du 19 octobre 2026 place l'authentification dans `pixs.auth`, module essentiel indépendant de `pixs.core`. Cette évolution est préparée par huit changes ouverts et leurs deltas proposés, sans code ni synchronisation du canon. Elle complète le chantier C03 existant de connexion et sessions, sans le dupliquer.
+
+`pixs.core` conserve les identités numériques, utilisateurs, groupes, appartenances, tenants, rôles, ACL et permissions. `pixs.auth` gère les justificatifs, méthodes, liaisons d'authentification, politiques, contextes, sessions, MFA, récupération et émission d'identité. Il consomme les contrats publics Core ; Core ne dépend pas d'une implémentation Auth. Les contrats purs partagés existants restent réutilisables sans déplacement.
+
+Par défaut, `pixs.auth` s'appuie sur PostgreSQL pour ses données persistantes, sous propriété et migrations distinctes de Core. Le profil local fonctionne sans OpenLDAP, KDC, fournisseur externe, cloud ou Internet obligatoire. Il livre mot de passe, passkeys/WebAuthn, TOTP et récupération à usage unique, avec enrôlement et usage selon politique ; aucun compte ou justificatif universel n'est créé implicitement.
 
 ```text
-             Authentication Contract
-                       │
-          ┌────────────┼────────────┐
-          │            │            │
-       Local         OIDC         SAML
-     Provider      Provider      Provider
+pixs.auth essentiel ── contrats publics ──► pixs.core
+├── local autonome ──► PostgreSQL par défaut
+├── méthodes locales, MFA, sessions et récupération
+├── forge/enrôlement ──► Commands Core
+├── fournisseur d'identité ──► applications clientes OIDC/SAML
+├── services propres activables ──► OpenLDAP et/ou KDC Kerberos
+└── sources externes ──► sous-modules à installer séparément
 ```
 
-OIDC et SAML sont des exemples de providers et non des dépendances obligatoires du framework.
+### 20.2 Sous-modules, services propres et sources externes
+
+Le [catalogue et les dépendances](openspec/changes/define-essential-autonomous-auth-module/design.md) distinguent méthodes locales, enrôlement, émission d'identité, gestion des services propres et sources externes. Tous utilisent les manifests, contrats et lifecycle communs. La présence d'un sous-module n'établit aucune confiance ni activation implicite.
+
+Le rôle fournisseur d'identité permet à Pixs d'émettre vers des applications clientes approuvées, via sous-modules OIDC/SAML. Ce rôle est distinct de la consommation d'un fournisseur externe. L'émission sortante n'est pas activée par défaut.
+
+Le sous-module optionnel `pixs.auth.directory.ad` permet également de gérer un domaine Active Directory propre : provisionnement, configuration, démarrage, arrêt, santé et reprise. Il reste non requis et non activé par défaut. Son annuaire, Kerberos et DNS sont coordonnés avec les services sélectionnés ; il ne nécessite pas de connecteur vers un AD externe. PostgreSQL reste le stockage Auth par défaut et la référence Core initiale, sous réserve de l'option OpenLDAP interne du §19.1 ; le contrôleur conserve son stockage et son autorité techniques de domaine. Produit, plateforme et compatibilité sont à qualifier dans [add-auth-managed-active-directory](openspec/changes/add-auth-managed-active-directory/proposal.md).
+
+`pixs.auth` peut provisionner et piloter son propre OpenLDAP et son propre KDC, ensemble ou séparément. Ces services ont un processus et un lifecycle distincts de Django ; ils restent non requis et non démarrés par défaut. Leur activation ne nécessite aucun connecteur vers une infrastructure externe et ne déclenche pas la migration Core du §19.1. PostgreSQL conserve son autorité par défaut et pour les données hors périmètre migré ; aucun backend PostgreSQL natif n'est supposé pour slapd ou le KDC.
+
+Les authentifications auprès de LDAP, Kerberos, OIDC, SAML ou autres sources externes passent par des sous-modules `pixs.auth.sources.*` absents de l'installation standard. Leur installation, configuration de confiance et activation sont distinctes. Une panne externe n'active pas automatiquement une connexion locale et ne réduit pas l'assurance exigée.
+
+La projection LDAP de consultation du §19 conserve son contrat sans authentification. Une capacité d'authentification portée par le propre OpenLDAP est déclarée séparément. Une carte à puce ou un certificat constitue un moyen extensible ; empreinte digitale et visage peuvent vérifier localement une passkey sans transmettre les données biométriques à Pixs. Aucun matériel ni annuaire n'est obligatoire pour le profil autonome.
+
+### 20.3 Confiance, assurance et sessions
 
 Un provider d'authentification établit une identité authentifiée mais ne devient pas pour autant la source de vérité des données `User`, `Group` ou `ACL` de Pixs.
 Le provider établit ou vérifie l'authentification d'une identité numérique ; il ne crée pas implicitement une relation utilisateur différente des cardinalités prévues par `pixs.core`.
@@ -1599,11 +1632,17 @@ PIXS.CORE
 └── Permission
       │
       ▼
- PostgreSQL
- source de vérité
+ Stockage Core de référence
+ PostgreSQL par défaut
+ OpenLDAP interne après migration réversible
 
 AUTHENTIFICATION
-└── Providers indépendants s'appuyant sur DigitalIdentity
+└── pixs.auth essentiel, indépendant de Core
+    ├── local autonome sur PostgreSQL par défaut
+    ├── moyens, politiques, sessions, MFA et récupération
+    ├── forge/enrôlement par contrats Core
+    ├── fournisseur d'identité et services OpenLDAP/KDC/AD activables
+    └── connecteurs externes installables séparément
 
 ASSURANCE D'AUTHENTIFICATION
 ├── contexte d'authentification vérifié
@@ -1615,7 +1654,7 @@ INTÉGRATIONS EXTERNES
 └── Modules / Providers optionnels
 ```
 
-Les données de référence Pixs restent sous l'autorité de PostgreSQL et du backend. Les providers externes peuvent authentifier, projeter, synchroniser ou enrichir selon leurs contrats sans devenir implicitement la source de vérité applicative.
+Django reste l'autorité métier et les données sont lues depuis le stockage de référence déclaré : PostgreSQL par défaut, ou OpenLDAP interne pour le seul périmètre Core migré selon le §19.1. Les providers externes peuvent authentifier, projeter, synchroniser ou enrichir selon leurs contrats sans devenir implicitement la source de vérité applicative.
 
 ## 22. Internationalisation
 
@@ -2057,13 +2096,13 @@ Le cap architectural de Pixs repose sur les principes de premier ordre suivants.
 18. **Explicit over implicit** — dépendances, providers, permissions, hooks, synchronisations et surcharges sont déclarés, inspectables et explicables.
 19. **Optimization is transverse** — les performances sont mesurées et optimisées transversalement sans sacrifier sécurité, cohérence, modularité ou déterminisme.
 
-Ces principes complètent les exigences de support multilingue natif, de Light/Dark, de PostgreSQL comme source de vérité et de Django comme autorité métier.
+Ces principes complètent les exigences de support multilingue natif, de Light/Dark, de PostgreSQL comme stockage par défaut et de Django comme autorité métier. L'option de stockage Core du §19.1 conserve ces principes et leurs garanties.
 
 ## 32. Invariants architecturaux
 
 Les invariants suivants constituent le cap architectural initial de Pixs :
 
-1. PostgreSQL est la source de vérité applicative de Pixs pour les données possédées par Pixs ; toute exception concernant une capacité spécialisée doit être explicitement spécifiée.
+1. PostgreSQL est la source de vérité applicative par défaut ; le périmètre Core engagé selon `core-storage` peut utiliser l'OpenLDAP interne après migration réversible vérifiée. Les autres domaines gardent leur stockage déclaré ; aucune double autorité ni bascule implicite n'est admise.
 2. Django est l'autorité pour les règles métier, commandes, transactions et contrôles d'autorisation.
 3. Le Kernel ne contient aucune logique métier et ne connaît aucun provider concret.
 4. `pixs.core` est un module obligatoire immédiatement au-dessus du Kernel.
@@ -2301,7 +2340,9 @@ Un module consommant un contrat doit pouvoir utiliser une autre implémentation 
 
 ### Authentification
 
-L'utilisation d'un provider d'authentification ne doit pas déplacer implicitement la source de vérité des `User`, `DigitalIdentity`, `Group` ou `ACL` hors de PostgreSQL.
+Un provider d'authentification ne modifie pas implicitement le stockage de référence des `User`, `DigitalIdentity`, `Group` ou `ACL`. Seule la migration Core postinstallation du §19.1 peut engager l'OpenLDAP interne à la place du PostgreSQL initial, avec retour vérifié ; l'évaluation des droits reste dans Pixs.
+
+La recette du cadrage Auth proposé doit aussi vérifier la présence essentielle de `pixs.auth`, l'autonomie locale PostgreSQL, les méthodes locales et leur enrôlement, l'absence des connecteurs externes dans l'installation standard et l'absence de démarrage implicite d'OpenLDAP/KDC. Les capacités optionnelles ne sont revendiquées qu'après qualification de leurs propres scénarios ; aucune preuve existante ne les couvre par anticipation.
 
 ### Identité et assurance d'authentification
 
@@ -2545,7 +2586,9 @@ Pixs est spécifié par capacités. Cette section et la [synthèse du README](RE
 
 Le canon dans [openspec/specs/](openspec/specs/) recense **78 capacités, 772 exigences et 892 scénarios**. Ce comptage porte sur les spécifications canoniques actuelles. Il inclut la séparation PA/PZT et les modules pixs.agent/pixs.pzt, l’adoption de C00 le 18 octobre et la synchronisation de C01 avant son archivage le 19 octobre. Les deltas de PA10 tracent une intégration déjà effectuée ; les deltas encore proposés ne sont pas comptés avant adoption.
 
-Le complément documentaire C02/R01 du 19 octobre relie **72 exigences existantes à 89 références de scénarios** : 18 exigences et 24 références dans la matrice principale, 54 exigences et 65 références dans la matrice transverse. R01 ajoute huit rattachements à des exigences déjà canoniques et onze références de scénarios, en précisant le [contrat d’autorité C08/C02](openspec/changes/add-installation-and-first-configuration/design.md). Les **12 vérifications futures C02 V01–V12** sont conservées ; V05/V07 sont enrichies par les dix cas de recette C08 B01–B10, qui ne sont ni des tests exécutés ni des scénarios canoniques supplémentaires. La [matrice C02](openspec/changes/add-core-postgres-services/requirements.md) et la [matrice C08](openspec/changes/add-installation-and-first-configuration/requirements.md) distinguent gardes locales, preuves intégrées et responsabilités. Ces sous-ensembles ne s’ajoutent pas aux totaux **78/772/892** et ne mesurent pas une couverture fonctionnelle acquise. D01–D04 restent adoptés en option A ; R01 distingue opérateur, autorisation du plan et compte cible sans étendre C01. Les mécanismes et paramètres concrets restent à détailler conformément au canon avant réalisation de cette branche. Cette mise à jour est exclusivement documentaire : les dix tâches de chaque change restent non cochées, aucun test produit ou migration n’est exécuté et aucune implémentation ni production de code n’est autorisée.
+Le complément C02/R01 du 19 octobre conservé ci-dessous décrit la préparation historique. L’invocation 1CISMP1 a ensuite autorisé la réalisation du seul C02, archivé le 20 octobre 2026. Les [preuves locales et limites](openspec/changes/archive/2026-10-20-add-core-postgres-services/VALIDATION.md) couvrent modèles, migration PostgreSQL propriétaire, services, QUERY et raccordement fermé R01 : 346 tests purs, cinq recettes PostgreSQL réelles (14/20/46/62/58 cas) et 12 indicateurs de migration réussis. Les 18 empreintes canoniques contrôlées restent identiques ; aucune nouvelle exigence ni scénario canonique. L’activation intégrée attend les garanties C03–C10 et la qualification C17/C18/C19 ; aucune disponibilité P0 n’est déduite. Les statistiques postarchive et le gate de ce RUN sont suivis séparément.
+
+Le complément documentaire C02/R01 du 19 octobre relie **72 exigences existantes à 89 références de scénarios** : 18 exigences et 24 références dans la matrice principale, 54 exigences et 65 références dans la matrice transverse. R01 ajoute huit rattachements à des exigences déjà canoniques et onze références de scénarios, en précisant le [contrat d’autorité C08/C02](openspec/changes/add-installation-and-first-configuration/design.md). Les **12 vérifications futures C02 V01–V12** sont conservées ; V05/V07 sont enrichies par les dix cas de recette C08 B01–B10, qui ne sont ni des tests exécutés ni des scénarios canoniques supplémentaires. La [matrice C02](openspec/changes/archive/2026-10-20-add-core-postgres-services/requirements.md) et la [matrice C08](openspec/changes/add-installation-and-first-configuration/requirements.md) distinguent gardes locales, preuves intégrées et responsabilités. Ces sous-ensembles ne s’ajoutent pas aux totaux **78/772/892** et ne mesurent pas une couverture fonctionnelle acquise. D01–D04 restent adoptés en option A ; R01 distingue opérateur, autorisation du plan et compte cible sans étendre C01. Les mécanismes et paramètres concrets restent à détailler conformément au canon avant réalisation de cette branche. Cette mise à jour est exclusivement documentaire : les dix tâches de chaque change restent non cochées, aucun test produit ou migration n’est exécuté et aucune implémentation ni production de code n’est autorisée.
 
 Le suivi historique relie les exigences examinées à un statut, des références, un écart ou une limite identifié et des lots proposés. La [correspondance globale](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/couverture-preparation-globale.md) donne accès à cet inventaire et aux dossiers préparés. La matrice statique du 16 octobre 2026 reste conservée. L’[audit du 17 octobre des 94 exigences NE](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) ajoute une surcouche de suivi : 10 appuis partiels et 84 couvertures non démontrées dans les sources consultées. Leur statut fonctionnel n’est pas réévalué par l’audit transversal suivant. Le tableau conserve cet instantané de 717 exigences avant PA10 ; il ne constitue pas une évaluation fonctionnelle actuelle des 772 exigences :
 
@@ -2561,21 +2604,25 @@ L’analyse est statique : présence de code, tests disponibles et archivage ne 
 
 #### Plan de la première composition installable
 
-Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances et critères de sortie pour le premier P0. Le [plan global historique](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/plan-global-preparation.md) recense les 107 dossiers préparés au 17 octobre, après N01/N02, N03–N06 et PA10. Après archivage de C00/C01 et du profil structurel EntitlementSubjectType, et préparation des deux compléments de protection des secrets le 19 octobre, l’inventaire courant compte **107 changes actifs**, dont **24 pour le premier P0**, y compris la qualification de protection et de récupération avant production :
+Le rapport initial proposait **20 lots candidats C00–C19**, avec dépendances et critères de sortie pour le premier P0. Le [plan global historique](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/plan-global-preparation.md) recense les 107 dossiers préparés au 17 octobre, après N01/N02, N03–N06 et PA10. Après archivage de C00/C01 et du profil structurel EntitlementSubjectType, préparation des deux compléments de protection des secrets et ouverture des huit changes Auth et du complément de stockage Core réversible le 19 octobre, l’inventaire courant compte **116 changes actifs**, dont **27 rattachés au premier P0**. Ces 27 comprennent les 24 précédents et trois dossiers Auth proposés pour étendre ce profil ; les cinq autres dossiers Auth et le complément de stockage Core sont optionnels :
 
 | Périmètre | Changes ouverts |
 | --- | ---: |
-| Premier P0, C02–C19, N01, N03–N06 et protection des secrets d’amorçage | 24 |
+| Premier P0, C02–C19, N01, N03–N06, protection des secrets et trois propositions Auth de socle | 27 |
 | Pixs Agent et séparation PA/PZT | 10 |
 | PZT actif et contrats techniques | 26 |
 | Compléments Bulk | 11 |
-| Capacités supplémentaires sélectionnables, dont coffre d’exploitation distribué | 33 |
+| Capacités supplémentaires sélectionnables, dont coffre distribué, cinq propositions Auth et stockage Core réversible | 39 |
 | Clarification native/hors ligne N02 | 1 |
 | Distribution Docker | 1 |
 | Recette étendue | 1 |
-| **Total** | **107** |
+| **Total** | **116** |
 
 Les dossiers hors premier P0 ne sont pas tous requis pour une installation P0 : leur sélection dépend du profil et de ses dépendances obligatoires. Leur préparation ne les active pas et ne vaut pas autorisation de les implémenter. Le [registre historique de conception et de qualification](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/arbitrages-preparation-globale.md) reste une source de préparation ; ses décisions ouvertes sont à recouper avec le canon courant et les adoptions C00/C01 avant réalisation.
+
+Les huit changes Auth sont ouverts en préparation documentaire : [architecture essentielle](openspec/changes/define-essential-autonomous-auth-module/proposal.md), [méthodes locales et MFA](openspec/changes/add-auth-local-authenticators-and-mfa/proposal.md), [forge/enrôlement](openspec/changes/add-auth-identity-enrollment/proposal.md), [fournisseur d’identité](openspec/changes/add-auth-identity-provider/proposal.md), [OpenLDAP propre](openspec/changes/add-auth-managed-openldap/proposal.md), [KDC propre](openspec/changes/add-auth-managed-kerberos-kdc/proposal.md) [sources externes](openspec/changes/add-auth-external-source-submodules/proposal.md) et [Active Directory propre](openspec/changes/add-auth-managed-active-directory/proposal.md). Les trois premiers étendent le socle cible ; les cinq autres sont sélectionnables séparément. C03 conserve connexion et sessions, sans duplication. Leurs deltas proposent sept capacités nouvelles, 44 exigences ajoutées et une exigence modifiée ; les 68 scénarios décrits comprennent un scénario existant conservé, soit 67 supplémentaires nets. Les 73 tâches restent non cochées et aucune synchronisation du canon n’est effectuée.
+
+Le [complément de stockage Core réversible](openspec/changes/add-reversible-core-directory-storage/proposal.md) ouvre un neuvième dossier lié : PostgreSQL par défaut, option OpenLDAP interne postinstallation et retour depuis les données LDAP courantes. Il propose la capacité `core-storage`, 12 exigences ajoutées, cinq modifiées et 16 scénarios supplémentaires nets ; ses dix tâches restent non cochées. Cette option modifie le stockage physique du périmètre Core engagé sans déplacer les sessions Auth ni déléguer les décisions ACL à LDAP. Les deltas ne sont pas synchronisés au canon.
 
 Le change [add-initial-entitlement-subject-type-v1](openspec/changes/archive/2026-10-19-add-initial-entitlement-subject-type-v1/proposal.md), archivé le 19 octobre, livre le vocabulaire passif des quatre types de sujets d’entitlement. Ses huit tâches sont prouvées et cochées ; ses quatre exigences et quatre scénarios sont intégrés au canon. Les trois fichiers Python compilent et les 17 tests ciblés et de régression réussissent. Ce profil ne réalise pas le moteur d’entitlements ou de quotas O15.
 
@@ -2583,23 +2630,23 @@ Le profil [C00](openspec/changes/archive/2026-10-18-define-first-installable-pbo
 
 Deux changes documentaires complètent cette livraison sans rouvrir C01 : [protection host+tpm2 et récupération sans ancien hôte](openspec/changes/qualify-pbo-bootstrap-secrets-host-tpm2/proposal.md), à relier à C08/C16/N05 et aux preuves C18/C17/C19 avant production ; [coffre indépendant pour les secrets d’exploitation distribués](openspec/changes/add-distributed-runtime-secret-vault/proposal.md), conditionnel à une composition distribuée sélectionnée. Leurs 15 exigences et 30 scénarios proposés ne sont pas intégrés au canon et leurs 20 tâches de réalisation restent non cochées.
 
-Les premières priorités sont :
+Les premières priorités après la réalisation locale C02 du 20 octobre sont :
 
-1. Lever les arbitrages de persistance Core C02 et, indépendamment, ceux de confiance des artefacts N03, à partir du profil C00 adopté. Les modules essentiels restent présents côté PBO même sans réseau actif.
-2. Réaliser les primitives Core persistantes C02 et l’audit durable C05, puis l’authentification C03 et l’autorisation intégrée C04. La reprise du journal d’amorçage C01 reste à intégrer dans C05/C08 ; la clôture C01 ne la prouve pas.
+1. Conserver les décisions Core D01–D04 adoptées et traiter les arbitrages indépendants de confiance des artefacts N03 à partir du profil C00. Les modules essentiels restent présents côté PBO même sans réseau actif.
+2. Intégrer les primitives persistantes C02 réalisées avec l’audit durable C05, l’authentification C03 et l’autorisation intégrée C04. Adopter préalablement les deltas Auth proposés avant réalisation du nouveau profil essentiel PostgreSQL, avec méthodes locales/MFA et enrôlement minimal ; ne pas en déduire l’activation des services propres ou sources externes. La reprise du journal d’amorçage C01 reste à intégrer dans C05/C08 ; les clôtures locales C01/C02 ne la prouvent pas.
 3. Relier API, composition réelle, installation, traitements persistants et gouvernance : C06–C10, selon leurs dépendances.
 4. Compléter interface modulaire, langues, thèmes, accessibilité, administration, modules essentiels, exploitation et restauration : C11–C16. Intégrer aussi N01 urgence, N04 entrée web et N05 réadmission après restauration selon leurs contrats, avant construction et recette.
 5. Fournir les vérifications de confiance N03 avant installation, construire le paquet Debian C18, puis qualifier la composition distribuée en C17 avec le kit minimal N06. C19 conserve support, preuves finales et préparation de publication, sans modification implicite de l’artefact qualifié.
 
-Au présent relevé, les changes actifs comptent **1 068 tâches non cochées**, dont quatre tâches futures PA10, les 20 tâches des compléments de protection des secrets et les huit tâches du profil EntitlementSubjectType, et **cinq tâches documentaires PA10 cochées**. Le complément C02 précise ses dix tâches existantes sans en ajouter ni en cocher. L’[audit transversal P0](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.md) du 17 octobre documente 17 parcours/interfaces, la vérification des références des 717 exigences et quatre nouveaux changes validés : N03 confiance avant installation, N04 entrée web, N05 réadmission après restauration et N06 kit minimal de conformité. Le rattachement préalable de 351 exigences à des lots P0 et de 366 à d’autres lots ne suffit pas à prouver leur applicabilité ou leur couverture ; les clauses conditionnelles restent à vérifier par rôle. Ce contrôle ne constitue pas un nouvel audit fonctionnel exhaustif des 623 exigences hors ancien périmètre NE.
+Au présent relevé recompté, les changes actifs comptent **1 143 tâches non cochées**, dont quatre tâches futures PA10, les 20 tâches des compléments de protection des secrets et les 73 tâches Auth et les dix tâches de stockage Core réversible, et **cinq tâches documentaires PA10 cochées**. Les huit tâches du profil EntitlementSubjectType sont désormais dans son archive et exclues des actifs. Le complément C02 précise ses dix tâches existantes sans en ajouter ni en cocher. L’[audit transversal P0](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.md) du 17 octobre documente 17 parcours/interfaces, la vérification des références des 717 exigences et quatre nouveaux changes validés : N03 confiance avant installation, N04 entrée web, N05 réadmission après restauration et N06 kit minimal de conformité. Le rattachement préalable de 351 exigences à des lots P0 et de 366 à d’autres lots ne suffit pas à prouver leur applicabilité ou leur couverture ; les clauses conditionnelles restent à vérifier par rôle. Ce contrôle ne constitue pas un nouvel audit fonctionnel exhaustif des 623 exigences hors ancien périmètre NE.
 
-Les contrôles stricts du relevé du 17 octobre validaient les **107 changes** ; le strict global sortait en exit 1 avec les quatre avertissements de longueur préexistants. Les **95 tests unitaires existants exécutés pendant cet audit transversal** vérifient des primitives et validateurs ; ils ne qualifient pas la composition installable. Les [contrôles locaux](reports/audit-transversal-p0-2026-10-17/RAPPORT.md) conservent commandes, résultats et limites. Les validations antérieures des 100 puis 102 dossiers et les 124 unités de l’audit NE restent des preuves historiques distinctes. Aucun résultat historique n’est présenté comme une validation actuelle des 108 dossiers courants.
+Les contrôles stricts du relevé du 17 octobre validaient les **107 changes** ; le strict global sortait en exit 1 avec les quatre avertissements de longueur préexistants. Les **95 tests unitaires existants exécutés pendant cet audit transversal** vérifient des primitives et validateurs ; ils ne qualifient pas la composition installable. Les [contrôles locaux](reports/audit-transversal-p0-2026-10-17/RAPPORT.md) conservent commandes, résultats et limites. Les validations antérieures des 100 puis 102 dossiers et les 124 unités de l’audit NE restent des preuves historiques distinctes. Le contrôle documentaire courant du 19 octobre, `openspec validate --all --strict --no-interactive --json`, réussit sur **194 éléments : 116 changes et 78 capacités**, sans échec ni avertissement ; aucun test produit n’est exécuté pour cette préparation Auth.
 
-Les compteurs canoniques ci-dessus sont recomptés dans les fichiers de spécification actuels. PA10, C00 et C01 sont déjà intégrés ; leurs adoptions ne constituent pas une seconde augmentation du canon. Les deltas encore proposés N02/N04/N05 représentent **4 exigences ajoutées, 2 exigences existantes modifiées et 15 scénarios supplémentaires nets**. Les deux compléments de protection des secrets ajoutent **15 exigences et 30 scénarios proposés**, sans nouvelle capacité. Si tous ces deltas étaient adoptés sans modification, la projection serait de **78 capacités, 791 exigences et 937 scénarios** ; elle ne remplace pas le canon courant **78/772/892**. Le recomptage ne synchronise pas les deltas encore proposés et ne réévalue pas la couverture fonctionnelle.
+Les compteurs canoniques ci-dessus sont recomptés dans les fichiers de spécification actuels. PA10, C00 et C01 sont déjà intégrés ; leurs adoptions ne constituent pas une seconde augmentation du canon. Les deltas encore proposés N02/N04/N05 représentent **4 exigences ajoutées, 2 exigences existantes modifiées et 15 scénarios supplémentaires nets**. Les deux compléments de protection des secrets ajoutent **15 exigences et 30 scénarios proposés**, sans nouvelle capacité. Les huit changes Auth proposent **7 capacités nouvelles, 44 exigences ajoutées, 1 exigence modifiée et 67 scénarios supplémentaires nets**. Le complément de stockage Core réversible ajoute une capacité, 12 exigences, modifie cinq exigences existantes et apporte 16 scénarios supplémentaires nets. Si tous ces deltas étaient adoptés sans modification, la projection serait de **86 capacités, 847 exigences et 1 020 scénarios** ; elle ne remplace pas le canon courant **78/772/892**. Le recomptage ne synchronise pas les deltas encore proposés et ne réévalue pas la couverture fonctionnelle.
 
 Le 19 octobre 2026, les quatre descriptions trop longues de `bulk-operations` et `identity-assurance` sont réparties entre validation structurelle et limites runtime, à la demande du développeur. Les intitulés et scénarios existants sont conservés ; quatre exigences distinctes et quatre scénarios de contrôle supplémentaires explicitent les limites déjà présentes, sans nouvelle fonctionnalité ni modification du code. Ce découpage explique l’augmentation du canon de 764/884 à 768/888 exigences/scénarios ; les archives et leurs résultats historiques restent inchangés.
 
-Le transport systemd C01 est acquis pour le profil Debian local. Les choix restant ouverts de providers, serveur/session/transport, schémas détaillés, paramètres, budgets, support et mécanismes de confiance doivent être validés avant leur réalisation, sans rouvrir les décisions C00/C01 adoptées. Les autres écarts transversaux complètent les dossiers propriétaires existants ; aucune option PA, réseau PZT, Docker, SDK complet, Bulk ou client natif n’est activée implicitement.
+Le transport systemd C01 est acquis pour le profil Debian local. Le cadrage Auth retient le local autonome PostgreSQL par défaut dans un module essentiel indépendant ; ses deltas restent proposés. Les autres choix de providers, serveur/session/transport, schémas détaillés, paramètres, budgets, support et mécanismes de confiance doivent être validés avant leur réalisation, sans rouvrir les décisions C00/C01 adoptées. Les autres écarts transversaux complètent les dossiers propriétaires existants ; aucune option PA, réseau PZT, Docker, SDK complet, Bulk ou client natif n’est activée implicitement.
 
 #### Ratio d’avancement affiché dans le README
 
@@ -2610,7 +2657,7 @@ total = changes archivés + changes ouverts
 avancement OpenSpec (%) = 100 × changes archivés / total
 ```
 
-Au 19 octobre 2026 : **153 archivés + 107 ouverts = 260 changes**, soit **58,85 %** après arrondi à deux décimales. Les archivés sont les dossiers de changes sous `openspec/changes/archive/` ; les ouverts sont les dossiers directement sous `openspec/changes/`, hors `archive` et dossiers techniques masqués. La création puis l’archivage du seul profil EntitlementSubjectType font évoluer cet inventaire, sans mesurer une qualification produit.
+Au 19 octobre 2026 : **153 archivés + 116 ouverts = 269 changes**, soit **56,88 %** après arrondi à deux décimales. Les archivés sont les dossiers de changes sous `openspec/changes/archive/` ; les ouverts sont les dossiers directement sous `openspec/changes/`, hors `archive` et dossiers techniques masqués. Les huit propositions Auth et le complément Core augmentent le dénominateur sans ajouter de réalisation ; ce ratio ne mesure pas une qualification produit.
 
 Ce ratio est un indicateur global non pondéré de clôture des changes. Il inclut les archives documentaires, les contrats préparatoires et les capacités hors premier P0 ; il ne mesure ni l’effort restant, ni la proportion de fonctions utilisables, ni la qualification de cette composition. Il peut diminuer lorsque de nouveaux changes sont créés. Une valeur de 100 % ne dispense jamais des critères de livraison, des tests et des preuves de qualification. En l’absence de changes, afficher « non calculable », sans annoncer 100 %.
 
@@ -3493,6 +3540,10 @@ Ces éléments restent des choix d'implémentation ou d'exploitation. Lorsqu'ils
 flowchart TB
     subgraph B["PBO — Django, modules et contrats"]
         K["Kernel — mécanismes génériques"] --> C["pixs.core — primitives communes"]
+        K -. "composition et services" .-> AU["pixs.auth — essentiel, local autonome"]
+        AU -. "contrats publics d'identité" .-> C
+        C -. "stockage Core après migration réversible" .-> LD[("OpenLDAP interne — périmètre engagé")]
+        AU -. "gestion du service" .-> LD
         C --> M["Modules fonctionnels"]
         K -. "composition et services" .-> A["pixs.agent — gestion PA hors PZT"]
         K -. "composition et services" .-> Z["pixs.pzt — gestion PZT"]
@@ -3505,7 +3556,7 @@ flowchart TB
         S --> TH["Thèmes — Light / Dark"]
         M --- DJ["Django — autorité métier, API et Commands"]
     end
-    DJ --> DB[("PostgreSQL — source de vérité")]
+    DJ --> DB[("PostgreSQL — stockage par défaut")]
     FE["PFO — TanStack"] -->|"API / Commands"| DJ
     DB --> E["Electric — synchronisation optionnelle"] --> FE
     A <-->|"Gestion PA via PZT"| T["PZT — exécutable réseau indépendant"]
@@ -3517,7 +3568,7 @@ Les déploiements locaux et les deux exemples distants, avec ou sans PBO/PFO,
 sont détaillés au §4. Les flèches sont des relations logiques, sans imposer les
 endpoints de réalisation ni transférer les décisions métier à PA ou PZT.
 
-Le modèle final sépare explicitement le Kernel, les primitives très bas niveau du Core, les fonctionnalités fournies par les modules, les contrats, les providers, les extensions, les thèmes, la source de vérité PostgreSQL, le backend Django, la synchronisation réactive optionnelle et le frontend TanStack, ainsi que PA/PZT et leurs modules de gestion distincts.
+Le modèle final sépare explicitement le Kernel, les primitives très bas niveau du Core, `pixs.auth` essentiel indépendant et ses capacités sélectionnables, les fonctionnalités fournies par les modules, les contrats, les providers, les extensions, les thèmes, le stockage PostgreSQL par défaut et le provider Core sélectionné, le backend Django, la synchronisation réactive optionnelle et le frontend TanStack, ainsi que PA/PZT et leurs modules de gestion distincts.
 
 La gouvernance des données et la confidentialité constituent une capacité transverse : elles suivent la propriété des composants et s'appliquent à la source de vérité comme à ses dérivés, sans transformer un provider, un canal de transport ou une topologie de déploiement en autorité métier.
 
@@ -3527,7 +3578,7 @@ Les SDK et outils développeur consomment les contrats publics de Pixs et réuti
 
 Les entitlements et quotas complètent cette chaîne sans remplacer l'autorisation : les premiers déterminent les capacités contractuellement disponibles, les seconds contrôlent la consommation effective. Leurs décisions sont évaluées côté backend, persistantes, versionnées, auditables et compatibles avec les API, SDK, Jobs et opérations bulk.
 
-La résidence et le placement régional complètent la gouvernance sans déplacer l'autorité métier : la politique du tenant détermine les emplacements admissibles, les providers et les copies dérivées, tandis que PostgreSQL/Django reste l'autorité par région et par ressource. La réplication, la bascule et les transferts restent explicites, contrôlés et conditionnels.
+La résidence et le placement régional complètent la gouvernance sans déplacer l'autorité métier : la politique du tenant détermine les emplacements admissibles, les providers et les copies dérivées, tandis que Django et le stockage de référence déclaré restent les autorités applicables par région et par ressource. La réplication, la bascule et les transferts restent explicites, contrôlés et conditionnels.
 
 La disponibilité des capacités relève de la composition, tandis que les feature flags pilotent uniquement des comportements runtime compatibles. Les deux mécanismes restent déterministes, auditables et indépendants des permissions et de l'autorité métier.
 

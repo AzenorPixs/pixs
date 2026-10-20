@@ -29,6 +29,8 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
+Le [complément de stockage Core réversible](../add-reversible-core-directory-storage/design.md) prépare un mode distinct où l'OpenLDAP interne devient référence après migration. Le présent repli PostgreSQL concerne uniquement la projection de consultation. Il ne peut pas réactiver une ancienne copie PostgreSQL si LDAP est le stockage Core autoritatif ; le retour de stockage doit migrer l'état LDAP courant sous plan vérifié.
+
 Composant/provider optionnel au-dessus du Kernel, déclaré par manifest et sélection explicite. Exposer uniquement ses contrats publics versionnés et écrire ses données via leur propriétaire. Conserver Django/PostgreSQL comme autorités, contexte tenant/scope, audit et gouvernance ; qualifier séparément dépendances, limites et mode dégradé. Ne pas imposer un provider, une bibliothèque ou une ressource métier encore non décidés.
 
 Périmètre propre à ce lot : Lecture sous contrat, préférence LDAP, fraîcheur après mutation, repli PG et DEGRADED.

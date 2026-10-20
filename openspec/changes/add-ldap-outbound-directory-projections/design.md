@@ -29,6 +29,8 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
+Le [complément Core réversible](../add-reversible-core-directory-storage/design.md) propose un rôle distinct de stockage OpenLDAP autoritatif après migration. Le présent dossier reste limité à la projection sortante avec PostgreSQL référence ; il ne réalise ni le déplacement des ACL ni le retour de stockage. Les deux rôles ne sont pas actifs sur le même périmètre sous des autorités concurrentes.
+
 Composant/provider optionnel au-dessus du Kernel, déclaré par manifest et sélection explicite. Exposer uniquement ses contrats publics versionnés et écrire ses données via leur propriétaire. Conserver Django/PostgreSQL comme autorités, contexte tenant/scope, audit et gouvernance ; qualifier séparément dépendances, limites et mode dégradé. Ne pas imposer un provider, une bibliothèque ou une ressource métier encore non décidés.
 
 Périmètre propre à ce lot : Provider/mapping, événements après commit, retraits/convergence/idempotence ; PostgreSQL autoritatif.

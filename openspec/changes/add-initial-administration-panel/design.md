@@ -20,11 +20,15 @@ Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les stru
 
 Construire le panneau avec les mêmes API/Commands que les autres façades ; conserver droits ordinaires et exception Super Admin dans son seul périmètre. Route initiale /admin/ administrable sans collision ; santé réservée selon niveau ; première configuration réservée au compte fonctionnel ; états/messages et erreurs localisés.
 
+Le [cadrage Auth proposé du 19 octobre 2026](../define-essential-autonomous-auth-module/design.md) ajoute les parcours d’administration de `pixs.auth` : moyens et enrôlement locaux, MFA, sessions, récupération et politiques effectives avec leur origine. La présence d’un sous-module, sa confiance, son activation et la santé d’un service propre OpenLDAP/KDC restent distinctes. Les sources externes ne sont proposées à l’activation qu’après installation explicite ; le panneau ne télécharge aucun connecteur à la connexion et n’expose aucune valeur secrète. Les sous-modules possèdent leurs contributions frontend sous contrats publics, sans second moteur d’autorisation. Aucun écran ni code n’est produit ici.
+
 ## Alternatives et frontière de conception
 
 Privilégier les mécanismes et dépendances existants. Une implémentation locale qui duplique les contrats, importe des tables privées ou sélectionne implicitement un provider est incompatible avec le cadrage. Toute technologie supplémentaire ou précision de comportement devra être justifiée avant réalisation ; la présence d’un paquet dans DEVOPS ne prouve ni sélection ni conformité.
 
 ## Décisions bloquantes avant réalisation
+
+Le [choix postinstallation de stockage Core](../add-reversible-core-directory-storage/design.md) nécessite un parcours distinct de la simple activation OpenLDAP : préparation du plan, impacts, contrôles, progression, engagement, reprise et retour PostgreSQL. L'interface doit afficher le stockage effectif et la génération, sans présenter une copie ou un bouton d'activation comme une migration confirmée. Aucun écran ni changement de données n'est réalisé ici.
 
 Catalogue exact d’écrans/actions, transitions et changement de route sous contrats publics ; ne pas activer implicitement l’administration Django ni créer un second modèle de permissions.
 
