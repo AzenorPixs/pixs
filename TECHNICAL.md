@@ -76,12 +76,16 @@ Les méthodes d'authentification, identifiants externes, dates d'activation et d
 Utilisateur
   └── données de personne ou de contexte métier
 
-Identité numérique
-  ├── authentification
-  ├── sessions et tokens
-  ├── méthodes d'authentification
-  ├── révocation et cycle de vie
+pixs.core / Identité numérique
+  ├── identité canonique et état de référence
+  ├── liens, groupes, appartenances et droits
   └── sujet d'autorisation possible
+
+pixs.auth / référence à l'identité Core
+  ├── justificatifs et méthodes d'authentification
+  ├── politiques, contexte, sessions et tokens
+  ├── MFA, récupération et révocation des accès dérivés
+  └── enrôlement, émission d'identité et services gérés
 
 Provider d'authentification
   └── vérification ou établissement de l'authentification
@@ -89,7 +93,11 @@ Provider d'authentification
 
 Un provider OIDC, SAML, LDAP ou local peut authentifier une identité numérique, mais ne devient pas automatiquement la source de vérité des utilisateurs, groupes, ACL ou permissions Pixs.
 
-Le backend Django reste l'autorité pour les règles métier, les transactions et l'autorisation. PostgreSQL reste la source de vérité applicative.
+Le cadrage cible Auth du 19 octobre 2026 précise cette répartition via un module essentiel indépendant ; les deltas proposés et leur statut sont décrits au §4.4. Il n'impose aucun déplacement du code ni des contrats structurels existants.
+
+Le backend Django reste l'autorité pour les règles métier, les mutations et l'autorisation. PostgreSQL reste le stockage applicatif par défaut ; les garanties de transaction du provider Core OpenLDAP proposé au §34.2 nécessitent leur qualification propre.
+
+Le complément proposé du 19 octobre 2026 distingue ce stockage par défaut d'une option de stockage Core OpenLDAP interne, décrite au §34.2. Après migration engagée, LDAP devient le stockage de référence du seul périmètre Core concerné ; les garanties de mutation restent à qualifier. Auth et les autres domaines conservent leurs stockages déclarés. Cette exception proposée ne modifie pas le canon courant.
 
 Le premier socle du profil identité v1 se limite aux modèles et validateurs structurels sans authentification réelle, persistance ou provider concret. Leur validation ne crée aucune session et n'accorde aucun accès. Elle ne prouve ni une mutation persistante ni un audit durable et ne dispense pas les mutations réelles des exigences applicables de persistance, d'autorisation et d'audit.
 
@@ -97,7 +105,9 @@ Le provider ne peut établir qu'un niveau d'assurance couvert par sa configurati
 
 ## 4. Articulation avec OpenSpec et choix techniques ouverts
 
-Les orientations de conception C02 D01–D04 sont adoptées en option A le 19 octobre 2026 : réutilisation de `PixsCoreConfig` et du label `pixs_core` pour les modèles/migrations Core dédiés, contrats versionnés par domaine, transactions Django avec contraintes PostgreSQL et verrous ciblés déterministes, politique restrictive avant classification et suppression logique par défaut des ressources métier. La [conception C02](openspec/changes/add-core-postgres-services/design.md) précise propriété, interfaces et preuves attendues. Les schémas physiques, signatures, paramètres de politique et recettes restent à détailler dans ces orientations ; les éléments ouverts ci-dessous ne rouvrent pas ces choix acquis. Cette adoption est exclusivement documentaire et n’autorise aucune implémentation, production de code ou migration ; les contrats purs et le canon restent inchangés.
+Le cadrage C02 du 19 octobre conservé ci-dessous décrit la préparation historique. L’invocation 1CISMP1 a ensuite autorisé la réalisation du seul C02, archivé le 20 octobre 2026. Les [preuves locales et limites](openspec/changes/archive/2026-10-20-add-core-postgres-services/VALIDATION.md) couvrent modèles, migration PostgreSQL propriétaire, services, QUERY et raccordement fermé R01 : 346 tests purs, cinq recettes PostgreSQL réelles (14/20/46/62/58 cas) et 12 indicateurs de migration réussis. Les 18 empreintes canoniques contrôlées restent identiques ; aucune nouvelle exigence ni scénario canonique. L’activation intégrée attend les garanties C03–C10 et la qualification C17/C18/C19 ; aucune disponibilité P0 n’est déduite. Les statistiques postarchive et le gate de ce RUN sont suivis séparément.
+
+Les orientations de conception C02 D01–D04 sont adoptées en option A le 19 octobre 2026 : réutilisation de `PixsCoreConfig` et du label `pixs_core` pour les modèles/migrations Core dédiés, contrats versionnés par domaine, transactions Django avec contraintes PostgreSQL et verrous ciblés déterministes, politique restrictive avant classification et suppression logique par défaut des ressources métier. La [conception C02](openspec/changes/archive/2026-10-20-add-core-postgres-services/design.md) précise propriété, interfaces et preuves attendues. Les schémas physiques, signatures, paramètres de politique et recettes restent à détailler dans ces orientations ; les éléments ouverts ci-dessous ne rouvrent pas ces choix acquis. Cette adoption est exclusivement documentaire et n’autorise aucune implémentation, production de code ou migration ; les contrats purs et le canon restent inchangés.
 
 Le [complément documentaire R01 de C08](openspec/changes/add-installation-and-first-configuration/design.md) précise la preuve de l’opérateur pré-session, la décision liée au plan d’installation et les écritures Core contrôlées par C02. Le compte à créer n’est pas un acteur déjà authentifié ; C03/C04 fournissent le sujet et l’autorisation conformes au canon sans exiger une session existante de ce compte. UID 0, les credentials PostgreSQL, les saisies de mot de passe ou un reçu C01 ne suffisent pas. C01 conserve ses seules actions techniques ; le journal C01 ne remplace pas l’audit des mutations Core. Preuves, plan et installation sont liés, les effets sont fermés et la reprise distingue rollback, commit confirmé et issue inconnue. Si un mécanisme ne peut satisfaire le canon, la branche reste refusée jusqu’à clarification autorisée, sans exception locale inventée. R01 documente les informations et critères attendus ; il ne sélectionne aucun provider ni n’autorise du code.
 
@@ -210,6 +220,30 @@ Les tokens d'accès sont bornés par la politique du provider. Les mécanismes d
 Le framework ne rend pas un mot de passe obligatoire. Un provider local peut fournir des credentials, tandis que des providers OIDC, SAML, WebAuthn, mTLS, device ou workload identity peuvent fournir d'autres méthodes. Les identités `SERVICE` et `DEVICE` déclarent une méthode adaptée, une durée de validité, des limites de périmètre et des règles de rotation. Une API key seule produit au plus une assurance de base, sauf politique explicite contraire.
 
 La récupération révoque les sessions concernées, remplace ou invalide le credential compromis et ne restaure pas automatiquement `VERIFIED`, `PROOFED`, `MULTI_FACTOR` ou `PHISHING_RESISTANT` sans nouvelle preuve ou intervention administrative autorisée.
+
+### 4.4 Module essentiel pixs.auth et PostgreSQL par défaut — proposition du 19 octobre 2026
+
+Le [change d'architecture](openspec/changes/define-essential-autonomous-auth-module/proposal.md) prépare `pixs.auth` indépendant et essentiel dans les compositions applicatives, dont P0. Ses deltas restent proposés sans synchronisation du canon. Aucun code, manifest produit, migration ou dépendance installée n'est ajouté. Les fixtures structurelles non applicatives restent distinctes des compositions concernées.
+
+La dépendance va de `pixs.auth` vers les contrats publics `pixs.core`. Core conserve l'autorité des identités numériques, utilisateurs, liens, tenants, groupes, appartenances, rôles, ACL et permissions. Auth possède justificatifs, références de moyens, mappings d'authentification, politiques, contextes, sessions et dossiers d'enrôlement ; ses tables et migrations sont distinctes, sans accès privé inter-modules. Plusieurs moyens ou sources peuvent viser une identité sans modifier les cardinalités User/DigitalIdentity.
+
+**Par défaut, `pixs.auth` s'appuie sur PostgreSQL.** Son profil local n'exige ni LDAP, ni Kerberos, ni fournisseur externe, ni Internet. Les empreintes de mots de passe, références, états et métadonnées nécessaires sont persistés sous protection adaptée ; clés privées, graines MFA et secrets réversibles suivent les contrats de secrets sans valeurs en clair dans les tables métier. Le choix PostgreSQL ne transforme pas la base métier en coffre d'amorçage et ne remplace pas C01/SecretProvider.
+
+Le catalogue proposé inclut le local (`password`, `webauthn`, `totp`, `recovery`), l'enrôlement, les émetteurs OIDC/SAML, la gestion d'OpenLDAP, la gestion du KDC et les sources externes séparées. Les méthodes locales et le parcours minimal d'enrôlement appartiennent à la composition standard cible ; leur usage est fixé par politique. Les adaptateurs matériels restent extensibles. Visage/empreinte digitale sont vérifiés de préférence localement via l'authentificateur WebAuthn, sans collecte des données biométriques par Pixs.
+
+Le rôle IdP/OP émet vers des clients approuvés et conserve sujet, audience, assurance, validité et attributs minimisés. Il ne requiert pas de source externe. Les connecteurs `pixs.auth.sources.ldap`, `.kerberos`, `.oidc`, `.saml` ou autres sont absents de l'installation standard et ajoutés explicitement, sans découverte valant confiance.
+
+Le sous-module optionnel `pixs.auth.directory.ad` gère un domaine Active Directory propre sous plan explicite, sans activation par défaut ni connecteur externe obligatoire. Les responsabilités annuaire/Kerberos/DNS, noms, endpoints et droits techniques sont coordonnés avec les autres services. SID et objectGUID sont mappés explicitement aux identités Core ; aucun rôle de domaine ne crée de privilège Pixs. PostgreSQL reste le stockage par défaut Auth, sans être imposé comme stockage natif du contrôleur. L'implémentation, la plateforme et le niveau de compatibilité sont à qualifier ; aucun domaine existant n'est adopté implicitement. Le [change AD](openspec/changes/add-auth-managed-active-directory/design.md) précise frontières et recette.
+
+Les sous-modules de gestion d'OpenLDAP et du KDC peuvent provisionner, configurer, démarrer, arrêter et superviser les propres services de Pixs. Ils ne sont pas des connecteurs externes. Les services sont distincts de Django et non requis/non démarrés par défaut. Le KDC peut fonctionner seul ; une dépendance à OpenLDAP n'existe que si son backend sélectionné l'exige. Stockages techniques natifs, secrets, placement, transport, comptes OS, sauvegardes et réadmission sont déclarés et qualifiés avant activation. Aucun backend PostgreSQL natif pour slapd/KDC n'est supposé.
+
+La projection `directory-projections` reste limitée à la consultation. Toute authentification LDAP est une capacité séparée, même dans le même processus OpenLDAP. Un repli de lecture PostgreSQL ne constitue jamais un repli d'authentification. Aucun hash local n'est supposé convertible en clé Kerberos ni propagé arbitrairement ; l'enrôlement des moyens propres suit un contrat qualifié.
+
+Les politiques Auth sont typées, versionnées, résolues par plateforme/tenant/scope applicable et présentent origine/valeur effective. Elles encadrent méthodes, MFA, fraîcheur, sessions, récupération, confiance et sources. La panne d'une source n'abaisse pas l'assurance ni n'active un mot de passe local. Révocation d'émission, validité résiduelle des tickets et effet sur les clients tiers restent distingués ; aucune invalidation universelle instantanée n'est supposée. L'exception Super Admin canonique et son authentification propre sont préservées.
+
+Le [catalogue des changes](openspec/changes/define-essential-autonomous-auth-module/design.md) donne les dépendances et recettes futures. C03 conserve connexion et sessions ; C02 conserve les données Core ; C08 conserve le provisionnement et R01. Les contrats exacts, paramètres, transports de session, bibliothèques et profils de services restent à arrêter avant réalisation, sans rouvrir le choix PostgreSQL par défaut.
+
+Le catalogue est complété par le [choix de stockage Core réversible](openspec/changes/add-reversible-core-directory-storage/design.md), détaillé au §34.2. Les mentions PostgreSQL pour le référentiel Core décrivent son état initial ; le provider engagé après migration porte ensuite les utilisateurs, groupes et ACL du périmètre concerné. Les sessions et justificatifs Auth restent dans leur domaine de persistance propre.
 
 ## 5. Modèle commun de composant
 
@@ -1895,7 +1929,7 @@ security_controls  contrôles requis ou fournis
 
 Le profil ne doit pas contenir de valeur secrète. Il permet de vérifier qu'un composant ne demande pas une permission, un secret ou une sortie réseau non déclarés. Les dépendances doivent être inventoriées dans un SBOM et soumises à une politique de vulnérabilité. Les artefacts doivent être associés à une provenance vérifiable, une empreinte et, lorsque la distribution l'exige, une signature. La vérification de l'artefact doit pouvoir confirmer la source, la version, le processus de build et les entrées principales.
 
-Le socle de build couvre le scan de secrets, l'analyse statique, la vérification des dépendances et de leurs vulnérabilités, le scan des images ou paquets, la génération du SBOM, la vérification des signatures et le contrôle de provenance. Une vulnérabilité critique connue bloque la distribution. Une vulnérabilité élevée peut uniquement faire l'objet d'une dérogation explicite avec justification, responsable, échéance, mesures compensatoires et audit. Les résultats de sécurité sont diagnostiquables sans exposer les détails exploitables ou les données sensibles.
+Le socle de build couvre le scan de secrets, l'analyse statique, la vérification des dépendances et de leurs vulnérabilités, le scan des images ou paquets, la génération du SBOM, la vérification des signatures et le contrôle de provenance. Une vulnérabilité critique connue bloque la distribution sauf dérogation limitée, documentée et auditée conforme au canon `security`. Une vulnérabilité élevée peut uniquement faire l'objet d'une dérogation explicite avec justification, responsable, échéance, mesures compensatoires et audit. Les résultats de sécurité sont diagnostiquables sans exposer les détails exploitables ou les données sensibles.
 
 Les contrôles de sécurité utilisent une politique fail-closed pour les décisions d'identité, d'autorisation, de signature, de secret, de contexte tenant, d'intégrité d'artefact et de validation de provider. Une information absente, expirée, incohérente ou indémontrable ne doit pas être interprétée comme un accord. Une capacité optionnelle peut passer à `DEGRADED` ou `DISABLED` si son isolement ne permet aucun accès ou traitement non autorisé. Le runtime doit pouvoir révoquer un composant, un provider, un token, une clé de webhook ou un endpoint sans supprimer implicitement les données métier. Les transitions de blocage, révocation, dérogation et réactivation portent une cause, une corrélation, un acteur autorisé et un événement d'audit ; le diagnostic expose l'état et la référence sans publier le secret ou le détail exploitable.
 
@@ -2105,6 +2139,18 @@ de fraîcheur, puis lit PostgreSQL en cas d'indisponibilité ou de retard. Aprè
 une mutation confirmée, elle privilégie PostgreSQL jusqu'à confirmation de la
 projection. Le repli produit un état `DEGRADED` corrélé ; il ne peut ni exposer
 une donnée hors périmètre ni élargir une autorisation.
+
+### 34.2 Stockage Core OpenLDAP interne et retour PostgreSQL
+
+Le [change de stockage Core réversible](openspec/changes/add-reversible-core-directory-storage/design.md) complète le cadrage : PostgreSQL reste le stockage initial des utilisateurs, groupes et ACL ; OpenLDAP interne peut devenir leur stockage de référence après une opération postinstallation autorisée. Le retour vers PostgreSQL est obligatoire et migre l'état LDAP courant, avec toutes les mutations, suppressions et révocations intervenues depuis l'aller.
+
+Core garde la propriété logique, les UUID, schémas, liens et contrats ; Auth gère le service OpenLDAP. Le provider de stockage est lié par contrat public sans dépendance privée ni cycle Core/Auth. Les ACL applicatives sont stockées sous schéma versionné et évaluées par Pixs ; les ACL techniques LDAP ne les remplacent pas. Aucun accès direct au backend ne devient une API métier.
+
+Le plan couvre un ensemble cohérent de données et relations, sa représentation complète, les contrôles d'unicité/intégrité, l'audit, la concurrence, la sauvegarde et le retour. La bascule ferme les écritures concurrentes lors de la réconciliation finale, valide les données et engage durablement une génération unique. Les anciens écrivains sont refusés ; caches, contextes et traitements différés sont réévalués. Une issue inconnue est réconciliée avant reprise ; aucun compteur ou ancien état ne vaut preuve de bascule.
+
+La projection du §34.1 garde PostgreSQL autoritatif et son repli de consultation. En mode stockage LDAP autoritatif, ce flux/repli ne s'applique plus au même périmètre et doit être désactivé ou reconfiguré sans boucle. Une indisponibilité LDAP ne rend pas l'ancienne copie PostgreSQL utilisable comme référence. L'ancienne copie est conservée protégée et non autoritative ; sa purge est un acte distinct.
+
+Les garanties multi-objets LDAP, l'idempotence, l'audit/outbox, le filtrage et les mutations croisant données Core LDAP et données métier PostgreSQL doivent être qualifiés avant code ; aucune équivalence SQL ni transaction atomique inter-stores n'est présumée. C02 D03-A reste acquis pour le provider PostgreSQL initial. Sessions Auth, credentials, secrets, audit et coordination ne sont pas déplacés par cette option ; AD et sources externes restent hors sélection comme stockage Core.
 
 ## 35. Conformité des providers et capacités du point 12
 

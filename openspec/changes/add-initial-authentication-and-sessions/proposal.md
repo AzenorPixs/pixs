@@ -6,7 +6,7 @@ Le code expose des identités structurelles et mappings d’assurance ; il ne d�
 
 ## Modifications proposées
 
-Implémenter le provider choisi en C00, l’authentification propre du Super Admin, sessions/jetons bornés, rotation, révocation et niveaux d’assurance obtenus. OIDC/SAML restent non sélectionnés si inutiles.
+Réaliser, sous mandat ultérieur, la connexion/déconnexion et les sessions du module essentiel `pixs.auth`, avec provider local autonome et PostgreSQL par défaut selon le [cadrage Auth proposé](../define-essential-autonomous-auth-module/proposal.md). Préserver l’authentification propre du Super Admin, sessions/jetons bornés, rotation, révocation et niveaux d’assurance obtenus. Les émetteurs IdP, services propres OpenLDAP/KDC et connecteurs externes ont des dossiers distincts ; ces derniers sont absents de l’installation standard.
 
 ## Capacités
 
@@ -20,6 +20,7 @@ Aucun texte canonique modifié par ce dossier. `requirements.md` relie les exige
 
 ## Dépendances
 
+- `define-essential-autonomous-auth-module` : deltas proposés à adopter avant la réalisation du nouveau profil ; C03 ne les duplique pas.
 - `add-pbo-runtime-secret-provider`.
 - `add-core-postgres-services`.
 
@@ -37,4 +38,4 @@ Connexion/déconnexion et révocation réelles ; jeton ou session expiré refus�
 
 ## Barrière de conception
 
-Provider initial, choix sessions/cookies/Bearer par façade, rotation/révocation et durées. Ces arbitrages modifient sécurité et contrats : revue avant réalisation, sans valeurs arbitraires.
+Le cadrage du 19 octobre retient le local autonome PostgreSQL par défaut dans `pixs.auth`. Restent à préciser les contrats et schémas propres Auth, le choix sessions/cookies/Bearer par façade, la rotation/révocation et les durées. Ces arbitrages modifient sécurité et contrats : revue avant réalisation, sans valeurs arbitraires. Les deltas restent possédés par les nouveaux changes Auth, sans synchronisation du canon ici.
