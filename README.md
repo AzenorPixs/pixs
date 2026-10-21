@@ -1,4 +1,4 @@
-# Pixs l'Application Universsel
+# Pixs l'Application Universelle
 
 **Version initiale — avancement OpenSpec : 56,88 %** — 153 changes archivés sur 269 au total, dont 116 ouverts. Relevé du 19 octobre 2026.
 
@@ -6,7 +6,7 @@ Ce ratio suit les changes, sans mesurer leur taille ni remplacer une qualificati
 
 > Un socle applicatif modulaire, sécurisé et API-first pour construire des applications et services métiers durables.
 
-Pixs l'Application Universsel est un framework applicatif conçu pour composer plusieurs applications et services métiers à partir de composants indépendants. Il sépare strictement le mécanisme du framework des fonctionnalités de domaine, afin de pouvoir faire évoluer une installation par ajout de modules, providers, extensions ou thèmes, sans modifier son noyau.
+Pixs l'Application Universelle est un framework applicatif conçu pour composer plusieurs applications et services métiers à partir de composants indépendants. Il sépare strictement le mécanisme du framework des fonctionnalités de domaine, afin de pouvoir faire évoluer une installation par ajout de modules, providers, extensions ou thèmes, sans modifier son noyau.
 
 ## État du projet
 
