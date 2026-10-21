@@ -24,6 +24,8 @@ Les scénarios existants de sauvegarde protégée et de purge sur révocation so
 
 Fixtures synthétiques de coffre et de base locale séparées ; vérification des exports et sauvegardes ; refus lorsque le coffre est indisponible ; absence de secret dans intentions et logs ; révocation/reconnexion ; aucun effet métier confirmé sans backend. Ces recettes runtime ne sont pas exécutées par l’adoption documentaire ; les tâches de qualification restent ouvertes et le dossier reste actif, sans archivage.
 
+Le [plan de qualification runtime N02](qualification-plan.md), préparé le 21 octobre 2026, détaille les prérequis, plateformes candidates, scénarios, critères d’acceptation et preuves attendues pour les tâches 4 et 5. Les choix encore ouverts et les recettes restent distincts de cette préparation documentaire.
+
 ## Vérifications documentaires du 21 octobre 2026
 
 OpenSpec 1.14.3, avec télémétrie désactivée, valide `validate --all --strict --no-interactive --json --report findings` avec code de sortie 0 : 190 éléments sur 190, soit 112 changes actifs et 78 capacités, sans erreur ni avertissement. Les deux blocs N02 sont identiques entre deltas et canon ; les scénarios existants sont préservés et trois scénarios sont ajoutés. Le canon compte 831 exigences et 986 scénarios ; PROJECT et README reprennent ces totaux.
