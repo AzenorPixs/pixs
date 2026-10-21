@@ -957,7 +957,7 @@ Ils doivent simuler les pertes de connexion, la reconnexion, les redémarrages d
 
 Les scénarios de reconnexion doivent démontrer la réévaluation de l'identité, du `ScopeContext`, de l'autorisation, de l'entitlement, du quota, de la concurrence et de la gouvernance. Ils doivent couvrir l'idempotence, les retries, les expirations, les révocations, les changements de tenant ou de scope, les tombstones, les suppressions et les conflits `REJECT`, `MANUAL_REVIEW`, `DOMAIN_MERGE` et `LAST_WRITE_WINS` lorsqu'il est déclaré. Aucun Event de domaine ne doit être publié localement avant confirmation serveur.
 
-La conformité doit vérifier l'isolation des répliques et files entre utilisateurs, appareils, tenants et scopes, la rétention, l'effacement, le chiffrement ou stockage sécurisé déclaré et l'absence de secrets, tokens, credentials ou preuves d'authentification brutes. `RESTRICTED` et `SENSITIVE_PERSONAL` doivent être refusés par défaut, `CONFIDENTIAL` doit exiger une politique explicite, et les imports, exports, opérations bulk, purges et actions sensibles doivent être refusés hors ligne par défaut.
+La conformité doit vérifier l'isolation des répliques et files entre utilisateurs, appareils, tenants et scopes, la rétention, l'effacement et le chiffrement ou stockage sécurisé déclaré. Le stockage local de `RESTRICTED` doit être refusé, y compris hors réplique ou dans un stockage chiffré ; `SENSITIVE_PERSONAL` reste refusé par défaut et `CONFIDENTIAL` exige une politique explicite. Les tests doivent appliquer N02 adopté et synchronisé le 21 octobre 2026 : coffre natif sécurisé séparé, absence de secrets, jetons et credentials dans les projections, caches, index, files et exports hors ligne, sauvegardes hors ligne sans copie du coffre et refus de repli non protégé si ce mécanisme est indisponible. L'exception du coffre ne couvre pas les données `RESTRICTED` et aucune preuve d'authentification brute n'est stockée localement. Les imports, exports, opérations bulk, purges et actions sensibles doivent être refusés hors ligne par défaut.
 
 Pour la multi-région et la résidence par tenant, les tests doivent vérifier le mode par défaut mono-région, la résolution d'une `TenantPlacementPolicy`, la version du placement, l'epoch régional et l'absence de réplication, transfert, sauvegarde ou bascule inter-région implicite. Ils doivent couvrir la région principale, les régions de traitement, de réplication, de sauvegarde et de clés, ainsi que l'héritage vers les scopes enfants et la possibilité de renforcer une contrainte sans l'élargir.
 
@@ -1525,6 +1525,11 @@ sur les contrats publics. Ils vérifient le stockage local chiffré lorsque la
 plateforme le déclare, l'absence de jeton dans les artefacts et la propagation
 du tenant, du scope, de l'identité et de la révocation aux notifications et
 liens profonds.
+
+La recette native applique la frontière N02 : credentials et secrets uniquement
+dans le mécanisme sécurisé déclaré de la plateforme, séparé des données hors
+ligne ; son indisponibilité doit refuser l'opération sans repli vers fichier ou
+base ordinaire. Cette exigence reste à qualifier sur les plateformes retenues.
 
 Le build vérifie que les références de secrets restent externes, sont liées à
 des identités de workload et privilégient des credentials courts, que les

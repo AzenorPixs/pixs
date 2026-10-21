@@ -26,7 +26,7 @@ Contrats C03/C06/C07/C11/C15 avant intégration N04 ; N04 avant C18/C17. Tests d
 
 ## Transport de session sélectionné le 20 octobre 2026
 
-D01 de la [conception C03](../add-initial-authentication-and-sessions/design.md) sélectionne une façade web explicitement déclarée, avec session serveur et cookie protégé inaccessible au JavaScript ; les mutations exigent CSRF selon les règles applicables. L’API standard conserve Authorization: Bearer et ses jetons opaques ; une route n’accepte pas implicitement un cookie comme substitut d’un Bearer. Les deux clauses de [transport et stockage navigateur du delta api](specs/api/spec.md) sont adoptées au canon le 20 octobre 2026 ; elles séparent les surfaces, sans serveur choisi ni exposition réseau supplémentaire.
+D01 de la [conception C03](../archive/2026-10-21-add-initial-authentication-and-sessions/design.md) sélectionne une façade web explicitement déclarée, avec session serveur et cookie protégé inaccessible au JavaScript ; les mutations exigent CSRF selon les règles applicables. L’API standard conserve Authorization: Bearer et ses jetons opaques ; une route n’accepte pas implicitement un cookie comme substitut d’un Bearer. Les deux clauses de [transport et stockage navigateur du delta api](specs/api/spec.md) sont adoptées au canon le 20 octobre 2026 ; elles séparent les surfaces, sans serveur choisi ni exposition réseau supplémentaire.
 
 Les noms/chemins, attributs complets du cookie, origines, transport sécurisé et règles d’ambiguïté doivent être spécifiés et qualifiés avant code. Le stockage de jetons persistants par JavaScript dans le navigateur reste exclu par défaut. La présence du cookie ne prouve ni session courante ni autorisation ; C03 vérifie l’état et C04 le périmètre. Le backend de sessions doit respecter le stockage serveur par empreinte retenu, sans reprise aveugle d’un backend conservant l’identifiant brut.
 
@@ -42,6 +42,6 @@ Aucun code produit, secret, compte, service, dépendance, migration, données r�
 
 ## Dépendances après audit transversal P0
 
-[C03](../add-initial-authentication-and-sessions/proposal.md), [C06](../add-protected-core-http-commands-and-queries/proposal.md), [C07](../activate-reference-runtime-composition/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md).
+[C03](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md), [C06](../add-protected-core-http-commands-and-queries/proposal.md), [C07](../activate-reference-runtime-composition/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

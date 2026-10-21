@@ -6,7 +6,7 @@ ADOPTION_NORMATIVE_PARTIELLE au 20 octobre 2026 : les trois deltas du présent c
 
 ## État et réemploi
 
-Les modèles de [DigitalIdentity](../../../src/pixs/core/identity/models.py), le [mapping d'assurance](../../../src/pixs/core/authz/assurance_mapping.py) et les contrats d'autorisation existent sous forme préparatoire. Ils ne prouvent pas une connexion utilisable. [C03](../add-initial-authentication-and-sessions/design.md) conserve la connexion/déconnexion et les sessions ; il n'est pas dupliqué.
+Les modèles de [DigitalIdentity](../../../src/pixs/core/identity/models.py), le [mapping d'assurance](../../../src/pixs/core/authz/assurance_mapping.py) et les contrats d'autorisation existent sous forme préparatoire. Ils ne prouvent pas une connexion utilisable. [C03](../archive/2026-10-21-add-initial-authentication-and-sessions/design.md) conserve la connexion/déconnexion et les sessions ; il n'est pas dupliqué.
 
 Le canon [core](../../specs/core/spec.md), [authentication](../../specs/authentication/spec.md), [identity-assurance](../../specs/identity-assurance/spec.md), [authorization](../../specs/authorization/spec.md) et [initial-administration](../../specs/initial-administration/spec.md) inclut désormais les trois deltas adoptés le 20 octobre 2026 ; les autres propositions restent distinctes.
 

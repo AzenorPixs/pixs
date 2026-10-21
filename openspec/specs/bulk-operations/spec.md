@@ -742,7 +742,7 @@ Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk
 ### B02 — Enveloppe et progression
 
 - Le contrat interne BulkExecutionV1 MUST respecter exactement les champs et types de l’annexe normative ; toutes les clés, y compris nullables, MUST être explicites.
-- Les textes runtime MUST être des str exactes, non vides, UTF-8 strict et sans NUL ; les entiers MUST être des int exacts, bool exclu. Aucun contrôle runtime MUST modifier le profil préparatoire Record v1.
+- Les textes runtime MUST être des str exactes, non vides, UTF-8 strict et sans NUL ; les entiers MUST être des int exacts, bool exclu. Un contrôle runtime MUST NOT modifier le profil préparatoire Record v1.
 - Les références MUST rester opaques ; leur présence MUST NOT prouver existence ou autorisation. Un scope None MUST NOT désigner PLATFORM ou un tenant global.
 - La progression MUST suivre l’annexe ProgressV1, être persistée et actualisée sans double comptage après reprise. Une validation positive MUST NOT être comptée comme mutation appliquée.
 - Une révision MUST être contrôlée par compare-and-swap ; une version obsolète MUST refuser l’évolution, sans écraser un checkpoint concurrent.
@@ -782,7 +782,7 @@ Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk
 - ATOMIC_PER_CHUNK MUST engager et checkpoint chaque chunk atomiquement ; une erreur MUST conserver les chunks déjà engagés et refuser de les rejouer comme nouveaux effets.
 - BEST_EFFORT MUST être autorisé par le module et engager chaque élément avec ses invariants ; succès et rejets MUST être distincts et diagnostiqués.
 - Les modes et stratégies MUST être choisis explicitement par le producteur serveur ; REJECT reste le rejet de conflit par défaut du contrat général et ATOMIC_PER_CHUNK le mode déclaré des gros imports.
-- CREATE_ONLY, UPDATE_ONLY et UPSERT MUST être explicitement supportés et autorisés par le propriétaire ; aucune valeur None MUST être transformée implicitement par le profil Record.
+- CREATE_ONLY, UPDATE_ONLY et UPSERT MUST être explicitement supportés et autorisés par le propriétaire ; une valeur None MUST NOT être transformée implicitement par le profil Record.
 - Une garantie atomique absente MUST refuser le mode avant mutation ; le runtime MUST NOT basculer vers BEST_EFFORT ou une transaction d’une autre source.
 
 ### B12 — Export et résultats

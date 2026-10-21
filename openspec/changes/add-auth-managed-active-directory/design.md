@@ -31,9 +31,9 @@ L'exception Super Admin canonique s'applique aux contrôles applicatifs dans son
 ## Dépendances
 
 - [Architecture Auth essentielle](../define-essential-autonomous-auth-module/proposal.md).
-- [C03 — authentification et sessions](../add-initial-authentication-and-sessions/proposal.md).
-- [C02 — référentiel Core PostgreSQL](../add-core-postgres-services/proposal.md).
-- [Audit durable](../add-durable-minimized-audit/proposal.md).
+- [C03 — authentification et sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
+- [C02 — référentiel Core PostgreSQL](../archive/2026-10-20-add-core-postgres-services/proposal.md).
+- [Audit durable](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 
 Les changes OpenLDAP et KDC fournissent des frontières à coordonner, sans dépendance obligatoire à leurs exécutants autonomes. Les contrats existants DNS, secrets, autorisation et reprise restent applicables selon les capacités sélectionnées ; aucun PA/PZT actif ou service Windows n'est ajouté implicitement au P0 local.
 

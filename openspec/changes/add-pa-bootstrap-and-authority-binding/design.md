@@ -37,8 +37,8 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 ## Dépendances et interfaces
 
 - [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
-- [add-core-postgres-services](../add-core-postgres-services/proposal.md).
-- [add-initial-authentication-and-sessions](../add-initial-authentication-and-sessions/proposal.md).
+- [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
+- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
 
 
 

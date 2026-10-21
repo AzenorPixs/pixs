@@ -23,7 +23,7 @@ Exposer les services Core propriétaires par API versionnée et contrats publié
 
 ## Raccordement C03 des façades du 20 octobre 2026
 
-Le profil retient une façade web explicitement déclarée à session côté serveur et cookie protégé inaccessible au JavaScript, avec CSRF ; l’API standard et la CLI restent Bearer opaque selon les [décisions C03](../add-initial-authentication-and-sessions/design.md). [N04](../define-p0-web-serving-and-security-boundary/specs/api/spec.md) possède la déclaration des surfaces et de leurs protections. Une route ne choisit pas implicitement l’un des modes selon les justificatifs reçus ; l’ambiguïté est traitée selon un contrat explicite sans élargir l’admission.
+Le profil retient une façade web explicitement déclarée à session côté serveur et cookie protégé inaccessible au JavaScript, avec CSRF ; l’API standard et la CLI restent Bearer opaque selon les [décisions C03](../archive/2026-10-21-add-initial-authentication-and-sessions/design.md). [N04](../define-p0-web-serving-and-security-boundary/specs/api/spec.md) possède la déclaration des surfaces et de leurs protections. Une route ne choisit pas implicitement l’un des modes selon les justificatifs reçus ; l’ambiguïté est traitée selon un contrat explicite sans élargir l’admission.
 
 Les façades utilisent les mêmes interfaces Auth spécialisées, puis le même contrôle d’autorisation et ScopeContext canonique. Routes, schémas, erreurs et paramètres de cookie/transport restent à détailler dans les contrats versionnés. Les durées, la fraîcheur et les plafonds ordinaires de C03 s’appliquent sans contournement par changement de façade, sous les exceptions canoniques Super Admin.
 
@@ -44,9 +44,9 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
 - [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
-- [add-initial-authentication-and-sessions](../add-initial-authentication-and-sessions/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 
 La création anticipée de ces dossiers ne signifie pas que leurs tâches sont réalisées. Les hôtes intermédiaires demeurent non prêts si une obligation manque ; C17 qualifie le paquet C18, C19 vérifie son identité de distribution.
 

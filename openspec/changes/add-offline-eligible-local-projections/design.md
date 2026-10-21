@@ -36,7 +36,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 ## Dépendances et interfaces
 
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
 - [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
 
@@ -68,7 +68,7 @@ Posséder le contrat d’éligibilité et la lecture locale : ressources/champs 
 
 Le serveur produit seulement la projection filtrée ; le client expose fraîcheur et état hors ligne sans transformer un snapshot en droit durable. Changement de périmètre, révocation, expiration ou suppression invalide/purge les données concernées selon cycle déclaré.
 
-O18 possède les intentions/mutations provisoires. Pour un profil natif hors ligne, l’adoption du delta N02 est une barrière : coffre plateforme séparé, jamais copié dans la réplique. Choisir ressources, stockage de projection et purge avant code ; aucun coffre concret choisi.
+O18 possède les intentions/mutations provisoires. Pour un profil natif hors ligne, N02 adopté et synchronisé le 21 octobre 2026 impose un coffre plateforme séparé, jamais copié dans la réplique. La barrière d’adoption est satisfaite ; choisir et qualifier ressources, stockage de projection, coffre et purge avant code.
 
 ### Exigences auditées et preuves de sortie futures
 
