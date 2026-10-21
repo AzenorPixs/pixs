@@ -2,10 +2,16 @@
 
 Cette table est une référence au canon, sans delta et sans altération de ses exigences. Les textes complets et tous leurs scénarios restent applicables selon leurs conditions. Le profil C00 adopté le 18 octobre 2026 et intégré au canon apporte les précisions de première livraison ; il ne supprime aucun MUST existant.
 
-Les lignes et empreintes désignent l’instant de préparation ; une dérive impose une nouvelle lecture avant réalisation. La sélection ci-dessous part de la matrice et doit être affinée par clause, sans annoncer que tous les scénarios ont déjà été vérifiés.
+Relecture documentaire du 20 octobre 2026 : les lignes, intitulés, scénarios et empreintes ci-dessous désignent le canon courant, y compris l’adoption Auth/Core et les précisions du profil initial et de PA/PZT. Une dérive impose une nouvelle lecture avant réalisation. Le statut P conserve le constat historique de la matrice ; N/A — ajout à la traçabilité désigne une clause ajoutée à cette table, sans inventer son statut dans la matrice ni son verdict fonctionnel.
+
+C07 consomme les contrats publics Core/Auth et d’audit ; les scénarios de leurs services restent à qualifier chez leurs propriétaires C02/C03/C05 et lors de l’intégration. Leur présence dans cette table n’étend pas C07 à la réalisation de ces services. Les exécutants PA/PZT restent hors sélection de cette reprise documentaire ; leurs obligations de séparation et celles des modules essentiels de gestion demeurent applicables à la composition.
 
 | Capacité / ligne | Exigence | Statut de matrice | Scénarios sources |
 |---|---|---|---|
+| authentication / 40 | [Module essentiel autonome pixs.auth](../../specs/authentication/spec.md#L40) | N/A — ajout à la traçabilité | Composition applicative sans Auth ; Fixture structurelle isolée |
+| authentication / 52 | [Autonomie locale et PostgreSQL par défaut](../../specs/authentication/spec.md#L52) | N/A — ajout à la traçabilité | Installation autonome ; PostgreSQL indisponible |
+| authentication / 64 | [Propriété des données Auth et protection des justificatifs](../../specs/authentication/spec.md#L64) | N/A — ajout à la traçabilité | Session persistée ; Liaison avec Core |
+| authentication / 76 | [Sous-modules Auth composés par les mécanismes communs](../../specs/authentication/spec.md#L76) | N/A — ajout à la traçabilité | Source installée sans confiance |
 | capabilities / 8 | [Descripteur de capacité résolu à la composition](../../specs/capabilities/spec.md#L8) | P | Résolution indépendante de l'ordre |
 | capabilities / 17 | [États de disponibilité distincts](../../specs/capabilities/spec.md#L17) | P | Capacité optionnelle indisponible isolée |
 | capabilities / 28 | [Fanion ne remplace pas la résolution](../../specs/capabilities/spec.md#L28) | P | Fanion sans fournisseur refusé |
@@ -24,6 +30,8 @@ Les lignes et empreintes désignent l’instant de préparation ; une dérive im
 | configuration / 28 | [Secrets par référence hors artefacts](../../specs/configuration/spec.md#L28) | P | Secret embarqué refusé |
 | contracts / 17 | [Versionnement SemVer indépendant](../../specs/contracts/spec.md#L17) | P | Champ obligatoire ajouté |
 | contracts / 26 | [Dépréciation et retrait encadrés](../../specs/contracts/spec.md#L26) | P | Suppression anticipée bloquée |
+| core / 8 | [Module obligatoire au-dessus du noyau](../../specs/core/spec.md#L8) | N/A — ajout à la traçabilité | Composition sans core refusée |
+| core / 116 | [Frontière Core Auth et dépendance unidirectionnelle](../../specs/core/spec.md#L116) | N/A — ajout à la traçabilité | Révocation canonique |
 | dependencies / 37 | [Graphe frontend récursif et façades publiques](../../specs/dependencies/spec.md#L37) | P | Import privé d'un parent refusé |
 | extension-contracts / 8 | [Points d'extension publics versionnés](../../specs/extension-contracts/spec.md#L8) | P | Contribution sans point déclaré rejetée |
 | extension-contracts / 17 | [Contributions déclarées et isolées](../../specs/extension-contracts/spec.md#L17) | P | Accès privé bloqué |
@@ -59,8 +67,16 @@ Les lignes et empreintes désignent l’instant de préparation ; une dérive im
 | providers / 26 | [Conformité contractuelle vérifiable](../../specs/providers/spec.md#L26) | P | Fournisseur non conforme activé |
 | providers / 35 | [Dégradation contrôlée et diagnostic](../../specs/providers/spec.md#L35) | P | Indisponibilité d'un fournisseur |
 | reference-composition / 10 | [Capacités obligatoires du P0](../../specs/reference-composition/spec.md#L10) | P | Capacité P0 absente |
-| reference-composition / 22 | [Capacités hors P0 explicites](../../specs/reference-composition/spec.md#L22) | P | Synchronisation non sélectionnée |
-| reference-composition / 33 | [Preuve reproductible](../../specs/reference-composition/spec.md#L33) | P | Deux validations identiques |
+| reference-composition / 19 | [Capacités hors P0 explicites](../../specs/reference-composition/spec.md#L19) | P | Synchronisation non sélectionnée |
+| reference-composition / 30 | [Preuve reproductible](../../specs/reference-composition/spec.md#L30) | P | Deux validations identiques |
+| reference-composition / 41 | [Profil initial PBO PFO Debian local v1](../../specs/reference-composition/spec.md#L41) | N/A — ajout à la traçabilité | Architecture seulement observée |
+| reference-composition / 50 | [Garanties du socle conservées dans le profil initial](../../specs/reference-composition/spec.md#L50) | N/A — ajout à la traçabilité | Module essentiel absent |
+| reference-composition / 59 | [Parcours installable et utilisable du profil initial](../../specs/reference-composition/spec.md#L59) | N/A — ajout à la traçabilité | Démonstration mémoire seule |
+| reference-composition / 68 | [Capacités non sélectionnées du profil initial](../../specs/reference-composition/spec.md#L68) | N/A — ajout à la traçabilité | Option absente sans dépendance obligatoire |
+| reference-composition / 77 | [Preuve de la composition effectivement distribuée](../../specs/reference-composition/spec.md#L77) | N/A — ajout à la traçabilité | Sources et paquet divergents |
+| reference-composition / 86 | [Choix C01 systemd et exception d’amorçage du profil Debian local](../../specs/reference-composition/spec.md#L86) | N/A — ajout à la traçabilité | Hôte intermédiaire conservé non prêt ; Source locale hors phase autorisée |
+| reference-composition / 100 | [Qualification et source de vérité après amorçage](../../specs/reference-composition/spec.md#L100) | N/A — ajout à la traçabilité | Hôte intermédiaire conservé non prêt ; Source locale hors phase autorisée |
+| reference-composition / 114 | [Profil Auth standard sans connecteur externe installé](../../specs/reference-composition/spec.md#L114) | N/A — ajout à la traçabilité | Profil livré sans connecteurs externes |
 | reference-runtime / 10 | [Pile de référence unique](../../specs/reference-runtime/spec.md#L10) | P | Runtime décrit ; Réseau désactivé |
 | reference-runtime / 24 | [Adapter explicite](../../specs/reference-runtime/spec.md#L24) | P | Runtime alternatif non déclaré |
 | reference-runtime / 35 | [Absence de sélection cachée](../../specs/reference-runtime/spec.md#L35) | P | Paquet alternatif présent |
@@ -73,25 +89,29 @@ Les lignes et empreintes désignent l’instant de préparation ; une dérive im
 | reference-runtime / 119 | [Qualification du graphe Python et incompatibilités explicites](../../specs/reference-runtime/spec.md#L119) | P | Graphe incompatible ou contrainte absente |
 | reference-runtime / 133 | [Absence d'installation forcée ou de recul Django](../../specs/reference-runtime/spec.md#L133) | P | Version de dépendance refusée par Django |
 | reference-runtime / 144 | [Compatibilité avec le Python actuel du projet](../../specs/reference-runtime/spec.md#L144) | P | Version compatible ; Incompatibilité avec Python actuel ; Solution validée par le développeur |
-| reference-runtime / 168 | [Couche exécutable PA séparée](../../specs/reference-runtime/spec.md#L168) | P | Couche exécutable PA séparée |
+| reference-runtime / 168 | [Couche exécutable PA séparée](../../specs/reference-runtime/spec.md#L168) | P | Exécutants distincts du backend |
+| reference-runtime / 181 | [Modules de gestion pixs.agent et pixs.pzt dans PBO](../../specs/reference-runtime/spec.md#L181) | N/A — ajout à la traçabilité | Composition des deux modules de gestion ; Réseau désactivé |
 | runtime / 8 | [Profils distincts d'un même artefact](../../specs/runtime/spec.md#L8) | P | Profil activé par configuration |
 | runtime / 17 | [Profils de déploiement déclarés](../../specs/runtime/spec.md#L17) | P | Capacité absente dans un profil local |
 | runtime / 29 | [Exposition minimale par défaut](../../specs/runtime/spec.md#L29) | P | Endpoint de management publiquement joignable |
 | runtime / 38 | [Processus stateless et coordination persistante](../../specs/runtime/spec.md#L38) | P | Redémarrage d'un worker ; État technique PA requis en conteneur |
 | runtime / 52 | [Lease du scheduler avec clôture de péremption](../../specs/runtime/spec.md#L52) | P | Ancien détenteur toujours actif |
 | runtime / 61 | [Arrêt, drain et reprise contrôlés](../../specs/runtime/spec.md#L61) | P | Arrêt pendant traitement |
-| runtime / 70 | [États techniques PA distincts du runtime PBO](../../specs/runtime/spec.md#L70) | P | États techniques PA distincts du runtime PBO |
+| runtime / 70 | [États techniques PA et PZT distincts du runtime PBO](../../specs/runtime/spec.md#L70) | P | Recréation du conteneur PA PZT |
+| runtime / 83 | [Topologies locales et distantes PA PZT](../../specs/runtime/spec.md#L83) | N/A — ajout à la traçabilité | Hôte local avec tous les composants ; Hôte distant sans backend local ; Hôte distant avec backend local |
 | services / 8 | [Enregistrement contractuel des services](../../specs/services/spec.md#L8) | P | Service privé non exposé |
 | services / 17 | [Résolution déterministe du fournisseur](../../specs/services/spec.md#L17) | P | Ambiguïté refusée |
 | services / 28 | [Traçabilité et sécurité des appels](../../specs/services/spec.md#L28) | P | Contexte non vérifiable |
 
 ## Empreintes SHA-256 du canon
 
+- `openspec/specs/authentication/spec.md` : `8c3a41d0f1c5531b9c15954c547b9970261a864812633a2db23944fe2b17ad4a`.
 - `openspec/specs/capabilities/spec.md` : `e9c0328da863d9fda5c128e339ab59e23fa3ca8b1a0cc3379ce1e014334975aa`.
 - `openspec/specs/compatibility/spec.md` : `aee6de57607e95e8442b59155cf893f4ef7454db6a0ba60fbfbd9abe360eb544`.
 - `openspec/specs/component-model/spec.md` : `6972572f92f9f020b89f5cf8e81ead65005fa858695a838089dd27fd4200b3ae`.
 - `openspec/specs/configuration/spec.md` : `8e710a2390f044b0d5f78ddf68546e3310eddbb878eea29171ea5608dd425904`.
 - `openspec/specs/contracts/spec.md` : `ad08fabc8ff78db8678ec873c9c50235b57fdf2554111d48adf57f274e4a3897`.
+- `openspec/specs/core/spec.md` : `1332388a595ac64fcc6ca8ce3fe8e70c9b371a9f038e820ec8ab48364ea92666`.
 - `openspec/specs/dependencies/spec.md` : `ca3f3276a1e741fb987fa690356b89e4c3e8b3e52717451264179b8e7e16cca7`.
 - `openspec/specs/extension-contracts/spec.md` : `f7d5d14c29aeb97aad6780413d5560686264a3cc3f97b29eca907182166f90eb`.
 - `openspec/specs/initial-application-bootstrap/spec.md` : `688063fbafcd34535d87b7f4920d8e4952ff2ed3267bd5b442400a3d9f0fe3a4`.
@@ -100,9 +120,9 @@ Les lignes et empreintes désignent l’instant de préparation ; une dérive im
 - `openspec/specs/migrations/spec.md` : `9b3ced385afbeaa7414a1d58752078482e57efa242064e21e7fb4b6fde451efe`.
 - `openspec/specs/modules/spec.md` : `7ea4899dff68afd31f22a501e587da4dcad9c911d1689583672678cf108ff37b`.
 - `openspec/specs/providers/spec.md` : `5aceaa82194cfc9802dcf6ef1bd9e4fc35b18b5156d1b29685e41d23689a7fd7`.
-- `openspec/specs/reference-composition/spec.md` : `7c4d7b603f35f02f6d2ba0eb10dd202793ec288fee0c65a5ff15d244446233ff`.
-- `openspec/specs/reference-runtime/spec.md` : `4bbbc0451013b7139f3898b4a5aebd592ab1c50b6aa6cce4e1246957e4052351`.
-- `openspec/specs/runtime/spec.md` : `0eb07f4494b590fdd845cfe90143a34dc331717b5b38b293dee4b45c100cee11`.
+- `openspec/specs/reference-composition/spec.md` : `55de6c615f02df5148be2e3a7808929cfc2651ca451cd423bc3ab6cad38f9668`.
+- `openspec/specs/reference-runtime/spec.md` : `ff14ac54557fd98cdc9d2e5b562bd8f78a8f6f32a44fbd03e88c48f468cde411`.
+- `openspec/specs/runtime/spec.md` : `25b5a9efcca07a83312a98f9e7bf7466c1975c8e96628ad07e1c9c946807b194`.
 - `openspec/specs/services/spec.md` : `e754ac950e612d335017122e23e55d75d3fb214f927fabcb2d48da8722013c37`.
 
 ## Critère d’application du profil

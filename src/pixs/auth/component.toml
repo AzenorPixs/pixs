@@ -1,0 +1,27 @@
+schema_version = "1"
+id = "pixs.auth"
+type = "MODULE"
+version = "0.1.0"
+
+[dependencies]
+components = ["pixs.kernel ==0.1.0", "pixs.core ==0.1.0"]
+contracts = ["pixs.core.identity.query ==1.0.0", "pixs.core.scope.query ==1.0.0", "pixs.core.authz-data.service ==1.0.0", "pixs.core.bootstrap.service ==1.0.0"]
+
+[provides]
+[[provides.capabilities]]
+id = "auth.local"
+version = "1.0.0"
+contracts = ["pixs.auth.authentication.service", "pixs.auth.sessions.service", "pixs.auth.credentials.service"]
+criticality = "REQUIRED"
+fallback = "none"
+
+[implements]
+[[implements.contracts]]
+id = "pixs.auth.authentication.service"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.auth.sessions.service"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.auth.credentials.service"
+version = "1.0.0"

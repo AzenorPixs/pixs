@@ -2,7 +2,7 @@
 
 ## Statut et périmètre autorisé
 
-PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 a été adopté et archivé le 18 octobre 2026 ; ses précisions normatives sont intégrées au canon. Les arbitrages propres au présent change restent à lever avant réalisation.
+RÉALISATION EN COURS. La reprise documentaire initiale est appliquée et validée. Les contrats producteurs C03, C04 et C05 sont désormais livrés et recoupés. Le transport ASGI et le raccord serveur ci-dessous possèdent leurs preuves exécutées ; les intégrations restantes conservent leurs critères propres. C00 adopté et le canon demeurent la référence, sans delta normatif ajouté par ce jalon.
 
 ## État actuel vérifié
 
@@ -21,23 +21,45 @@ Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les stru
 
 Fournir l’hôte runtime et les adapters du lifecycle commun, sans remplacer les mécanismes purs. Lier composants/providers/configuration/migrations et preuves authentifiées. L’hôte intermédiaire peut être exercé isolément mais refuse readiness P0 si PZT/DNS ou toute autre obligation manque ; C14 et C17 ferment l’intégration.
 
+### Raccordement au canon adopté le 20 octobre 2026
+
+La composition applicative comprend `pixs.core` et le module essentiel indépendant `pixs.auth`, avec une capacité locale PostgreSQL sélectionnée explicitement. L’absence du module, de sa capacité requise ou d’un état Auth courant empêche de revendiquer une activation applicative valide ; les fixtures structurelles non applicatives restent distinctes. Auth possède ses données et consomme les seuls contrats publics Core, sans cycle ni accès aux tables privées. Ses sous-modules suivent le manifest et le lifecycle communs, sans registre parallèle ; installation et activation de confiance restent distinctes.
+
+Le profil standard ne sélectionne aucun connecteur externe ni service LDAP/KDC/AD implicite. C07 vérifie cette composition et consomme les contrats Auth de C03 ; il ne déplace pas dans le Kernel les sessions ou protocoles Auth. Les exigences et scénarios sources sont reliés dans requirements.md.
+
+Le profil initial conserve `pixs.agent`, `pixs.pzt` et DNS essentiels, même réseau désactivé. Les trois exécutables PA et l’exécutable PZT indépendant, leurs états et leurs topologies restent distincts du runtime PBO. Le raccordement documentaire ne sélectionne ni ne lance ces exécutants ; l’hôte intermédiaire conserve un verdict P0 non prêt tant que les obligations C14/C17 et les autres preuves manquent.
+
+| Interface consommée par C07 | Propriétaire | Condition avant intégration |
+|---|---|---|
+| Résolution de références de secrets et lifecycle du provider | C01 | Réutiliser les contrats publics livrés et l’exception d’amorçage dans sa seule phase autorisée ; aucun secret dans une preuve. |
+| Identités, périmètres et services Core PostgreSQL | C02 | Consommer les contrats publics et leurs preuves, sans accès intercomposant aux tables privées. |
+| Module Auth essentiel, capacité locale et état Auth courant | C03 | Contrats publics, données et migrations Auth restent chez leur propriétaire ; aucune disponibilité présumée. |
+| Sink d’audit durable et conditions d’amorçage | C05 | Relier les effets aux garanties du sink disponible ; aucun journal local promu en autorité métier parallèle. |
+
+Cette table désigne les responsabilités et conditions ; elle ne valide aucune signature d’interface encore ouverte et ne prouve pas la livraison d’un change actif.
+
 ## Alternatives et frontière de conception
 
 Privilégier les mécanismes et dépendances existants. Une implémentation locale qui duplique les contrats, importe des tables privées ou sélectionne implicitement un provider est incompatible avec le cadrage. Toute technologie supplémentaire ou précision de comportement devra être justifiée avant réalisation ; la présence d’un paquet dans DEVOPS ne prouve ni sélection ni conformité.
 
-## Décisions bloquantes avant réalisation
+## Décisions retenues et intégrations restantes
 
-Entrée de lancement, registre des adapters et limites d’exposition à arrêter sans nouveau runtime ; ne pas transformer globally_compatible=False en certificat global.
+Le transport retenu est ASGI Django. `HostAsgi` reçoit explicitement le handler déjà configuré et le contexte asynchrone de l’hôte ; il ferme l’admission hors démarrage réussi, traite les événements lifespan et nettoie les contextes effectivement entrés. Les phases de transport restent distinctes de la disponibilité applicative.
 
-Ce sont des barrières de conception explicites, pas des questions supposées résolues. Elles n’empêchent pas la préparation documentaire ; elles empêchent de présenter le dossier comme entièrement prêt à coder. Les arbitrages PA/PZT suivent TECHNICAL §45.4 lorsqu’ils entrent dans son périmètre.
+`build_auth_server_bundle` raccorde les vrais lecteurs Auth PostgreSQL, `CoreFactSource`, le décideur C04 et le participant C05. Chaque invocation du décideur reçoit son propre store transactionnel et ses faits. La construction est testée sans requête SQL sur les deux alias liés ; le profil approuvé est relu lors des opérations. Cette construction n’est pas un verdict de disponibilité.
+
+Le pont `runtime_resolve` et le provider C01 livré refusent actuellement une résolution hors `INSTALLER`. Le raccord de l’entrée et des phases doit respecter ce contrat. Le contexte de ressources, l’enregistrement des adaptateurs, la configuration et les observations de lifecycle restent à intégrer aux mécanismes communs. Le kit développeur disponible valide les manifests localement ; l’authentification de preuves ne peut pas être déduite de ce seul rapport.
+
+Le profil web reste le candidat à une entrée publique explicitement déclarée. Workers, scheduler et management gardent leur frontière privée ou authentifiée, autorisée et auditée. Les choix de serveur, de port et de distribution restent aux lots concernés. Les arbitrages PA/PZT suivent TECHNICAL §45.4 lorsqu’ils entrent dans leur périmètre.
 
 ## Dépendances et progression
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
-- [add-core-postgres-services](../add-core-postgres-services/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [C01 — provider de secrets runtime](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md), archivé.
+- [C02 — services Core PostgreSQL](../archive/2026-10-20-add-core-postgres-services/proposal.md), archivé.
+- [C03 — authentification locale et sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md), producteur des contrats publics Auth.
+- [C05 — audit durable minimisé](../archive/2026-10-21-add-durable-minimized-audit/proposal.md), producteur du sink d’audit.
 
 La création anticipée de ces dossiers ne signifie pas que leurs tâches sont réalisées. Les hôtes intermédiaires demeurent non prêts si une obligation manque ; C17 qualifie le paquet C18, C19 vérifie son identité de distribution.
 
@@ -62,7 +84,7 @@ Analyse de préparation sans implémentation ; les critères ci-dessous complèt
 
 ### T02 — PBO/PFO réellement servi par le paquet
 
-Le serveur/bundle/routage et la frontière HTTP distribuée ne sont pas détaillés par un propriétaire commun. N04 dédié et deltas ciblés validés ; décisions de serveur/session/transport encore ouvertes.
+Le serveur/bundle/routage et la frontière HTTP distribuée ne sont pas détaillés par un propriétaire commun. N04 dédié : les clauses API de séparation façade web à cookie/API Bearer et de transport/stockage navigateur sont adoptées au canon le 20 octobre 2026 ; les autres choix de serveur et de frontière d’exposition restent à arrêter.
 
 Contrôles à intégrer : Navigation directe du shell via service livré ; Erreur API sans fallback HTML ; Hôtes/origines/en-têtes non fiables, CSRF si cookie ; Management et rôles non publics.
 
@@ -91,3 +113,13 @@ Un rattachement à un lot P0 n’active pas tout le domaine : Bulk, LDAP, flags 
 Contrôles à intégrer : Absent représenté sans readiness fictive ; Contrat consommé réutilisé sans activer tout le catalogue ; Aucun code distant ni composant DEVELOPMENT en production ; Pas de promesse universelle de performance/HA.
 
 Voir [audit transversal durable](../archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
+
+## Preuves exécutées du socle hôte
+
+| Périmètre | Résultat exécuté | Limite |
+|---|---|---|
+| Transport ASGI et guards Django existants | 8 cas enfant réussis, appel natif `call_01a15cb19e75756b8513e6d47ecb973f`, exit 0 | Contexte et routes de recette synthétiques ; aucune façade Auth simulée. |
+| Raccord Auth/Core/audit | 5 contrôles PG réussis, appel natif `call_01a15cdab582749a94518eb9a77b50e4`, exit 0 ; PostgreSQL 16.14, Django 6.1.2, schéma nettoyé et connexions fermées | Plans/clés C08 et classification C10 fixtures ; hôte installé et P0 restent à qualifier. |
+| Sources du jalon | 4 fichiers UTF-8/LF et empreintes vérifiées ; les 2 nouveaux fichiers du raccord compilés lors du contrôle PG | Les résultats portent sur les empreintes alors exécutées. |
+
+La recette positive vérifie le jeton avant le retrait puis exige son refus par une nouvelle lecture de production après retrait. Les états `UNKNOWN`, `PENDING` ou une dérogation d’audit ne sont pas tenus pour un commit confirmé dans cette recette.

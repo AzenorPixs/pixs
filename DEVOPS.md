@@ -3,7 +3,7 @@
 Version : 0.6
 
 Généré automatiquement par Debian Installeur Unifié (DIU).
-Début du relevé (UTC) : 2026-10-20T05:32:14Z
+Début du relevé (UTC) : 2026-10-21T06:12:54Z
 Environnement d'exécution DIU : PHYSICAL
 
 Les sondes système concernent le contexte d'exécution DIU.
@@ -24,7 +24,7 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
 
 # Docker
 
-  * 29.9.1
+  * 29.9.2
   * /usr/bin/docker
 
 
@@ -144,6 +144,12 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
     * Environnement : /home/devops/datas/pixs/.venv
     * Installation : /home/devops/datas/pixs/.venv/lib/python3.14/site-packages
   * sqlparse ==0.6.0 : 0.6.0 --> /home/devops/datas/pixs/.venv/bin/python3
+    * Environnement : /home/devops/datas/pixs/.venv
+    * Installation : /home/devops/datas/pixs/.venv/lib/python3.14/site-packages
+  * argon2-cffi ==25.1.0 : 25.1.0 --> /home/devops/datas/pixs/.venv/bin/python3
+    * Environnement : /home/devops/datas/pixs/.venv
+    * Installation : /home/devops/datas/pixs/.venv/lib/python3.14/site-packages
+  * cryptography ==50.0.2 : 50.0.2 --> /home/devops/datas/pixs/.venv/bin/python3
     * Environnement : /home/devops/datas/pixs/.venv
     * Installation : /home/devops/datas/pixs/.venv/lib/python3.14/site-packages
 
