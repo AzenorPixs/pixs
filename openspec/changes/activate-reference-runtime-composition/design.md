@@ -17,6 +17,10 @@ Sources consultées et empreintes recoupées avec la matrice :
 
 Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les structures et sous-lots présents sont à réutiliser ; aucun manque d’intégration ne justifie leur recréation.
 
+## Complément de ressources adopté le 21 octobre 2026
+
+Le [binaire PBO commun et les profils de ressources](../define-common-pbo-binary-and-resource-profiles/design.md) complètent le canon de référence. C07 conserve une même application Kernel/Core/Auth/Agent/PZT compilée par Nuitka standalone, ses modes d’exploitation Standalone/ZT et ses rôles configurables ; les nombres de processus, budgets effectifs, concurrence et connexions sont validés selon runtime. Les processus PA/PZT restent indépendants et gérés par leurs contrats. Les preuves ASGI et sous-lots historiques ci-dessous ne qualifient ni un binaire compilé PBO ni ce nouveau dimensionnement ; les tâches et preuves produit restent à réconcilier avant réalisation, sans les réexécuter ni les déclarer réalisées ici.
+
 ## Architecture proposée
 
 Fournir l’hôte runtime et les adapters du lifecycle commun, sans remplacer les mécanismes purs. Lier composants/providers/configuration/migrations et preuves authentifiées. L’hôte intermédiaire peut être exercé isolément mais refuse readiness P0 si PZT/DNS ou toute autre obligation manque ; C14 et C17 ferment l’intégration.
