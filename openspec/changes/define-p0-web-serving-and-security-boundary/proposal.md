@@ -10,9 +10,9 @@ Le développeur a validé ce dossier dédié le 17 octobre 2026 dans l’audit t
 
 ## Capacités et deltas
 
-Deltas ADDED proposés dans `reference-runtime` et `api`, limités au profil d’entrée P0.
+Deltas ADDED dans `reference-runtime` et `api`, limités au profil d’entrée P0. Les seules clauses api « Façade web à cookie et API Bearer explicitement distinctes » et « Contrats de transport et stockage navigateur », issues des décisions C03, sont adoptées au canon le 20 octobre 2026.
 
-Les deltas proposés restent dans le change ; aucune synchronisation ni archive pendant cette préparation. Les paramètres encore ouverts ne sont pas réputés approuvés.
+Les autres clauses api et le delta reference-runtime restent proposés. Les sources des deux clauses synchronisées sont conservées dans le change ; aucun archivage ni code n’est engagé. Les paramètres encore ouverts ne sont pas réputés approuvés.
 
 ## Dépendances et intégration
 

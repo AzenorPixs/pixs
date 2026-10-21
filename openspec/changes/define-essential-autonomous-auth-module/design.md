@@ -2,13 +2,13 @@
 
 ## Statut
 
-PROPOSITION_DOCUMENTAIRE ouverte le 19 octobre 2026. Orientation retenue : `pixs.auth` indépendant et essentiel, authentification locale autonome sur PostgreSQL par défaut, émission d'identité possible, OpenLDAP, KDC et domaine Active Directory propres activables, connecteurs externes installables séparément. Aucun code ni service n'est produit. Les deltas ne sont pas synchronisés au canon.
+ADOPTION_NORMATIVE_PARTIELLE au 20 octobre 2026 : les trois deltas du présent change sont intégrés aux capacités authentication, core et reference-composition. Le dossier reste ouvert ; aucun code ni service n'est produit. Le profil essentiel local autonome PostgreSQL est adopté ; les méthodes détaillées, l'enrôlement, l'émission d'identité, les services OpenLDAP/KDC/AD, les sources externes et le stockage Core réversible restent proposés dans leurs dossiers propres.
 
 ## État et réemploi
 
 Les modèles de [DigitalIdentity](../../../src/pixs/core/identity/models.py), le [mapping d'assurance](../../../src/pixs/core/authz/assurance_mapping.py) et les contrats d'autorisation existent sous forme préparatoire. Ils ne prouvent pas une connexion utilisable. [C03](../add-initial-authentication-and-sessions/design.md) conserve la connexion/déconnexion et les sessions ; il n'est pas dupliqué.
 
-Le canon [core](../../specs/core/spec.md), [authentication](../../specs/authentication/spec.md), [identity-assurance](../../specs/identity-assurance/spec.md), [authorization](../../specs/authorization/spec.md) et [initial-administration](../../specs/initial-administration/spec.md) reste applicable avant adoption des deltas.
+Le canon [core](../../specs/core/spec.md), [authentication](../../specs/authentication/spec.md), [identity-assurance](../../specs/identity-assurance/spec.md), [authorization](../../specs/authorization/spec.md) et [initial-administration](../../specs/initial-administration/spec.md) inclut désormais les trois deltas adoptés le 20 octobre 2026 ; les autres propositions restent distinctes.
 
 ## Propriété et dépendances
 
@@ -70,7 +70,7 @@ Le sous-module `pixs.auth.directory.ad` ajoute la gestion d'un domaine Active Di
 
 | Change | Périmètre | Prérequis |
 | --- | --- | --- |
-| define-essential-autonomous-auth-module | Frontières et composition | Adoption documentaire avant réalisation. |
+| define-essential-autonomous-auth-module | Frontières et composition | Trois deltas adoptés le 20 octobre 2026 ; contrats détaillés et qualification à compléter avant réalisation. |
 | add-initial-authentication-and-sessions (C03 existant) | Connexion et sessions persistantes | Présent cadrage, C02, C05 et secrets d'amorçage. |
 | add-auth-local-authenticators-and-mfa | Méthodes locales modernes et MFA | C03 et contrats du présent cadrage. |
 | add-auth-identity-enrollment | Forge et enrôlement | C02, C03, audit et autorisation. |
@@ -95,7 +95,7 @@ La présence essentielle est une évolution de composition incompatible pour un 
 
 Vérifier deltas RFC 2119, scénarios, liens, UTF-8/LF, tâches non cochées et concordance des capacités annoncées. Les recettes futures portent sur l'artefact réellement installé : autonomie PostgreSQL sans réseau externe, module essentiel absent refusé, isolation tenant, révocation et secours sans MFA fictif. Aucune réussite fonctionnelle n'est déduite d'une validation OpenSpec.
 
-Le contrôle documentaire du 19 octobre 2026, `openspec validate --all --strict --no-interactive --json`, réussit sur 194 éléments (116 changes actifs et 78 capacités canoniques). Le canon reste à 78 capacités, 772 exigences et 892 scénarios. Les huit dossiers Auth proposent 44 exigences ajoutées, une modifiée et 67 scénarios supplémentaires nets ; leurs 73 tâches de réalisation restent non cochées. Les artefacts de préparation complets ne constituent ni une adoption des deltas ni une réalisation prête/qualifiée. Aucun test produit n'a été exécuté pour cette préparation.
+Le contrôle documentaire du 19 octobre 2026, `openspec validate --all --strict --no-interactive --json`, réussit sur 194 éléments (116 changes actifs et 78 capacités canoniques). Ce contrôle historique précède l'adoption des trois deltas d'architecture du 20 octobre 2026 ; le canon après cette adoption recense 78 capacités, 781 exigences et 905 scénarios. Les huit dossiers Auth décrivaient au total 44 exigences ajoutées, une modifiée et 67 scénarios supplémentaires nets. L'architecture adoptée en intègre neuf ajoutées, une modifiée et treize scénarios supplémentaires nets ; les sept autres dossiers proposent encore 35 exigences et 54 scénarios supplémentaires nets, avec sept capacités nouvelles. Les 73 tâches restent non cochées. L'adoption est limitée aux trois deltas d'architecture ; les artefacts de préparation ne constituent aucune réalisation prête ou qualifiée. Aucun test produit n'a été exécuté pour cette préparation.
 
 Le complément Core ajoute 12 exigences, cinq exigences modifiées, 16 scénarios supplémentaires nets et dix tâches. L'ensemble des neuf changes conserve donc 83 tâches non cochées ; aucune capacité n'est présentée comme implémentée. Les deltas du registre doivent être lus ensemble pour appliquer l'exception de stockage Core aux formulations PostgreSQL par défaut des dossiers Auth, sans étendre cette exception à AD ou à un LDAP externe.
 

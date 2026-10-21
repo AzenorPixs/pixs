@@ -42,11 +42,11 @@ Dans son périmètre autorisé, le Super Admin MUST pouvoir déroger à tous les
 
 ### Requirement: Priorité transversale de l'exception Super Admin
 
-L'exception Super Admin MUST prévaloir sur les exigences de contrôle applicatif des autres capacités dans son seul périmètre autorisé. Les garanties des profils structurels préparatoires et les contrats d'exécution restent distincts de cette exception. Les comptes ordinaires MUST conserver leurs règles existantes, notamment priorité DENY, refus par défaut et contrôles obligatoires.
+L’exception Super Admin MUST prévaloir sur les contrôles applicatifs dans son seul périmètre autorisé. Profils structurels préparatoires et contrats d’exécution MUST rester distincts. Les comptes ordinaires MUST conserver DENY, refus par défaut et contrôles obligatoires ; seule l’exception d’audit de retrait d’accès Auth définie par audit s’applique sans leur transférer les privilèges Super Admin.
 
 #### Scenario: Compte ordinaire sans exception
 
-- **WHEN** un Administrateur ordinaire rencontre un refus ACL, un audit obligatoire ou un autre contrôle bloquant
+- **WHEN** un Administrateur ordinaire rencontre un refus ACL, un audit obligatoire hors retrait d’accès Auth admissible ou un autre contrôle bloquant
 - **THEN** le contrôle reste applicable et le rôle administrateur ne donne pas l'exception Super Admin
 
 #### Scenario: Contrat structurel sans privilège
@@ -56,7 +56,7 @@ L'exception Super Admin MUST prévaloir sur les exigences de contrôle applicati
 
 ### Requirement: Modèle Subject Resource Action Context
 
-Hors de l’exception technique d’amorçage C01 définie ci-dessous, chaque décision MUST évaluer sujet (identité numérique, utilisateur, groupe), ressource et action déclarées par le module, plus contexte incluant le ScopeContext valide ; la propriété, l'appartenance ou un rôle administrateur MUST NOT valoir autorisation implicite.
+Hors de l’exception technique C01 et de la seule branche d’opérateur pré-session R01 définies dans cette capacité, chaque décision MUST évaluer sujet (identité numérique, utilisateur, groupe), ressource et action déclarées par le module, plus contexte incluant le ScopeContext valide ; la propriété, l'appartenance ou un rôle administrateur MUST NOT valoir autorisation implicite.
 
 #### Scenario: Propriété sans politique refusée
 
@@ -69,11 +69,13 @@ Hors de l’exception technique d’amorçage C01 définie ci-dessous, chaque d�
 - **THEN** seul le sujet OS effectivement vérifié peut être évalué sous sa politique d’amorçage fermée, son contexte PLATFORM et son audit obligatoires
 - **AND** aucune identité numérique ou permission métier n’est fabriquée
 
+#### Scenario: Opérateur R01 sans session cible
+- **WHEN** une première installation exige un acte R01 avec opérateur vérifié par sa clé préautorisée et un plan autorisé
+- **THEN** seul le sujet opérateur borné et son mapping explicite sont évalués selon la branche R01, sans fabriquer de session ou d’identité du futur compte cible
+
 ### Requirement: Priorité DENY puis ALLOW puis refus
 
-Le système MUST respecter les garanties suivantes.
-
-Hors exception Super Admin définie ci-dessus, l'évaluation SUIT le refus explicite prioritaire, puis l'autorisation explicite, puis le refus par défaut ; tout accès plateforme ou inter-tenant exige permission, contexte et audit explicites.
+Hors exception Super Admin, l’évaluation MUST appliquer DENY, puis ALLOW, puis refus par défaut. Tout accès plateforme ou inter-tenant MUST avoir permission et contexte explicites ainsi que l’audit applicable. Seul un retrait d’accès Auth admissible selon audit MAY être confirmé sans audit disponible ; il MUST NOT accorder de nouvel accès ni ignorer un refus d’autorisation.
 
 #### Scenario: Conflit DENY contre ALLOW
 
@@ -106,3 +108,47 @@ La seule forme du contexte, la propriété ou root OS MUST NOT valoir permission
 
 - **WHEN** une demande dépasse les actions techniques INSTALLER autorisées ou vise une ressource métier
 - **THEN** l’exception est refusée et les exigences applicatives ordinaires restent obligatoires
+
+### Requirement: Opérateur pré-session R01 lié à une confiance explicite
+
+La branche propriétaire C08/C02 MAY employer avant session Pixs et compte cible un sujet opérateur vérifié par C03/C04, à partir d’une clé publique personnelle préautorisée et d’un mapping explicite. Une politique d’installation versionnée à actions fermées MUST encadrer ce sujet. Il MUST NOT être employé pour une opération ordinaire ni présumer l’identité ou l’assurance du futur compte.
+
+#### Scenario: Première installation sans session
+- **WHEN** clé préautorisée, mapping et politique sont vérifiés pour un plan INSTALLER éligible
+- **THEN** C04 peut autoriser les seuls effets fermés R01 sans session du compte cible
+
+### Requirement: Signature Ed25519 de la preuve d’amorçage
+
+La preuve R01 MUST utiliser une signature Ed25519 vérifiée avec cryptography sur des données liant opérateur, installation, version du plan, actions et validité. La clé privée MUST rester sous contrôle de l’opérateur. La sérialisation et les bornes temporelles MUST être qualifiées avant réalisation.
+
+#### Scenario: Plan substitué
+- **WHEN** une signature est présentée pour un plan différent de celui soumis
+- **THEN** la preuve est refusée avant effet métier
+
+### Requirement: Aucune autorité implicite de bootstrap
+
+Une clé fournie par l’appelant, UID 0, les credentials PostgreSQL, une confirmation de mot de passe ou un reçu C01 MUST NOT établir seuls confiance ou permission métier. C01 MUST conserver sa seule autorité technique et ses contrôles, sans transfert de l’exception Super Admin.
+
+#### Scenario: Clé autoautorisée
+- **WHEN** une signature valide utilise une clé non préautorisée ou sans mapping et politique
+- **THEN** l’acte est refusé sans droit déduit de la seule validité cryptographique
+
+### Requirement: Autorisation finale R01 de dix minutes et usage unique
+
+L’autorisation finale R01 MUST valoir 10 minutes à partir de la validation du plan final et MUST être liée à un opérateur, une installation, une version de plan et ses actions fermées. Sa consommation MUST être liée au commit propriétaire des effets et MUST NOT permettre un second effet concurrent ou repris. Cette durée MUST NOT limiter toute la préparation ni créer d’autorité permanente.
+
+#### Scenario: Consommation au commit
+- **WHEN** des appels concurrents présentent la même autorisation finale
+- **THEN** au plus un acte est committé et l’autorisation ne permet pas de second effet
+
+### Requirement: Revalidation et reprise de l’amorçage
+
+Preuve expirée, révoquée ou substituée, plan modifié ou autre cible MUST exiger une nouvelle autorisation R01. Après réponse perdue, la reprise MUST consulter le résultat persistant et revalider ses conditions ; une issue inconnue MUST être réconciliée avant rejeu.
+
+#### Scenario: Expiration ou nouveau plan
+- **WHEN** la fenêtre de 10 minutes est atteinte ou le plan signé modifié avant admission finale
+- **THEN** aucun nouvel effet n’est engagé et une nouvelle autorisation est requise
+
+#### Scenario: Commit puis réponse perdue
+- **WHEN** le commit a consommé l’autorisation mais la réponse ou le marqueur est perdu
+- **THEN** la reprise inspecte le résultat et ne crée ni second compte ni identité ou autorisation dupliquée
