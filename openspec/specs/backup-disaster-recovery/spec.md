@@ -43,7 +43,7 @@ Les restaurations MUST être exécutables dans un environnement isolé, testées
 
 ### Requirement: Restauration destructive autorisée et auditée
 
-Une restauration destructive ou un retour à un point antérieur MUST être une opération explicitement autorisée, confirmée et auditée ; aucune purge implicite d'identités, tenants, autorisations, secrets ou données métier MUST NOT être tolérée pour rendre la restauration possible.
+Une restauration destructive ou un retour à un point antérieur MUST être une opération explicitement autorisée, confirmée et auditée ; une purge implicite d'identités, tenants, autorisations, secrets ou données métier MUST NOT être tolérée pour rendre la restauration possible.
 
 #### Scenario: Suppression implicite refusée
 
