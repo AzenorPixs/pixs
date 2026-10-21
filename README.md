@@ -1,4 +1,4 @@
-# Pixs
+# Pixs l'Application Universsel
 
 **Version initiale — avancement OpenSpec : 56,88 %** — 153 changes archivés sur 269 au total, dont 116 ouverts. Relevé du 19 octobre 2026.
 
