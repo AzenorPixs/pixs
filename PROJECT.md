@@ -1,10 +1,10 @@
-# PROJECT.md — Pixs
+# PROJECT.md — Pixs l'Application Universelle
 
 Ce document décrit le projet Pixs dans son ensemble.
 
 ## 1. Objet
 
-Pixs l'Application Universselle est un framework applicatif modulaire destiné à servir de socle commun pour construire plusieurs applications et services métiers.
+Pixs l'Application Universelle est un framework applicatif modulaire destiné à servir de socle commun pour construire plusieurs applications et services métiers.
 
 Pixs repose principalement sur :
 
@@ -16,6 +16,8 @@ Réactivité / Sync   : Electric lorsque nécessaire
 Identité minimale   : utilisateurs et groupes via pixs.core
 Autorisation        : ACL et permissions via pixs.core
 Authentification    : pixs.auth essentiel indépendant, autonome sur PostgreSQL
+Gestion PA          : pixs.agent obligatoire, opérations système/utilisateur hors PZT
+Gestion réseau      : pixs.pzt obligatoire, pilotage de l'exécutable indépendant PZT
 ```
 
 PostgreSQL constitue la source de vérité applicative par défaut de Pixs. Le complément proposé au §19.1 permet de déplacer le stockage Core concerné vers l'OpenLDAP interne après installation, puis de revenir à PostgreSQL par migration vérifiée ; il ne déplace pas les autres données applicatives.
@@ -26,7 +28,14 @@ TanStack constitue la base du frontend.
 
 Electric fournit, lorsque nécessaire, les mécanismes de synchronisation et de réactivité entre PostgreSQL et les clients.
 
-`pixs.core`, module obligatoire immédiatement au-dessus du Kernel, fournit les primitives fonctionnelles de très bas niveau communes à toute installation Pixs : utilisateurs, groupes, appartenances, ACL et permissions associées.
+Le socle fonctionnel obligatoire de toute composition PBO, y compris le profil initial P0, comprend quatre modules distincts au-dessus du Kernel :
+
+* `pixs.core` fournit les primitives fonctionnelles communes de très bas niveau : utilisateurs, identités numériques, groupes, appartenances, tenants, rôles, ACL et permissions ;
+* `pixs.auth` porte l'authentification, les justificatifs, politiques, contextes et sessions, avec une capacité locale autonome et PostgreSQL par défaut ;
+* `pixs.agent` configure, administre et supervise PA pour les opérations système et utilisateur hors PZT, via ses contrats publics et des échanges passant exclusivement par PZT ;
+* `pixs.pzt` configure, administre, visualise, supervise et monitore le réseau Zéro Trust Pixs, exécuté par le binaire indépendant PZT.
+
+Ces modules sont essentiels au même titre et restent composés lorsque le réseau est désactivé ou qu'aucun exécutant PA/PZT n'est disponible. Leur présence ne vaut ni activation du réseau ni disponibilité des exécutants. Ils utilisent les mécanismes génériques du Kernel ; `pixs.auth`, `pixs.agent` et `pixs.pzt` consomment les contrats publics d'identité et de permissions de `pixs.core`. Le caractère obligatoire ne fixe donc pas une priorité de chargement avant Core : l'ordre découle des dépendances déclarées, sans intégrer ces responsabilités au Kernel. Le module DNS essentiel complète cette composition PBO selon les spécifications applicables.
 
 Le cadrage cible du 19 octobre 2026 retient `pixs.auth` comme module essentiel indépendant de `pixs.core`, avec une authentification locale autonome s'appuyant par défaut sur PostgreSQL. Les trois deltas de [define-essential-autonomous-auth-module](openspec/changes/define-essential-autonomous-auth-module/proposal.md) sont adoptés au canon le 20 octobre 2026, sans implémentation. Les autres dossiers Auth restent proposés.
 
@@ -111,11 +120,11 @@ Les modules apportent les fonctionnalités.
 
 Toute fonctionnalité Pixs doit être fournie par un module.
 
-Le Core n'est pas une exception architecturale.
+Les modules du socle obligatoire ne sont pas des exceptions architecturales.
 
 `pixs.core` est un module Pixs fondamental et obligatoire, marqué comme requis par le système de modules.
 
-Le cadrage cible rend aussi `pixs.auth` essentiel dans les compositions applicatives, avec dépendance vers les contrats publics Core. Son provider local PostgreSQL est sélectionné par le profil standard ; les services d'annuaire et les sources externes restent des capacités séparées. L'adoption des trois deltas d'architecture et les propositions restantes sont distinguées au §34.
+`pixs.auth` est également obligatoire dans les compositions applicatives ; `pixs.agent` et `pixs.pzt` le sont dans toute composition cible PBO, même réseau désactivé. Tous trois utilisent les contrats publics Core. Le provider local PostgreSQL d'Auth est sélectionné par le profil standard ; les services d'annuaire et les sources externes restent des capacités séparées. L'adoption des trois deltas d'architecture et les propositions restantes sont distinguées au §34.
 
 Principe :
 
@@ -124,9 +133,12 @@ Kernel
   ↓
 mécanisme générique
 
-pixs.core
-  ↓
-capacités fonctionnelles minimales
+pixs.core — obligatoire
+  primitives fonctionnelles communes de très bas niveau
+
+pixs.auth / pixs.agent / pixs.pzt — obligatoires dans PBO
+  authentification / gestion PA hors PZT / gestion PZT
+  consommation des contrats publics Core
 
 autres modules
   ↓
@@ -788,7 +800,8 @@ Pixs couvre notamment :
 * la capacité de multi-tenancy et l'isolation par tenant ;
 * les tenants comme frontières techniques d'accès aux données ;
 * la découverte des extensions ;
-* le module fondamental `pixs.core` ;
+* le socle obligatoire `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt` dans PBO ;
+* la gestion des exécutants PA hors PZT par `pixs.agent` et du réseau par `pixs.pzt`, même réseau désactivé ;
 * les modules fonctionnels ;
 * les sous-modules ;
 * les providers ;
@@ -865,13 +878,18 @@ flowchart TB
     subgraph H["Hôte local — PBO/PFO, PA et PZT"]
         subgraph B["PBO — Django"]
             M["Modules fonctionnels"]
-            A["pixs.agent — configuration, administration et supervision de PA hors PZT"]
-            Z["pixs.pzt — configuration, administration et supervision de PZT"]
-            C["pixs.core — identités, tenants et permissions"]
+            AU["pixs.auth obligatoire — authentification locale autonome"]
+            A["pixs.agent obligatoire — configuration, administration et supervision de PA hors PZT"]
+            Z["pixs.pzt obligatoire — configuration, administration et supervision de PZT"]
+            C["pixs.core obligatoire — identités, tenants et permissions"]
             K["Kernel — composition et services génériques"]
             M --> A
+            M --> AU
+            K -. "composition" .-> C
+            K -. "composition" .-> AU
             K -. "composition" .-> A
             K -. "composition" .-> Z
+            AU -. "contrats communs" .-> C
             A -. "contrats communs" .-> C
             Z -. "contrats communs" .-> C
         end
@@ -891,7 +909,7 @@ flowchart TB
     end
     subgraph R2["Hôte distant B — avec PBO/PFO facultatifs"]
         F2["PFO distant B"]
-        B2["PBO distant B — modules fonctionnels, pixs.agent et pixs.pzt"]
+        B2["PBO distant B — pixs.core, pixs.auth, pixs.agent, pixs.pzt et modules fonctionnels"]
         D2[("PostgreSQL distant B")]
         T2["PZT distant B"]
         P2["PA distant B"]
@@ -913,10 +931,12 @@ locaux et des exécutants distants uniquement dans les périmètres autorisés ;
 sa présence ne donne aucun droit automatique sur un autre PA ou PZT.
 PFO adresse toujours ses demandes à PBO. Aucun échange PBO–PA ne contourne PZT.
 
-Le Kernel fournit les mécanismes ; `pixs.core`, `pixs.agent`, `pixs.pzt` et les
+Le Kernel fournit les mécanismes ; `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et les
 modules fonctionnels fournissent leurs capacités via contrats publics. Les
 providers, extensions et thèmes s'intègrent par les mécanismes communs ; aucun
 provider concret ne bénéficie d'un statut architectural privilégié.
+
+Les quatre modules du socle sont obligatoires dans PBO. Le module DNS essentiel et les autres capacités requises par le profil complètent ce schéma de synthèse ; PA et PZT restent des exécutants distincts, dont la présence et l'activation sont déclarées séparément.
 
 ## 5. Backend Django
 
@@ -1225,7 +1245,7 @@ PostgreSQL constitue le stockage de référence initial de ces primitives. L'opt
 
 Le Core ne doit pas devenir un second Kernel : il contient des primitives fonctionnelles communes, tandis que le Kernel reste limité aux mécanismes du framework.
 
-Le Kernel traite `pixs.core` comme un module selon les mêmes mécanismes généraux que les autres modules, avec pour différence déclarative son caractère obligatoire.
+Le Kernel traite `pixs.core` comme un module selon les mêmes mécanismes généraux que les autres modules. Son caractère obligatoire est déclaratif, comme celui de `pixs.auth`, `pixs.agent` et `pixs.pzt` dans PBO ; leurs responsabilités restent distinctes et leurs dépendances explicites.
 
 ## 12. Modules
 
@@ -1236,7 +1256,9 @@ Exemples possibles :
 ```text
 modules/
 ├── core/
-├── authentication/
+├── auth/
+├── agent/
+├── pzt/
 ├── providers/
 ├── organizations/
 ├── documents/
@@ -1245,7 +1267,7 @@ modules/
 └── administration/
 ```
 
-Cette liste n'est pas normative.
+Cette liste illustre des chemins possibles, sans fixer l'implantation physique. Les identifiants canoniques `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt` désignent les modules obligatoires du socle PBO ; la liste des autres modules n'est pas normative.
 
 Un module peut fournir :
 
@@ -1799,7 +1821,9 @@ pixs/
 │   │   ├── users/
 │   │   ├── groups/
 │   │   └── authorization/
-│   ├── authentication/
+│   ├── auth/
+│   ├── agent/
+│   ├── pzt/
 │   ├── providers/
 │   └── ...
 │
@@ -1816,11 +1840,13 @@ pixs/
 
 Cette arborescence constitue un cadrage initial et peut évoluer conformément aux spécifications OpenSpec validées.
 
-Le principe invariant est que le Core reste un module :
+Le principe invariant est que les quatre responsabilités du socle PBO restent des modules, avec leurs identifiants canoniques indépendants des chemins :
 
 ```text
-pixs.modules.core
-required = true
+pixs.core   : obligatoire — primitives communes
+pixs.auth   : obligatoire — authentification
+pixs.agent  : obligatoire — gestion PA hors PZT
+pixs.pzt    : obligatoire — gestion PZT
 ```
 
 et non une couche parallèle bénéficiant d'un mécanisme spécial dans le Kernel.
@@ -1839,13 +1865,17 @@ pixs/modules/
 │   ├── permissions/
 │   └── contracts/
 │
-├── authentication/
+├── auth/
 │   ├── contracts/
 │   │   └── AuthenticationProvider
-│   └── providers/
-│       ├── local/
+│   ├── providers/
+│   │   └── local/             # PostgreSQL, sélectionné par le profil standard
+│   └── sources/               # sous-modules optionnels, installation explicite
 │       ├── oidc/
 │       └── saml/
+│
+├── agent/                     # gestion PA hors PZT
+├── pzt/                       # gestion du réseau PZT
 │
 └── providers/
     ├── directory/
@@ -1854,7 +1884,7 @@ pixs/modules/
     └── ...
 ```
 
-Les providers concrets vivent hors du socle obligatoire et implémentent les contrats appropriés.
+Les quatre modules du socle PBO sont obligatoires ; les providers implémentent leurs contrats sans devenir des responsabilités du Kernel. Le profil standard sélectionne explicitement la capacité locale PostgreSQL d'Auth. Les sources externes OIDC/SAML et autres connecteurs restent des sous-modules `pixs.auth.sources.*` installables séparément, absents de l'installation standard ; leur représentation ci-dessus reste indicative.
 
 Cette structure reste indicative. Les spécifications OpenSpec détermineront la structure implémentable exacte.
 
@@ -2061,7 +2091,8 @@ Avant activation d'une composition Pixs, le Kernel doit pouvoir vérifier au min
 * disponibilité des contrats requis ;
 * compatibilité des versions de contrats publics ;
 * cohérence des providers ;
-* présence de `pixs.core` ;
+* présence de `pixs.core` et, dans une composition applicative, de `pixs.auth` avec sa capacité locale requise ;
+* présence de `pixs.agent`, `pixs.pzt` et du module DNS essentiel dans PBO, même réseau désactivé ;
 * cohérence de la configuration nécessaire au chargement ;
 * validité des points d'extension et de leurs versions ;
 * absence de collision non déclarée entre contributions ;
@@ -2105,7 +2136,7 @@ Les invariants suivants constituent le cap architectural initial de Pixs :
 1. PostgreSQL est la source de vérité applicative par défaut ; le périmètre Core engagé selon `core-storage` peut utiliser l'OpenLDAP interne après migration réversible vérifiée. Les autres domaines gardent leur stockage déclaré ; aucune double autorité ni bascule implicite n'est admise.
 2. Django est l'autorité pour les règles métier, commandes, transactions et contrôles d'autorisation.
 3. Le Kernel ne contient aucune logique métier et ne connaît aucun provider concret.
-4. `pixs.core` est un module obligatoire immédiatement au-dessus du Kernel.
+4. `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt` constituent le socle modulaire obligatoire de PBO au-dessus du Kernel. Core fournit les primitives communes consommées par les trois autres via contrats publics ; l'ordre de chargement dépend du graphe déclaré. La désactivation réseau ne retire aucun de ces modules ni le module DNS essentiel.
 5. `pixs.core` fournit nativement les primitives `User`, `DigitalIdentity`, `Group`, `Membership`, `Tenant`, `TenantMembership`, `Role`, `ACL` et `Permission`.
 6. Toute capacité fonctionnelle autre que celles fournies par `pixs.core` est apportée par un module ou un sous-module.
 7. Chaque module est propriétaire des données, modèles, migrations et invariants métier qu'il introduit ; les autres composants ne peuvent les modifier qu'au travers de son interface publique.
@@ -2289,6 +2320,10 @@ Une installation minimale doit pouvoir charger le Kernel sans modèle fonctionne
 ### Core obligatoire et primitives bas niveau
 
 Une composition Pixs sans `pixs.core` est invalide. Une composition minimale avec `pixs.core` doit exposer les primitives utilisateurs, identités numériques, groupes, appartenances, tenants, rôles, ACL et permissions.
+
+### Modules essentiels Auth, Agent et PZT
+
+Une composition applicative sans `pixs.auth` ou sa capacité locale autonome requise est invalide. Toute composition cible PBO, dont P0, doit aussi composer `pixs.agent`, `pixs.pzt` et le module DNS essentiel, même réseau désactivé ou sans exécutant PA/PZT. La recette vérifie leurs contrats publics, leurs responsabilités distinctes et leurs dépendances Core, sans confondre présence du module, disponibilité de l'exécutant et activation réseau. Les fixtures structurelles isolées ne constituent pas une composition applicative qualifiée.
 
 ### Multi-tenancy
 
@@ -3345,6 +3380,8 @@ authentication
     ↓
 identity-assurance
     ↓
+pixs-agent / pzt
+    ↓
 authorization-engine
     ↓
 quotas-entitlements
@@ -3409,6 +3446,8 @@ release-management
 ```
 
 Cet ordre exprime des dépendances de conception.
+
+`core`, `authentication`, `pixs-agent` et `pzt` décrivent notamment les quatre modules obligatoires `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt` de PBO. Leur position dans cette liste n'impose aucune priorité de chargement : les manifests et contrats publics déterminent le graphe effectif.
 
 Il ne définit pas nécessairement :
 
@@ -3541,14 +3580,14 @@ Ces éléments restent des choix d'implémentation ou d'exploitation. Lorsqu'ils
 ```mermaid
 flowchart TB
     subgraph B["PBO — Django, modules et contrats"]
-        K["Kernel — mécanismes génériques"] --> C["pixs.core — primitives communes"]
-        K -. "composition et services" .-> AU["pixs.auth — essentiel, local autonome"]
+        K["Kernel — mécanismes génériques"] --> C["pixs.core obligatoire — primitives communes"]
+        K -. "composition et services" .-> AU["pixs.auth obligatoire — local autonome"]
         AU -. "contrats publics d'identité" .-> C
         C -. "stockage Core après migration réversible" .-> LD[("OpenLDAP interne — périmètre engagé")]
         AU -. "gestion du service" .-> LD
         C --> M["Modules fonctionnels"]
-        K -. "composition et services" .-> A["pixs.agent — gestion PA hors PZT"]
-        K -. "composition et services" .-> Z["pixs.pzt — gestion PZT"]
+        K -. "composition et services" .-> A["pixs.agent obligatoire — gestion PA hors PZT"]
+        K -. "composition et services" .-> Z["pixs.pzt obligatoire — gestion PZT"]
         A -. "primitives communes" .-> C
         Z -. "primitives communes" .-> C
         M --> A
@@ -3569,6 +3608,8 @@ flowchart TB
 Les déploiements locaux et les deux exemples distants, avec ou sans PBO/PFO,
 sont détaillés au §4. Les flèches sont des relations logiques, sans imposer les
 endpoints de réalisation ni transférer les décisions métier à PA ou PZT.
+
+Les quatre modules indiqués sont obligatoires dans PBO, même réseau désactivé. Le module DNS essentiel et les capacités complémentaires du profil restent requis selon OpenSpec ; ce schéma ne représente pas l'intégralité de la composition.
 
 Le modèle final sépare explicitement le Kernel, les primitives très bas niveau du Core, `pixs.auth` essentiel indépendant et ses capacités sélectionnables, les fonctionnalités fournies par les modules, les contrats, les providers, les extensions, les thèmes, le stockage PostgreSQL par défaut et le provider Core sélectionné, le backend Django, la synchronisation réactive optionnelle et le frontend TanStack, ainsi que PA/PZT et leurs modules de gestion distincts.
 
@@ -3688,14 +3729,18 @@ horodaté et les éventuels écarts de migration sont précisés dans
 OpenSpec `reference-runtime`.
 
 La composition P0 est le socle sécurisé et composable : Kernel, manifests,
-dépendances, configuration, lifecycle, modules, `pixs.core`, tenant et scope,
+dépendances, configuration, lifecycle, modules, `pixs.core`, `pixs.auth` avec
+sa capacité locale autonome PostgreSQL, tenant et scope,
 identité minimale, autorisation, APIs et contrats publics, migrations, runtime,
 installation, sécurité, secrets, audit, observabilité, gouvernance, cycle de
 vie des données, tests de conformité et composant d'exemple. Les autres
 capacités restent spécifiées, mais ne sont pas obligatoires pour une composition
-P0 valide. La composition cible de PBO inclut également le module essentiel
-PZT, même lorsque le réseau est désactivé ; cette évolution sera formalisée
-dans OpenSpec avant son implémentation, sans déclarer le P0 actuel complet.
+P0 valide, sauf lorsqu'une capacité sélectionnée les requiert explicitement.
+Le profil initial PBO compose obligatoirement `pixs.agent`, `pixs.pzt` et le
+module DNS essentiel, même lorsque le réseau est désactivé. Ces obligations
+sont déjà définies dans les capacités canoniques `reference-composition`,
+`reference-runtime`, `pixs-agent`, `pzt` et `authentication` ; elles ne
+démontrent pas une composition P0 implémentée ou qualifiée.
 
 Les extensions déclarent l'un des niveaux de confiance `PLATFORM`, `TRUSTED`,
 `SANDBOXED` ou `DEVELOPMENT`. Le niveau autorise uniquement les frontières et
@@ -3743,7 +3788,8 @@ ni les exclusions des modes de session dans Docker. PZT est le nom du composant
 et du binaire réseau ; casse du fichier, chemins, options CLI, noms de paquets,
 versions et architectures restent à spécifier avant réalisation.
 
-Dans PBO, `pixs.agent` configure, administre et supervise l'ensemble de PA hors
+Dans PBO, `pixs.agent`, module obligatoire au même titre que `pixs.core`,
+`pixs.auth` et `pixs.pzt`, configure, administre et supervise l'ensemble de PA hors
 PZT. `pixs.pzt`, module officiel essentiel, configure, administre, visualise,
 supervise et monitore PZT. PA et PZT exécutent leurs opérations respectives,
 collectent leurs observations et rapportent les états réellement appliqués.

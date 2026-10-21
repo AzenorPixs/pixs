@@ -16,6 +16,8 @@ Le dépôt ne publie pas encore de release, de paquet Debian ni d'image Docker u
 
 Cette documentation présente le périmètre cible du projet sans anticiper ces choix d'implémentation.
 
+Toute composition PBO, dont le profil initial P0, comprend quatre modules obligatoires au-dessus du Kernel : `pixs.core` pour les primitives communes d'identité et de droits, `pixs.auth` pour l'authentification locale autonome, `pixs.agent` pour la gestion PA hors PZT et `pixs.pzt` pour la gestion du réseau exécuté par le binaire indépendant PZT. Les trois derniers consomment les contrats publics Core ; leur ordre de chargement résulte des dépendances déclarées. Ils restent composés même réseau désactivé ou sans exécutant PA/PZT ; le module DNS essentiel et les autres capacités exigées par le profil complètent ce socle. Cette obligation architecturale ne démontre pas leur disponibilité fonctionnelle.
+
 ## OpenSpec
 
 OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 781 exigences et 905 scénarios**, recensés au 20 octobre 2026 après adoption des trois deltas d'architecture Auth.
@@ -48,9 +50,10 @@ Les priorités sont de finaliser les données et la sécurité, l’installation
 | Données | PostgreSQL par défaut ; option proposée de migration postinstallation des utilisateurs, groupes et ACL vers OpenLDAP interne, avec retour vérifié vers PostgreSQL. |
 | Frontend | TanStack est la base de l'interface web. |
 | Réactivité | Electric est optionnel et intervient seulement lorsque la synchronisation est nécessaire. |
-| Identité et droits | `pixs.core` apporte utilisateurs, groupes, appartenances, ACL et permissions. |
-| Gestion des exécutants | `pixs.agent` gère PA hors PZT ; `pixs.pzt` gère l’exécutable réseau PZT indépendant. |
-| Authentification | Cible proposée : `pixs.auth` essentiel indépendant, local autonome sur PostgreSQL par défaut ; IdP et services propres OpenLDAP/KDC activables, sources externes installables séparément. |
+| Identité et droits | Module obligatoire `pixs.core` : utilisateurs, groupes, appartenances, tenants, ACL et permissions. |
+| Gestion PA | Module obligatoire `pixs.agent` : configuration, administration et supervision de PA hors PZT, échanges via PZT. |
+| Gestion réseau | Module obligatoire `pixs.pzt` : configuration, administration, visualisation, supervision et monitoring de l'exécutable réseau PZT indépendant. |
+| Authentification | Module obligatoire `pixs.auth`, indépendant de Core, local autonome sur PostgreSQL par défaut ; IdP et services propres OpenLDAP/KDC activables, sources externes installables séparément. |
 | API | HTTP/REST et contrats OpenAPI versionnés sont l'interface publique principale. |
 
 ## Architecture
@@ -61,13 +64,18 @@ flowchart TB
     subgraph H["Hôte local — PBO/PFO, PA et PZT"]
         subgraph B["PBO — Django"]
             M["Modules fonctionnels"]
-            A["pixs.agent — configuration, administration et supervision de PA hors PZT"]
-            Z["pixs.pzt — configuration, administration et supervision de PZT"]
-            C["pixs.core — identités, tenants et permissions"]
+            AU["pixs.auth obligatoire — authentification locale autonome"]
+            A["pixs.agent obligatoire — configuration, administration et supervision de PA hors PZT"]
+            Z["pixs.pzt obligatoire — configuration, administration et supervision de PZT"]
+            C["pixs.core obligatoire — identités, tenants et permissions"]
             K["Kernel — composition et services génériques"]
             M --> A
+            M --> AU
+            K -. "composition" .-> C
+            K -. "composition" .-> AU
             K -. "composition" .-> A
             K -. "composition" .-> Z
+            AU -. "contrats communs" .-> C
             A -. "contrats communs" .-> C
             Z -. "contrats communs" .-> C
         end
@@ -87,7 +95,7 @@ flowchart TB
     end
     subgraph R2["Hôte distant B — avec PBO/PFO facultatifs"]
         F2["PFO distant B"]
-        B2["PBO distant B — modules fonctionnels, pixs.agent et pixs.pzt"]
+        B2["PBO distant B — pixs.core, pixs.auth, pixs.agent, pixs.pzt et modules fonctionnels"]
         D2[("PostgreSQL distant B")]
         T2["PZT distant B"]
         P2["PA distant B"]
@@ -109,7 +117,7 @@ locaux et des exécutants distants uniquement dans les périmètres autorisés ;
 sa présence ne donne aucun droit automatique sur un autre PA ou PZT.
 PFO adresse toujours ses demandes à PBO. Aucun échange PBO–PA ne contourne PZT.
 
-Le Kernel reste minimal et agnostique : il fournit les mécanismes de composition, de dépendances, de cycle de vie, de services, d'événements, de configuration et d'extensions. Les comportements fonctionnels, y compris ceux de `pixs.core`, sont apportés par des modules.
+Le Kernel reste minimal et agnostique : il fournit les mécanismes de composition, de dépendances, de cycle de vie, de services, d'événements, de configuration et d'extensions. Les comportements fonctionnels, y compris ceux du socle obligatoire `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt`, sont apportés par des modules. Le schéma est une synthèse : le module DNS essentiel et les capacités complémentaires du profil restent requis selon OpenSpec.
 
 Un composant déclare son identité, sa version, ses dépendances, ses capacités et ses contrats dans un manifest `component.toml`. Les composants communiquent de préférence par des contrats publics versionnés, plutôt que par des dépendances vers leurs implémentations internes.
 
@@ -179,13 +187,18 @@ Les services système ne sont que des adaptateurs d'exploitation : ils démarren
 
 ### Pixs Agent et PZT
 
-Pixs comprend quatre composants : PBO, PFO, PA et PZT. Dans PBO, `pixs.agent`
+Pixs comprend quatre composants : PBO, PFO, PA et PZT. Dans PBO, `pixs.agent`,
+obligatoire au même titre que `pixs.core`, `pixs.auth` et `pixs.pzt`,
 assure la configuration, l’administration et la supervision de toutes les fonctions
 PA hors PZT. Les modules fonctionnels restent propriétaires de leurs opérations
 et sollicitent PA par ses contrats publics, avec instructions, états et résultats.
 Le module officiel essentiel `pixs.pzt` assure la configuration, l’administration,
 la visualisation, la supervision et le monitoring de PZT. Il conserve ce rôle
 lorsque le réseau est désactivé.
+
+`pixs.agent` reste lui aussi composé lorsque le réseau est désactivé ou que PA
+est absent ; ses états distinguent configuration souhaitée, absence d'exécutant
+et état appliqué, sans annoncer de disponibilité non vérifiée.
 
 PZT est désormais un exécutable indépendant de PA, fondé sur WireGuard ;
 `pixs.agent` ne l’administre pas. Les capacités inspirées de NetBird sont

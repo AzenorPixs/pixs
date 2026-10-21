@@ -36,6 +36,8 @@ Le présent document concerne principalement :
 
 Il ne remplace ni `PROJECT.md` ni les spécifications OpenSpec.
 
+Tout artefact contenant PBO doit composer le socle obligatoire `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt`, ainsi que le module DNS essentiel et les autres capacités requises par son profil. Core fournit les primitives communes, Auth l'authentification locale autonome PostgreSQL, Agent la gestion PA hors PZT et le module PZT la gestion de l'exécutable réseau indépendant. La présence de ces modules ne dépend ni de l'activation réseau ni de la présence locale de PA/PZT ; leurs exécutables restent distribués selon les profils décrits au §46.
+
 En cas de divergence :
 
 ```text
@@ -78,7 +80,7 @@ sans modifier :
 
 * le modèle de composants ;
 * le Kernel ;
-* les responsabilités de `pixs.core` ;
+* les responsabilités et le caractère obligatoire de `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt` dans PBO ;
 * les contrats publics ;
 * les règles métier ;
 * les règles d'autorisation ;
@@ -88,6 +90,8 @@ sans modifier :
 * les invariants de compatibilité.
 
 Les différences entre les modes de distribution doivent rester limitées aux responsabilités nécessaires à l'installation, à la configuration, à l'exécution et à l'exploitation.
+
+La validation d'un artefact PBO doit refuser l'absence de l'un des quatre modules obligatoires ou du module DNS essentiel, même réseau désactivé. Leurs manifests, contrats publics et dépendances Core sont résolus par les mécanismes communs ; le packaging ne crée aucune priorité de chargement avant Core et ne confond pas présence d'un module, disponibilité d'un exécutant et activation réseau.
 
 ---
 
@@ -1540,10 +1544,16 @@ adapters futurs sont des composants distincts, validés par leurs contrats et
 leurs matrices de compatibilité.
 
 Un artefact P0 doit vérifier la composition minimale approuvée : mécanismes de
-composition, `pixs.core`, contexte tenant/scope, autorisation, API, migrations,
+composition, `pixs.core`, `pixs.auth` avec sa capacité locale autonome PostgreSQL,
+contexte tenant/scope, autorisation, API, migrations,
 runtime, provisionnement, sécurité, secrets, audit, observabilité, gouvernance,
 cycle de vie des données, conformité et composant d'exemple. Une capacité hors
 P0 ne peut devenir active que par sélection explicite.
+
+Le profil initial PBO doit également composer `pixs.agent`, `pixs.pzt` et le
+module DNS essentiel, même réseau désactivé, conformément à
+`reference-composition` et `reference-runtime`. La recette doit distinguer ces
+modules des exécutants PA/PZT, sans déduire une qualification de leur seule présence.
 
 Chaque release ou profil de déploiement doit déclarer des objectifs de service
 versionnés et mesurables couvrant disponibilité, latence, invalidation, reprise
@@ -1562,9 +1572,9 @@ deb-package et docker-image ; construction, qualification et publication restent
 
 | Artefact | Contenu obligatoire | Contenu exclu |
 | --- | --- | --- |
-| Paquet Debian PBO/PFO | PBO, PFO, `pixs.agent` et module essentiel `pixs.pzt` | Les trois binaires PA et le binaire PZT, colivrés séparément de PBO/PFO |
+| Paquet Debian PBO/PFO | PBO, PFO, socle obligatoire `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et module DNS essentiel | Les trois binaires PA et le binaire PZT, colivrés séparément de PBO/PFO |
 | Paquet Debian commun PA/PZT | Trois binaires PA : démon système, événements de l'hôte, sessions utilisateur ; plus le binaire indépendant PZT | PBO et PFO comme dépendances embarquées |
-| Image Docker Pixs | PBO, PFO, `pixs.agent`, `pixs.pzt`, deux binaires PA : démon système et événements du conteneur ; plus PZT | Binaire utilisateur PA et ses modes session-start, session-stop et session-daemon |
+| Image Docker Pixs | PBO, PFO, socle obligatoire `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et module DNS essentiel ; deux binaires PA : démon système et événements du conteneur ; plus PZT | Binaire utilisateur PA et ses modes session-start, session-stop et session-daemon |
 
 La séparation validée le 17 octobre 2026 conserve quatre exécutables dans le
 paquet PA/PZT et trois dans Docker. Les binaires système/utilisateur relèvent
@@ -1610,19 +1620,23 @@ n'est construit ou publié par cette intégration.
 ```mermaid
 flowchart TB
     S["Sources Pixs — composants PBO/PFO, PA et PZT"]
-    S --> B["Paquet Debian PBO/PFO — pixs.agent et pixs.pzt"]
+    S --> B["Paquet Debian PBO/PFO"]
     S --> A["Paquet Debian commun PA/PZT — indépendant de PBO/PFO"]
     S --> D["Image Docker Pixs"]
     A --> A1["Trois binaires PA, dont sessions utilisateur"]
     A --> A2["PZT indépendant"]
-    D --> D1["PBO/PFO — pixs.agent et pixs.pzt"]
+    D --> D1["PBO/PFO"]
     D --> D2["Deux binaires PA — système et événements du conteneur"]
     D --> D3["PZT indépendant — sans binaire utilisateur PA"]
+    B --> C["Socle PBO obligatoire — pixs.core, pixs.auth, pixs.agent, pixs.pzt et module DNS essentiel"]
+    D1 --> C
 ```
 
 Il s'agit de la composition cible, sans build réalisé ni processus activé.
 Un hôte distant peut recevoir seulement PA/PZT ou également PBO/PFO ; ces deux
 cas ne changent ni le contenu des artefacts ni les autorisations de gestion.
+Le socle commun représenté ne remplace pas les autres capacités exigées par
+le profil ; le paquet PA/PZT autonome n'embarque pas les modules PBO.
 
 ### 46.1 Compilation et objectifs de performance
 
@@ -1772,9 +1786,9 @@ opposables, les autres valeurs sont à proposer et mesurer par profil.
 
 | Contrôle de distribution | Résultat attendu à la future recette |
 | --- | --- |
-| Debian PBO/PFO | PBO/PFO, `pixs.agent` et module essentiel `pixs.pzt` présents ; exécutables PA/PZT colivrés séparément |
+| Debian PBO/PFO | PBO/PFO, `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et module DNS essentiel présents, même réseau désactivé ; exécutables PA/PZT colivrés séparément |
 | Debian PA/PZT | Trois binaires PA et PZT indépendant, sans PBO/PFO embarqués ; six modes PA et un mode PZT |
-| Docker | PBO/PFO, deux binaires PA système/événements et PZT présents ; binaire et fonctions de session PA absents |
+| Docker | PBO/PFO avec `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et module DNS essentiel ; deux binaires PA système/événements et PZT présents ; binaire et fonctions de session PA absents |
 | Activation PZT | Le binaire PZT exécute le réseau activé/configuré ; arrêt explicite sinon, sans perte du module essentiel PBO |
 | Cohabitation PBO/PA | Échanges sous PZT, isolation des comptes et droits, signaux et arrêt borné ; aucune exécution de rôle implicite |
 | Compatibilité et mises à niveau | Chaque artefact est identifiable et vérifié ; états techniques, mandats, clés et révocations préservés sans résurrection |

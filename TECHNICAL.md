@@ -1,6 +1,8 @@
-# TECHNICAL.md — Pixs
+# TECHNICAL.md — Pixs l'Application Universelle
 
 Ce document précise les décisions techniques transverses du projet. Il complète `PROJECT.md` sans remplacer les spécifications OpenSpec, qui définissent les comportements implémentables.
+
+Le socle fonctionnel obligatoire de PBO comprend `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt`, composés au-dessus du Kernel par les mécanismes communs. Core porte les primitives partagées ; Auth porte l'authentification locale autonome ; Agent gère PA hors PZT ; le module PZT gère l'exécutable réseau indépendant. Leurs dépendances publiques déterminent l'ordre de chargement, sans priorité implicite avant Core. La désactivation réseau ne retire pas ces modules ni le module DNS essentiel et ne dispense pas des autres capacités requises par le profil.
 
 ## Convention normative RFC 2119
 
@@ -87,11 +89,21 @@ pixs.auth / référence à l'identité Core
   ├── MFA, récupération et révocation des accès dérivés
   └── enrôlement, émission d'identité et services gérés
 
+pixs.agent / contrats publics Core et échanges via PZT
+  ├── configuration, administration et supervision de PA hors PZT
+  └── instructions, états et résultats sans propriété des opérations métier
+
+pixs.pzt / contrats publics Core
+  ├── configuration, administration, visualisation et supervision de PZT
+  └── monitoring réseau ; exécution par le binaire indépendant PZT
+
 Provider d'authentification
   └── vérification ou établissement de l'authentification
 ```
 
 Un provider OIDC, SAML, LDAP ou local peut authentifier une identité numérique, mais ne devient pas automatiquement la source de vérité des utilisateurs, groupes, ACL ou permissions Pixs.
+
+Les quatre modules sont obligatoires dans PBO, même réseau désactivé ou sans exécutant PA/PZT. `pixs.auth`, `pixs.agent` et `pixs.pzt` consomment les contrats publics d'identité et de permissions de Core ; ni le Kernel ni Core n'absorbent leurs responsabilités propres. Une fixture structurelle isolée n'est pas une composition applicative.
 
 Le cadrage cible Auth du 19 octobre 2026 précise cette répartition via un module essentiel indépendant ; les trois deltas d'architecture adoptés et les propositions restantes sont distingués au §4.4. Il n'impose aucun déplacement du code ni des contrats structurels existants.
 
@@ -296,6 +308,9 @@ Les identifiants officiels utilisent le namespace réservé `pixs.*`. Les compos
 
 ```text
 pixs.core
+pixs.auth
+pixs.agent
+pixs.pzt
 pixs.authentication.oidc
 acme.crm
 acme.storage.s3
@@ -2444,11 +2459,16 @@ la priorité des contraintes Django et rester cohérente avec l'ensemble des
 dépendances Python installées ; le pin historique 3.3.5 ne justifie à lui seul
 aucun retour arrière.
 
-Le profil P0 impose les capacités de composition, `pixs.core`, contexte de
+Le profil P0 impose les capacités de composition, `pixs.core`, `pixs.auth`
+avec sa capacité locale autonome PostgreSQL, contexte de
 périmètre, autorisation, API, migrations, runtime, provisionnement, sécurité,
 secrets, audit, observabilité, gouvernance, cycle de vie des données, tests
 de conformité et composant d'exemple. Une capacité non P0 doit déclarer son
-absence ou son état `DISABLED` sans affaiblir ce socle.
+absence ou son état `DISABLED` sans affaiblir ce socle. Le profil initial PBO
+compose aussi obligatoirement `pixs.agent`, `pixs.pzt` et le module DNS essentiel,
+même réseau désactivé, selon `reference-composition` et `reference-runtime`.
+Cette obligation de composition ne vaut ni présence d'un exécutant PA/PZT,
+ni réseau actif, ni qualification du P0.
 
 Une décision d'architecture contient son identifiant, son état, son contexte,
 les alternatives considérées, ses conséquences, ses spécifications affectées
@@ -2467,7 +2487,8 @@ PZT compilé avec Cython, pour `pzt-daemon`. Le binaire de sessions PA reste
 absent de Docker. PA et PZT sont distribués ensemble, sans confondre leurs
 composants, identités, contrats, droits ou cycles de vie.
 
-Dans PBO, `pixs.agent` assure configuration, administration et supervision de
+Dans PBO, `pixs.agent`, obligatoire au même titre que `pixs.core`, `pixs.auth`
+et `pixs.pzt`, assure configuration, administration et supervision de
 PA hors PZT ; `pixs.pzt`, nom canonique du module essentiel PZT, assure celles
 de PZT, avec visualisation et monitoring. Les modules fonctionnels conservent
 leurs opérations et consomment les contrats publics de `pixs.agent`.
@@ -2495,15 +2516,18 @@ PA, sans modifier le contenu des distributions ni les garanties de sécurité.
 
 ```mermaid
 flowchart LR
-    M["Module fonctionnel — propriétaire de l'opération"] --> A["pixs.agent — gestion PA hors PZT"]
+    M["Module fonctionnel — propriétaire de l'opération"] --> A["pixs.agent obligatoire — gestion PA hors PZT"]
     A <-->|"Instructions et résultats protégés"| T["PZT — transport et exécution réseau indépendants"]
-    Z["pixs.pzt — gestion réseau dans PBO"] <-->|"Contrôle sécurisé PZT"| T
+    Z["pixs.pzt obligatoire — gestion réseau dans PBO"] <-->|"Contrôle sécurisé PZT"| T
     T <-->|"Échanges PA autorisés"| P["PA — trois binaires, six modes"]
 ```
 
 Les flèches représentent des contrats logiques, sans imposer un endpoint ou un
 canal entre processus. Les schémas de topologie dans PROJECT.md §4 montrent
 le PA/PZT local et les deux cas distants, avec ou sans PBO/PFO locaux.
+Ce schéma se limite à la gestion des exécutants ; `pixs.core` et `pixs.auth`
+restent obligatoires dans PBO, avec les dépendances Core définies au §3.
+Les fonctions d'authentification ne sont pas déplacées vers PA ou PZT.
 
 ### 42.1 Composition et catalogue des capacités
 
