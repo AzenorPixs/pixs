@@ -1,0 +1,78 @@
+"""Façade publique PDP minimal."""
+
+from .decision import Decision, DecisionError, authorize
+from .filter_plan import (
+    PROFILE_VERSION,
+    FilterConfig,
+    FilterLot,
+    FilterPlan,
+    FilterPlanError,
+    plan_filter,
+)
+from .policy import (
+    AuthenticationAssurance,
+    Condition,
+    Effect,
+    FederationTrust,
+    IdentityAssurance,
+    Obligation,
+    Policy,
+    PolicyError,
+    ScopeSelector,
+    Selector,
+)
+from .ports import (
+    AuditEvent,
+    AuditSink,
+    AuthenticationContext,
+    Clock,
+    PortError,
+    Request,
+    RevocationStatus,
+    TrustedFacts,
+    TrustedFactsProvider,
+)
+from .snapshot import (
+    Catalog,
+    Limits,
+    Snapshot,
+    SnapshotError,
+    build_snapshot,
+    validate_snapshot,
+)
+
+__all__ = [
+    "PolicyError",
+    "Effect",
+    "IdentityAssurance",
+    "AuthenticationAssurance",
+    "FederationTrust",
+    "Selector",
+    "ScopeSelector",
+    "Condition",
+    "Obligation",
+    "Policy",
+    "PortError",
+    "RevocationStatus",
+    "Request",
+    "AuthenticationContext",
+    "TrustedFacts",
+    "TrustedFactsProvider",
+    "Clock",
+    "AuditSink",
+    "SnapshotError",
+    "Limits",
+    "Catalog",
+    "Snapshot",
+    "build_snapshot",
+    "validate_snapshot",
+    "DecisionError",
+    "Decision",
+    "authorize",
+    "FilterConfig",
+    "FilterLot",
+    "FilterPlan",
+    "FilterPlanError",
+    "PROFILE_VERSION",
+    "plan_filter",
+]

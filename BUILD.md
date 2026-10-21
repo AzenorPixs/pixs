@@ -1562,6 +1562,18 @@ reproductible de leur vérification, ou un diagnostic explicite lorsque le profi
 ne les satisfait pas. Aucun seuil chiffré universel ne doit être inventé par la
 chaîne de build.
 
+### 45.1 Binaire commun et configuration de ressources externe
+
+Les distributions PBO contiennent un binaire applicatif commun regroupant le Kernel, Core, Auth, Agent et le module PZT, avec les composants sélectionnés et les ressources frontend PFO. Ce binaire conserve Django et ne fusionne ni les propriétaires de données ni les exécutants PA/PZT. Le développement depuis les sources reste possible ; compiler PBO ne constitue pas une preuve de performance ou de support multicœur.
+
+Les rôles `web`, `worker` et `scheduler` utilisent ce même binaire pour une même cible de build. Leurs nombres de processus et limites de concurrence sont configurés au runtime, avec CPU, mémoire, files/buffers et connexions bornés. Les profils PA/PZT suivent la même politique de ressources, séparément selon leur propre environnement. Le build embarque déclarations et schémas ; les budgets accordés et configurations effectives restent externes aux paquets/images.
+
+La recette vérifie les quotas réels du service, de la VM ou du conteneur, les budgets cumulés des réplicas et composants cohébergés, les marges système et les dépendances PostgreSQL. La détection de ressources peut proposer un plan, appliqué uniquement sous configuration ou politique d'adaptation explicite et bornée. Les états demandé, effectif et réellement appliqué restent distingués et diagnostiquables.
+
+Les superviseurs OS/conteneur appliquent les rôles, limites, signaux et redémarrages déclarés sans autorité métier. Changer les processus ou budgets exige autorisation, validation, drain et reprise contrôlés. Plusieurs schedulers conservent leurs baux ; les processus PA conservent les sessions et l'idempotence ; les processus PZT conservent un propriétaire réseau unique par périmètre. Un budget incompatible avec une garantie obligatoire est refusé, sans changement des droits ou des délais de sécurité.
+
+La qualification relie binaire, versions, environnement et configuration aux mesures mémoire, CPU au repos/en charge, latence, débit, saturation et reprise. Nuitka en mode standalone est retenu pour PBO ; versions, options, compilateur C, noms/CLI, schémas exacts et valeurs par défaut restent à qualifier. Aucun outil ni dépendance supplémentaire n'est installé par ce cadrage. [Décision et tâches de réalisation](openspec/changes/define-common-pbo-binary-and-resource-profiles/design.md).
+
 ## 46. Distribution des binaires PA et PZT
 
 La publication cible distingue deux paquets Debian indépendants et une image
@@ -1572,9 +1584,9 @@ deb-package et docker-image ; construction, qualification et publication restent
 
 | Artefact | Contenu obligatoire | Contenu exclu |
 | --- | --- | --- |
-| Paquet Debian PBO/PFO | PBO, PFO, socle obligatoire `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et module DNS essentiel | Les trois binaires PA et le binaire PZT, colivrés séparément de PBO/PFO |
+| Paquet Debian PBO/PFO | Binaire PBO commun : Kernel, `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt`, module DNS essentiel et composants sélectionnés ; ressources PFO | Les trois binaires PA et le binaire PZT, colivrés séparément de PBO/PFO |
 | Paquet Debian commun PA/PZT | Trois binaires PA : démon système, événements de l'hôte, sessions utilisateur ; plus le binaire indépendant PZT | PBO et PFO comme dépendances embarquées |
-| Image Docker Pixs | PBO, PFO, socle obligatoire `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et module DNS essentiel ; deux binaires PA : démon système et événements du conteneur ; plus PZT | Binaire utilisateur PA et ses modes session-start, session-stop et session-daemon |
+| Image Docker Pixs | Binaire PBO commun et ressources PFO ; socle et composants requis identiques à la composition PBO Debian ; deux binaires PA système/événements du conteneur et PZT indépendant | Binaire utilisateur PA et ses modes session-start, session-stop et session-daemon |
 
 La séparation validée le 17 octobre 2026 conserve quatre exécutables dans le
 paquet PA/PZT et trois dans Docker. Les binaires système/utilisateur relèvent
@@ -1617,18 +1629,20 @@ n'est construit ou publié par cette intégration.
 
 ### 46.0 Composition des distributions
 
+Les fichiers exécutables sont distincts des processus lancés : le binaire PBO commun peut alimenter plusieurs processus par rôle, et PA/PZT leurs processus et auxiliaires déclarés. Les budgets effectifs sont fournis au runtime ; ils ne sont pas incorporés à l'artefact. Le module DNS essentiel reste requis dans la composition PBO représentée.
+
 ```mermaid
 flowchart TB
     S["Sources Pixs — composants PBO/PFO, PA et PZT"]
     S --> B["Paquet Debian PBO/PFO"]
     S --> A["Paquet Debian commun PA/PZT — indépendant de PBO/PFO"]
     S --> D["Image Docker Pixs"]
-    A --> A1["Trois binaires PA, dont sessions utilisateur"]
-    A --> A2["PZT indépendant"]
+    A --> A1["Trois binaires PA Cython — processus configurables, sessions incluses"]
+    A --> A2["PZT indépendant Cython — processus configurables"]
     D --> D1["PBO/PFO"]
-    D --> D2["Deux binaires PA — système et événements du conteneur"]
-    D --> D3["PZT indépendant — sans binaire utilisateur PA"]
-    B --> C["Socle PBO obligatoire — pixs.core, pixs.auth, pixs.agent, pixs.pzt et module DNS essentiel"]
+    D --> D2["Deux binaires PA Cython — processus selon quotas, sessions exclues"]
+    D --> D3["PZT indépendant Cython — processus selon quotas"]
+    B --> C["Binaire PBO Nuitka standalone — Kernel, Core, Auth, Agent, module PZT et composants requis"]
     D1 --> C
 ```
 
@@ -1640,6 +1654,10 @@ le profil ; le paquet PA/PZT autonome n'embarque pas les modules PBO.
 
 ### 46.1 Compilation et objectifs de performance
 
+Le binaire PBO commun est construit et qualifié séparément des exécutants PA/PZT. Le choix adopté le 21 octobre 2026 est Nuitka en mode `standalone` : un exécutable PBO avec son runtime, ses bibliothèques et ressources déclarées. Le mode `onefile` autoextractible ne remplace pas ce profil. Les modes d'exploitation PBO Standalone (instance autonome) et ZT (réseau gouverné via PZT) utilisent le même binaire ; ils ne sont pas des options de compilation. L'activation du transport PZT reste distincte et peut être requise en Standalone pour joindre des PA autorisés, sans canal de substitution ni bascule automatique vers Standalone après panne ou révocation. Les trois binaires PA et l'exécutant PZT sont compilés avec Cython. La réplication de ses processus ne multiplie pas les fichiers exécutables livrés. Le paquet Debian PBO/PFO et l'image livrent chacun ce binaire et les ressources PFO ; les comptes de trois binaires PA plus PZT sous Debian, ou deux plus PZT dans Docker, concernent uniquement les exécutants indépendants.
+
+Les optimisations Cython du PBO sont ciblées et admises seulement après profilage et mesures comparables démontrant un gain selon des critères définis avant recette. La qualification vérifie non-régression fonctionnelle, contrats, sécurité, maintenabilité et ressources, sans remplacer la chaîne Nuitka. Les versions/options et profils de compilation sont figés par cible pour la recette ; aucun gain de performance ni baisse de mémoire n'est déduit du compilateur seul. Le paquet doit inclure les imports dynamiques Django, commandes, migrations, catalogues, manifests et ressources requis et qualifier chaque rôle exécuté. Voir les [modes de distribution Nuitka](https://nuitka.net/user-documentation/use-cases.html).
+
 La chaîne cible part des sources Python, génère du C puis produit les
 trois binaires natifs PA et le binaire PZT pour chaque cible complète supportée ;
 le profil Docker distribue les deux binaires PA système/événements et PZT. Les dépendances runtime
@@ -1647,8 +1665,7 @@ et bibliothèques natives nécessaires sont inventoriées. L'autonomie visée
 est une installation sans Pixs Frontoffice ni Pixs Backoffice, avec un runtime
 embarqué si nécessaire pour éviter un interpréteur Python installé séparément.
 
-**Choix validé le 10 octobre 2026 :** Nuitka pour les binaires démon système,
-événements système et sessions utilisateur ; Cython pour le binaire PZT.
+**Choix adopté le 21 octobre 2026 :** Nuitka standalone pour PBO ; Cython pour les trois binaires PA — démon système, événements système et sessions utilisateur — et le binaire PZT indépendant. Ce choix remplace l'ancienne sélection Nuitka des binaires PA ; la séparation et les nombres de binaires sont conservés.
 La chaîne conserve Python vers C puis binaire natif avec runtime déclaré.
 Versions exactes, dépendances, ABI et compatibilité restent à qualifier avant
 installation ou compilation. Voir le [manuel Nuitka](https://nuitka.net/user-documentation/user-manual.html)

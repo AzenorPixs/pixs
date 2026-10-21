@@ -8,7 +8,7 @@ Les références de la matrice et les fichiers présents ne constituent pas une 
 
 ## Modifications proposées
 
-Catalogue fermé au build, quatre exécutables colivrés, six modes PA et un mode PZT, Nuitka pour PA et Cython pour PZT ; qualifier versions, ABI et runtime avant installation des outils.
+Catalogue fermé au build, quatre exécutables colivrés, six modes PA et un mode PZT, Cython pour les trois binaires PA et pour PZT indépendant ; qualifier versions, ABI et runtime avant installation des outils.
 
 ## Capacités
 
@@ -35,7 +35,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Impact de réalisation future
 
-Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Nuitka) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
+Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Cython) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
 
 ## Critère de sortie de réalisation future
 
@@ -43,4 +43,4 @@ Contenu et responsabilités exacts ; construction reproductible par cible ; aucu
 
 ## Décisions restant à valider
 
-Versions de Nuitka/Cython et graphe Python/ABI, format de distribution, noms des exécutables et architectures ; les outils eux-mêmes sont déjà décidés, leur installation n’est pas autorisée ici.
+Versions de Cython et graphe Python/ABI, format de distribution, noms des exécutables et architectures ; les outils eux-mêmes sont déjà décidés, leur installation n’est pas autorisée ici.

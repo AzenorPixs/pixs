@@ -2477,12 +2477,47 @@ par release ou profil : disponibilité, latence, fraîcheur d'invalidation,
 reprise et compatibilité. Leurs seuils sont explicites, versionnés et vérifiés ;
 aucun seuil universel n'est déduit du runtime.
 
+### 41.2 Binaire PBO commun et profils de ressources
+
+L'orientation du 21 octobre 2026 retient un binaire PBO commun contenant le Kernel, `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et les composants sélectionnés. La séparation des modules reste fonctionnelle : contrats publics, propriété des données, migrations, permissions et dépendances sont conservés. Les appels internes à un processus ne nécessitent pas de transport interprocessus. Le Kernel ne devient pas une passerelle obligatoire pour chaque appel.
+
+Le même binaire supporte plusieurs processus selon les rôles `web`, `worker`, `scheduler` et les rôles supplémentaires explicitement spécifiés. Chaque processus active le rôle déclaré et les fonctions nécessaires sans retirer le socle obligatoire de sa composition ni démarrer les exécutants PA/PZT. Les communications et coordinations interprocessus conservent leurs contrats sécurisés et leur persistance de référence ; la mémoire partagée d'un processus n'est pas une autorité durable.
+
+Le mode de compilation Nuitka `standalone` est distinct des modes d'exploitation PBO **Standalone** et **ZT**. Standalone désigne une instance autonome sans autorité Pixs extérieure ; ZT désigne sa participation autorisée au réseau gouverné via PZT. Le même exécutable, ses bibliothèques, son runtime et ses ressources servent les deux modes ; onefile n'est pas le profil retenu. L'activation de PZT est distincte du choix de mode : Standalone peut utiliser ce transport pour les échanges PBO–PA autorisés. Un profil sans réseau activé n'invente pas de résultat PA ; aucun transport absent ou invalide n'ouvre de canal alternatif. pixs.pzt reste essentiel dans les deux modes, sans retour autonome automatique après panne ou révocation.
+
+Cython dans PBO reste limité à des optimisations ciblées fondées sur un profilage et une comparaison mesurée, avec critères de gain et de non-régression définis avant recette. Les mesures comparent code fonctionnel, données, environnement, configuration et charge ; elles couvrent mémoire, CPU, latence ou débit pertinents, contrats, sécurité et maintenabilité. Les imports dynamiques Django, commandes, migrations, catalogues et ressources doivent aussi être qualifiés dans la distribution Nuitka. Cette restriction propre à PBO ne concerne pas les trois binaires PA ni le binaire indépendant PZT, tous compilés avec Cython.
+
+Le plan de ressources est versionné par composant, rôle et environnement. Il distingue capacités détectées, budgets accordés, configuration demandée/effective et état appliqué observé. Il borne nombres de processus, concurrence, files, buffers, CPU, mémoire et connexions. L'admission tient compte des quotas effectifs, de la somme des réplicas, des dépendances et d'une marge système déclarée ; le matériel physique seul ne constitue pas le budget d'une VM ou d'un conteneur.
+
+Une proposition automatique de dimensionnement n'est appliquée que sous configuration explicite ou politique préautorisée et bornée. Les variations de ressources sont diagnostiquées sans adaptation silencieuse. L'application passe par le lifecycle et la supervision déclarés, avec autorisation, drain, reprise et vérification. Les schedulers concurrents respectent le bail et la clôture de péremption ; les workers respectent idempotence et limites cumulées PostgreSQL.
+
+Les trois binaires PA et le binaire indépendant PZT gardent des plans propres à leur environnement, local ou distant. Des processus auxiliaires peuvent être prévus sous rôles et canaux qualifiés, sans mode nouveau implicite. Les événements PA restent bornés, les sessions réelles isolées et le propriétaire réseau PZT unique par périmètre. Le nombre de binaires livrés ne fixe pas le nombre de processus actifs.
+
+La qualification vérifie ressources, saturation, reprise et garanties temporelles de sécurité avant admission du profil. Une insuffisance entraîne refus ou comportement sûr, sans prolongation de droit ni repli hors PZT. Nuitka en mode standalone est retenu pour PBO. Ses versions et options, les noms/CLI, schémas et valeurs exactes, le chargement des extensions et les performances multicœurs restent à qualifier. Cython est retenu pour les trois binaires PA et conservé pour le binaire PZT ; aucun outil n'est installé et aucune option Python sans GIL n'est adoptée ici.
+
+```mermaid
+flowchart TB
+    H["Ressources réellement accordées à chaque environnement"] --> Q["Configuration versionnée — rôles, processus, concurrence et budgets"]
+    Q --> E["Exploitation PBO — Standalone ou ZT"]
+    E --> B["Binaire PBO Nuitka standalone — Kernel, Core, Auth, Agent et module PZT"]
+    B --> W["web — nombre de processus configuré"]
+    B --> J["worker — nombre de processus configuré"]
+    B --> S["scheduler — processus coordonnés par bail"]
+    Q --> A["PA indépendant Cython — processus par rôle et session réelle"]
+    Q --> T["PZT indépendant Cython — processus et auxiliaires déclarés"]
+    T --> O["Un propriétaire réseau admissible par périmètre"]
+```
+
+Ce schéma décrit les rôles et budgets, sans fixer de valeur numérique ni de canal de communication. Les nombres de processus restent soumis à la qualification et au lifecycle de chaque profil.
+
+Les exigences sont intégrées dans `reference-runtime`, `runtime`, `pixs-agent`, `pzt`, `deb-package`, `docker-image` et `reference-composition`, avec trace dans [le change de binaire commun et ressources](openspec/changes/define-common-pbo-binary-and-resource-profiles/design.md). Cette adoption ne construit ni ne lance de binaire.
+
 ## 42. Pixs Agent et séparation des binaires
 
 Ce chapitre porte les modalités techniques de PA et son articulation avec PZT ;
 PROJECT.md §43–§44 définit les responsabilités et BUILD.md §46–§47 la distribution.
 La séparation validée le 17 octobre 2026 définit trois binaires PA compilés
-avec Nuitka, pour six modes système/utilisateur, et le binaire indépendant
+avec Cython, pour six modes système/utilisateur, et le binaire indépendant
 PZT compilé avec Cython, pour `pzt-daemon`. Le binaire de sessions PA reste
 absent de Docker. PA et PZT sont distribués ensemble, sans confondre leurs
 composants, identités, contrats, droits ou cycles de vie.
@@ -2516,10 +2551,25 @@ PA, sans modifier le contenu des distributions ni les garanties de sécurité.
 
 ```mermaid
 flowchart LR
-    M["Module fonctionnel — propriétaire de l'opération"] --> A["pixs.agent obligatoire — gestion PA hors PZT"]
-    A <-->|"Instructions et résultats protégés"| T["PZT — transport et exécution réseau indépendants"]
-    Z["pixs.pzt obligatoire — gestion réseau dans PBO"] <-->|"Contrôle sécurisé PZT"| T
-    T <-->|"Échanges PA autorisés"| P["PA — trois binaires, six modes"]
+    subgraph B["Binaire PBO Nuitka standalone — exploitation Standalone ou ZT"]
+        K["Kernel — mécanismes génériques"]
+        C["pixs.core — primitives communes"]
+        U["pixs.auth — authentification"]
+        M["Module propriétaire de l'opération"]
+        A["pixs.agent — gestion PA hors PZT"]
+        Z["pixs.pzt — gestion réseau"]
+        K -. "composition" .-> C
+        K -. "composition" .-> U
+        K -. "composition" .-> A
+        K -. "composition" .-> Z
+        U -. "contrats publics" .-> C
+        A -. "contrats publics" .-> C
+        Z -. "contrats publics" .-> C
+        M --> A
+    end
+    A <-->|"Instructions et résultats via PZT"| T["PZT indépendant Cython — processus selon ressources"]
+    Z <-->|"Contrôle sécurisé PZT"| T
+    T <-->|"Échanges protégés"| P["PA indépendant Cython — trois binaires, six modes selon profil"]
 ```
 
 Les flèches représentent des contrats logiques, sans imposer un endpoint ou un

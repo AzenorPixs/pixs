@@ -18,9 +18,9 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
-Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Nuitka) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
+Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Cython) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
 
-Périmètre propre à ce lot : Catalogue fermé au build, quatre exécutables colivrés, six modes PA et un mode PZT, Nuitka pour PA et Cython pour PZT ; qualifier versions, ABI et runtime avant installation des outils.
+Périmètre propre à ce lot : Catalogue fermé au build, quatre exécutables colivrés, six modes PA et un mode PZT, Cython pour les trois binaires PA et pour PZT indépendant ; qualifier versions, ABI et runtime avant installation des outils.
 
 ## Choix déjà fixés et alternatives
 
@@ -30,7 +30,7 @@ Les modalités concrètes encore ouvertes ne reçoivent pas de valeur de défaut
 
 ## Barrières de conception avant réalisation
 
-Versions de Nuitka/Cython et graphe Python/ABI, format de distribution, noms des exécutables et architectures ; les outils eux-mêmes sont déjà décidés, leur installation n’est pas autorisée ici.
+Versions de Cython et graphe Python/ABI, format de distribution, noms des exécutables et architectures ; les outils eux-mêmes sont déjà décidés, leur installation n’est pas autorisée ici.
 
 Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant tout code, les choix ayant un impact réel sur sécurité, périmètre, compatibilité, exploitation ou ressources devront être soumis avec conséquences et recommandation ; pour PA/PZT, respecter TECHNICAL §45.4 et ses lots de trois arbitrages. Les paramètres déjà décidés sont à qualifier, pas à remplacer par une nouvelle décision supposée.
 

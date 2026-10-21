@@ -27,7 +27,7 @@ Les chemins et options CLI restent à spécifier.
 
 ### Requirement: Compilation différenciée validée
 
-Les trois binaires PA MUST être compilés avec Nuitka ; le binaire indépendant
+Les trois binaires PA MUST être compilés avec Cython ; le binaire indépendant
 PZT MUST suivre Cython selon pzt. Les chaînes MUST partir de Python via C avec
 runtime, dépendances et ABI déclarés et qualifiés avant construction. Cette
 décision MUST NOT installer un outil ni prouver un gain de performance.
@@ -35,7 +35,7 @@ décision MUST NOT installer un outil ni prouver un gain de performance.
 #### Scenario: Compilation des composants distincts
 
 - **WHEN** la matrice de compilation PA/PZT est déclarée
-- **THEN** les trois binaires PA utilisent Nuitka et PZT indépendant utilise Cython
+- **THEN** les trois binaires PA et PZT indépendant utilisent Cython avec leurs chaînes et qualifications propres
 
 ### Requirement: Démarrage système et session borné
 
@@ -86,7 +86,7 @@ de recette ou de mesure de performance.
 Les identifiants pixs.agent, pixs.pzt et le nom du composant/binaire PZT MUST
 être considérés validés. Noms/versions de paquets, noms de fichiers exécutables,
 chemins, CLI, bibliothèques, comptes, formats et valeurs non arrêtés MUST rester
-ouverts jusqu'à décision ou qualification. Les versions de Nuitka/Cython MUST
+ouverts jusqu'à décision ou qualification. Les versions de Cython MUST
 être qualifiées avant installation. Cette rédaction MUST NOT valoir code,
 recette runtime, support de plateforme ou artefact livré.
 

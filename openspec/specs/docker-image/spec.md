@@ -5,6 +5,20 @@ L'image de conteneur est un mode de livraison corrélé à la release Pixs : rep
 
 ## Requirements
 
+### Requirement: Réplication des profils sous quotas du conteneur
+
+L'image MUST livrer le binaire PBO commun Nuitka standalone avec ses ressources frontend et conserver les exécutants PA/PZT indépendants prévus. Chaque conteneur MUST sélectionner un rôle applicatif PBO explicite, avec processus et concurrence bornés selon runtime ; les réplicas et exécutants cohébergés MUST partager un budget contrôlé. La réplication MUST NOT cloner un propriétaire réseau ni une identité d'exécutant implicitement.
+
+#### Scenario: Plusieurs conteneurs web
+
+- **WHEN** plusieurs conteneurs lancent le rôle web depuis la même image
+- **THEN** leurs budgets cumulés et connexions sont contrôlés, sans activation implicite des binaires PA/PZT présents dans l'image
+
+#### Scenario: Ressources de l'hôte non accordées
+
+- **WHEN** le serveur possède plus de CPU ou mémoire que le quota du conteneur
+- **THEN** le dimensionnement respecte les limites accordées et les modes de session PA restent exclus
+
 ### Requirement: Composition reproductible corrélée à la release
 
 La construction MUST être reproductible et l’image MUST identifier sa release, ses manifests, contrats et garanties dans le profil déclaré. Les capacités communes MUST rester corrélables aux autres artefacts. Les exclusions de fonctions de session décrites par cette capacité MUST NOT créer de divergence métier cachée ; base et outillage restent à qualifier.
@@ -57,8 +71,9 @@ Le conteneur MUST gérer le signal d'arrêt par un drain contrôlé jusqu'à un 
 
 ### Requirement: Composition image PBO PFO deux binaires PA et PZT
 
-L'image Pixs MUST toujours contenir PBO/PFO, pixs.agent, le module essentiel
-pixs.pzt, deux binaires PA — démon système et événements du conteneur — et le
+L'image Pixs MUST toujours contenir le binaire PBO commun, les ressources PFO,
+pixs.core, pixs.auth, pixs.agent, pixs.pzt, deux binaires PA — démon système et
+événements du conteneur — et le
 binaire indépendant PZT. Elle MUST NOT contenir le binaire utilisateur PA ni
 ses modes session-start, session-stop et session-daemon. La séparation PA/PZT
 MUST conserver trois exécutables hors PBO/PFO dans l'image.

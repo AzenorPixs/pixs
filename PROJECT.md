@@ -18,6 +18,7 @@ Autorisation        : ACL et permissions via pixs.core
 Authentification    : pixs.auth essentiel indépendant, autonome sur PostgreSQL
 Gestion PA          : pixs.agent obligatoire, opérations système/utilisateur hors PZT
 Gestion réseau      : pixs.pzt obligatoire, pilotage de l'exécutable indépendant PZT
+Construction PBO    : Nuitka standalone ; exploitation Standalone ou ZT
 ```
 
 PostgreSQL constitue la source de vérité applicative par défaut de Pixs. Le complément proposé au §19.1 permet de déplacer le stockage Core concerné vers l'OpenLDAP interne après installation, puis de revenir à PostgreSQL par migration vérifiée ; il ne déplace pas les autres données applicatives.
@@ -40,6 +41,10 @@ Ces modules sont essentiels au même titre et restent composés lorsque le rése
 Le cadrage cible du 19 octobre 2026 retient `pixs.auth` comme module essentiel indépendant de `pixs.core`, avec une authentification locale autonome s'appuyant par défaut sur PostgreSQL. Les trois deltas de [define-essential-autonomous-auth-module](openspec/changes/define-essential-autonomous-auth-module/proposal.md) sont adoptés au canon le 20 octobre 2026, sans implémentation. Les autres dossiers Auth restent proposés.
 
 Les annuaires, KDC et systèmes externes ne sont pas nécessaires à cette autonomie. `pixs.auth` peut fournir l'identité à d'autres applications et gérer ses propres services OpenLDAP, KDC et Active Directory (`pixs.auth.directory.ad`) par sous-modules optionnels. Les connecteurs vers des sources externes, notamment LDAP, Kerberos, OIDC et SAML, sont des sous-modules à installer explicitement, absents de l'installation standard. Les moteurs de stockage, recherche et autres intégrations conservent leurs contrats et providers optionnels.
+
+L'orientation adoptée le 21 octobre 2026 regroupe le Kernel et les quatre modules obligatoires dans une même application distribuée par un binaire PBO commun compilé avec Nuitka en mode standalone. Leurs contrats publics, données, migrations et permissions restent distincts ; aucun processus autonome par module n'est imposé. Le même binaire peut démarrer plusieurs processus `web`, `worker`, `scheduler` ou autres rôles explicitement spécifiés, selon la configuration PBO et le budget de ressources réellement accordé à son environnement.
+
+Les exécutables PA/PZT restent indépendants de PBO et disposent de leurs propres plans de processus et de concurrence selon les ressources de leur hôte d'exécution. Cette configuration conserve les trois binaires et six modes PA, le binaire indépendant PZT et son propriétaire réseau unique par périmètre ; elle ne transforme pas les événements système en démons permanents. Les détails et limites sont définis au §42.1 et dans OpenSpec, sans binaire produit ni qualification de performance par cette adoption.
 
 Pixs doit être :
 
@@ -876,7 +881,7 @@ Architecture conceptuelle et exemples de déploiement :
 flowchart TB
     U["PFO / clients / intégrations"]
     subgraph H["Hôte local — PBO/PFO, PA et PZT"]
-        subgraph B["PBO — Django"]
+        subgraph B["PBO — Nuitka standalone / Django, exploitation Standalone ou ZT"]
             M["Modules fonctionnels"]
             AU["pixs.auth obligatoire — authentification locale autonome"]
             A["pixs.agent obligatoire — configuration, administration et supervision de PA hors PZT"]
@@ -894,8 +899,8 @@ flowchart TB
             Z -. "contrats communs" .-> C
         end
         D[("PostgreSQL — stockage par défaut")]
-        T["PZT local — exécutable indépendant"]
-        P["PA local — fonctions système et utilisateur selon profil"]
+        T["PZT local — Cython, exécutable indépendant, processus configurables"]
+        P["PA local — Cython, processus système/utilisateur selon ressources"]
         B --- D
         A <-->|"Instructions, états et résultats via PZT"| T
         Z <-->|"Contrôle sécurisé de PZT"| T
@@ -903,16 +908,16 @@ flowchart TB
     end
     U --> M
     subgraph R1["Hôte distant A — sans PBO/PFO"]
-        T1["PZT distant A"]
-        P1["PA distant A"]
+        T1["PZT distant A — Cython, ressources propres"]
+        P1["PA distant A — Cython, ressources propres"]
         T1 <-->|"Échanges protégés"| P1
     end
     subgraph R2["Hôte distant B — avec PBO/PFO facultatifs"]
         F2["PFO distant B"]
-        B2["PBO distant B — pixs.core, pixs.auth, pixs.agent, pixs.pzt et modules fonctionnels"]
+        B2["PBO distant B — même binaire Nuitka standalone, exploitation Standalone ou ZT"]
         D2[("PostgreSQL distant B")]
-        T2["PZT distant B"]
-        P2["PA distant B"]
+        T2["PZT distant B — Cython, ressources propres"]
+        P2["PA distant B — Cython, ressources propres"]
         F2 --> B2
         B2 --- D2
         B2 <-->|"Contrats de gestion via PZT"| T2
@@ -2239,7 +2244,7 @@ Les invariants suivants constituent le cap architectural initial de Pixs :
 104. Un webhook est un adapter versionné et signé d'un contrat d'intégration ; un webhook entrant doit être vérifié et transformé avant toute mutation métier.
 105. L'authentification, l'autorisation, le tenant, le scope et l'idempotence sont vérifiés à la frontière API et propagés aux opérations et événements selon leur périmètre.
 106. Une rupture de contrat détectée par le build ou le runtime bloque l'activation plutôt que de sélectionner silencieusement un schéma ou un provider incompatible.
-107. Un même artefact Pixs peut être exécuté selon les profils `web`, `worker` et `scheduler`, avec une configuration de rôle explicite et sans variante fonctionnelle cachée.
+107. Un binaire PBO commun regroupe le Kernel, Core, Auth, Agent et le module PZT. Il peut démarrer plusieurs processus `web`, `worker` et `scheduler` selon une configuration explicite, des budgets de ressources vérifiés et les règles de coordination, sans variante fonctionnelle ni démon par module imposés.
 108. Le rôle `web` est le seul rôle d'exécution exposé au trafic public par défaut ; les workers, schedulers et interfaces de coordination restent privés.
 109. Le runtime applicatif est stateless : aucune donnée nécessaire à l'autorité métier, à l'idempotence, à la reprise ou à la coordination ne dépend de la mémoire ou du filesystem local d'un processus.
 110. Les Jobs, outbox, inbox, files, leases, checkpoints, sessions durables et états de reprise utilisent une persistance ou un provider explicitement déclaré et compatible avec les mêmes garanties.
@@ -2617,9 +2622,15 @@ Pixs est spécifié par capacités. Cette section et la [synthèse du README](RE
 
 ### Suivi des spécifications et des changes
 
-#### État de référence au 19 octobre 2026
+#### État courant au 21 octobre 2026
 
-Le canon dans [openspec/specs/](openspec/specs/) recense **78 capacités, 781 exigences et 905 scénarios**. Ce comptage porte sur les spécifications canoniques actuelles. Il inclut la séparation PA/PZT et les modules pixs.agent/pixs.pzt, l’adoption de C00 le 18 octobre et la synchronisation de C01 avant son archivage le 19 octobre et l'adoption des trois deltas d'architecture Auth le 20 octobre (neuf exigences ajoutées, une modifiée, treize scénarios supplémentaires nets). Les deltas de PA10 tracent une intégration déjà effectuée ; les deltas encore proposés ne sont pas comptés avant adoption.
+Le canon compte **78 capacités, 831 exigences et 983 scénarios**. Avant la présente décision, il comptait 812 exigences et 948 scénarios. Le [binaire PBO commun et les profils de ressources](openspec/changes/define-common-pbo-binary-and-resource-profiles/proposal.md) avec le complément Nuitka standalone, les modes d’exploitation et Cython ciblé dans PBO ajoutent au total 19 exigences et 35 scénarios, modifient six exigences et synchronisent sept capacités sans en créer. Les deltas de ce change tracent une adoption déjà intégrée, sans double comptage ni implémentation.
+
+L’inventaire courant recense **158 archives et 112 changes ouverts**, soit **270 changes et 58,52 % d’archives**. Il inclut le nouveau change documentaire encore ouvert. Ces compteurs décrivent les fichiers présents, sans mesurer la disponibilité fonctionnelle ni remplacer les preuves de qualification. Les relevés et matrices historiques ci-dessous conservent leurs dates et leur périmètre.
+
+#### État historique des 19 et 20 octobre 2026
+
+Le canon du relevé historique dans [openspec/specs/](openspec/specs/) recensait **78 capacités, 781 exigences et 905 scénarios**. Ce comptage est conservé comme instantané daté. Il inclut la séparation PA/PZT et les modules pixs.agent/pixs.pzt, l’adoption de C00 le 18 octobre et la synchronisation de C01 avant son archivage le 19 octobre et l'adoption des trois deltas d'architecture Auth le 20 octobre (neuf exigences ajoutées, une modifiée, treize scénarios supplémentaires nets). Les deltas de PA10 tracent une intégration déjà effectuée ; les deltas encore proposés ne sont pas comptés avant adoption.
 
 Le complément C02/R01 du 19 octobre conservé ci-dessous décrit la préparation historique. L’invocation 1CISMP1 a ensuite autorisé la réalisation du seul C02, archivé le 20 octobre 2026. Les [preuves locales et limites](openspec/changes/archive/2026-10-20-add-core-postgres-services/VALIDATION.md) couvrent modèles, migration PostgreSQL propriétaire, services, QUERY et raccordement fermé R01 : 346 tests purs, cinq recettes PostgreSQL réelles (14/20/46/62/58 cas) et 12 indicateurs de migration réussis. Les 18 empreintes canoniques contrôlées restent identiques ; aucune nouvelle exigence ni scénario canonique. L’activation intégrée attend les garanties C03–C10 et la qualification C17/C18/C19 ; aucune disponibilité P0 n’est déduite. Les statistiques postarchive et le gate de ce RUN sont suivis séparément.
 
@@ -2675,11 +2686,11 @@ Les premières priorités après la réalisation locale C02 du 20 octobre sont :
 4. Compléter interface modulaire, langues, thèmes, accessibilité, administration, modules essentiels, exploitation et restauration : C11–C16. Intégrer aussi N01 urgence, N04 entrée web et N05 réadmission après restauration selon leurs contrats, avant construction et recette.
 5. Fournir les vérifications de confiance N03 avant installation, construire le paquet Debian C18, puis qualifier la composition distribuée en C17 avec le kit minimal N06. C19 conserve support, preuves finales et préparation de publication, sans modification implicite de l’artefact qualifié.
 
-Au présent relevé recompté, les changes actifs comptent **1 143 tâches non cochées**, dont quatre tâches futures PA10, les 20 tâches des compléments de protection des secrets et les 73 tâches Auth et les dix tâches de stockage Core réversible, et **cinq tâches documentaires PA10 cochées**. Les huit tâches du profil EntitlementSubjectType sont désormais dans son archive et exclues des actifs. Le complément C02 précise ses dix tâches existantes sans en ajouter ni en cocher. L’[audit transversal P0](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.md) du 17 octobre documente 17 parcours/interfaces, la vérification des références des 717 exigences et quatre nouveaux changes validés : N03 confiance avant installation, N04 entrée web, N05 réadmission après restauration et N06 kit minimal de conformité. Le rattachement préalable de 351 exigences à des lots P0 et de 366 à d’autres lots ne suffit pas à prouver leur applicabilité ou leur couverture ; les clauses conditionnelles restent à vérifier par rôle. Ce contrôle ne constitue pas un nouvel audit fonctionnel exhaustif des 623 exigences hors ancien périmètre NE.
+Au relevé historique du 19 octobre 2026, les changes actifs comptaient **1 143 tâches non cochées**, dont quatre tâches futures PA10, les 20 tâches des compléments de protection des secrets et les 73 tâches Auth et les dix tâches de stockage Core réversible, et **cinq tâches documentaires PA10 cochées**. Les huit tâches du profil EntitlementSubjectType sont désormais dans son archive et exclues des actifs. Le complément C02 précise ses dix tâches existantes sans en ajouter ni en cocher. L’[audit transversal P0](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.md) du 17 octobre documente 17 parcours/interfaces, la vérification des références des 717 exigences et quatre nouveaux changes validés : N03 confiance avant installation, N04 entrée web, N05 réadmission après restauration et N06 kit minimal de conformité. Le rattachement préalable de 351 exigences à des lots P0 et de 366 à d’autres lots ne suffit pas à prouver leur applicabilité ou leur couverture ; les clauses conditionnelles restent à vérifier par rôle. Ce contrôle ne constitue pas un nouvel audit fonctionnel exhaustif des 623 exigences hors ancien périmètre NE.
 
 Les contrôles stricts du relevé du 17 octobre validaient les **107 changes** ; le strict global sortait en exit 1 avec les quatre avertissements de longueur préexistants. Les **95 tests unitaires existants exécutés pendant cet audit transversal** vérifient des primitives et validateurs ; ils ne qualifient pas la composition installable. Les [contrôles locaux](reports/audit-transversal-p0-2026-10-17/RAPPORT.md) conservent commandes, résultats et limites. Les validations antérieures des 100 puis 102 dossiers et les 124 unités de l’audit NE restent des preuves historiques distinctes. Le contrôle documentaire courant du 19 octobre, `openspec validate --all --strict --no-interactive --json`, réussit sur **194 éléments : 116 changes et 78 capacités**, sans échec ni avertissement ; aucun test produit n’est exécuté pour cette préparation Auth.
 
-Les compteurs canoniques ci-dessus sont recomptés dans les fichiers de spécification actuels. PA10, C00 et C01 sont déjà intégrés ; leurs adoptions ne constituent pas une seconde augmentation du canon. Les deltas encore proposés N02/N04/N05 représentent **4 exigences ajoutées, 2 exigences existantes modifiées et 15 scénarios supplémentaires nets**. Les deux compléments de protection des secrets ajoutent **15 exigences et 30 scénarios proposés**, sans nouvelle capacité. L'architecture Auth essentielle est déjà intégrée ; les sept autres changes Auth proposent encore **7 capacités nouvelles, 35 exigences ajoutées et 54 scénarios supplémentaires nets**. Le complément de stockage Core réversible ajoute une capacité, 12 exigences, modifie cinq exigences existantes et apporte 16 scénarios supplémentaires nets. Si tous ces deltas étaient adoptés sans modification, la projection serait de **86 capacités, 847 exigences et 1 020 scénarios** ; elle ne remplace pas le canon courant **78/781/905**. Le recomptage ne synchronise pas les deltas encore proposés et ne réévalue pas la couverture fonctionnelle.
+Les compteurs historiques de ce paragraphe décrivent le relevé des 19 et 20 octobre ; le recomptage courant figure en tête de section. PA10, C00 et C01 sont déjà intégrés ; leurs adoptions ne constituent pas une seconde augmentation du canon. Les deltas encore proposés N02/N04/N05 représentent **4 exigences ajoutées, 2 exigences existantes modifiées et 15 scénarios supplémentaires nets**. Les deux compléments de protection des secrets ajoutent **15 exigences et 30 scénarios proposés**, sans nouvelle capacité. L'architecture Auth essentielle est déjà intégrée ; les sept autres changes Auth proposent encore **7 capacités nouvelles, 35 exigences ajoutées et 54 scénarios supplémentaires nets**. Le complément de stockage Core réversible ajoute une capacité, 12 exigences, modifie cinq exigences existantes et apporte 16 scénarios supplémentaires nets. Si tous ces deltas étaient adoptés sans modification, la projection serait de **86 capacités, 847 exigences et 1 020 scénarios** ; elle ne remplace pas le canon courant **78/781/905**. Le recomptage ne synchronise pas les deltas encore proposés et ne réévalue pas la couverture fonctionnelle.
 
 Le 19 octobre 2026, les quatre descriptions trop longues de `bulk-operations` et `identity-assurance` sont réparties entre validation structurelle et limites runtime, à la demande du développeur. Les intitulés et scénarios existants sont conservés ; quatre exigences distinctes et quatre scénarios de contrôle supplémentaires explicitent les limites déjà présentes, sans nouvelle fonctionnalité ni modification du code. Ce découpage explique l’augmentation du canon de 764/884 à 768/888 exigences/scénarios ; les archives et leurs résultats historiques restent inchangés.
 
@@ -3579,7 +3590,7 @@ Ces éléments restent des choix d'implémentation ou d'exploitation. Lorsqu'ils
 
 ```mermaid
 flowchart TB
-    subgraph B["PBO — Django, modules et contrats"]
+    subgraph B["PBO — Nuitka standalone, modules et processus par rôle"]
         K["Kernel — mécanismes génériques"] --> C["pixs.core obligatoire — primitives communes"]
         K -. "composition et services" .-> AU["pixs.auth obligatoire — local autonome"]
         AU -. "contrats publics d'identité" .-> C
@@ -3600,9 +3611,9 @@ flowchart TB
     DJ --> DB[("PostgreSQL — stockage par défaut")]
     FE["PFO — TanStack"] -->|"API / Commands"| DJ
     DB --> E["Electric — synchronisation optionnelle"] --> FE
-    A <-->|"Gestion PA via PZT"| T["PZT — exécutable réseau indépendant"]
+    A <-->|"Gestion PA via PZT"| T["PZT — Cython, binaire indépendant, processus selon ressources"]
     Z <-->|"Gestion sécurisée PZT"| T
-    T <-->|"Échanges protégés locaux ou distants"| P["PA — exécution système et utilisateur"]
+    T <-->|"Échanges protégés locaux ou distants"| P["PA — Cython, binaires indépendants, processus selon ressources"]
 ```
 
 Les déploiements locaux et les deux exemples distants, avec ou sans PBO/PFO,
@@ -3755,6 +3766,24 @@ déploiement déclarent des objectifs de service vérifiables — disponibilité
 latence, invalidation, reprise et compatibilité — sans imposer de seuil chiffré
 universel.
 
+### 42.1 Binaire commun et plans de processus selon les ressources
+
+Le binaire PBO commun contient le socle modulaire et les composants sélectionnés de la composition. Le Kernel demeure un mécanisme générique ; Core, Auth, Agent et le module PZT gardent leur propriété fonctionnelle. Les contrats internes peuvent être consommés dans le même processus sans IPC imposée. Un module présent dans le binaire ne lance ni service, ni exécutant, ni rôle supplémentaire implicitement. Les modules dans un même processus partagent sa mémoire, ses privilèges et ses défaillances ; la modularité ne constitue pas une isolation système.
+
+Le mode de compilation PBO est **Nuitka standalone**. Le paquet contient un exécutable PBO commun avec son runtime, ses bibliothèques et ressources déclarées ; il n'impose pas un fichier autoextractible onefile. Ses modes d'exploitation sont **Standalone**, instance autonome sans autorité Pixs extérieure, et **ZT**, participation autorisée au réseau gouverné via PZT. Le même binaire et le module essentiel pixs.pzt sont conservés dans les deux modes. L'activation du transport PZT est une dimension distincte : une instance Standalone peut l'utiliser pour joindre ses PA locaux ou distants autorisés ; si ce transport est absent ou invalide, l'échange reste bloqué sans substitution. Les trois binaires PA et l'exécutant réseau PZT restent indépendants et sont compilés avec Cython.
+
+Dans PBO, Cython est réservé aux optimisations ciblées justifiées par un profilage et des mesures comparables selon des critères établis avant recette. Leur admission exige gain pertinent, compatibilité des contrats, sécurité, maintenabilité et non-régression. Cython ne remplace pas Nuitka pour le PBO complet.
+
+La configuration distingue les ressources détectées, le budget accordé, le plan demandé, la configuration effective et l'état réellement appliqué. Chaque plan déclare rôles, nombres de processus, concurrence, files et buffers bornés, budgets CPU/mémoire et plafonds de connexions. Le dimensionnement utilise les limites effectives de la machine, VM, conteneur ou service, avec une marge pour le système et les dépendances cohébergées. Les réplicas sont comptabilisés ensemble ; le nombre de cœurs seul ne fixe pas le nombre de workers.
+
+Une détection peut proposer un plan ; seule une configuration versionnée ou une politique d'adaptation préautorisée et bornée permet de l'appliquer. Les processus sont lancés, limités et supervisés par les adapters OS/conteneur déclarés. Une modification exige validation, autorisation, drain et reprise contrôlés, avec état appliqué vérifié. Plusieurs schedulers conservent le bail persistant et la clôture de péremption par périmètre ; augmenter les workers ne doit pas dupliquer un travail ni saturer implicitement PostgreSQL.
+
+PA et PZT ont des profils indépendants fondés sur leur propre environnement, même lorsque PBO est distant. Leurs rôles et éventuels auxiliaires sont déclarés, bornés et qualifiés. Les sessions PA réelles gardent leur isolation ; les événements de démarrage/arrêt restent bornés. PZT conserve un propriétaire admissible unique des ressources réseau par périmètre. Les configurations et états PA passent par `pixs.agent` via PZT ; ceux de PZT relèvent des interfaces sécurisées de `pixs.pzt`.
+
+Un budget insuffisant bloque l'admission ou déclenche le comportement sûr prévu en service. Il ne réduit ni autorisation, audit, isolation, durabilité, attestation, révocation ni protection indépendante, et n'ouvre aucun canal PBO–PA hors PZT. Les profils sont qualifiés par des mesures de mémoire, CPU au repos/en charge, latence, débit, saturation et reprise. Noms de fichiers, options CLI, schémas exacts et valeurs de dimensionnement, versions et options de la chaîne Nuitka standalone et stratégie de chargement restent à spécifier et qualifier ; aucun gain multicœur n'est déduit de la seule compilation.
+
+Cette décision est tracée dans [define-common-pbo-binary-and-resource-profiles](openspec/changes/define-common-pbo-binary-and-resource-profiles/proposal.md). Les capacités canoniques sont synchronisées ; les tâches de réalisation restent à engager séparément.
+
 ## 43. Pixs Agent — architecture et responsabilités
 
 Le cadrage PA/PZT est intégré aux fichiers officiels du projet le 10 octobre
@@ -3764,7 +3793,7 @@ implémenté, testé ou publié par cette intégration documentaire.
 
 La séparation validée le 17 octobre 2026 définit quatre composants : Pixs
 Backoffice (PBO), Pixs Frontoffice (PFO), Pixs Agent (PA) et PZT.
-PA comprend exactement trois binaires dédiés, compilés avec Nuitka depuis
+PA comprend exactement trois binaires dédiés, compilés avec Cython depuis
 Python via C. PZT est le composant réseau indépendant, avec son propre binaire
 compilé avec Cython. Versions et compatibilité restent à qualifier.
 PBO conserve Django et PostgreSQL ; PA et PZT ne deviennent ni un runtime
@@ -3970,26 +3999,30 @@ Aucun choix du produit ZeroTier n'est effectué.
 
 | Mode | Fonctionnement |
 | --- | --- |
-| Autonome | Une seule instance Pixs, indépendante des autres instances, assure sa propre gouvernance, son administration et ses opérations métier. |
-| Zéro Trust Pixs (ZTP) | Plusieurs instances participent à un réseau gouverné, avec autorités hiérarchiques, délégations explicites et coopération autorisée entre pairs. |
+| Standalone (autonome) | Une seule instance Pixs, indépendante des autres instances, assure sa propre gouvernance, son administration et ses opérations métier. |
+| ZT | Plusieurs instances participent au réseau gouverné via PZT, avec autorités hiérarchiques, délégations explicites et coopération autorisée entre pairs. |
 
-Le mode autonome conserve les règles de sécurité de Pixs. L'autonomie décrit
+Le mode Standalone conserve les règles de sécurité de Pixs. L'autonomie décrit
 l'absence de dépendance à une autorité Pixs extérieure ; les dépendances
 techniques nécessaires au service restent déclarées et exploitées dans son
 périmètre.
 
-Dans le mode ZTP, chaque instance conserve ses responsabilités locales,
+Dans le mode ZT, chaque instance conserve ses responsabilités locales,
 ses contrôles applicatifs et l'autorité sur les ressources qui lui sont
 attribuées. Elle respecte les contraintes communes et les mandats reçus.
 
 Le passage d'un mode à l'autre est explicite. Une coupure, une révocation ou
-une perte de quorum ne déclenche pas un retour automatique au mode autonome.
+une perte de quorum ne déclenche pas un retour automatique au mode Standalone.
 La procédure d'adhésion ou de retrait reste à spécifier.
+
+Les noms des modes d'exploitation sont Standalone et ZT. PZT désigne le composant réseau, et ZTP son appellation historique dans ce cadrage ; ces sigles ne sont pas des options de compilation. L'autonomie de gouvernance ne désactive pas automatiquement le transport PZT : une instance Standalone peut en avoir besoin pour ses PA, même locaux. Sans transport PZT vérifiable, les échanges PBO–PA restent bloqués. Le profil initial sans réseau activé est un cas particulier distinct du seul nom Standalone.
 
 ### 44.3 Vocabulaire
 
 | Terme | Sens dans ce document |
 | --- | --- |
+| Mode Standalone | Exploitation autonome de PBO, sans autorité Pixs extérieure ; l'activation éventuelle du transport PZT reste distincte. |
+| Mode ZT | Exploitation de PBO comme participant autorisé au réseau gouverné via PZT. |
 | Zéro Trust Pixs (ZTP) | Le réseau sécurisé Pixs et ses mécanismes de communication et d'autorité. |
 | PZT | Sigle employé dans le cadrage du PA pour le même réseau ; ZTP reste le sigle de ce document. |
 | Pixs Agent (PA) | Le composant d’exécution système et utilisateur hors PZT, administré par `pixs.agent`. |
