@@ -95,7 +95,7 @@ La preuve intégrée conserve version du contrat, plan, environnement, commandes
 
 ## Sélection de la preuve R01 du 20 octobre 2026
 
-Les [décisions C03 D15/D16](../add-initial-authentication-and-sessions/design.md) sélectionnent la clé publique personnelle préautorisée et une signature Ed25519 vérifiée avec cryptography. Le [delta C04 adopté le 20 octobre 2026](../integrate-runtime-authorization-and-super-admin/specs/authorization/spec.md) formalise le sujet opérateur pré-session et son mapping explicite. Les formulations R01 antérieures décrivent la frontière avant cette sélection ; le delta est désormais synchronisé au canon, sans réalisation de R01.
+Les [décisions C03 D15/D16](../archive/2026-10-21-add-initial-authentication-and-sessions/design.md) sélectionnent la clé publique personnelle préautorisée et une signature Ed25519 vérifiée avec cryptography. Le [delta C04 adopté le 20 octobre 2026](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/specs/authorization/spec.md) formalise le sujet opérateur pré-session et son mapping explicite. Les formulations R01 antérieures décrivent la frontière avant cette sélection ; le delta est désormais synchronisé au canon, sans réalisation de R01.
 
 Clé publique, opérateur et droits d’installation sont établis par une procédure de confiance explicite, indépendante de la future session du Super Admin. La clé privée reste sous contrôle de l’opérateur. Une clé fournie par le demandeur ne s’autorise pas elle-même ; UID 0, accès PostgreSQL, confirmations de mot de passe et reçu C01 ne remplacent pas la chaîne C03/C04.
 
@@ -119,9 +119,9 @@ Les dossiers suivants doivent fournir leurs contrats/conditions avant intégrati
 
 - [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
 - [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
-- [add-initial-authentication-and-sessions](../add-initial-authentication-and-sessions/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 - [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
 
 La création anticipée de ces dossiers ne signifie pas que leurs tâches sont réalisées. Les hôtes intermédiaires demeurent non prêts si une obligation manque ; C17 qualifie le paquet C18, C19 vérifie son identité de distribution.

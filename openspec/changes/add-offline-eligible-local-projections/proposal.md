@@ -28,7 +28,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Dépendances
 
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
 - [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
 
@@ -47,6 +47,6 @@ Non éligible indisponible ; pas de secret/jeton/donnée interdite locale ; inva
 Éligibilité et catégories de données locales, chiffrement/protection et politique de purge ; pas de secret/jeton persistant par défaut.
 
 
-## Clarification normative conditionnelle validée
+## Clarification normative N02 adoptée
 
-Pour un profil combinant client natif et données hors ligne, adopter [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) avant réalisation : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette préparation ne synchronise pas les deltas.
+Pour un profil combinant client natif et données hors ligne, appliquer [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md), adopté et synchronisé au canon le 21 octobre 2026 : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette adoption ne qualifie ni le coffre ni la réalisation O17.

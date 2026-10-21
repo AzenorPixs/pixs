@@ -4,7 +4,7 @@ Ce jalon fournit une interface autonome TanStack/React à la route publique `/`,
 
 ## Dépendances
 
-Node.js24.21.0 et npm11.19.0 sont déclarés dans DEVOPS.md. Les quatre dépendances directes autorisées sont figées: @tanstack/react-router1.170.41, react19.3.0, react-dom19.3.0 et vite8.3.1. Le lock npm fixe également leurs dépendances transitives. Aucun plugin JSX, TypeScript ou générateur supplémentaire n’est utilisé.
+Les versions de Node.js et npm de l'environnement de référence sont relevées dans [DEVOPS.md](../DEVOPS.md). Les quatre dépendances directes autorisées sont figées: @tanstack/react-router1.170.41, react19.3.0, react-dom19.3.0 et vite8.3.1. Le lock npm fixe également leurs dépendances transitives. Aucun plugin JSX, TypeScript ou générateur supplémentaire n’est utilisé.
 
 ## Installation et vérifications
 

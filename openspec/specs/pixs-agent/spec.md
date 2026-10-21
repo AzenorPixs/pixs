@@ -89,7 +89,7 @@ décision MUST NOT installer un outil ni prouver un gain de performance.
 
 ### Requirement: Plateformes demandées et qualification progressive
 
-PA MUST conserver le périmètre Linux et Windows physiques, VM Linux et Windows, Docker et LXC sous Proxmox. La première qualification MUST cibler Debian/Linux et Docker locaux, puis les autres cibles ; une cible non qualifiée MUST être indiquée comme telle. Versions OS/CPU, topologies Docker dans VM ou LXC, droits, bureaux et vTPM MUST être déclarés par profil ; aucun support MUST être inféré du seul environnement de développement.
+PA MUST conserver le périmètre Linux et Windows physiques, VM Linux et Windows, Docker et LXC sous Proxmox. La première qualification MUST cibler Debian/Linux et Docker locaux, puis les autres cibles ; une cible non qualifiée MUST être indiquée comme telle. Versions OS/CPU, topologies Docker dans VM ou LXC, droits, bureaux et vTPM MUST être déclarés par profil ; un support MUST NOT être inféré du seul environnement de développement.
 
 #### Scenario: Plateformes demandées et qualification progressive
 
@@ -264,7 +264,7 @@ PA et PBO MUST appliquer les obligations ordinaires de security, authorization e
 
 ### Requirement: Interfaces et messages cohérents
 
-Les interfaces CLI et les contributions PBO/PFO MUST utiliser les contrats publics, des erreurs stables et les traductions des composants propriétaires ; codes et champs MUST rester non localisés. PFO MUST adresser ses demandes à PBO ; aucune liaison directe PFO–PA MUST être introduite par ces spécifications. Les interfaces MUST respecter accessibilité, thèmes et confidentialité déclarés.
+Les interfaces CLI et les contributions PBO/PFO MUST utiliser les contrats publics, des erreurs stables et les traductions des composants propriétaires ; codes et champs MUST rester non localisés. PFO MUST adresser ses demandes à PBO ; une liaison directe PFO–PA MUST NOT être introduite par ces spécifications. Les interfaces MUST respecter accessibilité, thèmes et confidentialité déclarés.
 
 #### Scenario: Interfaces et messages cohérents
 

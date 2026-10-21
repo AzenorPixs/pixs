@@ -27,8 +27,8 @@ Les contrôles MUST distinguer vivacité, disponibilité, démarrage et diagnost
 
 Une release ou un profil MAY déclarer des objectifs versionnés de disponibilité,
 latence, invalidation, reprise et compatibilité. Tout objectif déclaré MUST
-identifier sa méthode de mesure, son périmètre, son seuil et sa période ; aucun
-seuil universel MUST être déduit du runtime.
+identifier sa méthode de mesure, son périmètre, son seuil et sa période ; un
+seuil universel MUST NOT être déduit du runtime.
 
 #### Scenario: Objectif sans méthode de mesure
 

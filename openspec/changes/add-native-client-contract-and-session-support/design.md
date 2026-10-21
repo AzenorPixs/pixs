@@ -37,8 +37,8 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 ## Dépendances et interfaces
 
 - [generate-typescript-python-public-sdks](../generate-typescript-python-public-sdks/proposal.md).
-- [add-initial-authentication-and-sessions](../add-initial-authentication-and-sessions/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
 
 La dépendance offline n’est conditionnelle qu’à la sélection de ce mode ; un client en ligne ne reçoit pas de stockage local ou de file d’intentions par défaut.
 
@@ -66,9 +66,9 @@ Conception proposée sans implémentation. Ces contrats de travail ne modifient 
 
 Le client natif consomme uniquement contrats publics/SDK O21, avec matrice plateformes et versions. Liens profonds et notifications transportent un minimum et déclenchent une nouvelle vérification d’identité et de droit à l’ouverture.
 
-Après adoption de N02, credentials uniquement dans mécanisme sécurisé déclaré de la plateforme, séparé des projections/caches/files. Absence du mécanisme n’autorise aucun repli en fichier/base ordinaire ; sauvegardes et journaux non protégés exclus.
+Selon N02 adopté et synchronisé le 21 octobre 2026, credentials uniquement dans le mécanisme sécurisé déclaré de la plateforme, séparé des projections/caches/files. Absence du mécanisme n’autorise aucun repli en fichier/base ordinaire ; sauvegardes et journaux non protégés exclus.
 
-Offline reste optionnel : sa sélection ajoute O17/O18 et la barrière d’adoption N02. Reconnexion n’accorde pas un ancien droit et intention locale reste provisoire. Choisir plateformes, mécanismes de coffre et politique session/révocation avant réalisation ; les binaires PA ne sont pas ces clients.
+Offline reste optionnel : sa sélection ajoute O17/O18 et les garanties canoniques N02, dont l’adoption est acquise. Reconnexion n’accorde pas un ancien droit et intention locale reste provisoire. Choisir et qualifier plateformes, mécanismes de coffre et politique session/révocation avant réalisation ; les binaires PA ne sont pas ces clients.
 
 ### Exigences auditées et preuves de sortie futures
 
