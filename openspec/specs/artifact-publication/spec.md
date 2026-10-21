@@ -43,7 +43,7 @@ La signature, la provenance et l'inventaire des dépendances font partie de l'id
 
 ### Requirement: Autorités distinctes et gestion des clés
 
-L'autorité de signature des canaux stables et de sécurité MUST être distincte de celle des artefacts expérimentaux sauf décision de confiance explicitement documentée ; la rotation MUST permettre un chevauchement contrôlé, la révocation MUST rester vérifiable même si un dépôt ou un service de publication est indisponible, et les clés privées MUST NOT apparaître dans aucun artefact, journal, manifest ou fixture.
+L'autorité de signature des canaux stables et de sécurité MUST être distincte de celle des artefacts expérimentaux sauf décision de confiance explicitement documentée ; la rotation MUST permettre un chevauchement contrôlé, la révocation MUST rester vérifiable même si un dépôt ou un service de publication est indisponible, et les clés privées MUST NOT apparaître dans un artefact, journal, manifest ou fixture.
 
 #### Scenario: Dépôt de publication indisponible
 
