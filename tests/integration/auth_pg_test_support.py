@@ -9,7 +9,7 @@ EXPECTED_ROOT = "/home/devops/datas/pixs"
 NS_PATTERN = re.compile(r"c03_[0-9a-f]{16}")
 
 
-def run_in_auth_schema(root_str, callback, expected_cases, *, with_core=False):
+def run_in_auth_schema(root_str, callback, expected_cases, *, with_core=False, core_target="0002_core_audit"):
     import core_pg_test_support as core
     out = {"real_pg": False, "code": "AUTH_PG_FAILED", "failure_type": "NONE", "failure_frames": [],
            "pg_version_num": "", "django_version": "", "cases": {},
@@ -30,6 +30,10 @@ def run_in_auth_schema(root_str, callback, expected_cases, *, with_core=False):
                 raise ValueError("CASES_INVALID")
             if type(with_core) is not bool:
                 raise ValueError("PROFILE_INVALID")
+            if type(core_target) is not str or core_target not in ("0002_core_audit", "0003_core_idempotence"):
+                raise ValueError("CORE_TARGET_INVALID")
+            if not with_core and core_target != "0002_core_audit":
+                raise ValueError("CORE_TARGET_INVALID")
             out["core_migration"] = False if with_core else None
             from django.conf import settings
             if settings.configured:
@@ -109,15 +113,24 @@ def run_in_auth_schema(root_str, callback, expected_cases, *, with_core=False):
             if with_core:
                 from pixs.core.migration_lock import run_core_initial
                 from django.db.migrations.executor import MigrationExecutor
+                target = ("pixs_core", core_target)
+                loader = MigrationExecutor(connection).loader
+                if target not in loader.graph.nodes:
+                    raise RuntimeError("CORE_TARGET_UNPROVED")
+                expected_applied = {name for app, name in loader.graph.forwards_plan(target) if app == "pixs_core"}
+                historical = loader.project_state([target]).apps.get_app_config("pixs_core")
+                expected_core_tables = {model._meta.db_table for model in historical.get_models(include_auto_created=True)
+                                        if model._meta.managed and not model._meta.proxy}
+                if not expected_core_tables:
+                    raise RuntimeError("CORE_STATE_UNPROVED")
                 if run_core_initial("default", origin=None, target="0.1.0") != "applied":
                     raise RuntimeError("CORE_INITIAL_UNPROVED")
                 with transaction.atomic(using="default", durable=True):
-                    MigrationExecutor(connection).migrate([("pixs_core", "0002_core_audit")])
+                    MigrationExecutor(connection).migrate([target])
                 with connection.cursor() as cursor:
                     core_tables = {name for name in connection.introspection.table_names(cursor) if name.startswith("pixs_core_")}
-                expected_core_tables = {model._meta.db_table for model in apps.get_app_config("pixs_core").get_models()}
                 core_applied = {name for app, name in MigrationRecorder(connection).applied_migrations() if app == "pixs_core"}
-                if core_tables != expected_core_tables or core_applied != {"0001_core_initial", "0002_core_audit"}:
+                if core_tables != expected_core_tables or core_applied != expected_applied:
                     raise RuntimeError("CORE_AUDIT_UNPROVED")
                 out["core_migration"] = True
             cases = callback()
