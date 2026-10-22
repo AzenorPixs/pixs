@@ -46,6 +46,6 @@ Révoqué refusé explicitement ; aucun double effet confirmé ni conflit silenc
 Stratégies de conflits par ressource et protocole de réconciliation ; intentions provisoires jusqu’au verdict serveur.
 
 
-## Clarification normative conditionnelle validée
+## Clarification normative N02 adoptée
 
-Pour un profil combinant client natif et données hors ligne, adopter [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) avant réalisation : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette préparation ne synchronise pas les deltas.
+Pour un profil combinant client natif et données hors ligne, appliquer [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md), adopté et synchronisé au canon le 21 octobre 2026 : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette adoption ne qualifie ni le coffre ni la réalisation O18.

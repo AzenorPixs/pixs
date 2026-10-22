@@ -17,10 +17,10 @@ Le provisionnement Super Admin reste la responsabilité C08/initial-administrati
 ## Dépendances
 
 - [define-essential-autonomous-auth-module](../define-essential-autonomous-auth-module/proposal.md).
-- [add-core-postgres-services](../add-core-postgres-services/proposal.md).
-- [add-initial-authentication-and-sessions](../add-initial-authentication-and-sessions/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
+- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 
 Les contrats de secrets, autorisation, audit, gouvernance, périmètre et reprise restent applicables. L'exception Super Admin de authorization/initial-administration s'applique dans son seul périmètre aux contrôles runtime ; elle ne crée ni preuve cryptographique ni conformité de protocole absente.
 

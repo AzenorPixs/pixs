@@ -10,9 +10,9 @@ Le développeur a validé ce dossier dédié le 17 octobre 2026 dans l’audit t
 
 ## Capacités et deltas
 
-Deltas ADDED proposés dans `reference-runtime` et `api`, limités au profil d’entrée P0.
+Deltas ADDED dans `reference-runtime` et `api`, limités au profil d’entrée P0. Les seules clauses api « Façade web à cookie et API Bearer explicitement distinctes » et « Contrats de transport et stockage navigateur », issues des décisions C03, sont adoptées au canon le 20 octobre 2026.
 
-Les deltas proposés restent dans le change ; aucune synchronisation ni archive pendant cette préparation. Les paramètres encore ouverts ne sont pas réputés approuvés.
+Les autres clauses api et le delta reference-runtime restent proposés. Les sources des deux clauses synchronisées sont conservées dans le change ; aucun archivage ni code n’est engagé. Les paramètres encore ouverts ne sont pas réputés approuvés.
 
 ## Dépendances et intégration
 
@@ -24,6 +24,6 @@ Préparation documentaire du chemin P0 ; pas d’activation d’option extérieu
 
 ## Dépendances après audit transversal P0
 
-[C03](../add-initial-authentication-and-sessions/proposal.md), [C06](../add-protected-core-http-commands-and-queries/proposal.md), [C07](../activate-reference-runtime-composition/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md).
+[C03](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md), [C06](../add-protected-core-http-commands-and-queries/proposal.md), [C07](../activate-reference-runtime-composition/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

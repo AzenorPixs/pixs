@@ -1,6 +1,8 @@
-# TECHNICAL.md — Pixs
+# TECHNICAL.md — Pixs l'Application Universelle
 
 Ce document précise les décisions techniques transverses du projet. Il complète `PROJECT.md` sans remplacer les spécifications OpenSpec, qui définissent les comportements implémentables.
+
+Le socle fonctionnel obligatoire de PBO comprend `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt`, composés au-dessus du Kernel par les mécanismes communs. Core porte les primitives partagées ; Auth porte l'authentification locale autonome ; Agent gère PA hors PZT ; le module PZT gère l'exécutable réseau indépendant. Leurs dépendances publiques déterminent l'ordre de chargement, sans priorité implicite avant Core. La désactivation réseau ne retire pas ces modules ni le module DNS essentiel et ne dispense pas des autres capacités requises par le profil.
 
 ## Convention normative RFC 2119
 
@@ -87,13 +89,23 @@ pixs.auth / référence à l'identité Core
   ├── MFA, récupération et révocation des accès dérivés
   └── enrôlement, émission d'identité et services gérés
 
+pixs.agent / contrats publics Core et échanges via PZT
+  ├── configuration, administration et supervision de PA hors PZT
+  └── instructions, états et résultats sans propriété des opérations métier
+
+pixs.pzt / contrats publics Core
+  ├── configuration, administration, visualisation et supervision de PZT
+  └── monitoring réseau ; exécution par le binaire indépendant PZT
+
 Provider d'authentification
   └── vérification ou établissement de l'authentification
 ```
 
 Un provider OIDC, SAML, LDAP ou local peut authentifier une identité numérique, mais ne devient pas automatiquement la source de vérité des utilisateurs, groupes, ACL ou permissions Pixs.
 
-Le cadrage cible Auth du 19 octobre 2026 précise cette répartition via un module essentiel indépendant ; les deltas proposés et leur statut sont décrits au §4.4. Il n'impose aucun déplacement du code ni des contrats structurels existants.
+Les quatre modules sont obligatoires dans PBO, même réseau désactivé ou sans exécutant PA/PZT. `pixs.auth`, `pixs.agent` et `pixs.pzt` consomment les contrats publics d'identité et de permissions de Core ; ni le Kernel ni Core n'absorbent leurs responsabilités propres. Une fixture structurelle isolée n'est pas une composition applicative.
+
+Le cadrage cible Auth du 19 octobre 2026 précise cette répartition via un module essentiel indépendant ; les trois deltas d'architecture adoptés et les propositions restantes sont distingués au §4.4. Il n'impose aucun déplacement du code ni des contrats structurels existants.
 
 Le backend Django reste l'autorité pour les règles métier, les mutations et l'autorisation. PostgreSQL reste le stockage applicatif par défaut ; les garanties de transaction du provider Core OpenLDAP proposé au §34.2 nécessitent leur qualification propre.
 
@@ -105,7 +117,11 @@ Le provider ne peut établir qu'un niveau d'assurance couvert par sa configurati
 
 ## 4. Articulation avec OpenSpec et choix techniques ouverts
 
-Les orientations de conception C02 D01–D04 sont adoptées en option A le 19 octobre 2026 : réutilisation de `PixsCoreConfig` et du label `pixs_core` pour les modèles/migrations Core dédiés, contrats versionnés par domaine, transactions Django avec contraintes PostgreSQL et verrous ciblés déterministes, politique restrictive avant classification et suppression logique par défaut des ressources métier. La [conception C02](openspec/changes/add-core-postgres-services/design.md) précise propriété, interfaces et preuves attendues. Les schémas physiques, signatures, paramètres de politique et recettes restent à détailler dans ces orientations ; les éléments ouverts ci-dessous ne rouvrent pas ces choix acquis. Cette adoption est exclusivement documentaire et n’autorise aucune implémentation, production de code ou migration ; les contrats purs et le canon restent inchangés.
+Le cadrage C02 du 19 octobre conservé ci-dessous décrit la préparation historique. L’invocation 1CISMP1 a ensuite autorisé la réalisation du seul C02, archivé le 20 octobre 2026. Les [preuves locales et limites](openspec/changes/archive/2026-10-20-add-core-postgres-services/VALIDATION.md) couvrent modèles, migration PostgreSQL propriétaire, services, QUERY et raccordement fermé R01 : 346 tests purs, cinq recettes PostgreSQL réelles (14/20/46/62/58 cas) et 12 indicateurs de migration réussis. Les 18 empreintes canoniques contrôlées restent identiques ; aucune nouvelle exigence ni scénario canonique. L’activation intégrée attend les garanties C03–C10 et la qualification C17/C18/C19 ; aucune disponibilité P0 n’est déduite. Les statistiques postarchive et le gate de ce RUN sont suivis séparément.
+
+La réalisation propriétaire C05 fournit `CoreAuditEvent`, la migration `0002_core_audit`, `PostgresAuditParticipant`, `PostgresAuditSink` et les procédures de lecture/maintenance. Politique et classification sont explicites ; le stage participe au xid PostgreSQL du propriétaire et la réconciliation utilise un alias indépendant vers la même base. D14 peut conserver l’instant du retrait via `stage_observation` et un vérificateur propriétaire courant ; `confirm_observation` ne réinsère rien et ne confère aucun droit. Les [interfaces C05](src/pixs/core/audit_sink.py) sont éprouvées par 224 régressions et 35 scénarios PG16.14 réels, avec owners Auth/C4/C10/Jobs synthétiques. Cette preuve locale ne qualifie pas leur runtime ni la composition P0 ; voir `VALIDATION.md` du change `add-durable-minimized-audit`.
+
+Les orientations de conception C02 D01–D04 sont adoptées en option A le 19 octobre 2026 : réutilisation de `PixsCoreConfig` et du label `pixs_core` pour les modèles/migrations Core dédiés, contrats versionnés par domaine, transactions Django avec contraintes PostgreSQL et verrous ciblés déterministes, politique restrictive avant classification et suppression logique par défaut des ressources métier. La [conception C02](openspec/changes/archive/2026-10-20-add-core-postgres-services/design.md) précise propriété, interfaces et preuves attendues. Les schémas physiques, signatures, paramètres de politique et recettes restent à détailler dans ces orientations ; les éléments ouverts ci-dessous ne rouvrent pas ces choix acquis. Cette adoption est exclusivement documentaire et n’autorise aucune implémentation, production de code ou migration ; les contrats purs et le canon restent inchangés.
 
 Le [complément documentaire R01 de C08](openspec/changes/add-installation-and-first-configuration/design.md) précise la preuve de l’opérateur pré-session, la décision liée au plan d’installation et les écritures Core contrôlées par C02. Le compte à créer n’est pas un acteur déjà authentifié ; C03/C04 fournissent le sujet et l’autorisation conformes au canon sans exiger une session existante de ce compte. UID 0, les credentials PostgreSQL, les saisies de mot de passe ou un reçu C01 ne suffisent pas. C01 conserve ses seules actions techniques ; le journal C01 ne remplace pas l’audit des mutations Core. Preuves, plan et installation sont liés, les effets sont fermés et la reprise distingue rollback, commit confirmé et issue inconnue. Si un mécanisme ne peut satisfaire le canon, la branche reste refusée jusqu’à clarification autorisée, sans exception locale inventée. R01 documente les informations et critères attendus ; il ne sélectionne aucun provider ni n’autorise du code.
 
@@ -157,7 +173,7 @@ Les spécifications OpenSpec actives définissent les exigences normatives appli
 * la rétention, la confidentialité, l'agrégation et l'audit des décisions et données de consommation, sans introduire de facturation dans le Kernel ;
 * le contrat `OfflineSyncCapability`, les ressources et Commands éligibles, les états locaux et les limites de fraîcheur ;
 * les modèles `LocalReplica`, `OfflineCommand` et, lorsque nécessaire, `OfflineAccessLease`, leurs versions, checkpoints, idempotence et rétention ;
-* le provider de stockage local, l'isolation appareil/utilisateur/tenant/scope, le chiffrement, l'effacement et l'absence de secrets ou tokens locaux ;
+* le provider de stockage local, l'isolation appareil/utilisateur/tenant/scope, le chiffrement, l'effacement et la séparation du coffre natif sécurisé des projections, caches et files selon N02 adopté ;
 * le protocole de reconnexion, de réévaluation serveur, de réconciliation avec PostgreSQL, l'outbox et les Jobs, ainsi que les stratégies de conflit et de révocation ;
 * les règles de compatibilité des schémas locaux et protocoles de synchronisation entre releases, sans imposer Electric, une base navigateur ou un service worker ;
 * le contrat `TenantPlacementPolicy`, le `ResidencyContext`, les régions logiques, les versions, les epochs et les états de placement ;
@@ -219,9 +235,29 @@ Le framework ne rend pas un mot de passe obligatoire. Un provider local peut fou
 
 La récupération révoque les sessions concernées, remplace ou invalide le credential compromis et ne restaure pas automatiquement `VERIFIED`, `PROOFED`, `MULTI_FACTOR` ou `PHISHING_RESISTANT` sans nouvelle preuve ou intervention administrative autorisée.
 
+### 4.3.1 Décisions de sessions locales du 20 octobre 2026
+
+La [conception C03](openspec/changes/archive/2026-10-21-add-initial-authentication-and-sessions/design.md) consigne D01–D17. Les deltas des décisions C03/C04/C05 et les deux clauses de sessions N04 sont adoptés et synchronisés dans le canon le 20 octobre 2026, sans code ni qualification produit. Les autres propositions N04 restent distinctes.
+
+| Sujet | Profil retenu |
+|---|---|
+| Web et API | Session serveur à cookie protégé inaccessible au JavaScript sur façade web explicitement déclarée, avec CSRF ; API standard/CLI en Bearer opaque. Aucun jeton navigateur persistant accessible au JavaScript par défaut. |
+| Durées ordinaires | Utilisateur : 60 minutes d’inactivité / 12 heures absolues ; administration ordinaire : 15 minutes / 2 heures. Fraîcheur sensible : moins de 5 minutes et assurance requise réellement obtenue. |
+| Accès et renouvellement | Accès API/CLI de 15 minutes au plus, borné par validité restante ; renouvellement automatique rotatif à usage unique, empreintes seules côté serveur. Aucun renouvellement ne repousse plafond absolu, fraîcheur ou, à lui seul, délai d’inactivité. |
+| Concurrence et retrait | Plafonds configurables par défaut de 5 sessions ordinaires / 2 d’administration ordinaire, remplacement explicite sans fermeture silencieuse ; réutilisation suspecte : session concernée et dérivés révoqués ; changement de mot de passe/récupération/compromission : révocation globale et nouvelle connexion sans assurance restaurée implicitement. |
+| Interfaces | Authentification, sessions et justificatifs par interfaces spécialisées typées/versionnées du même module, données propriétaires et références Core par contrats publics/UUID. |
+| Hachage | Argon2id via Django/argon2-cffi. Réutilisation OpenLDAP qualifiée pour le seul profil D11 Debian 13/2.6.10+dfsg-1 par adaptation d’enveloppe sans affaiblissement, copie ou activation implicite. PostgreSQL stocke l’empreinte applicative ; l’authentification de ses comptes techniques reste distincte. |
+| Audit | Création/renouvellement et audit C05 requis dans une transaction PostgreSQL commune par ports propriétaires. Le delta C05 adopté définit le retrait d’accès Auth prioritaire si seul l’audit échoue, avec retrait durable, échec signalé et réconciliation, sans nouvel accès ni audit inventé. |
+| Amorçage R01 | Clé publique personnelle préautorisée, mapping et politique d’installation explicites ; signature Ed25519 via cryptography liée au plan/installation/actions ; autorisation finale de 10 minutes à usage unique consommée avec le commit, sans session préalable du compte cible ni extension de C01. |
+| CLI interactive | Trousseau système disponible et qualifié, sinon jeton de renouvellement en mémoire du processus seulement ; aucun repli automatique en fichier clair ni compte de service créé. |
+
+Les valeurs de politique sont configurables et leurs origines exposées aux administrateurs autorisés. Les exceptions canoniques du seul Super Admin restent préservées. La réponse perdue d’une rotation ne justifie pas une seconde émission ; un secret nouveau stocké seulement sous empreinte peut imposer une nouvelle authentification.
+
+C03 qualifie le profil local le 21 octobre 2026 : Python 3.14.8, Django 6.1.2, PostgreSQL 16.14, argon2-cffi 25.1.0 et cryptography 50.0.2 ; Argon2id v19, m=102400 Kio, t=2, p=8. Le banc Debian 13/OpenLDAP 2.6.10+dfsg-1 réussit quatre tests via les fonctions de production, sans service durable. Les 116 tests unitaires et 243 cas PostgreSQL couvrent contrats, concurrence, activité serveur, R01, audit et les façades. Le trousseau natif OpenCode non qualifié conduit au mode mémoire sans fichier clair. Les autres versions Python déclarées n’ont pas été exécutées. Les preuves et limites sont dans la validation C03 ; aucune activation C06/C07/C08/C10 ou P0 globale n’est déduite.
+
 ### 4.4 Module essentiel pixs.auth et PostgreSQL par défaut — proposition du 19 octobre 2026
 
-Le [change d'architecture](openspec/changes/define-essential-autonomous-auth-module/proposal.md) prépare `pixs.auth` indépendant et essentiel dans les compositions applicatives, dont P0. Ses deltas restent proposés sans synchronisation du canon. Aucun code, manifest produit, migration ou dépendance installée n'est ajouté. Les fixtures structurelles non applicatives restent distinctes des compositions concernées.
+Le [change d'architecture](openspec/changes/define-essential-autonomous-auth-module/proposal.md) prépare `pixs.auth` indépendant et essentiel dans les compositions applicatives, dont P0. Ses trois deltas sont adoptés et intégrés au canon le 20 octobre 2026 ; les autres dossiers Auth conservent leurs propositions distinctes. Cette adoption documentaire n'ajoutait aucun code, manifest produit, migration ou dépendance installée. C03 réalise ensuite le module local et sa migration propriétaire, qualifiés le 21 octobre 2026 ; les fixtures structurelles non applicatives restent distinctes des compositions concernées.
 
 La dépendance va de `pixs.auth` vers les contrats publics `pixs.core`. Core conserve l'autorité des identités numériques, utilisateurs, liens, tenants, groupes, appartenances, rôles, ACL et permissions. Auth possède justificatifs, références de moyens, mappings d'authentification, politiques, contextes, sessions et dossiers d'enrôlement ; ses tables et migrations sont distinctes, sans accès privé inter-modules. Plusieurs moyens ou sources peuvent viser une identité sans modifier les cardinalités User/DigitalIdentity.
 
@@ -239,7 +275,7 @@ La projection `directory-projections` reste limitée à la consultation. Toute a
 
 Les politiques Auth sont typées, versionnées, résolues par plateforme/tenant/scope applicable et présentent origine/valeur effective. Elles encadrent méthodes, MFA, fraîcheur, sessions, récupération, confiance et sources. La panne d'une source n'abaisse pas l'assurance ni n'active un mot de passe local. Révocation d'émission, validité résiduelle des tickets et effet sur les clients tiers restent distingués ; aucune invalidation universelle instantanée n'est supposée. L'exception Super Admin canonique et son authentification propre sont préservées.
 
-Le [catalogue des changes](openspec/changes/define-essential-autonomous-auth-module/design.md) donne les dépendances et recettes futures. C03 conserve connexion et sessions ; C02 conserve les données Core ; C08 conserve le provisionnement et R01. Les contrats exacts, paramètres, transports de session, bibliothèques et profils de services restent à arrêter avant réalisation, sans rouvrir le choix PostgreSQL par défaut.
+Le [catalogue des changes](openspec/changes/define-essential-autonomous-auth-module/design.md) donne les dépendances et recettes futures. C03 conserve connexion et sessions ; C02 conserve les données Core ; C08 conserve le provisionnement et R01. Les contrats locaux spécialisés, paramètres, transports et bibliothèques de C03 sont réalisés/qualifiés ; les autres profils de services du catalogue restent à détailler dans leurs changes propres, sans rouvrir le choix PostgreSQL par défaut.
 
 Le catalogue est complété par le [choix de stockage Core réversible](openspec/changes/add-reversible-core-directory-storage/design.md), détaillé au §34.2. Les mentions PostgreSQL pour le référentiel Core décrivent son état initial ; le provider engagé après migration porte ensuite les utilisateurs, groupes et ACL du périmètre concerné. Les sessions et justificatifs Auth restent dans leur domaine de persistance propre.
 
@@ -272,6 +308,9 @@ Les identifiants officiels utilisent le namespace réservé `pixs.*`. Les compos
 
 ```text
 pixs.core
+pixs.auth
+pixs.agent
+pixs.pzt
 pixs.authentication.oidc
 acme.crm
 acme.storage.s3
@@ -1413,6 +1452,8 @@ La version majeure d'une API est portée par son chemin public (`/api/v1/...`). 
 
 L'authentification HTTP standard est portée par l'en-tête `Authorization: Bearer`. Un provider peut valider un token OAuth2/OIDC JWT ou opaque et doit produire un `AuthenticationContext` rattaché à une `DigitalIdentity`, avec ses niveaux d'assurance, sa validité et sa révocabilité. Les API keys sont réservées aux mécanismes explicitement déclarés pour les comptes de service et produisent au plus une assurance de base. Le mTLS peut être utilisé pour les identités `DEVICE` ou les comptes de service lorsque le provider le prend en charge.
 
+Le profil local choisi par C03 le 20 octobre 2026 retient les jetons opaques pour cette API et la CLI. Une façade web explicitement déclarée utilise les sessions serveur à cookie protégé et CSRF ; elle ne rend pas les cookies implicitement acceptables sur les routes Bearer. Les deux clauses de sessions du [delta N04](openspec/changes/define-p0-web-serving-and-security-boundary/specs/api/spec.md), adoptées au canon le 20 octobre 2026, définissent cette séparation ; chemins, attributs complets du cookie et transport restent à qualifier avant réalisation, sans exposition réseau supplémentaire par cette décision.
+
 L'autorisation ne doit être évaluée qu'après résolution de l'identité numérique, de l'`AuthenticationContext`, du `ScopeContext` et du contexte de requête. Un identifiant d'utilisateur présent dans le payload ou les paramètres ne modifie jamais le sujet authentifié. Une route sans authentification doit déclarer explicitement son caractère public dans son contrat API et appliquer malgré tout ses règles de validation et de limitation.
 
 Pour une ressource tenant-scoped, le contexte canonique est porté par le chemin, par exemple `/api/v1/tenants/{tenant_id}/resources`. La frontière API résout ce tenant, vérifie la `TenantMembership` de la `DigitalIdentity` et transmet un contexte tenant immuable aux Commands, Queries, Events, Jobs et écritures d'audit. Un header tenant ou une valeur fournie dans le payload peut être rejeté ou traité comme une incohérence ; il ne remplace jamais le chemin canonique. Les routes platform-scoped ne doivent pas être implicitement rattachées à un tenant.
@@ -1652,7 +1693,7 @@ entitlement + quota + concurrence + gouvernance
 
 Les conflits sont déclarés par ressource et ne sont jamais résolus silencieusement. Les stratégies permises sont `REJECT`, `MANUAL_REVIEW`, `DOMAIN_MERGE` et, lorsque la perte est acceptable et documentée, `LAST_WRITE_WINS`. Une résolution locale ne peut pas publier un Event de domaine, élargir un scope, prolonger un entitlement ou confirmer une réservation de quota.
 
-La persistance locale respecte le `DataGovernanceProfile`. `PUBLIC` et `INTERNAL` peuvent être autorisés par défaut lorsque la capacité le déclare ; `CONFIDENTIAL` exige une politique de stockage sécurisée et explicite ; `RESTRICTED` et `SENSITIVE_PERSONAL` sont refusés par défaut. Les secrets, tokens, credentials et preuves d'authentification brutes ne sont jamais stockés localement. Une projection non publique peut exiger un `OfflineAccessLease` borné, lié au sujet, à l'appareil, au tenant et au scope, sans remplacer la réévaluation serveur.
+La persistance locale respecte le `DataGovernanceProfile`. `PUBLIC` et `INTERNAL` peuvent être autorisés par défaut lorsque la capacité le déclare ; `CONFIDENTIAL` exige une politique de stockage sécurisée et explicite. Le stockage local des données `RESTRICTED` est interdit, y compris hors réplique ou dans un stockage chiffré ; `SENSITIVE_PERSONAL` reste refusé par défaut. Selon N02 adopté et synchronisé le 21 octobre 2026, les secrets, jetons et credentials sont conservés uniquement dans le coffre natif sécurisé déclaré par la plateforme, séparé des projections, caches, index et files hors ligne. Un coffre indisponible n'autorise aucun repli non protégé ; les exports et sauvegardes hors ligne ne copient pas son contenu. Cette exception ne couvre pas les données `RESTRICTED` et les preuves d'authentification brutes restent interdites en stockage local. Une projection non publique peut exiger un `OfflineAccessLease` borné, lié au sujet, à l'appareil, au tenant et au scope, sans remplacer la réévaluation serveur.
 
 Un changement de tenant ou de scope, une déconnexion, une expiration, une révocation, un tombstone, une demande d'effacement ou une expiration de rétention doit invalider ou purger les répliques et Commands concernées. Les caches locaux ne doivent pas masquer une révocation ou une version dépassée. Les quotas et entitlements sont résolus côté serveur à la soumission ; les imports, exports, opérations bulk, purges et actions sensibles sont refusés hors ligne par défaut.
 
@@ -1927,7 +1968,7 @@ security_controls  contrôles requis ou fournis
 
 Le profil ne doit pas contenir de valeur secrète. Il permet de vérifier qu'un composant ne demande pas une permission, un secret ou une sortie réseau non déclarés. Les dépendances doivent être inventoriées dans un SBOM et soumises à une politique de vulnérabilité. Les artefacts doivent être associés à une provenance vérifiable, une empreinte et, lorsque la distribution l'exige, une signature. La vérification de l'artefact doit pouvoir confirmer la source, la version, le processus de build et les entrées principales.
 
-Le socle de build couvre le scan de secrets, l'analyse statique, la vérification des dépendances et de leurs vulnérabilités, le scan des images ou paquets, la génération du SBOM, la vérification des signatures et le contrôle de provenance. Une vulnérabilité critique connue bloque la distribution. Une vulnérabilité élevée peut uniquement faire l'objet d'une dérogation explicite avec justification, responsable, échéance, mesures compensatoires et audit. Les résultats de sécurité sont diagnostiquables sans exposer les détails exploitables ou les données sensibles.
+Le socle de build couvre le scan de secrets, l'analyse statique, la vérification des dépendances et de leurs vulnérabilités, le scan des images ou paquets, la génération du SBOM, la vérification des signatures et le contrôle de provenance. Une vulnérabilité critique connue bloque la distribution sauf dérogation limitée, documentée et auditée conforme au canon `security`. Une vulnérabilité élevée peut uniquement faire l'objet d'une dérogation explicite avec justification, responsable, échéance, mesures compensatoires et audit. Les résultats de sécurité sont diagnostiquables sans exposer les détails exploitables ou les données sensibles.
 
 Les contrôles de sécurité utilisent une politique fail-closed pour les décisions d'identité, d'autorisation, de signature, de secret, de contexte tenant, d'intégrité d'artefact et de validation de provider. Une information absente, expirée, incohérente ou indémontrable ne doit pas être interprétée comme un accord. Une capacité optionnelle peut passer à `DEGRADED` ou `DISABLED` si son isolement ne permet aucun accès ou traitement non autorisé. Le runtime doit pouvoir révoquer un composant, un provider, un token, une clé de webhook ou un endpoint sans supprimer implicitement les données métier. Les transitions de blocage, révocation, dérogation et réactivation portent une cause, une corrélation, un acteur autorisé et un événement d'audit ; le diagnostic expose l'état et la référence sans publier le secret ou le détail exploitable.
 
@@ -2418,11 +2459,16 @@ la priorité des contraintes Django et rester cohérente avec l'ensemble des
 dépendances Python installées ; le pin historique 3.3.5 ne justifie à lui seul
 aucun retour arrière.
 
-Le profil P0 impose les capacités de composition, `pixs.core`, contexte de
+Le profil P0 impose les capacités de composition, `pixs.core`, `pixs.auth`
+avec sa capacité locale autonome PostgreSQL, contexte de
 périmètre, autorisation, API, migrations, runtime, provisionnement, sécurité,
 secrets, audit, observabilité, gouvernance, cycle de vie des données, tests
 de conformité et composant d'exemple. Une capacité non P0 doit déclarer son
-absence ou son état `DISABLED` sans affaiblir ce socle.
+absence ou son état `DISABLED` sans affaiblir ce socle. Le profil initial PBO
+compose aussi obligatoirement `pixs.agent`, `pixs.pzt` et le module DNS essentiel,
+même réseau désactivé, selon `reference-composition` et `reference-runtime`.
+Cette obligation de composition ne vaut ni présence d'un exécutant PA/PZT,
+ni réseau actif, ni qualification du P0.
 
 Une décision d'architecture contient son identifiant, son état, son contexte,
 les alternatives considérées, ses conséquences, ses spécifications affectées
@@ -2431,17 +2477,53 @@ par release ou profil : disponibilité, latence, fraîcheur d'invalidation,
 reprise et compatibilité. Leurs seuils sont explicites, versionnés et vérifiés ;
 aucun seuil universel n'est déduit du runtime.
 
+### 41.2 Binaire PBO commun et profils de ressources
+
+L'orientation du 21 octobre 2026 retient un binaire PBO commun contenant le Kernel, `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et les composants sélectionnés. La séparation des modules reste fonctionnelle : contrats publics, propriété des données, migrations, permissions et dépendances sont conservés. Les appels internes à un processus ne nécessitent pas de transport interprocessus. Le Kernel ne devient pas une passerelle obligatoire pour chaque appel.
+
+Le même binaire supporte plusieurs processus selon les rôles `web`, `worker`, `scheduler` et les rôles supplémentaires explicitement spécifiés. Chaque processus active le rôle déclaré et les fonctions nécessaires sans retirer le socle obligatoire de sa composition ni démarrer les exécutants PA/PZT. Les communications et coordinations interprocessus conservent leurs contrats sécurisés et leur persistance de référence ; la mémoire partagée d'un processus n'est pas une autorité durable.
+
+Le mode de compilation Nuitka `standalone` est distinct des modes d'exploitation PBO **Standalone** et **ZT**. Standalone désigne une instance autonome sans autorité Pixs extérieure ; ZT désigne sa participation autorisée au réseau gouverné via PZT. Le même exécutable, ses bibliothèques, son runtime et ses ressources servent les deux modes ; onefile n'est pas le profil retenu. L'activation de PZT est distincte du choix de mode : Standalone peut utiliser ce transport pour les échanges PBO–PA autorisés. Un profil sans réseau activé n'invente pas de résultat PA ; aucun transport absent ou invalide n'ouvre de canal alternatif. pixs.pzt reste essentiel dans les deux modes, sans retour autonome automatique après panne ou révocation.
+
+Cython dans PBO reste limité à des optimisations ciblées fondées sur un profilage et une comparaison mesurée, avec critères de gain et de non-régression définis avant recette. Les mesures comparent code fonctionnel, données, environnement, configuration et charge ; elles couvrent mémoire, CPU, latence ou débit pertinents, contrats, sécurité et maintenabilité. Les imports dynamiques Django, commandes, migrations, catalogues et ressources doivent aussi être qualifiés dans la distribution Nuitka. Cette restriction propre à PBO ne concerne pas les trois binaires PA ni le binaire indépendant PZT, tous compilés avec Cython.
+
+Le plan de ressources est versionné par composant, rôle et environnement. Il distingue capacités détectées, budgets accordés, configuration demandée/effective et état appliqué observé. Il borne nombres de processus, concurrence, files, buffers, CPU, mémoire et connexions. L'admission tient compte des quotas effectifs, de la somme des réplicas, des dépendances et d'une marge système déclarée ; le matériel physique seul ne constitue pas le budget d'une VM ou d'un conteneur.
+
+Une proposition automatique de dimensionnement n'est appliquée que sous configuration explicite ou politique préautorisée et bornée. Les variations de ressources sont diagnostiquées sans adaptation silencieuse. L'application passe par le lifecycle et la supervision déclarés, avec autorisation, drain, reprise et vérification. Les schedulers concurrents respectent le bail et la clôture de péremption ; les workers respectent idempotence et limites cumulées PostgreSQL.
+
+Les trois binaires PA et le binaire indépendant PZT gardent des plans propres à leur environnement, local ou distant. Des processus auxiliaires peuvent être prévus sous rôles et canaux qualifiés, sans mode nouveau implicite. Les événements PA restent bornés, les sessions réelles isolées et le propriétaire réseau PZT unique par périmètre. Le nombre de binaires livrés ne fixe pas le nombre de processus actifs.
+
+La qualification vérifie ressources, saturation, reprise et garanties temporelles de sécurité avant admission du profil. Une insuffisance entraîne refus ou comportement sûr, sans prolongation de droit ni repli hors PZT. Nuitka en mode standalone est retenu pour PBO. Ses versions et options, les noms/CLI, schémas et valeurs exactes, le chargement des extensions et les performances multicœurs restent à qualifier. Cython est retenu pour les trois binaires PA et conservé pour le binaire PZT ; aucun outil n'est installé et aucune option Python sans GIL n'est adoptée ici.
+
+```mermaid
+flowchart TB
+    H["Ressources réellement accordées à chaque environnement"] --> Q["Configuration versionnée — rôles, processus, concurrence et budgets"]
+    Q --> E["Exploitation PBO — Standalone ou ZT"]
+    E --> B["Binaire PBO Nuitka standalone — Kernel, Core, Auth, Agent et module PZT"]
+    B --> W["web — nombre de processus configuré"]
+    B --> J["worker — nombre de processus configuré"]
+    B --> S["scheduler — processus coordonnés par bail"]
+    Q --> A["PA indépendant Cython — processus par rôle et session réelle"]
+    Q --> T["PZT indépendant Cython — processus et auxiliaires déclarés"]
+    T --> O["Un propriétaire réseau admissible par périmètre"]
+```
+
+Ce schéma décrit les rôles et budgets, sans fixer de valeur numérique ni de canal de communication. Les nombres de processus restent soumis à la qualification et au lifecycle de chaque profil.
+
+Les exigences sont intégrées dans `reference-runtime`, `runtime`, `pixs-agent`, `pzt`, `deb-package`, `docker-image` et `reference-composition`, avec trace dans [le change de binaire commun et ressources](openspec/changes/define-common-pbo-binary-and-resource-profiles/design.md). Cette adoption ne construit ni ne lance de binaire.
+
 ## 42. Pixs Agent et séparation des binaires
 
 Ce chapitre porte les modalités techniques de PA et son articulation avec PZT ;
 PROJECT.md §43–§44 définit les responsabilités et BUILD.md §46–§47 la distribution.
 La séparation validée le 17 octobre 2026 définit trois binaires PA compilés
-avec Nuitka, pour six modes système/utilisateur, et le binaire indépendant
+avec Cython, pour six modes système/utilisateur, et le binaire indépendant
 PZT compilé avec Cython, pour `pzt-daemon`. Le binaire de sessions PA reste
 absent de Docker. PA et PZT sont distribués ensemble, sans confondre leurs
 composants, identités, contrats, droits ou cycles de vie.
 
-Dans PBO, `pixs.agent` assure configuration, administration et supervision de
+Dans PBO, `pixs.agent`, obligatoire au même titre que `pixs.core`, `pixs.auth`
+et `pixs.pzt`, assure configuration, administration et supervision de
 PA hors PZT ; `pixs.pzt`, nom canonique du module essentiel PZT, assure celles
 de PZT, avec visualisation et monitoring. Les modules fonctionnels conservent
 leurs opérations et consomment les contrats publics de `pixs.agent`.
@@ -2469,15 +2551,33 @@ PA, sans modifier le contenu des distributions ni les garanties de sécurité.
 
 ```mermaid
 flowchart LR
-    M["Module fonctionnel — propriétaire de l'opération"] --> A["pixs.agent — gestion PA hors PZT"]
-    A <-->|"Instructions et résultats protégés"| T["PZT — transport et exécution réseau indépendants"]
-    Z["pixs.pzt — gestion réseau dans PBO"] <-->|"Contrôle sécurisé PZT"| T
-    T <-->|"Échanges PA autorisés"| P["PA — trois binaires, six modes"]
+    subgraph B["Binaire PBO Nuitka standalone — exploitation Standalone ou ZT"]
+        K["Kernel — mécanismes génériques"]
+        C["pixs.core — primitives communes"]
+        U["pixs.auth — authentification"]
+        M["Module propriétaire de l'opération"]
+        A["pixs.agent — gestion PA hors PZT"]
+        Z["pixs.pzt — gestion réseau"]
+        K -. "composition" .-> C
+        K -. "composition" .-> U
+        K -. "composition" .-> A
+        K -. "composition" .-> Z
+        U -. "contrats publics" .-> C
+        A -. "contrats publics" .-> C
+        Z -. "contrats publics" .-> C
+        M --> A
+    end
+    A <-->|"Instructions et résultats via PZT"| T["PZT indépendant Cython — processus selon ressources"]
+    Z <-->|"Contrôle sécurisé PZT"| T
+    T <-->|"Échanges protégés"| P["PA indépendant Cython — trois binaires, six modes selon profil"]
 ```
 
 Les flèches représentent des contrats logiques, sans imposer un endpoint ou un
 canal entre processus. Les schémas de topologie dans PROJECT.md §4 montrent
 le PA/PZT local et les deux cas distants, avec ou sans PBO/PFO locaux.
+Ce schéma se limite à la gestion des exécutants ; `pixs.core` et `pixs.auth`
+restent obligatoires dans PBO, avec les dépendances Core définies au §3.
+Les fonctions d'authentification ne sont pas déplacées vers PA ou PZT.
 
 ### 42.1 Composition et catalogue des capacités
 

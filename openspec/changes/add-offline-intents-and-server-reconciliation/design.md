@@ -67,7 +67,7 @@ Posséder file d’intentions, identité d’opération, version source attendue
 
 À reconnexion, le serveur réévalue identité, tenant/scope, droit, données courantes et garde métier, puis exécute la Command propriétaire. Dédoublonner par opération ; refus/version concurrente appelle la stratégie de conflit déclarée par ressource, sans fusion silencieuse.
 
-Purger/invalider selon révocation et cycle de données ; réconcilier une réponse perdue avant nouvel effet. N02 doit être adopté pour le profil combiné natif/hors ligne, coffre séparé sans repli en clair. Définir ressources, conflits et preuves de purge avant code.
+Purger/invalider selon révocation et cycle de données ; réconcilier une réponse perdue avant nouvel effet. Pour le profil combiné natif/hors ligne, appliquer N02 adopté et synchronisé le 21 octobre 2026 : coffre séparé sans repli en clair. Définir ressources, conflits et preuves de purge avant code ; la qualification du coffre reste requise.
 
 ### Exigences auditées et preuves de sortie futures
 

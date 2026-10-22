@@ -1,9 +1,9 @@
 # DEVOPS.md — pixs
 
-Version : 0.5
+Version : 0.6
 
 Généré automatiquement par Debian Installeur Unifié (DIU).
-Début du relevé (UTC) : 2026-10-19T18:48:07Z
+Début du relevé (UTC) : 2026-10-22T03:24:20Z
 Environnement d'exécution DIU : PROXMOX
 
 Les sondes système concernent le contexte d'exécution DIU.
@@ -24,13 +24,13 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
 
 # Docker
 
-  * 29.9.1
+  * 29.9.2
   * /usr/bin/docker
 
 
 # Docker-Compose
 
-  * 5.6.0
+  * 5.6.1
   * /usr/local/bin/docker-compose
 
 
@@ -42,13 +42,13 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
 
 # Go
 
-  * 1.27.2
+  * 1.27.3
   * /home/devops/go/current/bin/go
 
 
 # Node
 
-  * 24.22.0
+  * 24.22.1
   * /home/devops/node/current/bin/node
 
 
@@ -127,7 +127,7 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
 
 # Python
 
-  * 3.14.8
+  * 3.14.9
   * /home/devops/python/current/bin/python3
   * venv: disponible
 
@@ -146,12 +146,24 @@ Cet inventaire ne constitue pas une qualification fonctionnelle ni une preuve de
   * sqlparse ==0.6.0 : 0.6.0 --> /home/devops/datas/pixs/.venv/bin/python3
     * Environnement : /home/devops/datas/pixs/.venv
     * Installation : /home/devops/datas/pixs/.venv/lib/python3.14/site-packages
+  * argon2-cffi ==25.1.0 : 25.1.0 --> /home/devops/datas/pixs/.venv/bin/python3
+    * Environnement : /home/devops/datas/pixs/.venv
+    * Installation : /home/devops/datas/pixs/.venv/lib/python3.14/site-packages
+  * cryptography ==50.0.2 : 50.0.2 --> /home/devops/datas/pixs/.venv/bin/python3
+    * Environnement : /home/devops/datas/pixs/.venv
+    * Installation : /home/devops/datas/pixs/.venv/lib/python3.14/site-packages
 
 
 # Python - Gestionnaire de paquets
 
-  * 26.2.1
+  * 26.2.2
   * /home/devops/python/current/bin/pip3
+
+
+# Prompts
+
+  * Dossier des prompts : /home/devops/datas/prompts
+  * Index des prompts : /home/devops/datas/prompts/INDEX.md
 
 
 # Tests navigateurs extérieurs en mode headless
@@ -167,6 +179,6 @@ La détection ne vérifie pas le fonctionnement du mode headless.
 
 ## Firefox
 
-  * 153.5.0esr
+  * 153.5.1esr
   * /usr/bin/firefox
   * Mode headless : --headless

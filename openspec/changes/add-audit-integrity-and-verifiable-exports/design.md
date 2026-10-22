@@ -36,7 +36,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 ## Dépendances et interfaces
 
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
 - [add-upgrade-backup-and-restore-contracts](../add-upgrade-backup-and-restore-contracts/proposal.md).
 

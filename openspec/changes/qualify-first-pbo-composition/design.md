@@ -21,7 +21,7 @@ Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les stru
 
 Après C18, qualifier la composition réellement distribuée. Authentifier les preuves émises hors manifest par les suites versionnées ; distinguer unités, intégration réelle, conformité et manuel. Relier chaque scénario applicable à un verdict/version/artefact ; dimensions inconnues explicites, sans certificat global.
 
-Le [cadrage Auth du 19 octobre 2026](../define-essential-autonomous-auth-module/design.md) reste proposé sans synchronisation du canon. Après adoption, la recette du profil standard inclura `pixs.auth` essentiel indépendant, le local PostgreSQL sans réseau externe, méthodes locales/MFA et enrôlement minimal, révocation et secours propre. Elle vérifiera l’absence des connecteurs externes installés et de démarrage implicite d’OpenLDAP/KDC ou d’émission IdP. Les capacités optionnelles auront leurs qualifications distinctes. Aucun résultat historique n’est étendu à ce nouveau périmètre et aucune tâche de réalisation n’est cochée.
+Le [cadrage Auth essentiel](../define-essential-autonomous-auth-module/design.md) est adopté au canon le 20 octobre 2026 pour ses trois deltas d'architecture. La recette future du profil standard vérifiera pixs.auth essentiel indépendant et le refus de son absence, le local PostgreSQL sans réseau externe, l'absence des connecteurs externes installés et des services LDAP/KDC/AD ou d'émission IdP activés implicitement, ainsi que l'isolation, la révocation et le secours propre sans MFA fictif. Les méthodes locales/MFA et l'enrôlement minimal restent proposés dans leurs dossiers propres et devront être adoptés puis qualifiés avant toute garantie correspondante. Aucun résultat historique n'est étendu à ce périmètre et aucune tâche de réalisation n'est cochée.
 
 ## Alternatives et frontière de conception
 
@@ -41,7 +41,7 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
 - [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
 - [add-installation-and-first-configuration](../add-installation-and-first-configuration/proposal.md).
 - [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
@@ -99,7 +99,7 @@ Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-firs
 
 ## Dépendances après audit transversal P0
 
-[C04](../integrate-runtime-authorization-and-super-admin/proposal.md), [C06](../add-protected-core-http-commands-and-queries/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C12](../complete-shared-ui-i18n-and-accessibility/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md), [N06](../add-minimal-p0-contract-conformance-kit/proposal.md).
+[C04](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md), [C06](../add-protected-core-http-commands-and-queries/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C12](../complete-shared-ui-i18n-and-accessibility/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md), [N06](../add-minimal-p0-contract-conformance-kit/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.
 

@@ -36,6 +36,8 @@ Le présent document concerne principalement :
 
 Il ne remplace ni `PROJECT.md` ni les spécifications OpenSpec.
 
+Tout artefact contenant PBO doit composer le socle obligatoire `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt`, ainsi que le module DNS essentiel et les autres capacités requises par son profil. Core fournit les primitives communes, Auth l'authentification locale autonome PostgreSQL, Agent la gestion PA hors PZT et le module PZT la gestion de l'exécutable réseau indépendant. La présence de ces modules ne dépend ni de l'activation réseau ni de la présence locale de PA/PZT ; leurs exécutables restent distribués selon les profils décrits au §46.
+
 En cas de divergence :
 
 ```text
@@ -78,7 +80,7 @@ sans modifier :
 
 * le modèle de composants ;
 * le Kernel ;
-* les responsabilités de `pixs.core` ;
+* les responsabilités et le caractère obligatoire de `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt` dans PBO ;
 * les contrats publics ;
 * les règles métier ;
 * les règles d'autorisation ;
@@ -88,6 +90,8 @@ sans modifier :
 * les invariants de compatibilité.
 
 Les différences entre les modes de distribution doivent rester limitées aux responsabilités nécessaires à l'installation, à la configuration, à l'exécution et à l'exploitation.
+
+La validation d'un artefact PBO doit refuser l'absence de l'un des quatre modules obligatoires ou du module DNS essentiel, même réseau désactivé. Leurs manifests, contrats publics et dépendances Core sont résolus par les mécanismes communs ; le packaging ne crée aucune priorité de chargement avant Core et ne confond pas présence d'un module, disponibilité d'un exécutant et activation réseau.
 
 ---
 
@@ -126,7 +130,7 @@ Le build doit également valider le modèle de scopes déclaré par les composan
 
 Les providers d'authentification doivent déclarer leurs capacités, protocoles, issuers, audiences, méthodes, algorithmes, clés, claims obligatoires, mappings d'identifiants et niveaux d'assurance maximaux. Le build doit vérifier la cohérence de ces déclarations, l'unicité du triplet `(provider_id, issuer, subject)`, l'absence de confiance implicite et l'absence de credentials, tokens ou assertions brutes dans les manifests et artefacts.
 
-Le cadrage cible Auth du 19 octobre 2026 est préparé dans [define-essential-autonomous-auth-module](openspec/changes/define-essential-autonomous-auth-module/proposal.md), avec deltas proposés sans synchronisation du canon ni réalisation. Après adoption, la composition applicative et sa qualification incluront `pixs.auth` essentiel indépendant, son profil local autonome et PostgreSQL comme stockage par défaut. Les méthodes locales et l'enrôlement minimal seront disponibles selon politique, sans fournisseur externe ni service OpenLDAP/KDC obligatoire. Cette évolution de composition ne sera pas déduite des preuves historiques du paquet.
+Le [cadrage Auth essentiel](openspec/changes/define-essential-autonomous-auth-module/proposal.md) est adopté le 20 octobre 2026 pour ses trois deltas authentication, core et reference-composition. La recette future devra vérifier pixs.auth essentiel indépendant, son profil local autonome PostgreSQL, le refus d'une composition sans cette capacité et l'absence des connecteurs externes installés ou de services LDAP/KDC/AD et d'émission IdP activés implicitement. Les méthodes locales détaillées et l'enrôlement restent proposés dans leurs dossiers distincts. Aucune preuve historique du paquet ne qualifie ce nouveau périmètre ; aucun code ni service n'est produit par l'adoption.
 
 Le profil standard exclura les sous-modules de sources externes LDAP, Kerberos, OIDC, SAML et autres ; leur installation nécessitera une sélection et un artefact déclaré. Les rôles émetteurs IdP, OpenLDAP propre et KDC propre auront une activation explicite, sans service ni écoute réseau lancé par leur seule disponibilité. Leurs sous-modules de gestion appartiendront à Auth, avec exécutants séparés de Django et dépendances produit installées uniquement selon le plan sélectionné. Aucune dépendance OS n'est ajoutée par ce cadrage documentaire.
 
@@ -953,7 +957,7 @@ Ils doivent simuler les pertes de connexion, la reconnexion, les redémarrages d
 
 Les scénarios de reconnexion doivent démontrer la réévaluation de l'identité, du `ScopeContext`, de l'autorisation, de l'entitlement, du quota, de la concurrence et de la gouvernance. Ils doivent couvrir l'idempotence, les retries, les expirations, les révocations, les changements de tenant ou de scope, les tombstones, les suppressions et les conflits `REJECT`, `MANUAL_REVIEW`, `DOMAIN_MERGE` et `LAST_WRITE_WINS` lorsqu'il est déclaré. Aucun Event de domaine ne doit être publié localement avant confirmation serveur.
 
-La conformité doit vérifier l'isolation des répliques et files entre utilisateurs, appareils, tenants et scopes, la rétention, l'effacement, le chiffrement ou stockage sécurisé déclaré et l'absence de secrets, tokens, credentials ou preuves d'authentification brutes. `RESTRICTED` et `SENSITIVE_PERSONAL` doivent être refusés par défaut, `CONFIDENTIAL` doit exiger une politique explicite, et les imports, exports, opérations bulk, purges et actions sensibles doivent être refusés hors ligne par défaut.
+La conformité doit vérifier l'isolation des répliques et files entre utilisateurs, appareils, tenants et scopes, la rétention, l'effacement et le chiffrement ou stockage sécurisé déclaré. Le stockage local de `RESTRICTED` doit être refusé, y compris hors réplique ou dans un stockage chiffré ; `SENSITIVE_PERSONAL` reste refusé par défaut et `CONFIDENTIAL` exige une politique explicite. Les tests doivent appliquer N02 adopté et synchronisé le 21 octobre 2026 : coffre natif sécurisé séparé, absence de secrets, jetons et credentials dans les projections, caches, index, files et exports hors ligne, sauvegardes hors ligne sans copie du coffre et refus de repli non protégé si ce mécanisme est indisponible. L'exception du coffre ne couvre pas les données `RESTRICTED` et aucune preuve d'authentification brute n'est stockée localement. Les imports, exports, opérations bulk, purges et actions sensibles doivent être refusés hors ligne par défaut.
 
 Pour la multi-région et la résidence par tenant, les tests doivent vérifier le mode par défaut mono-région, la résolution d'une `TenantPlacementPolicy`, la version du placement, l'epoch régional et l'absence de réplication, transfert, sauvegarde ou bascule inter-région implicite. Ils doivent couvrir la région principale, les régions de traitement, de réplication, de sauvegarde et de clés, ainsi que l'héritage vers les scopes enfants et la possibilité de renforcer une contrainte sans l'élargir.
 
@@ -1050,7 +1054,7 @@ Les journaux de construction ne doivent pas exposer :
 
 Les fichiers temporaires contenant des informations sensibles doivent être évités ou protégés et supprimés après utilisation.
 
-Le build doit produire un SBOM couvrant les dépendances applicatives, frontend, système et de packaging lorsque leur inventaire est disponible. Il doit vérifier les profils de sécurité des composants, scanner les secrets, analyser le code et les dépendances, contrôler les vulnérabilités des paquets et images, calculer les empreintes, vérifier les signatures et produire une attestation de provenance reliée aux sources, à la configuration de build et aux entrées principales. Une vulnérabilité critique connue doit bloquer la publication. Une exception de vulnérabilité élevée doit être documentée, approuvée, limitée dans le temps et incluse dans le diagnostic de l'artefact.
+Le build doit produire un SBOM couvrant les dépendances applicatives, frontend, système et de packaging lorsque leur inventaire est disponible. Il doit vérifier les profils de sécurité des composants, scanner les secrets, analyser le code et les dépendances, contrôler les vulnérabilités des paquets et images, calculer les empreintes, vérifier les signatures et produire une attestation de provenance reliée aux sources, à la configuration de build et aux entrées principales. Une vulnérabilité critique connue doit bloquer la publication sauf dérogation limitée, documentée et auditée conforme au canon `security`. Une exception de vulnérabilité élevée doit être documentée, approuvée, limitée dans le temps et incluse dans le diagnostic de l'artefact.
 
 Les vérifications doivent être exécutables pour les chemins Debian, Docker et développement avec des garanties équivalentes, même si les outils d'analyse sont fournis par des adapters différents. Les rapports doivent être exportables et ne doivent pas inclure de secret, token, contenu utilisateur ou détail sensible non nécessaire.
 
@@ -1522,6 +1526,11 @@ plateforme le déclare, l'absence de jeton dans les artefacts et la propagation
 du tenant, du scope, de l'identité et de la révocation aux notifications et
 liens profonds.
 
+La recette native applique la frontière N02 : credentials et secrets uniquement
+dans le mécanisme sécurisé déclaré de la plateforme, séparé des données hors
+ligne ; son indisponibilité doit refuser l'opération sans repli vers fichier ou
+base ordinaire. Cette exigence reste à qualifier sur les plateformes retenues.
+
 Le build vérifie que les références de secrets restent externes, sont liées à
 des identités de workload et privilégient des credentials courts, que les
 providers SCIM, de secrets et de déploiement déclarent leurs contrats et que
@@ -1540,10 +1549,16 @@ adapters futurs sont des composants distincts, validés par leurs contrats et
 leurs matrices de compatibilité.
 
 Un artefact P0 doit vérifier la composition minimale approuvée : mécanismes de
-composition, `pixs.core`, contexte tenant/scope, autorisation, API, migrations,
+composition, `pixs.core`, `pixs.auth` avec sa capacité locale autonome PostgreSQL,
+contexte tenant/scope, autorisation, API, migrations,
 runtime, provisionnement, sécurité, secrets, audit, observabilité, gouvernance,
 cycle de vie des données, conformité et composant d'exemple. Une capacité hors
 P0 ne peut devenir active que par sélection explicite.
+
+Le profil initial PBO doit également composer `pixs.agent`, `pixs.pzt` et le
+module DNS essentiel, même réseau désactivé, conformément à
+`reference-composition` et `reference-runtime`. La recette doit distinguer ces
+modules des exécutants PA/PZT, sans déduire une qualification de leur seule présence.
 
 Chaque release ou profil de déploiement doit déclarer des objectifs de service
 versionnés et mesurables couvrant disponibilité, latence, invalidation, reprise
@@ -1551,6 +1566,18 @@ et compatibilité. Le build et les suites applicables doivent produire une preuv
 reproductible de leur vérification, ou un diagnostic explicite lorsque le profil
 ne les satisfait pas. Aucun seuil chiffré universel ne doit être inventé par la
 chaîne de build.
+
+### 45.1 Binaire commun et configuration de ressources externe
+
+Les distributions PBO contiennent un binaire applicatif commun regroupant le Kernel, Core, Auth, Agent et le module PZT, avec les composants sélectionnés et les ressources frontend PFO. Ce binaire conserve Django et ne fusionne ni les propriétaires de données ni les exécutants PA/PZT. Le développement depuis les sources reste possible ; compiler PBO ne constitue pas une preuve de performance ou de support multicœur.
+
+Les rôles `web`, `worker` et `scheduler` utilisent ce même binaire pour une même cible de build. Leurs nombres de processus et limites de concurrence sont configurés au runtime, avec CPU, mémoire, files/buffers et connexions bornés. Les profils PA/PZT suivent la même politique de ressources, séparément selon leur propre environnement. Le build embarque déclarations et schémas ; les budgets accordés et configurations effectives restent externes aux paquets/images.
+
+La recette vérifie les quotas réels du service, de la VM ou du conteneur, les budgets cumulés des réplicas et composants cohébergés, les marges système et les dépendances PostgreSQL. La détection de ressources peut proposer un plan, appliqué uniquement sous configuration ou politique d'adaptation explicite et bornée. Les états demandé, effectif et réellement appliqué restent distingués et diagnostiquables.
+
+Les superviseurs OS/conteneur appliquent les rôles, limites, signaux et redémarrages déclarés sans autorité métier. Changer les processus ou budgets exige autorisation, validation, drain et reprise contrôlés. Plusieurs schedulers conservent leurs baux ; les processus PA conservent les sessions et l'idempotence ; les processus PZT conservent un propriétaire réseau unique par périmètre. Un budget incompatible avec une garantie obligatoire est refusé, sans changement des droits ou des délais de sécurité.
+
+La qualification relie binaire, versions, environnement et configuration aux mesures mémoire, CPU au repos/en charge, latence, débit, saturation et reprise. Nuitka en mode standalone est retenu pour PBO ; versions, options, compilateur C, noms/CLI, schémas exacts et valeurs par défaut restent à qualifier. Aucun outil ni dépendance supplémentaire n'est installé par ce cadrage. [Décision et tâches de réalisation](openspec/changes/define-common-pbo-binary-and-resource-profiles/design.md).
 
 ## 46. Distribution des binaires PA et PZT
 
@@ -1562,9 +1589,9 @@ deb-package et docker-image ; construction, qualification et publication restent
 
 | Artefact | Contenu obligatoire | Contenu exclu |
 | --- | --- | --- |
-| Paquet Debian PBO/PFO | PBO, PFO, `pixs.agent` et module essentiel `pixs.pzt` | Les trois binaires PA et le binaire PZT, colivrés séparément de PBO/PFO |
+| Paquet Debian PBO/PFO | Binaire PBO commun : Kernel, `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt`, module DNS essentiel et composants sélectionnés ; ressources PFO | Les trois binaires PA et le binaire PZT, colivrés séparément de PBO/PFO |
 | Paquet Debian commun PA/PZT | Trois binaires PA : démon système, événements de l'hôte, sessions utilisateur ; plus le binaire indépendant PZT | PBO et PFO comme dépendances embarquées |
-| Image Docker Pixs | PBO, PFO, `pixs.agent`, `pixs.pzt`, deux binaires PA : démon système et événements du conteneur ; plus PZT | Binaire utilisateur PA et ses modes session-start, session-stop et session-daemon |
+| Image Docker Pixs | Binaire PBO commun et ressources PFO ; socle et composants requis identiques à la composition PBO Debian ; deux binaires PA système/événements du conteneur et PZT indépendant | Binaire utilisateur PA et ses modes session-start, session-stop et session-daemon |
 
 La séparation validée le 17 octobre 2026 conserve quatre exécutables dans le
 paquet PA/PZT et trois dans Docker. Les binaires système/utilisateur relèvent
@@ -1607,24 +1634,34 @@ n'est construit ou publié par cette intégration.
 
 ### 46.0 Composition des distributions
 
+Les fichiers exécutables sont distincts des processus lancés : le binaire PBO commun peut alimenter plusieurs processus par rôle, et PA/PZT leurs processus et auxiliaires déclarés. Les budgets effectifs sont fournis au runtime ; ils ne sont pas incorporés à l'artefact. Le module DNS essentiel reste requis dans la composition PBO représentée.
+
 ```mermaid
 flowchart TB
     S["Sources Pixs — composants PBO/PFO, PA et PZT"]
-    S --> B["Paquet Debian PBO/PFO — pixs.agent et pixs.pzt"]
+    S --> B["Paquet Debian PBO/PFO"]
     S --> A["Paquet Debian commun PA/PZT — indépendant de PBO/PFO"]
     S --> D["Image Docker Pixs"]
-    A --> A1["Trois binaires PA, dont sessions utilisateur"]
-    A --> A2["PZT indépendant"]
-    D --> D1["PBO/PFO — pixs.agent et pixs.pzt"]
-    D --> D2["Deux binaires PA — système et événements du conteneur"]
-    D --> D3["PZT indépendant — sans binaire utilisateur PA"]
+    A --> A1["Trois binaires PA Cython — processus configurables, sessions incluses"]
+    A --> A2["PZT indépendant Cython — processus configurables"]
+    D --> D1["PBO/PFO"]
+    D --> D2["Deux binaires PA Cython — processus selon quotas, sessions exclues"]
+    D --> D3["PZT indépendant Cython — processus selon quotas"]
+    B --> C["Binaire PBO Nuitka standalone — Kernel, Core, Auth, Agent, module PZT et composants requis"]
+    D1 --> C
 ```
 
 Il s'agit de la composition cible, sans build réalisé ni processus activé.
 Un hôte distant peut recevoir seulement PA/PZT ou également PBO/PFO ; ces deux
 cas ne changent ni le contenu des artefacts ni les autorisations de gestion.
+Le socle commun représenté ne remplace pas les autres capacités exigées par
+le profil ; le paquet PA/PZT autonome n'embarque pas les modules PBO.
 
 ### 46.1 Compilation et objectifs de performance
+
+Le binaire PBO commun est construit et qualifié séparément des exécutants PA/PZT. Le choix adopté le 21 octobre 2026 est Nuitka en mode `standalone` : un exécutable PBO avec son runtime, ses bibliothèques et ressources déclarées. Le mode `onefile` autoextractible ne remplace pas ce profil. Les modes d'exploitation PBO Standalone (instance autonome) et ZT (réseau gouverné via PZT) utilisent le même binaire ; ils ne sont pas des options de compilation. L'activation du transport PZT reste distincte et peut être requise en Standalone pour joindre des PA autorisés, sans canal de substitution ni bascule automatique vers Standalone après panne ou révocation. Les trois binaires PA et l'exécutant PZT sont compilés avec Cython. La réplication de ses processus ne multiplie pas les fichiers exécutables livrés. Le paquet Debian PBO/PFO et l'image livrent chacun ce binaire et les ressources PFO ; les comptes de trois binaires PA plus PZT sous Debian, ou deux plus PZT dans Docker, concernent uniquement les exécutants indépendants.
+
+Les optimisations Cython du PBO sont ciblées et admises seulement après profilage et mesures comparables démontrant un gain selon des critères définis avant recette. La qualification vérifie non-régression fonctionnelle, contrats, sécurité, maintenabilité et ressources, sans remplacer la chaîne Nuitka. Les versions/options et profils de compilation sont figés par cible pour la recette ; aucun gain de performance ni baisse de mémoire n'est déduit du compilateur seul. Le paquet doit inclure les imports dynamiques Django, commandes, migrations, catalogues, manifests et ressources requis et qualifier chaque rôle exécuté. Voir les [modes de distribution Nuitka](https://nuitka.net/user-documentation/use-cases.html).
 
 La chaîne cible part des sources Python, génère du C puis produit les
 trois binaires natifs PA et le binaire PZT pour chaque cible complète supportée ;
@@ -1633,8 +1670,7 @@ et bibliothèques natives nécessaires sont inventoriées. L'autonomie visée
 est une installation sans Pixs Frontoffice ni Pixs Backoffice, avec un runtime
 embarqué si nécessaire pour éviter un interpréteur Python installé séparément.
 
-**Choix validé le 10 octobre 2026 :** Nuitka pour les binaires démon système,
-événements système et sessions utilisateur ; Cython pour le binaire PZT.
+**Choix adopté le 21 octobre 2026 :** Nuitka standalone pour PBO ; Cython pour les trois binaires PA — démon système, événements système et sessions utilisateur — et le binaire PZT indépendant. Ce choix remplace l'ancienne sélection Nuitka des binaires PA ; la séparation et les nombres de binaires sont conservés.
 La chaîne conserve Python vers C puis binaire natif avec runtime déclaré.
 Versions exactes, dépendances, ABI et compatibilité restent à qualifier avant
 installation ou compilation. Voir le [manuel Nuitka](https://nuitka.net/user-documentation/user-manual.html)
@@ -1772,9 +1808,9 @@ opposables, les autres valeurs sont à proposer et mesurer par profil.
 
 | Contrôle de distribution | Résultat attendu à la future recette |
 | --- | --- |
-| Debian PBO/PFO | PBO/PFO, `pixs.agent` et module essentiel `pixs.pzt` présents ; exécutables PA/PZT colivrés séparément |
+| Debian PBO/PFO | PBO/PFO, `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et module DNS essentiel présents, même réseau désactivé ; exécutables PA/PZT colivrés séparément |
 | Debian PA/PZT | Trois binaires PA et PZT indépendant, sans PBO/PFO embarqués ; six modes PA et un mode PZT |
-| Docker | PBO/PFO, deux binaires PA système/événements et PZT présents ; binaire et fonctions de session PA absents |
+| Docker | PBO/PFO avec `pixs.core`, `pixs.auth`, `pixs.agent`, `pixs.pzt` et module DNS essentiel ; deux binaires PA système/événements et PZT présents ; binaire et fonctions de session PA absents |
 | Activation PZT | Le binaire PZT exécute le réseau activé/configuré ; arrêt explicite sinon, sans perte du module essentiel PBO |
 | Cohabitation PBO/PA | Échanges sous PZT, isolation des comptes et droits, signaux et arrêt borné ; aucune exécution de rôle implicite |
 | Compatibilité et mises à niveau | Chaque artefact est identifiable et vérifié ; états techniques, mandats, clés et révocations préservés sans résurrection |

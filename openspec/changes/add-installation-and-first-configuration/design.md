@@ -22,7 +22,7 @@ Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les stru
 
 Séparer marqueur externe d’installation et état FIRST_CONFIGURATION en base. La CLI présente les plans, confirme toute création/migration/destruction concernée et reprend l’état persistant. Authentifier explicitement l’opérateur d’amorçage sans dépendre circulairement d’une session pas encore créée ; valeurs saisies remplacées par références privées.
 
-Le [cadrage Auth du 19 octobre 2026](../define-essential-autonomous-auth-module/design.md) propose un profil standard avec `pixs.auth` essentiel, local autonome et PostgreSQL par défaut. C08 devra sélectionner explicitement ce profil et provisionner le premier moyen via les contrats Core/Auth, sans session préalable du compte cible ni dépendance à LDAP/Kerberos. Les connecteurs externes seront absents de l’installation standard ; OpenLDAP/KDC propres et émission IdP ne seront pas activés implicitement. R01, l’identité opérateur, le compte de secours unique et ses exemptions canoniques restent préservés. Ce raccordement documentaire ne réalise aucun mécanisme ni ne synchronise les deltas proposés.
+Le [cadrage Auth essentiel](../define-essential-autonomous-auth-module/design.md) est adopté au canon le 20 octobre 2026 pour ses trois deltas d'architecture. C08 devra sélectionner explicitement le profil local PostgreSQL et provisionner le premier moyen via les contrats Core/Auth, sans session préalable du compte cible ni dépendance à LDAP/Kerberos. La recette future vérifiera l'absence de justificatif universel par défaut, des connecteurs externes installés et des services LDAP/KDC/AD ou d'émission IdP activés implicitement. R01, l'identité opérateur, le compte de secours unique et ses exemptions canoniques restent préservés. Les méthodes détaillées et l'enrôlement conservent leurs propositions distinctes ; aucun mécanisme ni recette n'est réalisé par cet alignement.
 
 ## R01 — Contrat d’autorité d’amorçage C08/C02
 
@@ -93,6 +93,16 @@ Les dix cas suivants sont des critères futurs, non des scénarios ajoutés au c
 
 La preuve intégrée conserve version du contrat, plan, environnement, commandes, résultats et effets contrôlés sans secret. Elle ne sera pas déduite de booléens simulés. Aucun cas B01–B10 n’est déclaré réussi par sa rédaction ; aucun code ni test n’est produit par ce complément.
 
+## Sélection de la preuve R01 du 20 octobre 2026
+
+Les [décisions C03 D15/D16](../archive/2026-10-21-add-initial-authentication-and-sessions/design.md) sélectionnent la clé publique personnelle préautorisée et une signature Ed25519 vérifiée avec cryptography. Le [delta C04 adopté le 20 octobre 2026](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/specs/authorization/spec.md) formalise le sujet opérateur pré-session et son mapping explicite. Les formulations R01 antérieures décrivent la frontière avant cette sélection ; le delta est désormais synchronisé au canon, sans réalisation de R01.
+
+Clé publique, opérateur et droits d’installation sont établis par une procédure de confiance explicite, indépendante de la future session du Super Admin. La clé privée reste sous contrôle de l’opérateur. Une clé fournie par le demandeur ne s’autorise pas elle-même ; UID 0, accès PostgreSQL, confirmations de mot de passe et reçu C01 ne remplacent pas la chaîne C03/C04.
+
+L’autorisation finale vaut 10 minutes à partir de la validation du plan final, pour une installation, sa version de plan et les seuls effets fermés. Sa consommation est liée au commit des effets propriétaires ; elle n’est pas consommée par un simple succès mémoire et ne permet pas de second effet. La préparation complète de l’installation n’est pas limitée par ce délai. Plan/cible changés, expiration ou preuve révoquée exigent une nouvelle autorisation. Une reprise inspecte le résultat committé ; le marqueur externe reste réconcilié séparément, sans nouvel acte de création.
+
+La transaction commune de l’effet d’amorçage et de son audit reste obligatoire. L’exception D14 est limitée au retrait d’accès Auth et ne dispense aucune création de compte, identité, tenant ou droit de son audit. Les scénarios R01 B01–B10 devront inclure signature, validité, concurrence et réponse perdue. Versions, sérialisation du plan, ancrage de confiance, mapping exact, marqueur et checkpoint restent à qualifier avant code ; aucun cas n’est exécuté ici.
+
 ## Alternatives et frontière de conception
 
 Privilégier les mécanismes et dépendances existants. Une implémentation locale qui duplique les contrats, importe des tables privées ou sélectionne implicitement un provider est incompatible avec le cadrage. Toute technologie supplémentaire ou précision de comportement devra être justifiée avant réalisation ; la présence d’un paquet dans DEVOPS ne prouve ni sélection ni conformité.
@@ -108,10 +118,10 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
 - [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
-- [add-core-postgres-services](../add-core-postgres-services/proposal.md).
-- [add-initial-authentication-and-sessions](../add-initial-authentication-and-sessions/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
+- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 - [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
 
 La création anticipée de ces dossiers ne signifie pas que leurs tâches sont réalisées. Les hôtes intermédiaires demeurent non prêts si une obligation manque ; C17 qualifie le paquet C18, C19 vérifie son identité de distribution.

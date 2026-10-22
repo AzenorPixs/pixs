@@ -7,12 +7,23 @@ de Pixs.
 
 ## Requirements
 
+### Requirement: Qualification du binaire commun et des profils de ressources P0
+
+Le profil initial PBO MUST qualifier le binaire commun Kernel/Core/Auth/Agent/PZT et son plan de processus selon reference-runtime et runtime. La preuve MUST relier budgets accordés, configuration demandée, état appliqué, mesures et scénarios de panne. Les modules essentiels MUST rester composés sans exiger PA/PZT actifs ; leurs profils propres MUST être qualifiés seulement lorsqu'ils sont sélectionnés.
+
+#### Scenario: P0 sans exécution réseau
+
+- **WHEN** le profil initial conserve le réseau désactivé
+- **THEN** les modules essentiels restent présents dans le binaire PBO et aucun exécutant PA/PZT ni résultat réseau n'est inventé
+
+#### Scenario: Plan de ressources sans preuve sur cible
+
+- **WHEN** une composition P0 possède un plan mais pas de recette sur l'environnement distribué
+- **THEN** elle ne revendique pas un binaire ou un dimensionnement qualifié sur cette seule déclaration
+
 ### Requirement: Capacités obligatoires du P0
 
-Une composition P0 MUST inclure les mécanismes de composition, `pixs.core`, le
-contexte tenant/scope, l'autorisation, les API et contrats publics, migrations,
-runtime, provisionnement, sécurité, secrets, audit, observabilité, gouvernance,
-cycle de vie des données, conformité et un composant d'exemple.
+Une composition P0 MUST inclure les mécanismes de composition, `pixs.core`, `pixs.auth` essentiel avec son authentification locale autonome et PostgreSQL par défaut, le contexte tenant/scope, l'autorisation, les API et contrats publics, migrations, runtime, provisionnement, sécurité, secrets, audit, observabilité, gouvernance, cycle de vie des données, conformité et un composant d'exemple.
 
 #### Scenario: Capacité P0 absente
 
@@ -113,3 +124,11 @@ Cette exception MUST NOT devenir une source de vérité métier parallèle aprè
 
 - **WHEN** le journal local est proposé comme autorité applicative après reprise complète ou pour des opérations métier ordinaires
 - **THEN** la composition refuse cet usage hors de l’exception d’amorçage
+
+### Requirement: Profil Auth standard sans connecteur externe installé
+
+Le profil standard MUST sélectionner explicitement la capacité locale Auth PostgreSQL. Les connecteurs vers LDAP, Kerberos ou autres sources externes MUST être absents de l'installation standard et installés seulement sur sélection explicite. Les services OpenLDAP, KDC et Active Directory propres ainsi que l'émission d'identité sortante MUST rester non activés par défaut et MUST NOT conditionner l'autonomie locale.
+
+#### Scenario: Profil livré sans connecteurs externes
+- **WHEN** le profil standard est installé
+- **THEN** la recette vérifie le fonctionnement local sur PostgreSQL, l'absence des connecteurs externes et l'absence de service LDAP/KDC/AD ou d'émission sortante activé implicitement

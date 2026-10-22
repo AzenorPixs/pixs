@@ -30,4 +30,4 @@ Aucune dans ce dossier ; les capacités spécialisées ont leurs changes propres
 
 Cadrages PROJECT.md, TECHNICAL.md, BUILD.md et synthèse README.md ; raccordement documentaire de C02, C03, C08, C13 et C17. C03 reste propriétaire de la future connexion et des sessions. Aucun manifeste produit, code, dépendance installée, migration, service, secret, Git, déploiement ou publication.
 
-Les deltas restent proposés dans ce change, sans synchronisation du canon ni archivage. L'ouverture des dossiers n'autorise aucune réalisation. Le catalogue de sous-modules et les recettes sont des cibles, pas des fonctions disponibles.
+Les trois deltas de ce change sont adoptés et synchronisés le 20 octobre 2026 dans authentication, core et reference-composition : neuf exigences ajoutées, une modifiée et treize scénarios supplémentaires nets. Cette adoption normative n'archive pas le dossier et n'autorise aucun code. Les autres dossiers Auth et le stockage Core réversible conservent leurs deltas proposés. Le catalogue détaillé et les recettes restent à réaliser et qualifier.

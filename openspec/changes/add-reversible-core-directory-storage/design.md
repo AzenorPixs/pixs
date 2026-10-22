@@ -58,10 +58,10 @@ Les commandes qui combinent données Core LDAP et mutations métier PostgreSQL r
 
 ## Dépendances et raccordements
 
-- [C02 — données Core PostgreSQL](../add-core-postgres-services/design.md) : provider initial, contrat public et invariants.
+- [C02 — données Core PostgreSQL](../archive/2026-10-20-add-core-postgres-services/design.md) : provider initial, contrat public et invariants.
 - [OpenLDAP propre](../add-auth-managed-openldap/design.md) : service interne géré ; le rôle de stockage est explicitement distinct du rôle de projection.
 - [Architecture Auth](../define-essential-autonomous-auth-module/design.md) : périmètre Core/Auth et maintien du stockage Auth PostgreSQL par défaut.
-- [Autorisation runtime](../integrate-runtime-authorization-and-super-admin/proposal.md), [audit](../add-durable-minimized-audit/proposal.md), [migrations](../../specs/migrations/spec.md) et [réadmission](../add-p0-post-restore-reconciliation-and-readmission/proposal.md) : garanties impératives applicables.
+- [Autorisation runtime](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md), [audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md), [migrations](../../specs/migrations/spec.md) et [réadmission](../add-p0-post-restore-reconciliation-and-readmission/proposal.md) : garanties impératives applicables.
 - [Projection sortante](../add-ldap-outbound-directory-projections/design.md) et [lecture fraîche](../add-directory-read-freshness-and-postgres-fallback/design.md) : restent limités au mode projection.
 
 L'exception Super Admin est conservée dans son périmètre canonique pour les contrôles applicatifs ; elle ne transforme pas une copie incomplète, un état d'engagement inconnu ou une double autorité en preuve technique acquise. Aucun résultat absent n'est fabriqué.

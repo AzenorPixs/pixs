@@ -29,8 +29,8 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 ## Dépendances
 
 - [generate-typescript-python-public-sdks](../generate-typescript-python-public-sdks/proposal.md).
-- [add-initial-authentication-and-sessions](../add-initial-authentication-and-sessions/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
 
 La dépendance offline n’est conditionnelle qu’à la sélection de ce mode ; un client en ligne ne reçoit pas de stockage local ou de file d’intentions par défaut.
 
@@ -47,6 +47,6 @@ Pas d'autorité métier locale ; droits maintenus ; révocation/purge et platefo
 Plateformes/types de client et stockage de session qualifiés ; options offline seulement sélectionnées, pas imposées au client en ligne.
 
 
-## Clarification normative conditionnelle validée
+## Clarification normative N02 adoptée
 
-Pour un profil combinant client natif et données hors ligne, adopter [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md) avant réalisation : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette préparation ne synchronise pas les deltas.
+Pour un profil combinant client natif et données hors ligne, appliquer [N02](../clarify-native-credentials-and-offline-storage-boundary/proposal.md), adopté et synchronisé au canon le 21 octobre 2026 : coffre sécurisé de plateforme séparé des projections/caches/files, sans repli non protégé. Cette adoption ne qualifie ni le coffre ni la réalisation O23.

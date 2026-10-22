@@ -1,0 +1,86 @@
+schema_version = "1"
+id = "pixs.core"
+type = "MODULE"
+version = "0.1.0"
+
+[dependencies]
+components = ["pixs.kernel ==0.1.0"]
+
+[provides]
+[[provides.capabilities]]
+id = "core.identity"
+version = "1.0.0"
+contracts = ["pixs.core.identity.command", "pixs.core.identity.query", "pixs.core.identity.service"]
+criticality = "REQUIRED"
+fallback = "none"
+[[provides.capabilities]]
+id = "core.groups"
+version = "1.0.0"
+contracts = ["pixs.core.groups.command", "pixs.core.groups.query", "pixs.core.groups.service"]
+criticality = "REQUIRED"
+fallback = "none"
+[[provides.capabilities]]
+id = "core.scope"
+version = "1.0.0"
+contracts = ["pixs.core.scope.command", "pixs.core.scope.query", "pixs.core.scope.service"]
+criticality = "REQUIRED"
+fallback = "none"
+[[provides.capabilities]]
+id = "core.authz-data"
+version = "1.0.0"
+contracts = ["pixs.core.authz-data.command", "pixs.core.authz-data.query", "pixs.core.authz-data.service"]
+criticality = "REQUIRED"
+fallback = "none"
+[[provides.capabilities]]
+id = "core.bootstrap"
+version = "1.0.0"
+contracts = ["pixs.core.bootstrap.command", "pixs.core.bootstrap.query", "pixs.core.bootstrap.service"]
+criticality = "REQUIRED"
+fallback = "none"
+
+[implements]
+[[implements.contracts]]
+id = "pixs.core.identity.command"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.identity.query"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.identity.service"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.groups.command"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.groups.query"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.groups.service"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.scope.command"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.scope.query"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.scope.service"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.authz-data.command"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.authz-data.query"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.authz-data.service"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.bootstrap.command"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.bootstrap.query"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.core.bootstrap.service"
+version = "1.0.0"

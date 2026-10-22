@@ -1,6 +1,6 @@
 # Références normatives — N04
 
-Les références ci-dessous restent canoniques. Les blocs sont des sources de traçabilité, sans synchronisation ou copie normative concurrente. Les deltas propres au dossier, s’il en contient, restent proposés.
+Les références ci-dessous restent canoniques. Les blocs sont des sources de traçabilité, sans synchronisation ou copie normative concurrente. Les seules deux clauses api issues de C03, relatives à la façade cookie/Bearer et au transport/stockage navigateur, sont adoptées le 20 octobre 2026 ; les autres propositions du dossier restent distinctes.
 
 ## reference-runtime #1
 
@@ -75,7 +75,7 @@ L'arrêt MUST être contrôlé : cesser l'exposition, drainer les traitements en
 
 ## api #2
 
-[Source canonique](../../specs/api/spec.md#L18) ; SHA-256 source `58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152`.
+[Source canonique](../../specs/api/spec.md#L18) ; SHA-256 source `7e3c27a0211e357f3bb2b51e58ae8d73c4846db660c6395a3cdda3b0adcd69fe`.
 
 ### Requirement: Contrats OpenAPI versionnés par majeure
 
@@ -88,7 +88,7 @@ Chaque capacité exposée MUST disposer d'un contrat OpenAPI publié et versionn
 
 ## api #3
 
-[Source canonique](../../specs/api/spec.md#L27) ; SHA-256 source `58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152`.
+[Source canonique](../../specs/api/spec.md#L27) ; SHA-256 source `7e3c27a0211e357f3bb2b51e58ae8d73c4846db660c6395a3cdda3b0adcd69fe`.
 
 ### Requirement: Enveloppes stables et erreurs typées
 
@@ -103,7 +103,7 @@ Les succès utilisent données, métadonnées et liens avec pagination par curse
 
 ## api #4
 
-[Source canonique](../../specs/api/spec.md#L38) ; SHA-256 source `58abd35620d8a6e9c65b0f525e8afda12a2291b9a531bba9248643be3afd3152`.
+[Source canonique](../../specs/api/spec.md#L38) ; SHA-256 source `7e3c27a0211e357f3bb2b51e58ae8d73c4846db660c6395a3cdda3b0adcd69fe`.
 
 ### Requirement: Périmètre canonique et autorisation à la frontière
 
@@ -213,3 +213,6 @@ Les journaux, diagnostics et inventaires MUST NOT exposer de secret, de jeton ni
 - **WHEN** un diagnostic est produit après un échec de sécurité
 - **THEN** il identifie le composant et la cause sans divulguer de valeur sensible
 
+## Clauses de sessions adoptées le 20 octobre 2026
+
+Les clauses canoniques [Façade web à cookie et API Bearer explicitement distinctes](../../specs/api/spec.md#requirement-façade-web-à-cookie-et-api-bearer-explicitement-distinctes) et [Contrats de transport et stockage navigateur](../../specs/api/spec.md#requirement-contrats-de-transport-et-stockage-navigateur) portent les deux seules additions synchronisées de ce dossier. Les autres deltas restent proposés, sans implémentation ni archive.
