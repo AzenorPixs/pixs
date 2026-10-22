@@ -2,6 +2,8 @@
 
 ## Statut et périmètre autorisé
 
+La reprise documentaire du 22 octobre 2026 en fin de fichier présente le cadrage courant et la décision d’adoption. Les sections antérieures conservent leurs dates et leurs limites de preuve.
+
 PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 a été adopté et archivé le 18 octobre 2026 ; ses précisions normatives sont intégrées au canon. Les arbitrages propres au présent change restent à lever avant réalisation.
 
 Le complément R01 du 19 octobre 2026 précise le contrat d’amorçage C08/C02 et sa recette. Il conserve les options A de D01–D04 de C02 et les limites de C01. Il autorise uniquement les documents concernés ; aucune implémentation, production de code, migration ou recette produit n’est lancée. Les mécanismes concrets d’authentification, de marqueur et de reprise restent à détailler dans les lots propriétaires.
@@ -122,7 +124,7 @@ Les dossiers suivants doivent fournir leurs contrats/conditions avant intégrati
 - [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
 - [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
 - [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
-- [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
+- [activate-reference-runtime-composition](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md).
 
 La création anticipée de ces dossiers ne signifie pas que leurs tâches sont réalisées. Les hôtes intermédiaires demeurent non prêts si une obligation manque ; C17 qualifie le paquet C18, C19 vérifie son identité de distribution.
 
@@ -136,9 +138,9 @@ Relier les scénarios de `requirements.md` à la recette concernée et conserver
 
 Aucune migration ni remise à zéro pendant cette préparation. Toute évolution future de données aura un contrat, un plan autorisé, des contrôles de compatibilité et une compensation/restauration explicite ; aucun abaissement automatique de base.
 
-## Hors profil
+## Hors profil — état historique avant le complément PA/PZT
 
-PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+La préparation antérieure ne sélectionnait pas PA/PZT actifs ni Docker. Le complément 1.3 ci-dessous révise explicitement cette orientation pour le parcours de préparation PostgreSQL validé ; les contrats canoniques et qualifications antérieurs ne sont pas réputés modifiés ou exécutés. Le service DNS exécuté par PA et les autres options ne sont pas activés implicitement.
 
 
 ## Revue transversale P0 du 17 octobre 2026
@@ -178,3 +180,116 @@ Voir [audit transversal durable](../archive/2026-10-18-define-first-installable-
 Les validations OpenSpec ciblées strictes de `add-core-postgres-services` et `add-installation-and-first-configuration`, avec l’exécutable déclaré dans DEVOPS.md et télémétrie désactivée, ont retourné exit 0. L’information native `skip_specs` accepte zéro delta ; ce résultat ne valide ni un mécanisme d’authentification ni une recette produit.
 
 Les références, titres, lignes et listes de scénarios ont été contrôlés : C02 contient 72 exigences / 89 références de scénarios et conserve V01–V12 ; C08 contient 36 exigences / 44 références de scénarios, reliées notamment aux dix cas B01–B10. Les empreintes canoniques, l’encodage UTF-8/LF, les cibles de liens et les tâches sont contrôlés séparément des preuves fonctionnelles. Les vingt tâches de réalisation des deux changes restent non cochées. Aucun cas de recette, code, migration ou archivage n’est exécuté par ce complément.
+
+
+## Reprise documentaire C08 du 22 octobre 2026 — conception 1.2 après adoption
+
+### Statut et portée
+
+La rédaction documentaire initiale et l’alignement distinct de .openspec.yaml sont validés. Le développeur valide ensuite l’intégration exacte des quatre exigences et huit scénarios des deltas [secrets-providers](specs/secrets-providers/spec.md) et [installation-provisioning](specs/installation-provisioning/spec.md) dans leurs deux canons, avec alignement des quatre documents C08. Les exigences canoniques antérieures sont conservées.
+
+La métadonnée conserve schema et created et ne déclare plus skip_specs. Son alignement a été réalisé sous autorisation distincte ; la validation ciblée stricte avant adoption a réussi. Le présent lot d’adoption ne réalise aucun code, migration, service ou archivage. Les constats et contrôles des sections antérieures restent historiques.
+
+Le prévol du RUN `cismp1-pixs-02716fc18b3546c0` a prouvé modèle et raisonnement attendus, broker READY, demande et décision corrélées, permission native once et `/usr/bin/true` exit 0. Cela ne constitue aucune recette C08.
+
+### Faits déterminants et dépendance de gouvernance
+
+`src/pixs/backend/runtime_resolve.py:76` et `src/pixs/backend/systemd_secret_provider/provider.py:233` refusent hors INSTALLER. Le transport C01 est en lecture seule : publier des références ne prouve ni la création du credential correspondant ni sa disponibilité pour un workload autorisé.
+
+`src/pixs/core/ports.py` définit `GovernanceProvider` ; `services_common.py` exige une attestation valide et `services_bootstrap.py` refuse sa dispense lors de CREATE_IDENTITY. Le producteur observé dans `tests/integration/core_pg_participants.py` est une fixture. Le contrat minimal avec C10 doit donc précéder la branche positive C08 ; ni le futur Super Admin ni le reçu C01 ne peuvent le remplacer.
+
+### Plan privé et empreintes sans auto-référence
+
+C08 possède un plan privé immuable, versionné et lié à l’identité d’opération, à l’installation/base, à l’état observé, à l’action de base, aux cibles et aux effets fermés. Sa sérialisation interne déterministe utilise UTF-8, clés triées et séparateurs compacts ; doublons, champs inconnus, NaN, coercitions et entrées hors bornes sont refusés. Les bornes sont déclarées par configuration protégée, sans recopier une valeur de fixture.
+
+`plan_sha256` est calculé sur ces seuls octets de plan, avant confirmation. L’entrée du digest exclut son propre digest, signatures, preuves brutes, credentials et résultats de confirmation. Les confirmations sont enregistrées séparément et liées au digest courant ; un changement de plan invalide les confirmations. Une intention de credential est une référence privée opaque, liée à son préparé protégé ; ni mot de passe ni empreinte de mot de passe n’entre dans une empreinte ou représentation publique du plan.
+
+La preuve C03 réutilise `canonical_bootstrap_bytes(facts, nonce)` et `verify_signed_bootstrap` existants. Elle contient le digest du plan déjà calculé ; son digest de challenge est distinct du digest du plan. Calculer le plan avec les octets de sa propre preuve créerait une auto-référence et est exclu. Les liaisons de `BootstrapActInput` et `CommandEnvelope`, notamment opération, corrélation, causalité, idempotence et contenu privé, restent vérifiées par Core.
+
+### Confiance et autorité de l’opérateur
+
+La politique de confiance versionnée est provisionnée par une procédure d’administration déclarée, indépendamment de la future base. Sa source protégée épingle propriétaire, identité/version et bornes ; chemin ou clé fourni par le demandeur ne s’autorise pas lui-même. L’identité OS est un contrôle technique de source, pas un mapping applicatif implicite.
+
+Le mapping opérateur, la clé publique Ed25519, l’installation, l’action et les validités sont explicitement liés. La clé privée reste chez l’opérateur, hors des données et journaux Pixs. La vérification C03 et la décision/revalidation C04 restent distinctes. La fenêtre finale est exactement 600 secondes ; une préparation longue ne la prolonge pas et toute modification du plan exige une nouvelle autorisation.
+
+### Propriété et transaction C08
+
+La conception de code future prévoit des modules privés `src/pixs/backend/installation/` : `plan.py`, `checkpoint.py`, `marker.py`, `base_inspect.py` et `cli.py`. Cette liste est une orientation à recouper avant les mandats, pas une autorisation d’écrire ces sources.
+
+Le port C08 `InstallationPlanSource` fournit vérification du plan et des liaisons, résolution des cibles, inspection du résultat, staging et vérification du résultat. Son état durable appartient à C08. Une migration propriétaire sera présentée avant réalisation ; aucune table privée Core/Auth/C05 n’est lue ou écrite directement.
+
+La transaction propriétaire commune réunit effets Core, stamp du credential Auth, consommation de l’autorisation, audit C05 et résultat C08. Alias, connexion, transaction et preuves staged sont recoupés par les ports existants. Aucun commit autonome du checkpoint ni callback booléen n’atteste cet ensemble. L’identité d’opération, l’installation, la version/digest du plan, les références de décision/résultat et l’état de première configuration sont persistés sans credential ni assertion brute.
+
+Une opération confirmée est inspectée et restituée sans second effet après contrôles actuels. Une même identité avec plan divergent est un conflit. Une issue inconnue exige inspection avant tout rejeu. Une panne avant commit annule l’ensemble ; après commit, seule l’étape externe manquante est reprise.
+
+### Marqueur externe et modes
+
+Le marqueur d’installation est un fichier privé versionné, distinct du marqueur de désactivation Super Admin et du résultat PostgreSQL. Il contient seulement identité d’installation, référence/version du résultat confirmé et métadonnées de format minimisées. Son chemin et son propriétaire sont explicitement déclarés par la configuration protégée ; les valeurs de tests ne deviennent pas des défauts.
+
+Lecture et écriture refusent symlink, type non régulier, propriétaire ou droits divergents, liens multiples, contenu hors bornes, champs inconnus et identité incohérente. Les fichiers sont privés en mode 0600 ; les parents sont contrôlés. La publication suit fichier temporaire privé dans le même répertoire, fsync du fichier, remplacement atomique puis fsync du répertoire. Aucun succès durable n’est annoncé après une étape inconnue.
+
+Le marqueur n’est publié qu’après inspection du commit confirmé et est rapproché de l’installation et du résultat persistants. Son absence, invalidité ou divergence bloque NORMAL et ne déclenche jamais INSTALLER. Un marqueur valide avec première configuration inachevée conduit à FIRST_CONFIGURATION et à l’authentification propre du Super Admin existant. La finalisation autorisée et auditée de l’état en base précède NORMAL. MAINTENANCE conserve une transition explicite ; elle n’est pas une dispense d’autorisation.
+
+### Secrets après INSTALLER — delta adopté
+
+Le transport LoadCredentialEncrypted et les preuves réelles UID/unité/workload C01 sont conservés. Une politique versionnée distincte doit autoriser explicitement mode, rôle, finalité, références, versions, validités et délais ; aucun rôle ou mode supplémentaire n’est admis par simple présence d’une référence.
+
+FIRST_CONFIGURATION, NORMAL et MAINTENANCE ne sont jamais présentés comme INSTALLER pour contourner le contrôle actuel. Leur résolution suit désormais le delta adopté ; son raccord réel reste à réaliser et qualifier. Avant accès PostgreSQL, une preuve d’audit technique durable indépendante de cette base est exigée. Après ouverture vérifiée, les événements de cette invocation sont importés idempotemment dans C05 et le relais est rapproché avant disponibilité ; panne, doublon, ancienne invocation, journal scellé et reprise doivent être qualifiés sans réouvrir ni purger silencieusement un journal.
+
+Ce démarrage technique n’obtient aucun droit de création de base, compte, tenant ou privilège R01. Rotation, révocation et arrêt attesté des consommateurs restent opposables. Les gabarits purs restent inchangés.
+
+L’installateur ne devient pas writer C01 : la publication externe contrôlée du credential par l’administrateur reste distincte, avec identité, autorisation et procédure déclarées. C08 reçoit uniquement la référence et vérifie la version effectivement résolue et sa correspondance avec la cible courante, sans exposer la valeur. Tant que cette étape n’est pas prouvée, il reste non prêt ; il ne conserve aucune saisie pour la rejouer.
+
+### Gouvernance initiale — delta adopté
+
+Une source serveur protégée doit fournir un profil versionné complet et l’attestation requise par `GovernanceProvider` pour les données créées. Propriétaire, source de vérité, classes, confidentialité, données personnelles, finalités, rétention, suppression, consommateurs, processeurs, résidence/transfert, export et lignée suivent `data-governance`. Références et politiques sont explicites et contrôlées ; aucune durée de rétention, propriétaire ou valeur métier de fixture n’est inventée.
+
+L’attestation est liée aux cibles et à la transaction courante, puis revalidée avant commit. Profil absent, révoqué, périmé, incompatible ou partiellement décrit : aucune création Core ni disponibilité. Le compte encore inexistant ne peut fournir sa propre dispense. Le seul contrat minimal requis est coordonné avec C10 ; purge, droits de demandes et gouvernance globale C10 ne sont pas réalisés par ce lot.
+
+### Recettes supplémentaires et retour au cycle
+
+S01–S04 et G01–G03 de `requirements.md` complètent B01–B10 : modes/workloads autorisés ou refusés, audit pré-base et relais après crash, publication externe absente/divergente, profil de gouvernance frais ou invalide et rollback commun. Toutes sont non exécutées.
+
+Le lot d’adoption exige UTF-8/LF, liens valides, validation OpenSpec ciblée stricte du change et des deux canons, ainsi que contrôle de l’absence d’écriture hors des six fichiers autorisés pour cette intégration. L’adoption et la mise en cohérence de .openspec.yaml sont autorisées séparément et documentées ci-dessus. Après validation documentaire de l’intégration, le contrôle revient au cycle CISMP et au premier jalon C08 non prouvé. Le code ne commence qu’après vérification des contrats et dépendances et cadrage des mandats CAB unitaires ; l’archive et les statistiques restent des étapes futures.
+
+
+## Complément PA/PZT du 22 octobre 2026 — conception 1.3 proposée
+
+### Portée et statut
+
+Le développeur valide la formalisation du parcours PA/PZT → PostgreSQL → PBO, sur physique/VM et dans Docker Pixs. Cette section recadre la proposition antérieure R02 autonome, qui n’a pas été adoptée. Elle prépare huit deltas, sans modifier les canons ni annoncer une implémentation. Les quatre exigences déjà intégrées dans secrets-providers et installation-provisioning restent acquises. Les analyses antérieures qui exigeaient Auth PostgreSQL pour obtenir la connexion à cette même base décrivent la circularité à résoudre ; elles ne sont pas une recette positive.
+
+### Responsabilités et séquence
+
+1. Une procédure locale explicitement lancée par l’opérateur provisionne PA et PZT : identité propre de chaque exécutant, origine vérifiée, ancrages, configuration minimale, références externes et politique technique protégée/versionnée. Elle ne dépend pas de la base Pixs ni d’une session future. Le premier PBO n’est jamais approuvé par simple découverte. Les fichiers de provisionnement ne sont pas un canal de management PBO–PA.
+2. Le PA système possède une capacité PostgreSQL du catalogue fermé livré. Sur physique/VM, il installe et configure le service dans le périmètre autorisé ; dans Docker, le logiciel est déjà fourni et PA vérifie puis initialise seulement les ressources absentes. Ses accès SQL sont techniques (service, rôle et base explicitement prévus), distincts de ceux des workloads applicatifs. PA initie la première connexion technique et atteste l’état constaté, sans lire les tables métier ni se substituer à leurs propriétaires.
+3. Tout échange PBO–PA, y compris préparation, inspection, diagnostic et résultat locaux, passe par un profil PZT local mTLS provisionné et vérifié. Ce profil borne les actions, cibles, validités, anti-rejeu, révocations et preuves ; il n’ouvre aucun réseau distant ni permission métier. Si PZT manque, les échanges sont bloqués. Une réparation locale par opérateur reste une procédure distincte et auditée, jamais un canal de substitution PBO–PA.
+4. Les secrets techniques et applicatifs sont publiés par une procédure externe autorisée, distincte du provider de lecture. Le mandat PA seul n’autorise pas un writer générique ; C08 non plus. PZT transporte des références et métadonnées minimisées, pas des credentials. Le provider remet les valeurs uniquement au consommateur vérifié. Le mot de passe d’un futur Super Admin reste traité dans son contrat Auth privé ; il n’est pas un credential de service PA.
+5. PBO vérifie la cible préparée, ouvre sa connexion sous l’autorité technique minimale définie ci-dessous, puis inspecte le schéma et utilise les contrats propriétaires de migration. Les quatre états de base et leurs confirmations sont conservés. L’acte R01 Core/Auth/Super Admin/tenant, la gouvernance initiale et le résultat C08 restent sous les contrôles et la transaction applicatifs définis en 1.2.
+6. Les preuves de préparation, d’audit et de résultat sont rapprochées avec les propriétaires persistants ; les mandats techniques temporaires sont terminés avant admission du management ordinaire. PostgreSQL reprend l’autorité des états de contrôle applicatifs. Il n’existe pas deux sources concurrentes d’autorisation métier. Le marqueur externe suit le commit confirmé et FIRST_CONFIGURATION conserve l’authentification propre du compte.
+
+### Démarrages suivants et autorité technique minimale
+
+La disponibilité de PA et de PZT et la remise de la connexion PBO ne doivent pas dépendre d’Auth dans la base qu’ils doivent ouvrir. Le delta authorization propose donc une branche technique explicite fondée sur le provisionnement opérateur et des identités natives vérifiées. Elle n’invente aucun DigitalIdentity ni ScopeContext tenant. Sa politique protégée vérifie rôle, mode réel, finalité, installation/cible, action fermée, référence/version, validité, révocation et audit ; une donnée manquante ou une fraîcheur non vérifiable refuse l’admission.
+
+À chaque redémarrage, cette branche ne permet que les actes techniques indispensables et, pour PBO, la remise de ses seuls secrets de connexion avant ouverture. Les décisions métier, les autres résolutions exigeant une autorité applicative et le management ordinaire attendent C03/C04 et PostgreSQL courants. NORMAL n’est pas renommé INSTALLER. C01 n’acquiert aucune extension implicite et R01 n’est ni prolongé ni utilisable comme autorité permanente. Le transport LoadCredentialEncrypted demeure le choix Debian local, avec ses garanties, rotation et arrêt attesté ; un raccord Docker ne prouve pas leur équivalence et doit sélectionner/qualifier son mécanisme avant distribution.
+
+L’audit technique pré-base est durable et indépendant, lié à l’invocation, au workload et à l’opération. Le relais C05 est idempotent, rapproché et confirmé avant disponibilité. Une panne d’audit ou une issue de relais inconnue maintient non prêt, sans purger l’historique ni prolonger un mandat périmé. Les contrôles restent exécutables sans accès préalable à la base Pixs.
+
+### États, frontières transactionnelles et reprise
+
+Les phases opérateur, préparation PA, connexion PBO, migrations, acte applicatif et marqueur ont des propriétaires et résultats distincts. Le reçu PA porte opération, version/digest du plan, cible, état observé, résultat et métadonnées minimales, sans secret. Il n’atteste aucun commit Core/Auth. Un effet externe sur service, rôle ou base n’est pas atomique avec la transaction Core/Auth/C05/C08.
+
+Après interruption, chaque propriétaire inspecte son état durable et la cible avant de poursuivre. Une issue inconnue est réconciliée avant rejeu. La même opération conforme est restituée sans duplication ; un plan divergent est refusé. Une compensation ne détruit aucune donnée existante sans un nouveau plan destructif explicitement autorisé. Un commit applicatif confirmé ne déclenche jamais de seconde création pour réparer un marqueur perdu. Le cluster Docker existant est conservé à chaque redémarrage et les réplicas n’en deviennent pas des propriétaires concurrents.
+
+### Composition, Docker et qualification
+
+Le parcours sélectionne explicitement PA système et PZT local. Réseau distant désactivé ne signifie pas PZT local absent. Le profil initial Debian doit être révisé et qualifié avec ces exécutants ; les profils ne les sélectionnant pas gardent leurs limites et ne revendiquent pas ce parcours. Les modes de session PA et le réseau distant ne sont pas activés par ce choix.
+
+L’image Docker fournit le logiciel PostgreSQL, PBO/PFO et les exécutants PA/PZT déjà prévus ; ni cluster préinitialisé ni données, identité ou secret effectifs ne sont dans les couches. Le stockage PostgreSQL est persistant hors image et hors couche éphémère. Le profil d’exécution sélectionne les processus et déclare supervision, ordre, signaux, budgets communs, cible de persistance et propriétaire unique de préparation. Une réplication ne clone pas d’identité ni de propriétaire PZT/base. Aucun montage ou droit réel n’est modifié par cette conception.
+
+Après adoption normative, BUILD §14 et §23 devront distinguer logiciel PostgreSQL inclus et données persistantes externes à l’image ; PROJECT et TECHNICAL devront renvoyer aux mêmes responsabilités. La sélection du mécanisme de secrets Docker, les paramètres de confiance et de fraîcheur, les versions/architectures, quotas et recettes réelles restent à déclarer et vérifier avant qualification, sans prendre une valeur de fixture pour un défaut d’exploitation.
+
+### Vérification et décision suivante
+
+Les cas P01–P10 de requirements.md précisent les preuves futures. Le lot documentaire est limité aux quatre documents C08, huit deltas et commentaire de .openspec.yaml. Il conserve schema/created, les canons et le code. Une validation OpenSpec stricte et les contrôles d’empreintes/UTF-8/LF/liens vérifient la préparation documentaire seulement. La revue de l’intégration des clauses modifiées et ajoutées précède leur adoption canonique ; aucun nouveau change, déploiement ou archivage n’est lancé.
