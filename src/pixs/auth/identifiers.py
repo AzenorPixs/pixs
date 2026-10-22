@@ -64,5 +64,29 @@ def parse_identity_reference(reference: str) -> uuid.UUID:
     return parsed
 
 
+SESSION_CREATION_PREFIX = "pixs.auth.session-intent:v1:"
+
+
+def session_creation_reference(actor_ref: str, context: object) -> str:
+    """Identifiant logique de création, jamais preuve d'accès ou ressource existante."""
+    import hashlib
+    import json
+    from pixs.core.scope.context import ScopeContext, validate_structure
+    parse_identity_reference(actor_ref)
+    if type(context) is not ScopeContext:
+        raise AuthIdentifierError()
+    try:
+        validate_structure(context)
+        values = ["pixs.auth.session-intent.v1", actor_ref, context.scope_type.value,
+                  context.tenant_id, context.scope_id]
+        if any(type(value) is str and chr(0) in value for value in values):
+            raise AuthIdentifierError()
+        canonical = json.dumps(values, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
+    except (ValueError, TypeError, AttributeError, UnicodeError):
+        raise AuthIdentifierError() from None
+    return SESSION_CREATION_PREFIX + hashlib.sha256(canonical).hexdigest()
+
+
 __all__ = ["AuthIdentifierError", "CORE_IDENTITY_PREFIX", "require_uuid7",
-           "new_uuid7", "identity_reference", "parse_identity_reference"]
+           "new_uuid7", "identity_reference", "parse_identity_reference",
+           "SESSION_CREATION_PREFIX", "session_creation_reference"]

@@ -487,6 +487,8 @@ class CoreQueryInput:
     correlation_id: str
     resource_refs: tuple[str, ...]
     filter_plan: FilterPlan | None
+    after: str | None = None
+    page_limit: int | None = None
     def __post_init__(self) -> None:
         _check_ctx(object.__getattribute__(self, "context"))
         if not _is_id(object.__getattribute__(self, "correlation_id")):
@@ -496,6 +498,14 @@ class CoreQueryInput:
             raise CoreInputInvalid()
         plan = object.__getattribute__(self, "filter_plan")
         if plan is not None and type(plan) is not FilterPlan:
+            raise CoreInputInvalid()
+        after = object.__getattribute__(self, "after")
+        page_limit = object.__getattribute__(self, "page_limit")
+        if after is not None and not _is_id(after):
+            raise CoreInputInvalid()
+        if page_limit is not None and (type(page_limit) is not int or page_limit < 1):
+            raise CoreInputInvalid()
+        if after is not None and page_limit is None:
             raise CoreInputInvalid()
 
 
@@ -745,6 +755,7 @@ class CorePage:
     evaluated_at: datetime.datetime
     expires_at: datetime.datetime | None
     correlation_id: str
+    next_after: str | None = None
     def __post_init__(self) -> None:
         if type(self.items) is not tuple or any(type(item) is not CorePageItem for item in self.items):
             raise CoreInputInvalid()
@@ -763,6 +774,10 @@ class CorePage:
                 raise CoreInputInvalid()
         if not _is_id(self.correlation_id):
             raise CoreInputInvalid()
+        next_after = object.__getattribute__(self, "next_after")
+        if next_after is not None:
+            if not _is_id(next_after) or not self.items or next_after != self.items[-1].ref:
+                raise CoreInputInvalid()
 
 
 @dataclass(frozen=True, slots=True, repr=False)
