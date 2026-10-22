@@ -76,3 +76,31 @@ produire de tenant, d'identité ou d'autorisation dupliqués.
 
 - **WHEN** le processus de provisionnement est interrompu avant son résultat
 - **THEN** une reprise autorisée atteint un état explicite sans effet dupliqué
+
+### Requirement: Gouvernance initiale vérifiée avant création Core
+
+Avant une création Core d’amorçage, C08 MUST obtenir d’une source serveur protégée un profil de gouvernance complet et versionné conforme à data-governance et une attestation liée aux cibles et à la transaction. Cette attestation MUST être revalidée avant commit. Une fixture ou une dispense du compte encore inexistant MUST NOT la remplacer. Profil absent, périmé, révoqué ou incohérent MUST empêcher la création.
+
+#### Scenario: Profil initial déclaré et vérifié
+
+- **WHEN** l’acte R01 dispose d’un profil complet provenant de la source de confiance courante et d’une attestation vérifiée
+- **THEN** les contrôles propriétaires peuvent poursuivre la transaction sans dispense anticipée du futur Super Admin
+
+#### Scenario: Profil absent ou substitué avant commit
+
+- **WHEN** le profil initial manque ou diverge lors de la revalidation transactionnelle
+- **THEN** aucune création n’est confirmée et les effets liés suivent le rollback propriétaire
+
+### Requirement: Publication externe et références de connexion vérifiées
+
+C08 MUST remplacer les saisies de connexion par les seules références du provider autorisé après une publication externe explicitement contrôlée. Il MUST vérifier la disponibilité, la version et la correspondance à la cible avant mise en service. Une référence seule MUST NOT prouver cette publication ni autoriser C08 à devenir writer de secrets. Les valeurs saisies MUST NOT être persistées dans un artefact, audit ou checkpoint.
+
+#### Scenario: Publication externe non confirmée
+
+- **WHEN** une référence est déclarée sans preuve de disponibilité de la version et de la cible attendues
+- **THEN** l’installation reste non prête sans conserver ni exposer la saisie pour la rejouer
+
+#### Scenario: Référence de connexion confirmée
+
+- **WHEN** la publication autorisée et la résolution de la bonne version sont vérifiées
+- **THEN** la reprise conserve uniquement les références et métadonnées non secrètes nécessaires

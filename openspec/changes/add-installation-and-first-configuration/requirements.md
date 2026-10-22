@@ -2,7 +2,7 @@
 
 ## Portée et traçabilité R01
 
-Le complément documentaire du 19 octobre 2026 conserve les exigences et scénarios canoniques et précise leur rattachement aux tâches et à la recette R01 B01–B10 de `design.md`. Ces cas sont des critères de recette futurs, pas de nouveaux scénarios OpenSpec ni des tests exécutés. D01–D04 de C02 restent validés ; aucun code ou delta n’est produit.
+Le complément documentaire du 19 octobre 2026 conserve les exigences et scénarios canoniques et précise leur rattachement aux tâches et à la recette R01 B01–B10 de `design.md`. Ces cas sont des critères de recette futurs, pas de nouveaux scénarios OpenSpec ni des tests exécutés. D01–D04 de C02 restent validés ; aucun code ou delta n’a été produit par ce complément historique. La reprise documentaire du 22 octobre 2026 présente deux deltas distincts, désormais adoptés après décision explicite ; leur traçabilité figure en fin de fichier.
 
 Les 27 références du relevé initial sont conservées avec leurs statuts ND/P historiques. Les neuf références supplémentaires R01 portent « non évalué » ; aucun statut ne constitue un verdict fonctionnel actuel. Titres, lignes, scénarios et empreintes sont recoupés avec le canon courant. Chaque texte complet, et pas seulement son titre ou son scénario, reste applicable selon ses conditions.
 
@@ -61,13 +61,66 @@ Les empreintes identifient les sources courantes du complément, sans réécrire
 
 - `openspec/specs/initial-administration/spec.md` : `a875dfd4e48cc2920ea38242b02c46aab386a7a77b645165d009d9fa47f4cc4a`.
 - `openspec/specs/initial-application-bootstrap/spec.md` : `688063fbafcd34535d87b7f4920d8e4952ff2ed3267bd5b442400a3d9f0fe3a4`.
-- `openspec/specs/installation-provisioning/spec.md` : `2d33df47ef9ad0c073c4e0d7677c98e3cd96cb8e3b6866894c6d3cb7d305e7b4`.
-- `openspec/specs/reference-composition/spec.md` : `5c833175c3ed05b6951b4193aba6eaaa0fa3990b0e61c2ef51f41e7cc7fa92d7`.
-- `openspec/specs/authorization/spec.md` : `427c3bc5776a640d2c944c7ccc21baebd85f0c92f258e3313d87b52fcdd779a1`.
+- `openspec/specs/installation-provisioning/spec.md` : `b5a8760659f847f663521718e7d8b27d4808dc4aface049a1da84c4e0e967ef6`.
+- `openspec/specs/reference-composition/spec.md` : `53f1d388d6999fcf7af05317a9774d2c4e708a90157fe1666b4210e0d1314a4c`.
+- `openspec/specs/authorization/spec.md` : `c09e4dac79ecbe6bdb16550d8a4d1566307127818cdeaf9dfbe9224f50858310`.
 - `openspec/specs/services/spec.md` : `e754ac950e612d335017122e23e55d75d3fb214f927fabcb2d48da8722013c37`.
-- `openspec/specs/audit/spec.md` : `074ea1a323e8cd6b4f4ad83fa796b75277268efbc0f791dbb6edfde1681cd47f`.
+- `openspec/specs/audit/spec.md` : `19c58dc8b16e537967c46e69fca4132867e98ada591980b67872ee8c382a5eb1`.
 - `openspec/specs/interactions/spec.md` : `9a2e9186b51c70c17781e2395da3e42f83dd2cc90da36bab624d90397d4ab9a0`.
 
 ## Comptage et état des preuves
 
 La matrice contient 36 exigences distinctes et 44 références de scénarios. Les dix cas B01–B10 précisent leur recette ; ils ne s’ajoutent pas aux compteurs du canon. Les dix tâches de réalisation restent non cochées. Aucun test produit, migration, code, nouveau change, synchronisation ou archivage n’est exécuté par ce complément.
+
+
+## Reprise documentaire du 22 octobre 2026 — exigences adoptées, recettes futures
+
+Les références R01–R36 ci-dessus restent canoniques. Les quatre exigences et huit scénarios des deux deltas locaux ont été adoptés sous accord distinct du développeur ; leurs recettes ne sont pas exécutées. Les dénominateurs historiques de 36 exigences / 44 références sont conservés comme relevé historique, sans assimiler les ajouts à des preuves produit.
+
+| Cas | Référence canonique adoptée | Critère de recette future | Tâches |
+|---|---|---|---|
+| S01 | [Résolution technique après INSTALLER explicitement autorisée](../../specs/secrets-providers/spec.md) | Chaque mode FIRST_CONFIGURATION/NORMAL/MAINTENANCE et rôle déclaré passe sous preuves réelles ; mode, rôle, finalité ou référence non autorisé échoue sans secret. | 1.3, 2.5, 3.1, 3.2 |
+| S02 | [Continuité auditée du démarrage avant PostgreSQL](../../specs/secrets-providers/spec.md) | Preuve d’audit indépendante avant remise de valeur ; import C05 idempotent de la bonne invocation avant disponibilité ; doublon, crash et relais indisponible restent inspectables. | 1.3, 2.5, 3.2 |
+| S03 | [Publication externe et références de connexion vérifiées](../../specs/installation-provisioning/spec.md) | Référence absente ou version/cible divergente garde l’installation non prête ; aucune saisie, credential ou empreinte sensible dans artefact, audit ou checkpoint. | 1.3, 2.5, 3.2 |
+| S04 | Secrets-providers / cycle de vie C01 canonique | Rotation/révocation et consommateurs encore actifs ne sont pas réputés traités par un changement de mode ; refus et reprise sans bypass INSTALLER. | 2.5, 3.2 |
+| G01 | [Gouvernance initiale vérifiée avant création Core](../../specs/installation-provisioning/spec.md) et data-governance canonique | Source protégée et profil complet/versionné, attestation réellement produite et liée aux cibles avant création. Aucun producteur de test présenté comme source déployée. | 1.4, 2.6, 3.2 |
+| G02 | Même delta adopté ; B01/B02/B08 | Profil absent, révoqué, périmé ou incohérent : aucune création ; audit applicable sans dispense du futur compte. | 2.6, 2.4, 3.2 |
+| G03 | Même delta adopté ; B06/B07 | Substitution/concurrence/panne : revalidation avant commit, rollback commun Core/Auth/audit/résultat C08 et reprise sans duplication. | 2.6, 2.4, 3.2 |
+
+Les scénarios S04 et B01–B10 renvoient aux exigences complètes existantes, sans les assouplir. C01 reste technique, R01 Ed25519/600 secondes est conservé, les deux marqueurs sont distincts et le résultat C08 reste dans la transaction propriétaire.
+
+Le besoin C10 est limité au profil et au fournisseur de gouvernance initiale effectivement requis. Ce lot ne prétend ni livrer C10, ni choisir ses rétentions, ni implémenter purge/effacement ou demandes de données. La procédure externe de publication du credential reste à vérifier séparément, sans nouveau writer.
+
+Aucune tâche de réalisation n’est cochée. .openspec.yaml a été aligné sous autorisation distincte : schema et created sont conservés et skip_specs est retiré. Les contrôles documentaires distinguent adoption et validation des exigences de toute preuve d’implémentation. Les recettes S01–S04/G01–G03 complètent B01–B10 sans démontrer une livraison C08.
+
+- `openspec/specs/secrets-providers/spec.md` : `e666a47aae86b91ed6d43d32dd8dce7b1451cb43662e5625f26a40470abf94bd` (source du delta adopté ; aucune recette produit déduite).
+
+La synchronisation ajoute deux exigences/quatre scénarios dans secrets-providers et deux exigences/quatre scénarios dans installation-provisioning ; les scénarios antérieurs restent inchangés. S04 renvoie au cycle de vie C01 canonique existant.
+
+## Limite de l’adoption antérieure — autorité du démarrage
+
+Les quatre ajouts adoptés ne modifient pas [authorization](../../specs/authorization/spec.md). Son exception de sujet OS C01 reste limitée aux seules actions techniques INSTALLER avant existence de la base et des identités ; après amorçage, les contrôles applicatifs ordinaires reprennent.
+
+S01 doit donc démontrer le sujet applicatif et la décision courante effectivement vérifiables pour une résolution post-INSTALLER, en plus des preuves UID/unité/workload. Ces preuves techniques seules ne créent aucune nouvelle exception. Si le raccord avant ouverture de PostgreSQL ne peut satisfaire ce contrat, il reste refusé et exige un arbitrage de spécification avant code ; l’adoption du présent lot ne résout pas implicitement ce point.
+
+
+## Parcours PA/PZT validé — deltas proposés et recettes futures
+
+Le parcours PA/PZT → PostgreSQL → PBO a été validé pour formalisation documentaire. Les huit deltas locaux contiennent quatre exigences déjà adoptées (conservées) et le nouveau complément proposé : six exigences modifiées, six exigences ajoutées et vingt-trois scénarios nouveaux nets par rapport aux canons courants. Ces ajouts ne sont pas encore intégrés aux canons et ne sont pas des preuves produit. La branche technique proposée dans authorization répond explicitement à la limite historique ci-dessus ; les règles canoniques actuelles restent applicables jusqu’à adoption.
+
+| Cas | Delta concerné | Critère de recette future | Tâches |
+|---|---|---|---|
+| P01 | [Administration initiale](specs/initial-administration/spec.md), [PA](specs/pixs-agent/spec.md) | Sur physique/VM sans PG préparé, PA prépare le service et initie la première connexion technique ; PBO seul réalise les migrations et effets applicatifs après contrôles. | 1.5, 1.6, 2.7 |
+| P02 | [Docker](specs/docker-image/spec.md), administration initiale | Logiciel PG dans l’image sans données/secret ; stockage externe vide initialisé par PA ; stockage existant conservé, incompatibilité non prête sans suppression implicite. | 1.5, 2.7 |
+| P03 | [PZT](specs/pzt/spec.md), [autorisation](specs/authorization/spec.md) | Avant PG, provisionnement opérateur vérifié, identités/ancrages/politique locaux contrôlés ; tout échange PBO–PA via PZT mTLS ; premier PBO non auto-approuvé. | 1.6, 2.7 |
+| P04 | PZT, autorisation | PZT absent, politique absente/périmée/révoquée ou fraîcheur invérifiable : refus, aucun repli Unix/loopback/fichier hors PZT ni ouverture réseau distante. | 1.6, 2.7 |
+| P05 | [Secrets](specs/secrets-providers/spec.md), autorisation | Redémarrage réel en NORMAL sans connexion PG préalable : remise du seul secret de connexion au workload sous politique native indépendante d’Auth PG ; droits métier attendent C04/PG et aucun mode n’est réétiqueté. | 1.3, 2.5, 2.7 |
+| P06 | Secrets, [provisionnement](specs/installation-provisioning/spec.md) | Publication externe et consommateur vérifiés, aucun writer implicite, credential absent des messages PZT/artefacts/checkpoints ; rotation/révocation/copies/audit pré-base et relais C05 rapprochés avant disponibilité. | 1.3, 2.5, 2.7 |
+| P07 | PA, provisionnement | Réponse PA perdue ou panne avant migration : inspection des résultats et de la cible avant reprise, aucun double effet ; un reçu technique n’est ni commit métier ni autorisation d’étape suivante. | 2.1, 2.7 |
+| P08 | Provisionnement, PZT | Relais ou commit puis marqueur perdus : réconciliation par propriétaire, aucun second compte/tenant, aucune atomicité inventée entre service PG externe et transaction Core/Auth/C05/C08 ; pas de compensation destructive implicite. | 2.1, 2.4, 2.7 |
+| P09 | Autorisation, PA | Sujet technique demande une création tenant, table métier, shell arbitraire ou code reçu : refus ; R01 Ed25519/600 s et gouvernance G01–G03 restent requis pour les effets applicatifs. | 1.6, 2.3, 2.7 |
+| P10 | [Composition](specs/reference-composition/spec.md), Docker | PA système/PZT local explicitement sélectionnés et qualifiés, réseau distant et sessions PA non activés implicitement ; réplicas, budgets et propriétaire de base/PZT distincts, profil historique sans exécutants non présenté comme preuve. | 1.5, 2.7 |
+
+P01–P10 sont des critères de recette future, tous non exécutés. Ils complètent B01–B10, S01–S04 et G01–G03 sans les remplacer. Le nouveau cas P05 distingue la remise technique de connexion avant PG des autres résolutions post-INSTALLER exigeant le sujet et les décisions applicatifs courants.
+
+Le périmètre documentaire est de treize fichiers C08 : quatre documents, huit deltas et le seul commentaire de métadonnée. Les empreintes des huit canons sont conservées dans le checkpoint du RUN et doivent rester inchangées à ce jalon ; le code, les migrations, la configuration d’exploitation, BUILD/PROJECT/TECHNICAL et Git ne sont pas modifiés. Les alignements racine sont identifiés dans design.md pour la phase d’adoption.
