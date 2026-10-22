@@ -94,7 +94,7 @@ def _reject_duplicate_keys(pairs: list) -> dict:
     return result
 
 
-def _walk_json(value: object, depth: int) -> None:
+def _walk_json(value: object, depth: int, *, local_references: bool = False) -> None:
     if depth > _MAX_DEPTH:
         raise _invalid_document()
     if value is None or type(value) is bool:
@@ -117,19 +117,19 @@ def _walk_json(value: object, depth: int) -> None:
         return
     if type(value) is list:
         for item in value:
-            _walk_json(item, depth + 1)
+            _walk_json(item, depth + 1, local_references=local_references)
         return
     if type(value) is dict:
         for key, item in value.items():
             if type(key) is not str:
                 raise _invalid_document()
-            if key == "$ref":
+            if key == "$ref" and (not local_references or type(item) is not str or not item.startswith("#/components/schemas/")):
                 raise _invalid_document()
             try:
                 key.encode("utf-8")
             except Exception:
                 raise _invalid_document() from None
-            _walk_json(item, depth + 1)
+            _walk_json(item, depth + 1, local_references=local_references)
         return
     raise _invalid_document()
 
@@ -311,19 +311,8 @@ def _check_form(root: object, prefix: str, contract_version: str) -> None:
                         _check_schema(media_obj["schema"], 0)
 
 
-def build_openapi_view(plan: object, document: object) -> object:
-    """Build the handler serving one validated public document."""
-    try:
-        prefix = api_major_prefix(plan)
-    except Exception:
-        raise _invalid_document() from None
-    try:
-        contract = object.__getattribute__(plan, "contract")
-        contract_version = object.__getattribute__(contract, "version")
-    except Exception:
-        raise _invalid_document() from None
-    if type(contract_version) is not str or contract_version == "":
-        raise _invalid_document()
+def _bounded_json_document(document: object, *, local_references: bool = False) -> tuple[bytes, object]:
+    """Charge un document public injecté, mêmes bornes et refus JSON que le profil historique."""
     if type(document) is not str or document == "" or len(document) > _MAX_DOCUMENT_CHARS:
         raise _invalid_document()
     try:
@@ -338,9 +327,16 @@ def build_openapi_view(plan: object, document: object) -> object:
         raise
     except Exception:
         raise _invalid_document() from None
-    _walk_json(parsed, 0)
-    _check_form(parsed, prefix, contract_version)
+    if type(local_references) is not bool:
+        raise _invalid_document()
+    _walk_json(parsed, 0, local_references=local_references)
+    return body, parsed
 
+
+def _preloaded_json_view(body: bytes) -> object:
+    """Transport commun privé ; les profils valident entièrement leur document avant cet appel."""
+    if type(body) is not bytes or not body or len(body) > _MAX_DOCUMENT_SIZE:
+        raise _invalid_document()
     def openapi_handler(request: object) -> object:
         method = _require_method(request)
         from django.http import HttpResponse
@@ -361,3 +357,21 @@ def build_openapi_view(plan: object, document: object) -> object:
         return denied
 
     return openapi_handler
+
+
+def build_openapi_view(plan: object, document: object) -> object:
+    """Build the handler serving one validated public document."""
+    try:
+        prefix = api_major_prefix(plan)
+    except Exception:
+        raise _invalid_document() from None
+    try:
+        contract = object.__getattribute__(plan, "contract")
+        contract_version = object.__getattribute__(contract, "version")
+    except Exception:
+        raise _invalid_document() from None
+    if type(contract_version) is not str or contract_version == "":
+        raise _invalid_document()
+    body, parsed = _bounded_json_document(document)
+    _check_form(parsed, prefix, contract_version)
+    return _preloaded_json_view(body)

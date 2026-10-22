@@ -170,8 +170,16 @@ class PostgresLocalAuthService:
         command.__post_init__()
         supplied.__post_init__()
         request = command.request
-        if request.action_id != "pixs.auth.session.create" or request.resource_id != request.subject_id:
+        if request.action_id != "pixs.auth.session.create":
             raise AuthServiceError("AUTH_INPUT_INVALID")
+        if request.resource_id != request.subject_id:
+            from pixs.auth.identifiers import session_creation_reference, AuthIdentifierError
+            try:
+                expected = session_creation_reference(request.subject_id, request.context)
+            except AuthIdentifierError:
+                raise AuthServiceError("AUTH_INPUT_INVALID") from None
+            if request.resource_id != expected:
+                raise AuthServiceError("AUTH_INPUT_INVALID")
         identity_id = parse_identity_reference(request.subject_id)
         source, decider, decision = None, None, None
         commit_attempted = False

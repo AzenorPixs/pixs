@@ -2,18 +2,18 @@
 
 ## Statut et périmètre autorisé
 
-PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 a été adopté et archivé le 18 octobre 2026 ; ses précisions normatives sont intégrées au canon. Les arbitrages propres au présent change restent à lever avant réalisation.
+RÉALISATION_VÉRIFIÉE_C06 — conception et compléments techniques validés par CGPT avant écriture, dans le canon C00 courant. Les preuves du 22 octobre sont précisées en fin de document. Archivage, rapport post-archive et clôture CAB restent distincts et ne sont pas encore déclarés accomplis.
 
-## État actuel vérifié
+## État initial de préparation — historique
 
 Constat : Plans OpenAPI et fabriques de réponses sont isolés ; les documents backend indiquent l’absence de routes Core complètes, pagination et idempotence générale.
 
 Sources consultées et empreintes recoupées avec la matrice :
 
-- [src/pixs/backend/api/README.md](../../../src/pixs/backend/api/README.md).
-- [src/pixs/backend/api/contracts.py](../../../src/pixs/backend/api/contracts.py).
-- [src/pixs/backend/api/success.py](../../../src/pixs/backend/api/success.py).
-- [src/pixs/backend/local_test_composition.py](../../../src/pixs/backend/local_test_composition.py).
+- [src/pixs/backend/api/README.md](../../../../src/pixs/backend/api/README.md).
+- [src/pixs/backend/api/contracts.py](../../../../src/pixs/backend/api/contracts.py).
+- [src/pixs/backend/api/success.py](../../../../src/pixs/backend/api/success.py).
+- [src/pixs/backend/local_test_composition.py](../../../../src/pixs/backend/local_test_composition.py).
 
 Ces constats ne sont pas des preuves d’exécution actuelle des tests. Les structures et sous-lots présents sont à réutiliser ; aucun manque d’intégration ne justifie leur recréation.
 
@@ -23,7 +23,7 @@ Exposer les services Core propriétaires par API versionnée et contrats publié
 
 ## Raccordement C03 des façades du 20 octobre 2026
 
-Le profil retient une façade web explicitement déclarée à session côté serveur et cookie protégé inaccessible au JavaScript, avec CSRF ; l’API standard et la CLI restent Bearer opaque selon les [décisions C03](../archive/2026-10-21-add-initial-authentication-and-sessions/design.md). [N04](../define-p0-web-serving-and-security-boundary/specs/api/spec.md) possède la déclaration des surfaces et de leurs protections. Une route ne choisit pas implicitement l’un des modes selon les justificatifs reçus ; l’ambiguïté est traitée selon un contrat explicite sans élargir l’admission.
+Le profil retient une façade web explicitement déclarée à session côté serveur et cookie protégé inaccessible au JavaScript, avec CSRF ; l’API standard et la CLI restent Bearer opaque selon les [décisions C03](../2026-10-21-add-initial-authentication-and-sessions/design.md). [N04](../../define-p0-web-serving-and-security-boundary/specs/api/spec.md) possède la déclaration des surfaces et de leurs protections. Une route ne choisit pas implicitement l’un des modes selon les justificatifs reçus ; l’ambiguïté est traitée selon un contrat explicite sans élargir l’admission.
 
 Les façades utilisent les mêmes interfaces Auth spécialisées, puis le même contrôle d’autorisation et ScopeContext canonique. Routes, schémas, erreurs et paramètres de cookie/transport restent à détailler dans les contrats versionnés. Les durées, la fraîcheur et les plafonds ordinaires de C03 s’appliquent sans contournement par changement de façade, sous les exceptions canoniques Super Admin.
 
@@ -33,7 +33,7 @@ La création/rotation de session suit la transaction commune C03/C05. L’except
 
 Privilégier les mécanismes et dépendances existants. Une implémentation locale qui duplique les contrats, importe des tables privées ou sélectionne implicitement un provider est incompatible avec le cadrage. Toute technologie supplémentaire ou précision de comportement devra être justifiée avant réalisation ; la présence d’un paquet dans DEVOPS ne prouve ni sélection ni conformité.
 
-## Décisions bloquantes avant réalisation
+## Décisions initialement bloquantes avant réalisation
 
 Catalogue exact de routes et commandes, schémas/versions, contrat de curseur et conservation idempotence ; ne pas annoncer Bulk ou SDK optionnels.
 
@@ -43,10 +43,10 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
-- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
+- [add-core-postgres-services](../2026-10-20-add-core-postgres-services/proposal.md).
+- [add-initial-authentication-and-sessions](../2026-10-21-add-initial-authentication-and-sessions/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../2026-10-21-add-durable-minimized-audit/proposal.md).
 
 La création anticipée de ces dossiers ne signifie pas que leurs tâches sont réalisées. Les hôtes intermédiaires demeurent non prêts si une obligation manque ; C17 qualifie le paquet C18, C19 vérifie son identité de distribution.
 
@@ -58,7 +58,7 @@ Relier les scénarios de `requirements.md` à la recette concernée et conserver
 
 ## Migrations et retour
 
-Aucune migration ni remise à zéro pendant cette préparation. Toute évolution future de données aura un contrat, un plan autorisé, des contrôles de compatibilité et une compensation/restauration explicite ; aucun abaissement automatique de base.
+La préparation initiale ne réalisait aucune migration. La réalisation ajoute 0003_core_idempotence après 0002_core_audit, avec migration/retour testés uniquement dans des schémas PG privés jetables. Le retour refuse les données idempotentes à conserver ; aucun abaissement automatique ni migration d’une base applicative n’est exécuté.
 
 ## Hors profil
 
@@ -75,7 +75,7 @@ Relier chaque opération publique au contexte canonique, authentification, autor
 La construction du bundle d’entrée SDK appartient à O21 ; C06 possède contrat et serveur HTTP. Format de publication/version et compatibilité doivent être revus avant code, sans créer ici un nouveau change déjà couvert par ce lot.
 
 
-Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
+Voir [audit individuel et limites des preuves](../2026-10-18-define-first-installable-pbo-profile/audit-ne-94.json) et [rapport d’audit](../../../../reports/audit-ne-94-2026-10-17/RAPPORT.md). Les tâches de réalisation restent non cochées.
 
 
 ## Revue transversale P0 du 17 octobre 2026
@@ -124,7 +124,7 @@ Les parcours CLI, erreurs API, management et secours font aussi partie des texte
 
 Contrôles à intégrer : Deux navigateurs déclarés, clavier/zoom/lecteur d’écran ; Erreurs et confirmations d’installation/exploitation localisées ; Thème/session/tenant sans fuite d’état.
 
-Voir [audit transversal durable](../archive/2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
+Voir [audit transversal durable](../2026-10-18-define-first-installable-pbo-profile/audit-transversal-p0.json) et [rapport local](../../../../reports/audit-transversal-p0-2026-10-17/RAPPORT.md). Aucune tâche de réalisation cochée.
 
 ## Décisions de réalisation du 21 octobre 2026 — C06
 
@@ -193,7 +193,7 @@ Idempotency-Key est obligatoire pour les mutations. Les identifiants de décisio
 
 Queries GET : P expose users/USER, identities/IDENTITY, links/LINK, permissions/PERMISSION, policies/POLICY, tenants/TENANT, bindings/BINDING, grants/GRANT ; P/T/S exposent groups/GROUP, user-groups/USER_GROUP, roles/ROLE, role-permissions/ROLE_PERMISSION, assignments/ROLE_ASSIGNMENT selon la propriété réelle ; T expose memberships/TENANT_MEMBERSHIP et scopes/SCOPE. Les tombstones ne sont pas exposés dans cette première surface. Chaque Query appelle query_identity, query_groups, query_scope, query_authz_data ou query_bootstrap ; cette dernière est une lecture protégée, jamais un effet R01. Action Query fixe pixs.core.<domaine>.read, domaines identity/groups/scope/authz-data/bootstrap selon services_queries ; référence collection_ref propriétaire.
 
-Auth C03 : GET public `/api/v1/web/auth/csrf` ; sous chaque racine de contexte, POST `auth/login`, `auth/logout`, `auth/revoke-session`, `auth/revoke-all`, `auth/change-password` ; `auth/renew` pour Bearer seulement. Les méthodes publiques login/invoke des façades C03 restent propriétaires de la transaction, des émissions et de leurs règles de rejeu. Le login est déclaré public avec authentification propre, jamais avec des faits d'acteur déclarés par le client ; récupération opérateur et réconciliation administrative ne sont pas publiées ici. Pas de journalisation de corps, mots de passe, tokens ni cookies.
+Auth C03 : GET public `/api/v1/web/auth/csrf` ; sous les racines de contexte, POST `auth/login`, `auth/logout`, `auth/revoke-session`, avec `auth/renew` pour Bearer seulement. `auth/revoke-all` et `auth/change-password` sont publiés uniquement sous PLATFORM car compte et justificatif sont globaux. Le login tenant/scope utilise un intent logique Auth versionné reconnu après vraie preuve mot de passe, sans réétiqueter une identité Core ni modifier le resolver des ressources existantes. Les méthodes publiques login/invoke des façades C03 restent propriétaires de la transaction, des émissions et de leurs règles de rejeu. Le login est déclaré public avec authentification propre, jamais avec des faits d'acteur déclarés par le client ; récupération opérateur et réconciliation administrative ne sont pas publiées ici. Pas de journalisation de corps, mots de passe, tokens ni cookies.
 
 ### Pagination, filtrage et activité
 
@@ -256,3 +256,112 @@ Recettes : unitaires des valeurs/serializer/curseurs/erreurs/contrats ; PostgreS
 
 Archivage seulement après critères prouvés et revue ; mandat séparé, puis STATISTIQUES.md distinct vérifié à six sections, publication, gate et arrêt ciblé. Aucun Git, prochain change, déploiement de production ou arrêt des services communs.
 
+
+
+## Réalisation vérifiée du 22 octobre 2026
+
+La réalisation C06 est autorisée dans le RUN
+`cismp5-pixs-1f3e128ad89f45a9`, job
+`cismp5-c06-34960d24111a4362`. Les barrières de conception initiales ont
+été levées par la conception du 21 octobre et les NFDOC complémentaires
+validés par CGPT avant écriture. Aucun delta de canon n'est introduit ;
+`.openspec.yaml` déclare `skip_specs`. Les sections historiques datées
+restent des constats de préparation, sans valoir résultat actuel.
+
+### Surface et construction contractuelle
+
+Le catalogue public ferme 22 commandes et 15 collections, soit 156 opérations
+dans leurs contextes et façades réellement publiés. Les deux fabriques
+publiques HTTP exigent la référence contractuelle antérieure approuvée.
+La comparaison structurelle précède leur construction et calcule les
+ruptures au lieu d'accepter un booléen de l'appelant. OpenAPI 3.1.0,
+version de contrat 1.0.0, index et documents de capacités sont préchargés,
+chacun limité à 64 Kio avec taille/SHA-256 vérifiables. Le helper historique
+conserve signature, exports, profil et comportement ; seuls chargement JSON
+et transport privés sont mutualisés.
+
+La catégorie Auth est ADMIN, fixée par le serveur. PLATFORM conserve le
+login legacy et les opérations globales de compte/justificatif. Tenant/scope
+utilisent les opérations de session. Revoke-all et change-password ne sont
+pas publiés dans ces contextes : leurs ressources restent globales.
+Les huit routes globales T/S du prototype de conception ont été retirées
+avant toute publication ; la référence finale couvre 156 opérations.
+
+### Corrections de raccordement nécessaires
+
+Les NFDOC et décisions préalables sont conservés dans le checkpoint du RUN.
+
+- C03 : avec une horloge réelle, l'authentification précède la création de
+  session. Le vérificateur contrôle séparément création et authentification
+  antérieures à la dernière activité, elle-même non future ; expiration,
+  fraîcheur, générations et assurances ne sont pas diminuées.
+- Auth tenant/scope : `session_creation_reference` produit un identifiant
+  logique versionné liant sujet et contexte complet. `AuthInvocationSource`
+  ne reconnaît cet intent qu'après vraie revalidation de mot de passe,
+  sans session/token, pour session.create et sous liaison requête/alias/
+  opération. Le resolver des ressources existantes n'est pas modifié.
+  L'identité Core n'est jamais réétiquetée. La référence ne donne aucun droit :
+  absence de politique et contexte/opération substitués restent refusés.
+- C04 : la création/composition d'un rôle revalide une permission déjà
+  déclarée. Le validateur accepte sa réutilisation seulement si ACTIVE et
+  de définition exactement identique, sous verrou de ligne. Une permission
+  différente ou inactive est refusée. Le propriétaire Core conserve sa garde
+  de création contre doublon ; les reçus d'objet/TX/savepoint sont inchangés.
+
+Les compléments de fichiers validés concernent
+`src/pixs/auth/api_request_source.py`, `identifiers.py`, `invocation.py`,
+`services.py`, `runtime_verifier.py`,
+`src/pixs/core/services_runtime_declarations.py`,
+`src/pixs/backend/openapi_document_view.py` et la recette unitaire dédiée
+aux valeurs idempotentes. Aucun fichier généré OpenCode, configuration,
+manifest de composant, migration historique ou règle canonique n'est modifié.
+
+### Activité, transaction et reprise
+
+La politique de commandes web interactives est un frozenset serveur
+explicite. Après un premier résultat Core confirmé, C06 fournit une preuve
+éphémère liée à l'acteur, la session, le contexte, l'opération et la date ;
+C03 possède revalidation, déduplication et prolongation. Renew, query
+d'arrière-plan et rejeu n'ajoutent pas d'activité. Un échec distinct de suivi
+est signalé dans meta.activity sans altérer le résultat Core déjà confirmé
+ni prétendre prolonger la session.
+
+Le participant C06 rejoint la transaction propriétaire avec C05 et les
+participants requis. Le trigger PostgreSQL différé relit l'état final et
+interdit IN_PROGRESS engagé. Le résultat complet initial est conservé.
+La perte d'acquittement est réconciliée sur connexion dédiée sans réappliquer
+la mutation. Aucune purge de rétention n'est ajoutée ; la migration 0003 est
+additive et son retour refuse les données idempotentes à conserver.
+
+### Preuves finales examinées
+
+| Contrôle | Résultat observé | Effet natif |
+| --- | --- | --- |
+| Neuf recettes PostgreSQL C03/C04/C06 | 192 cas vrais, cleanup et conns_closed vrais | `call_01a1612c0a267426b2a7213b01d628b0` |
+| Unitaires C06 et helpers/plans/contrats historiques | 166 tests OK | `call_01a1612dc5ca722cbd04fc7b39425507` |
+| Syntaxe de tous fichiers Python modifiés | 33 fichiers compilés, cache de preuves réservé | `call_01a1612f3f457159936f1edc70d3509c` |
+| Change OpenSpec avant alignement documentaire | strict valide, zéro delta accepté | `call_01a161311fd4740682a8e9bf65c6c538` |
+
+La recette finale comprend 80 cas PG C06 (30 idempotence, 10 bridge Auth,
+19 plateforme et activité, 21 tenant/scope/Root) et 112 cas de régression
+(98 C03, 14 C04). Le vérificateur C03 historique déclare ses doubles de
+faits/confiance ; les parcours applicatifs C06 exécutent les vrais
+C03/C04/C05/Core/C06. Les sorties et empreintes sont conservées dans
+`output/cismp/cismp5-pixs-1f3e128ad89f45a9/state.json`.
+
+### Frontières de qualification et clôture
+
+Les schémas PostgreSQL sont privés, jetables et nettoyés ; la version
+réellement observée est 16.14 (160014), Django 6.1.2. L'inventaire DEVOPS
+d'une autre version ne remplace pas cette preuve. Les requêtes
+RequestFactory et ASGI s'exécutent en processus, sans serveur ni TLS réseau.
+C09/C10 sont des doubles explicitement nommés dans ces recettes ; les lignes
+C08 de binding/grant servent de setup et ne qualifient pas R01.
+Le frontend, le packaging/distribution C17/C19, les jobs/Bulk asynchrones et
+une activation P0 complète ne sont pas livrés par C06.
+
+Git, déploiement et prochain change ne sont pas autorisés ici. L'archivage
+C06 puis STATISTIQUES.md, la publication CAB, le gate, le désarmement et la
+libération restent des étapes terminales distinctes : aucune n'est réputée
+accomplie par la seule réussite des tests. La garde d'autorisation de 3.4 est
+respectée ; le rapport post-archive demeure obligatoire avant TERMINÉ.

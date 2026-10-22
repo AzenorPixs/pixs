@@ -218,7 +218,7 @@ class AuthAuthenticationVerifier:
                     or (session.facade == "WEB") != (self._kind is TokenKind.WEB_SESSION)):
                 raise AuthVerificationError()
             authenticated_at = session.authenticated_at
-            if not session.created_at <= authenticated_at <= session.last_activity_at <= now:
+            if not (session.created_at <= session.last_activity_at <= now and authenticated_at <= session.last_activity_at):
                 raise AuthVerificationError()
             access_cap = token.issued_at + datetime.timedelta(seconds=policy.access_seconds) if self._kind is TokenKind.ACCESS else session.absolute_expires_at
             expires_at = min(access_cap, token.expires_at, session.idle_expires_at, session.absolute_expires_at, session.context_expires_at,

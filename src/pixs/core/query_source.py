@@ -262,13 +262,18 @@ def _row_context(kind, row, fallback):
         return _Cx(_T.TENANT, row.tenant_ref, row.scope_ref)
     return fallback
 
-def selected_rows(kind, refs, context, alias, *, governance_waived, limit):
+def selected_rows(kind, refs, context, alias, *, governance_waived, limit, after=None, page_limit=None):
     """Adapter interne : seules les références du plan source C04 sont matérialisées."""
     conn = _source_inputs(kind, context, alias, limit)
     if type(refs) is not tuple or any(type(r) is not str or not r for r in refs):
         raise _SE("REFERENCES_INVALIDES") from None
     if len(set(refs)) != len(refs) or len(refs) > limit or type(governance_waived) is not bool:
         raise _SE("BORNE_INVALIDE") from None
+    if page_limit is not None and (type(page_limit) is not int or not 1 <= page_limit <= limit):
+        raise _SE("BORNE_INVALIDE") from None
+    if after is not None and (type(after) is not str or not after or page_limit is None):
+        raise _SE("BORNE_INVALIDE") from None
+    after_keys = None if after is None else _parse_ref(kind, after)
     if not conn.in_atomic_block:
         raise _SE("HORS_TRANSACTION") from None
     if not refs:
@@ -284,7 +289,15 @@ def selected_rows(kind, refs, context, alias, *, governance_waived, limit):
     qs = _base_queryset(kind, context, alias).filter(where)
     if governance_waived is not True:
         qs = qs.filter(governance_ref__isnull=False, confidentiality__isnull=False, personal__isnull=False)
-    rows = list(qs.order_by(*key_fields)[:limit + 1])
+    if after_keys is not None:
+        lexicographic = _Q(pk__in=[])
+        for position, field in enumerate(key_fields):
+            branch = {key_fields[earlier]: after_keys[earlier] for earlier in range(position)}
+            branch[field + "__gt"] = after_keys[position]
+            lexicographic |= _Q(**branch)
+        qs = qs.filter(lexicographic)
+    bound = limit if page_limit is None else page_limit
+    rows = list(qs.order_by(*key_fields)[:bound + 1])
     if len(rows) > limit:
         raise _SE("DEPASSEMENT_LOT") from None
     contexts = [_row_context(kind, row, context) for row in rows]
@@ -312,6 +325,8 @@ def selected_rows(kind, refs, context, alias, *, governance_waived, limit):
         if ref in by_ref:
             raise _SE("REFERENCE_AMBIGUE") from None
         by_ref[ref] = _Item(kind, ref, current, row.version, row.persistence_state, row.retention_state, row.governance_ref, row.confidentiality, row.personal, _row_data(kind, row))
+    if page_limit is not None:
+        return tuple(by_ref.values())
     return tuple(by_ref[ref] for ref in refs if ref in by_ref)
 
 class CoreFactSource:

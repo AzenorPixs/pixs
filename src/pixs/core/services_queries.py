@@ -120,7 +120,17 @@ def query_core(kind: str, *, query: CoreQueryInput, envelope: CommandEnvelope, p
             refs = tuple(ref for ref in plan.resource_ids if not wanted or ref in wanted)
             if governance_waived is not True and any(ref not in attestation.resource_refs for ref in refs):
                 raise CoreServiceError("RESSOURCE_NON_COUVERTE") from None
-            items = selected_rows(kind, refs, request.context, alias, governance_waived=governance_waived, limit=maximum)
+            next_after = None
+            if query.page_limit is None:
+                items = selected_rows(kind, refs, request.context, alias, governance_waived=governance_waived, limit=maximum)
+            else:
+                if query.page_limit > maximum:
+                    raise CoreServiceError("BORNE_INVALIDE") from None
+                reserved = selected_rows(kind, refs, request.context, alias, governance_waived=governance_waived,
+                                         limit=maximum, after=query.after, page_limit=query.page_limit)
+                items = reserved[:query.page_limit]
+                if len(reserved) > query.page_limit:
+                    next_after = items[-1].ref
             if governance_waived is not True:
                 profile = attestation.profile
                 expected = (profile.data_asset_id, profile.confidentiality.value, profile.personal_data.value)
@@ -148,7 +158,7 @@ def query_core(kind: str, *, query: CoreQueryInput, envelope: CommandEnvelope, p
             final_governance = ports.decider.governance_waived(request, fresh, alias=alias, operation_id=envelope.operation_id)
             if type(final_audit) is not bool or type(final_governance) is not bool or (final_audit, final_governance) != (audit_waived, governance_waived):
                 raise CoreServiceError("DEROGATION_DIVERGENTE") from None
-            page = CorePage(items, PROFILE_VERSION, final.snapshot_version, final.evaluated_at, final.expires_at, query.correlation_id)
+            page = CorePage(items, PROFILE_VERSION, final.snapshot_version, final.evaluated_at, final.expires_at, query.correlation_id, next_after)
             commit_attempted = True
         return page
     except (CoreServiceError, CorePortError, CoreInputInvalid, PortError, FilterPlanError) as principal:

@@ -82,7 +82,14 @@ class AuthInvocationSource:
                 raise AuthVerificationError()
             request = self._template._request
             def resolve(verifier, metadata):
-                verifier.revalidate(request, alias=alias, operation_id=operation_id)
+                authentication, _ = verifier.revalidate(request, alias=alias, operation_id=operation_id)
+                # Espace logique distinct, jamais un remplacement du resolver de lignes existantes.
+                if (verifier._digest is None and authentication.session_id is None
+                        and request.action_id == "pixs.auth.session.create" and type(resource_id) is str):
+                    from pixs.auth.identifiers import session_creation_reference
+                    expected = session_creation_reference(request.subject_id, request.context)
+                    if resource_id == expected:
+                        return ResourceOwnership(resource_id, request.context)
                 return metadata.ownership(resource_id, context=context, alias=alias, operation_id=operation_id)
             return self._operate(request, alias, operation_id, resolve)
 

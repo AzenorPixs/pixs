@@ -100,7 +100,10 @@ class RuntimeDeclarationValidator:
         if (owner not in self._owners or resource_ref not in self._store.catalog.resource_ids
                 or action_ref not in self._store.catalog.action_ids):
             raise CorePortError()
-        if CorePermission.objects.using(alias).filter(permission_id=permission_id).exists():
+        existing = CorePermission.objects.using(alias).select_for_update().filter(permission_id=permission_id).values(
+            "owner", "resource_ref", "action_ref", "persistence_state").first()
+        if existing is not None and (existing["persistence_state"] != "ACTIVE"
+                or (existing["owner"], existing["resource_ref"], existing["action_ref"]) != (owner, resource_ref, action_ref)):
             raise CorePortError()
         return self._stage(alias, operation_id, transaction_token, context,
                            "permission", (permission_id, owner, resource_ref, action_ref))
