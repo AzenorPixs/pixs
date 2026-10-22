@@ -23,27 +23,36 @@ PZT. Les droits de transport et les droits métier restent distincts. Les donné
 souhaitées restent dans PostgreSQL côté PBO, les états réellement appliqués sont
 rapportés par leur exécutant. Un accusé de réception ne prouve pas l'exécution.
 
+## Complément adopté le 21 octobre 2026
+
+Le [binaire PBO commun et les profils de ressources](../define-common-pbo-binary-and-resource-profiles/design.md) complètent cette conception. Le Kernel, Core, Auth et les modules Agent/PZT sont regroupés dans une application PBO ; les plans de processus PBO et PA/PZT sont configurables selon leur environnement. La séparation des exécutants, les canaux sécurisés et les responsabilités décrits ici sont conservés. Le schéma ci-dessous reflète cette composition actuelle ; les preuves datées du 17 octobre restent historiques.
+
 ## Topologies
 
 ```mermaid
 flowchart TB
     U["PFO / clients / intégrations"]
     subgraph H["Hôte local — PBO/PFO, PA et PZT"]
-        subgraph B["PBO — Django"]
+        subgraph B["PBO — Nuitka standalone / Django, exploitation Standalone ou ZT"]
             M["Modules fonctionnels"]
-            A["pixs.agent — configuration, administration et supervision de PA hors PZT"]
-            Z["pixs.pzt — configuration, administration et supervision de PZT"]
-            C["pixs.core — identités, tenants et permissions"]
+            AU["pixs.auth obligatoire — authentification locale autonome"]
+            A["pixs.agent obligatoire — configuration, administration et supervision de PA hors PZT"]
+            Z["pixs.pzt obligatoire — configuration, administration et supervision de PZT"]
+            C["pixs.core obligatoire — identités, tenants et permissions"]
             K["Kernel — composition et services génériques"]
             M --> A
+            M --> AU
+            K -. "composition" .-> C
+            K -. "composition" .-> AU
             K -. "composition" .-> A
             K -. "composition" .-> Z
+            AU -. "contrats communs" .-> C
             A -. "contrats communs" .-> C
             Z -. "contrats communs" .-> C
         end
-        D[("PostgreSQL — source de vérité applicative")]
-        T["PZT local — exécutable indépendant"]
-        P["PA local — fonctions système et utilisateur selon profil"]
+        D[("PostgreSQL — stockage par défaut")]
+        T["PZT local — Cython, exécutable indépendant, processus configurables"]
+        P["PA local — Cython, processus système/utilisateur selon ressources"]
         B --- D
         A <-->|"Instructions, états et résultats via PZT"| T
         Z <-->|"Contrôle sécurisé de PZT"| T
@@ -51,16 +60,16 @@ flowchart TB
     end
     U --> M
     subgraph R1["Hôte distant A — sans PBO/PFO"]
-        T1["PZT distant A"]
-        P1["PA distant A"]
+        T1["PZT distant A — Cython, ressources propres"]
+        P1["PA distant A — Cython, ressources propres"]
         T1 <-->|"Échanges protégés"| P1
     end
     subgraph R2["Hôte distant B — avec PBO/PFO facultatifs"]
         F2["PFO distant B"]
-        B2["PBO distant B — modules fonctionnels, pixs.agent et pixs.pzt"]
+        B2["PBO distant B — même binaire Nuitka standalone, exploitation Standalone ou ZT"]
         D2[("PostgreSQL distant B")]
-        T2["PZT distant B"]
-        P2["PA distant B"]
+        T2["PZT distant B — Cython, ressources propres"]
+        P2["PA distant B — Cython, ressources propres"]
         F2 --> B2
         B2 --- D2
         B2 <-->|"Contrats de gestion via PZT"| T2
@@ -95,13 +104,16 @@ PA/PZT ne poursuivent sans PBO que des fonctions provisionnées encore autorisé
 
 ## Compilation et distribution conservées
 
+La révision du 21 octobre 2026 retient Nuitka standalone pour PBO et Cython pour les trois binaires PA et le binaire PZT. Les deltas de compilation de ce dossier sont alignés sur ce choix ; les contrôles et décisions datés du 17 octobre ci-dessous restent des preuves historiques sans requalification produit.
+
+
 | Artefact | Composition |
 | --- | --- |
-| Debian PBO/PFO | PBO/PFO avec pixs.agent et pixs.pzt, sans exécutables PA/PZT. |
-| Debian PA/PZT | Trois binaires PA (Nuitka) et PZT indépendant (Cython), sans PBO/PFO embarqués. |
-| Docker | PBO/PFO, deux binaires PA système/événements (Nuitka) et PZT (Cython), sans binaire utilisateur PA. |
+| Debian PBO/PFO | Binaire PBO commun Kernel/Core/Auth/Agent/PZT, composants requis et ressources PFO, sans exécutables PA/PZT. |
+| Debian PA/PZT | Trois binaires PA (Cython) et PZT indépendant (Cython), sans PBO/PFO embarqués. |
+| Docker | Binaire PBO commun et ressources PFO, deux binaires PA système/événements (Cython) et PZT (Cython), sans binaire utilisateur PA. |
 
-Les quatre exécutables complets et les trois Docker restent inchangés en nombre.
+Les quatre exécutables PA/PZT complets et les trois exécutants Docker restent inchangés en nombre ; ils sont distincts du binaire PBO commun. Le nombre de processus est configuré selon les ressources et ne modifie pas ce nombre de fichiers exécutables.
 PZT garde son démarrage sans délai, PA ses délais système/session ; comptes,
 signaux, états durables et budgets d'arrêt sont distincts et déclarés par profil.
 Les noms de paquets/fichiers, options CLI, versions d'outils et endpoints restent

@@ -37,7 +37,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 ## Dépendances et interfaces
 
 - [add-pzt-telemetry-purge-jobs-and-leases](../add-pzt-telemetry-purge-jobs-and-leases/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 
 
 

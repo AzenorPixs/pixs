@@ -25,7 +25,7 @@ Chaque transition MUST vérifier gardes, autorisation, périmètre et assurance 
 
 ### Requirement: Reprise persistante sans perte
 
-Délais, points de reprise et états survivent au redémarrage via persistance déclarée ; aucune donnée nécessaire à la reprise MUST NOT dépendre de la mémoire locale.
+Délais, points de reprise et états survivent au redémarrage via persistance déclarée ; une donnée nécessaire à la reprise MUST NOT dépendre de la mémoire locale.
 
 #### Scenario: Redémarrage avec reprise
 

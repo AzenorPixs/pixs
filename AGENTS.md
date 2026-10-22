@@ -1,10 +1,10 @@
-# AGENTS.md — Pixs
+# AGENTS.md — Pixs l'Application Universelle
 
 Version : 0.4
 
 ## 1. Contexte
 
-* Projet : `Pixs` ;
+* Projet : `Pixs l'Application Universelle` ;
 * Racine du projet : `/home/devops/datas/pixs` ;
 * Règles de sécurité et de travails des LLM : `AGENTS.md` ;
 * Objectifs et architecture du projet : `PROJECT.md` ;

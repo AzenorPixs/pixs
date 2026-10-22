@@ -35,9 +35,9 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
 - [define-first-installable-pbo-profile](../archive/2026-10-18-define-first-installable-pbo-profile/proposal.md).
-- [add-core-postgres-services](../add-core-postgres-services/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 - [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
 - [compose-modular-frontend-with-core-api](../compose-modular-frontend-with-core-api/proposal.md).
 

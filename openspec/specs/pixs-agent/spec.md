@@ -11,9 +11,25 @@ n’est déclarée par ces spécifications.
 
 ```mermaid
 flowchart LR
-    A["PBO : pixs.agent"] <-->|"Gestion PA via PZT"| T["PZT indépendant"]
-    Z["PBO : pixs.pzt"] <-->|"Gestion PZT sécurisée"| T
-    T <-->|"Échanges protégés"| P["PA : trois binaires, six modes"]
+    subgraph B["Binaire PBO Nuitka standalone — exploitation Standalone ou ZT"]
+        K["Kernel — mécanismes génériques"]
+        C["pixs.core — primitives communes"]
+        U["pixs.auth — authentification"]
+        M["Module propriétaire de l'opération"]
+        A["pixs.agent — gestion PA hors PZT"]
+        Z["pixs.pzt — gestion réseau"]
+        K -. "composition" .-> C
+        K -. "composition" .-> U
+        K -. "composition" .-> A
+        K -. "composition" .-> Z
+        U -. "contrats publics" .-> C
+        A -. "contrats publics" .-> C
+        Z -. "contrats publics" .-> C
+        M --> A
+    end
+    A <-->|"Instructions et résultats via PZT"| T["PZT indépendant Cython — processus selon ressources"]
+    Z <-->|"Contrôle sécurisé PZT"| T
+    T <-->|"Échanges protégés"| P["PA indépendant Cython — trois binaires, six modes selon profil"]
 ```
 
 Le schéma est logique ; les exigences ci-dessous fixent les responsabilités.
@@ -21,6 +37,29 @@ Les profils locaux et distants, avec ou sans PBO/PFO sur l'hôte distant,
 sont définis par runtime. Les endpoints restent à qualifier.
 
 ## Requirements
+
+### Requirement: Processus PA configurables par rôle et session
+
+Les trois binaires et six modes PA MUST conserver leur répartition et permettre un plan de processus et de concurrence selon runtime et les ressources de leur environnement. Le plan MUST distinguer démons permanents, événements bornés et sessions réelles. Il MUST NOT transformer un événement en démon, activer un mode exclu du profil ou partager les privilèges entre système et utilisateur.
+
+#### Scenario: Deux sessions utilisateur
+
+- **WHEN** deux sessions réelles utilisent le binaire utilisateur PA
+- **THEN** leurs processus, droits, ressources et arrêts restent isolés dans le budget global déclaré
+
+#### Scenario: Profil Docker dimensionné
+
+- **WHEN** un plan de ressources PA est appliqué dans Docker
+- **THEN** seuls les modes système et événements du conteneur admissibles sont sélectionnés, sans mode de session
+
+### Requirement: Unicité des opérations PA multiprocessus
+
+Les processus PA MUST coordonner propriété des ressources, admission, idempotence et résultats durables selon leurs contrats. Leur multiplication MUST NOT dupliquer un effet, créer une identité ou une autorité implicite, ni permettre des mutations concurrentes incompatibles. Les configurations de ressources MUST être gérées par pixs.agent via PZT avec état appliqué vérifié.
+
+#### Scenario: Deux processus pour une opération
+
+- **WHEN** deux processus PA reçoivent une même opération ou des opérations incompatibles sur une ressource
+- **THEN** la coordination conserve l'idempotence et la propriété déclarée sans double application ni choix implicite d'autorité
 
 ### Requirement: Trois binaires PA et six modes distincts de PZT
 
@@ -38,7 +77,7 @@ Les chemins et options CLI restent à spécifier.
 
 ### Requirement: Compilation différenciée validée
 
-Les trois binaires PA MUST être compilés avec Nuitka ; le binaire indépendant
+Les trois binaires PA MUST être compilés avec Cython ; le binaire indépendant
 PZT MUST suivre Cython selon pzt. Les chaînes MUST partir de Python via C avec
 runtime, dépendances et ABI déclarés et qualifiés avant construction. Cette
 décision MUST NOT installer un outil ni prouver un gain de performance.
@@ -46,11 +85,11 @@ décision MUST NOT installer un outil ni prouver un gain de performance.
 #### Scenario: Compilation des composants distincts
 
 - **WHEN** la matrice de compilation PA/PZT est déclarée
-- **THEN** les trois binaires PA utilisent Nuitka et PZT indépendant utilise Cython
+- **THEN** les trois binaires PA et PZT indépendant utilisent Cython avec leurs chaînes et qualifications propres
 
 ### Requirement: Plateformes demandées et qualification progressive
 
-PA MUST conserver le périmètre Linux et Windows physiques, VM Linux et Windows, Docker et LXC sous Proxmox. La première qualification MUST cibler Debian/Linux et Docker locaux, puis les autres cibles ; une cible non qualifiée MUST être indiquée comme telle. Versions OS/CPU, topologies Docker dans VM ou LXC, droits, bureaux et vTPM MUST être déclarés par profil ; aucun support MUST être inféré du seul environnement de développement.
+PA MUST conserver le périmètre Linux et Windows physiques, VM Linux et Windows, Docker et LXC sous Proxmox. La première qualification MUST cibler Debian/Linux et Docker locaux, puis les autres cibles ; une cible non qualifiée MUST être indiquée comme telle. Versions OS/CPU, topologies Docker dans VM ou LXC, droits, bureaux et vTPM MUST être déclarés par profil ; un support MUST NOT être inféré du seul environnement de développement.
 
 #### Scenario: Plateformes demandées et qualification progressive
 
@@ -225,7 +264,7 @@ PA et PBO MUST appliquer les obligations ordinaires de security, authorization e
 
 ### Requirement: Interfaces et messages cohérents
 
-Les interfaces CLI et les contributions PBO/PFO MUST utiliser les contrats publics, des erreurs stables et les traductions des composants propriétaires ; codes et champs MUST rester non localisés. PFO MUST adresser ses demandes à PBO ; aucune liaison directe PFO–PA MUST être introduite par ces spécifications. Les interfaces MUST respecter accessibilité, thèmes et confidentialité déclarés.
+Les interfaces CLI et les contributions PBO/PFO MUST utiliser les contrats publics, des erreurs stables et les traductions des composants propriétaires ; codes et champs MUST rester non localisés. PFO MUST adresser ses demandes à PBO ; une liaison directe PFO–PA MUST NOT être introduite par ces spécifications. Les interfaces MUST respecter accessibilité, thèmes et confidentialité déclarés.
 
 #### Scenario: Interfaces et messages cohérents
 
@@ -259,7 +298,7 @@ La première livraison envisagée MUST rester locale sur canal expérimental, av
 Les identifiants pixs.agent, pixs.pzt et le nom du composant/binaire PZT MUST
 être considérés validés. Noms/versions de paquets, noms de fichiers exécutables,
 chemins, CLI, bibliothèques, comptes, formats et valeurs non arrêtés MUST rester
-ouverts jusqu'à décision ou qualification. Les versions de Nuitka/Cython MUST
+ouverts jusqu'à décision ou qualification. Les versions de Cython MUST
 être qualifiées avant installation. Cette rédaction MUST NOT valoir code,
 recette runtime, support de plateforme ou artefact livré.
 

@@ -18,7 +18,7 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
-Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Nuitka) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
+Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Cython) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
 
 Périmètre propre à ce lot : Identité, références de secrets, ancrages et relations PBO–PA ; plusieurs autorités sans conflit résolu par dernière écriture ; provisionnement distinct du contrôle continu.
 
@@ -37,8 +37,8 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 ## Dépendances et interfaces
 
 - [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
-- [add-core-postgres-services](../add-core-postgres-services/proposal.md).
-- [add-initial-authentication-and-sessions](../add-initial-authentication-and-sessions/proposal.md).
+- [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
+- [add-initial-authentication-and-sessions](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md).
 
 
 

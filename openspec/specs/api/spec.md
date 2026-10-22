@@ -45,3 +45,19 @@ Les ressources de périmètre exposent le tenant dans le chemin et vérifient l'
 
 - **WHEN** un client fournit le tenant hors chemin canonique en contradiction avec le contexte
 - **THEN** la requête est refusée avec une erreur stable
+
+### Requirement: Façade web à cookie et API Bearer explicitement distinctes
+
+Le profil local MUST déclarer une façade web à session serveur et cookie protégé inaccessible au JavaScript, avec CSRF. L’API standard et la CLI MUST conserver Authorization: Bearer avec jeton opaque du profil local. Une route Bearer MUST NOT accepter implicitement un cookie comme substitut.
+
+#### Scenario: Cookie seul sur route Bearer
+- **WHEN** un client présente uniquement un cookie sur une route Bearer
+- **THEN** la route ne l’utilise pas implicitement et retourne le refus prévu
+
+### Requirement: Contrats de transport et stockage navigateur
+
+Routes, contrats et protections MUST indiquer leur mode d’authentification et une règle explicite pour les justificatifs ambigus sans élargir l’admission. Le navigateur MUST NOT persister de jeton accessible au JavaScript par défaut. Attributs du cookie et transport MUST être qualifiés avant code. Les exceptions Super Admin MUST rester préservées sans transformer un justificatif non vérifié en fait de confiance.
+
+#### Scenario: Façade web authentifiée
+- **WHEN** un navigateur utilise une route à session serveur
+- **THEN** la session courante et les protections du cookie/CSRF sont vérifiées sans jeton persistant accessible au JavaScript

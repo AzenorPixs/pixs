@@ -28,9 +28,9 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Dépendances
 
-- [add-core-postgres-services](../add-core-postgres-services/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 - [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
 

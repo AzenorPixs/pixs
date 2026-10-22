@@ -29,7 +29,7 @@ Sources et périmètres consultés :
 
 ## Architecture et frontières
 
-Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Nuitka) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
+Couche locale séparée de Django/PostgreSQL et sans autorité métier. Composer les opérations au build par contrats, dispatch explicite et identité du mode ; isoler comptes/sessions, handles et générations. Lier mandats, contexte, effets et résultats observés ; communiquer avec PBO uniquement via PZT. Les trois binaires PA (Cython) et PZT indépendant (Cython) restent colivrés, sous gestion respective de pixs.agent et pixs.pzt.
 
 Périmètre propre à ce lot : État technique PA borné, protégé, propriétaire, rétention/corruption/reprise ; hors PBO seulement capacités provisionnées et encore valides.
 

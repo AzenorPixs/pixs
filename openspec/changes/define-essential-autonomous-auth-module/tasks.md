@@ -1,6 +1,6 @@
 # Tâches futures — module essentiel pixs.auth
 
-Toutes les tâches restent non cochées. Les documents et deltas proposés ne constituent ni code ni autorisation de réalisation.
+Les trois deltas d'architecture sont adoptés au canon le 20 octobre 2026. Les tâches restent non cochées pour les contrats détaillés, raccordements, recettes et preuves encore manquants ; cette adoption partielle ne constitue ni code ni autorisation de réalisation.
 
 ## 1. Adoption et conception
 - [ ] 1.1 Revoir les deltas et le catalogue ; confirmer contrats, identifiants, frontières Core/Auth et paramètres avant réalisation.

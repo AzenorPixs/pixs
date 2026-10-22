@@ -35,8 +35,8 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 - [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
 - [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
 

@@ -1,5 +1,7 @@
 # Références normatives — PA01
 
+> Instantané historique des exigences reproduites lors de la préparation. La décision du 21 octobre 2026 retient désormais Cython pour les trois binaires PA et pour PZT indépendant ; les mentions Nuitka dans les blocs et empreintes ci-dessous conservent leur valeur de trace historique et ne sont plus le choix de compilation PA. Le canon et les deltas du change [binaire PBO et profils](../define-common-pbo-binary-and-resource-profiles/design.md) font référence avant réalisation. Aucune empreinte ni preuve de qualification antérieure n'est régénérée ici.
+
 Ce fichier est une copie de référence pour préparer le lot, pas un delta OpenSpec ni une source de vérité indépendante. Les blocs complets ci-dessous conservent conditions, scénarios, valeurs validées et indications historiques. Le canon courant prévaut ; toute dérive impose une relecture avant réalisation.
 
 La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécution, ni fonction manquante. Les lignes NE et les structures déjà livrées restent à auditer/réutiliser. Les dérogations applicatives et contrats structurels gardent leurs frontières.

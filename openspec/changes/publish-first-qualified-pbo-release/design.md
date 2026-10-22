@@ -55,7 +55,7 @@ PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capac
 
 ## Dépendances après audit transversal P0
 
-[C17](../qualify-first-pbo-composition/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N03](../add-p0-artifact-trust-and-preinstallation-verification/proposal.md).
+[C17](../qualify-first-pbo-composition/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.
 

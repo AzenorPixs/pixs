@@ -31,7 +31,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 - [add-entitlements-and-atomic-quota-reservations](../add-entitlements-and-atomic-quota-reservations/proposal.md) — dépendance explicitée après audit du 17 octobre 2026.
 
 - [add-declared-ai-provider-and-governed-retrieval](../add-declared-ai-provider-and-governed-retrieval/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 - [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
 
 

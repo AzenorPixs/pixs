@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-17
+# Deltas adoptés au canon le 20 octobre 2026 ; sans réalisation ni archive.
+skip_specs: false

@@ -34,9 +34,9 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [add-core-postgres-services](../add-core-postgres-services/proposal.md).
-- [integrate-runtime-authorization-and-super-admin](../integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-durable-minimized-audit](../add-durable-minimized-audit/proposal.md).
+- [add-core-postgres-services](../archive/2026-10-20-add-core-postgres-services/proposal.md).
+- [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
+- [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
 - [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
 
 La création anticipée de ces dossiers ne signifie pas que leurs tâches sont réalisées. Les hôtes intermédiaires demeurent non prêts si une obligation manque ; C17 qualifie le paquet C18, C19 vérifie son identité de distribution.

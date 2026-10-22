@@ -24,7 +24,7 @@ Le runtime applicatif PBO/PFO MUST utiliser Django pour l’autorité métier, P
 Les trois binaires PA définis par pixs-agent et le binaire indépendant PZT
 défini par pzt MUST rester distincts du runtime applicatif. Ils MUST NOT
 remplacer Django, PostgreSQL ou TanStack ni devenir un backend métier
-alternatif. Les trois binaires PA MUST suivre Nuitka et PZT MUST suivre Cython,
+alternatif. Les trois binaires PA et PZT MUST suivre Cython,
 avec chaînes et plateformes qualifiées avant construction.
 
 #### Scenario: Exécutants distincts du backend

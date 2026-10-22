@@ -10,9 +10,25 @@ sans activer le réseau ni qualifier les plateformes.
 
 ```mermaid
 flowchart LR
-    A["PBO : pixs.agent"] <-->|"Gestion PA via PZT"| T["PZT indépendant"]
-    Z["PBO : pixs.pzt"] <-->|"Gestion PZT sécurisée"| T
-    T <-->|"Échanges protégés"| P["PA : trois binaires, six modes"]
+    subgraph B["Binaire PBO Nuitka standalone — exploitation Standalone ou ZT"]
+        K["Kernel — mécanismes génériques"]
+        C["pixs.core — primitives communes"]
+        U["pixs.auth — authentification"]
+        M["Module propriétaire de l'opération"]
+        A["pixs.agent — gestion PA hors PZT"]
+        Z["pixs.pzt — gestion réseau"]
+        K -. "composition" .-> C
+        K -. "composition" .-> U
+        K -. "composition" .-> A
+        K -. "composition" .-> Z
+        U -. "contrats publics" .-> C
+        A -. "contrats publics" .-> C
+        Z -. "contrats publics" .-> C
+        M --> A
+    end
+    A <-->|"Instructions et résultats via PZT"| T["PZT indépendant Cython — processus selon ressources"]
+    Z <-->|"Contrôle sécurisé PZT"| T
+    T <-->|"Échanges protégés"| P["PA indépendant Cython — trois binaires, six modes selon profil"]
 ```
 
 Le schéma est logique ; les exigences ci-dessous fixent les responsabilités.
@@ -20,6 +36,34 @@ Les profils locaux et distants, avec ou sans PBO/PFO sur l'hôte distant,
 sont définis par runtime. Les endpoints restent à qualifier.
 
 ## Requirements
+
+### Requirement: Processus PZT configurables sous propriétaire réseau unique
+
+Le binaire PZT MUST permettre un plan de processus et de concurrence selon runtime et les ressources de son environnement. Les rôles, auxiliaires, identités, canaux et limites MUST être déclarés et qualifiés. Le mode pzt-daemon MUST conserver un propriétaire admissible unique des ressources réseau par périmètre ; augmenter les processus MUST NOT créer des écrivains concurrents sur ce périmètre.
+
+#### Scenario: Auxiliaires réseau supplémentaires
+
+- **WHEN** un plan augmente des processus auxiliaires PZT
+- **THEN** leurs fonctions restent déclarées sous contrôle du propriétaire réseau sans écriture concurrente des mêmes routes, interfaces ou règles
+
+#### Scenario: Propriétaires réseau concurrents
+
+- **WHEN** un plan demande deux propriétaires simultanément actifs du même périmètre réseau
+- **THEN** son activation est refusée sauf séparation explicite de périmètres indépendants qualifiés
+
+### Requirement: Budgets PZT sans affaiblissement des garanties
+
+Le plan de ressources PZT MUST être configuré et suivi par pixs.pzt selon runtime. Il MUST préserver démarrage, contrôle local mTLS, expiration, révocation, protection indépendante, attestation et reprise exigés par le profil. Une insuffisance MUST empêcher l'admission ou déclencher l'état sûr prévu ; elle MUST NOT prolonger un droit ni ouvrir un canal PBO–PA hors PZT.
+
+#### Scenario: Quota incompatible avec la révocation
+
+- **WHEN** un budget CPU ou mémoire ne permet pas de garantir les délais de révocation du profil
+- **THEN** le plan n'est pas admis et aucune qualification de ces délais n'est revendiquée
+
+#### Scenario: Réseau désactivé
+
+- **WHEN** le réseau est désactivé malgré un plan de processus disponible
+- **THEN** le binaire réseau se ferme selon son lifecycle et le module pixs.pzt reste composé dans PBO
 
 ### Requirement: Base WireGuard et développement propre à Pixs
 
@@ -162,7 +206,7 @@ Admission MUST utiliser mandat et preuves courants ; jeton individuel MUST être
 
 ### Requirement: Audit applicable et faits réellement établis
 
-Les contrôles applicatifs PZT MUST suivre security, authorization, initial-administration et audit, y compris l'exception Super Admin dans son seul périmètre reconnu. Aucun worker MUST recevoir ses credentials ou devenir Super Admin. Une dérogation MUST NOT fabriquer un dossier, audit, contrôle, signature, mesure ou effet absent ; les contrats structurels et d'exécution MUST rester distincts.
+Les contrôles applicatifs PZT MUST suivre security, authorization, initial-administration et audit, y compris l'exception Super Admin dans son seul périmètre reconnu. Un worker MUST NOT recevoir ses credentials ou devenir Super Admin. Une dérogation MUST NOT fabriquer un dossier, audit, contrôle, signature, mesure ou effet absent ; les contrats structurels et d'exécution MUST rester distincts.
 
 #### Scenario: Audit applicable et faits réellement établis
 
