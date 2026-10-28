@@ -1,4 +1,4 @@
 schema: spec-driven
 created: 2026-10-17
-# Préparation de la réalisation du canon existant ; aucun nouveau comportement normatif prévu.
-skip_specs: true
+# La politique Cython par campagne adoptée le 26 octobre 2026 ajoute un delta pixs-agent.
+skip_specs: false

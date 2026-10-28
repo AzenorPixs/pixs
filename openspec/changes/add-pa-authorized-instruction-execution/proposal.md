@@ -14,11 +14,11 @@ Contrats publics des instructions, fraîcheur, scopes, idempotence, revalidation
 
 ### Capacités nouvelles
 
-Aucun comportement normatif nouveau n’est prévu. Ce dossier prépare la réalisation ou la qualification des contrats déjà présents dans le canon.
+Aucune nouvelle capacité indépendante. Les cinq opérations OBSERVE, PREPARE_PLAN, START, STOP, READ_RESULT modifient la capacité existante pixs-agent dans le profil 1A-2B-3A. Voir specs/pixs-agent/spec.md et contracts.md proposés.
 
 ### Capacités modifiées
 
-Aucune modification de texte canonique. `requirements.md` référence et reproduit les blocs sources, avec empreintes et scénarios ; `skip_specs: true` évite un delta identique artificiel. Si un audit ou une décision exige une évolution normative, présenter son delta avant réalisation, sans considérer cette métadonnée comme une dispense de conformité.
+Capacité existante pixs-agent modifiée par delta conditionnel 1A-2B-3A. `requirements.md` référence et reproduit les blocs sources, avec empreintes et scénarios. Formats wire, identifiants API, versions, ports, paramètres, confiance, durabilité, bornes et budgets restent ouverts et à mesurer.
 
 ## Sélection et périmètre autorisé
 

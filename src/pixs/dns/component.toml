@@ -1,0 +1,96 @@
+schema_version = "1"
+id = "pixs.dns"
+type = "MODULE"
+version = "0.1.0"
+
+[dependencies]
+components = ["pixs.kernel ==0.1.0", "pixs.core ==0.1.0"]
+
+[provides]
+[[provides.capabilities]]
+id = "dns.management"
+version = "1.0.0"
+contracts = ["pixs.dns.zones.command", "pixs.dns.records.command", "pixs.dns.views.query", "pixs.dns.policy.query"]
+criticality = "REQUIRED"
+fallback = "none"
+
+[implements]
+[[implements.contracts]]
+id = "pixs.dns.zones.command"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.dns.records.command"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.dns.views.query"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.dns.policy.query"
+version = "1.0.0"
+
+[frontend]
+schema_version = "1"
+
+[[frontend.contributions]]
+type = "TRANSLATION"
+id = "pixs.dns.management.translations"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = []
+scope = "AUTHENTICATED"
+
+[[frontend.contributions]]
+type = "PAGE"
+id = "pixs.dns.management.page"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.dns.management.translations ==1.0.0"]
+scope = "AUTHENTICATED"
+
+[[frontend.contributions]]
+type = "ROUTE"
+id = "pixs.dns.management.route.platform"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.dns.management.page ==1.0.0"]
+scope = "PLATFORM_SCOPED"
+
+[[frontend.contributions]]
+type = "NAVIGATION"
+id = "pixs.dns.management.navigation.platform"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.dns.management.route.platform ==1.0.0", "pixs.dns.management.translations ==1.0.0"]
+scope = "PLATFORM_SCOPED"
+
+[[frontend.contributions]]
+type = "ROUTE"
+id = "pixs.dns.management.route.tenant"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.dns.management.page ==1.0.0"]
+scope = "TENANT_SCOPED"
+
+[[frontend.contributions]]
+type = "NAVIGATION"
+id = "pixs.dns.management.navigation.tenant"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.dns.management.route.tenant ==1.0.0", "pixs.dns.management.translations ==1.0.0"]
+scope = "TENANT_SCOPED"
+
+[[frontend.contributions]]
+type = "ROUTE"
+id = "pixs.dns.management.route.scope"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.dns.management.page ==1.0.0"]
+scope = "TENANT_SCOPED"
+
+[[frontend.contributions]]
+type = "NAVIGATION"
+id = "pixs.dns.management.navigation.scope"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.dns.management.route.scope ==1.0.0", "pixs.dns.management.translations ==1.0.0"]
+scope = "TENANT_SCOPED"

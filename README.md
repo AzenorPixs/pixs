@@ -1,6 +1,10 @@
 # Pixs l'Application Universelle
 
-**Version initiale — avancement OpenSpec : 58,52 %** — 158 changes archivés sur 270 au total, dont 112 ouverts. Relevé du 21 octobre 2026.
+**Version initiale — avancement OpenSpec : 63,48 %** — 186 changes archivés sur 293 au total, dont 107 ouverts. Relevé du 26 octobre 2026 (2026-10-26T20:21:17.536242+00:00).
+
+> Relevé précédent conservé : **Version initiale — avancement OpenSpec : 60,44 %** — 165 changes archivés sur 273 au total, dont 108 ouverts. Relevé du 26 octobre 2026 (2026-10-26T19:32:32.084613+00:00).
+
+> Relevé antérieur conservé : **Version initiale — avancement OpenSpec : 58,52 %** — 158 changes archivés sur 270 au total, dont 112 ouverts. Relevé du 21 octobre 2026.
 
 Ce ratio suit les changes, sans mesurer leur taille ni remplacer une qualification fonctionnelle. [Méthode et suivi détaillé](PROJECT.md#34-openspec).
 
@@ -11,6 +15,12 @@ Pixs l'Application Universelle est un framework applicatif conçu pour composer 
 ## État du projet
 
 Le dépôt contient les cadrages, les spécifications OpenSpec et une implémentation partielle : mécanismes du Kernel, services Core persistants, authentification locale et sessions, adapters d'autorisation et d'audit, adaptateurs Django et shell TanStack/React. Des modèles et migrations Django représentent aussi les snapshots de fanions et les travaux. Ces jalons ne démontrent pas une composition P0 complète ni un service prêt pour la production.
+
+Le [shell frontend](frontend/README.md) distingue désormais les modes autonome et composé. C11 réalise la sélection opérateur épinglée, la composition des contributions déclarées, le contexte WEB Auth, les intentions Query/Command et les champs typés. Ces sources restent en qualification : la présence du code ne démontre ni la réussite des recettes navigateur/transport, ni un paquet installé ou un P0 complet.
+
+Le [module de gestion Agent](src/pixs/agent/) fournit trois contrats publics 1.0.0, une persistance PostgreSQL propriétaire, un service contrôlé par Core, son adaptateur de composition et la supervision des états souhaité, observé, dernier connu et confirmé. L’absence d’exécutant ou de transport PZT reste explicite : aucune commande PA n’est envoyée. Les ports de confiance doivent vérifier les preuves d’origine et de confirmation ; leurs fixtures de test ne qualifient aucun exécutant. Les qualifications réelles locales et distantes restent ouvertes dans [PA10](openspec/changes/separate-pa-pzt-and-pbo-management-modules/tasks.md).
+
+Les modules propriétaires [PZT](src/pixs/pzt/) et [DNS](src/pixs/dns/) disposent de contrats de gestion 1.0.0, de persistance PostgreSQL, de configurations souhaitées et de contributions frontend déclarées. Leurs Commands conservent les contrôles Auth/Core, l’audit et l’idempotence ; les lectures distinguent configuration souhaitée, état appliqué inconnu et mesures absentes. Le [raccord HTTP C14](src/pixs/backend/api_pzt_dns_boundary.py) consomme les frontières publiques communes et leurs politiques explicites. Ces sources ne sélectionnent aucun exécutant réseau distant ni service DNS actif ; le parcours local C08 et la qualification du profil installé restent distincts.
 
 Les réalisations locales [Auth C03](openspec/changes/archive/2026-10-21-add-initial-authentication-and-sessions/VALIDATION.md) et [autorisation/Super Admin C04](openspec/changes/archive/2026-10-21-integrate-runtime-authorization-and-super-admin/VALIDATION.md) disposent de qualifications bornées rapportées le 21 octobre 2026. Elles couvrent leurs services et adapters propriétaires ; les parcours intégrés, l'activation de la composition et sa qualification installée restent à établir avec les composants concernés. Ces preuves datées ne constituent pas une nouvelle exécution de tests ni une disponibilité P0.
 
@@ -25,6 +35,24 @@ L'orientation adoptée le 21 octobre 2026 retient un **binaire PBO commun compil
 Le mode de compilation **Nuitka standalone** est distinct des modes d'exploitation PBO **Standalone** (instance autonome sans autorité Pixs extérieure) et **ZT** (participation autorisée au réseau gouverné via PZT). Le même exécutable et ses bibliothèques/ressources servent les deux modes ; un fichier autoextractible onefile n'est pas requis. L'activation du transport PZT reste distincte : un PBO Standalone peut l'utiliser pour joindre ses PA autorisés. Si ce transport manque, les échanges concernés restent bloqués, sans repli hors PZT ni retour automatique de ZT vers Standalone. Dans PBO, Cython reste réservé aux optimisations ciblées justifiées par profilage et mesures de gain/non-régression, avec contrats, sécurité et maintenabilité préservés. Les trois binaires PA et le binaire indépendant PZT sont compilés avec Cython.
 
 ## OpenSpec
+
+### Découpage RFC 2119 en 21 lots — 26 octobre 2026
+
+La [migration RFC 2119](openspec/changes/archive/2026-09-10-adopt-rfc2119-keywords/README.md) est répartie en 21 lots documentaires : 56 fichiers, 205 exigences et 206 scénarios conservés à l'identique. Les archivages --skip-specs laissent le canon inchangé. Les vingt archives supplémentaires ne représentent aucune fonctionnalité nouvelle ; la préservation historique visée par 2.1 reste NON VÉRIFIABLE.
+
+### Découpage documentaire du 26 octobre 2026
+
+La proposition historique de première application est répartie entre le
+[bootstrap](openspec/changes/archive/2026-09-16-specify-initial-application-bootstrap/proposal.md) (4 exigences, 6 scénarios) et le
+[lot administration, maintenance et audit](openspec/changes/archive/2026-10-26-specify-initial-administration-and-maintenance/proposal.md)
+(9 exigences, 15 scénarios). Les 13 exigences et 21 scénarios sont conservés
+sans duplication. Propositions complètes et deltas passent le strict pour les
+deux lots ; les deux archivages natifs utilisent `--skip-specs` et les
+78 empreintes canoniques sont inchangées. Ce découpage ajoute un dossier
+d'archive documentaire, aucune capacité ou fonctionnalité produit.
+Le ratio ci-dessus décrit l'inventaire courant et non une qualification
+fonctionnelle ; les relevés précédents restent datés.
+
 
 OpenSpec décrit ce que Pixs doit faire et les situations à vérifier : **78 capacités, 831 exigences et 986 scénarios**, recomptés au 21 octobre 2026 après adoption du binaire PBO commun, des profils de ressources et de N02. La décision de binaire commun, complétée par Nuitka standalone, les modes d’exploitation et Cython ciblé dans PBO, a ajouté 19 exigences et 35 scénarios à l’état de 812 exigences et 948 scénarios observé avant modification. La [frontière N02 entre coffre natif et données hors ligne](openspec/changes/clarify-native-credentials-and-offline-storage-boundary/proposal.md) modifie deux exigences et ajoute trois scénarios, sans nouvelle capacité ni réalisation produit ; ses qualifications runtime restent à faire et le change reste ouvert.
 
@@ -221,8 +249,10 @@ utilise les interfaces sécurisées de PZT, sans canal de substitution.
 Ces capacités sont cadrées dans PROJECT.md §43–§44, TECHNICAL.md §42–§45 et
 BUILD.md §46–§47 et déclarées par [pixs-agent](openspec/specs/pixs-agent/spec.md)
 et [pzt](openspec/specs/pzt/spec.md). Nuitka standalone est retenu pour PBO ; les trois binaires
-PA et le binaire PZT sont compilés avec Cython. Seules les spécifications sont rédigées : implémentation,
-qualification et artefacts restent à réaliser.
+PA et le binaire PZT sont compilés avec Cython dans l’architecture adoptée. La gestion PBO Agent
+est réalisée dans les sources décrites ci-dessus ; le transport, les exécutants et les artefacts
+PA/PZT restent à réaliser ou à qualifier dans leurs lots propriétaires. Aucune disponibilité P0
+ni distribution installable n’est déduite de ces sources.
 
 ## Configuration de déploiement
 

@@ -73,6 +73,8 @@ Themes
 Intégrations externes
 ```
 
+Le service système d’horloge est géré par PA lorsque le profil retenu l’exige, tandis que pixs.agent administre PA hors responsabilités réseau PZT. Tous les échanges entre PBO et PA transitent par PZT. Kernel, Core, Auth, PA et PZT consomment l’interface commune du runtime, et le Kernel demeure agnostique du fournisseur. Un seul service est géré par horloge, non un service par module, avec réutilisation d’un composant conforme avant toute installation. Le fonctionnement hors ligne reste borné et qualifié, et les fonctions sans besoin d’UTC continuent selon leurs contrats ; les autres gardes de mandat, politique et révocation restent opposables.
+
 ## 2. Principes architecturaux fondamentaux
 
 Pixs repose sur les principes suivants.
@@ -2622,7 +2624,39 @@ Pixs est spécifié par capacités. Cette section et la [synthèse du README](RE
 
 ### Suivi des spécifications et des changes
 
-#### État courant au 21 octobre 2026
+#### Découpage RFC 2119 en 21 lots — 26 octobre 2026
+
+La migration historique [adopt-rfc2119-keywords](openspec/changes/archive/2026-09-10-adopt-rfc2119-keywords/README.md) est répartie en 21 lots documentaires, dont le premier conserve le chemin d'origine. Les 56 fichiers normatifs sont conservés à octets identiques, soit 205 exigences et 206 scénarios sans duplication. Les propositions complètes et les deltas des 21 lots passent les contrôles stricts de revalidation historique ; les 21 archivages natifs utilisent --skip-specs et ne synchronisent pas le canon. Les 78 fichiers canoniques conservent leurs empreintes et passent leur validation stricte séparée. Le contrôle de resynchronisation contre le canon actuel conserve ses 8 écarts de scénarios ultérieurs ; ce découpage n'autorise aucune réapplication des anciens deltas. La tâche historique 2.1 reste NON VÉRIFIABLE.
+
+Recomptage observé le 2026-10-26T20:21:17.536242+00:00 : **186 archives et 107 changes actifs**, soit **293 dossiers et 63,48 % d'archives**. Ce découpage ajoute vingt dossiers d'archive par rapport à son périmètre d'un dossier ; il n'ajoute aucune capacité ou fonctionnalité. Les autres variations depuis les relevés antérieurs ne lui sont pas attribuées. Les anciens relevés et leurs dates sont conservés.
+
+#### Découpage documentaire au 26 octobre 2026
+
+Le change historique [bootstrap](openspec/changes/archive/2026-09-16-specify-initial-application-bootstrap/proposal.md) conserve
+4 exigences et 6 scénarios. Le lot compagnon
+[administration, maintenance et audit](openspec/changes/archive/2026-10-26-specify-initial-administration-and-maintenance/proposal.md) porte
+9 exigences et 15 scénarios transférés à l'identique. L'union conserve
+13 exigences et 21 scénarios, sans duplication. Les propositions complètes et
+les deltas des deux lots passent le mode strict. Les deux archivages natifs
+utilisent `--skip-specs` ; les 78 empreintes canoniques restent identiques au
+relevé initial de cette intervention. Aucun comportement historique n'est
+réappliqué au canon actuel et aucune fonctionnalité n'est qualifiée ici.
+
+Inventaire observé le 2026-10-26T19:32:32.084613+00:00 : **165 archives et 108 changes
+actifs**, soit **273 dossiers et 60,44 % d'archives**. Le découpage ajoute
+une archive documentaire par rapport à son périmètre initial d'un seul dossier ;
+il ne double pas le nombre d'exigences ou de scénarios et n'ajoute pas de capacité.
+Ces compteurs de fichiers ne mesurent pas l'avancement fonctionnel. Les relevés
+historiques ci-dessous conservent leurs dates et leurs chiffres.
+
+
+#### État courant au 22 octobre 2026 — adoption C08
+
+Le canon compte **78 capacités, 841 exigences et 1 021 scénarios** après adoption du parcours [C08 PA/PZT → PostgreSQL → PBO](openspec/changes/add-installation-and-first-configuration/proposal.md). Les huit deltas apportent six exigences nouvelles, six exigences modifiées et vingt-sept scénarios supplémentaires nets (dont quatre de présentation des garanties) ; les quatre ajouts C08 précédemment intégrés sont conservés sans double comptage. Les canons, les documents C08 et les cadrages PROJECT/TECHNICAL/BUILD sont alignés. Cette adoption ne livre ni exécutant, provider, image Docker, installation ou recette produit ; les tâches de réalisation restent non cochées.
+
+L'inventaire de cette session recense **160 archives et 110 changes actifs**, soit 270 dossiers et **59,26 % d'archives**. Les changes existants sont réutilisés sans archivage ni création de doublon. Ces compteurs documentaires ne mesurent pas la disponibilité fonctionnelle ; les relevés antérieurs conservent leurs dates.
+
+#### Relevé du 21 octobre 2026
 
 Le canon compte **78 capacités, 831 exigences et 986 scénarios**. Le [binaire PBO commun et les profils de ressources](openspec/changes/define-common-pbo-binary-and-resource-profiles/proposal.md), avec le complément Nuitka standalone, les modes d’exploitation et Cython ciblé dans PBO, ont ajouté 19 exigences et 35 scénarios au relevé précédent de 812 exigences et 948 scénarios, modifié six exigences et synchronisé sept capacités sans en créer. Les deltas de ce change tracent une adoption déjà intégrée, sans double comptage ni implémentation.
 
@@ -3754,6 +3788,10 @@ module DNS essentiel, même lorsque le réseau est désactivé. Ces obligations
 sont déjà définies dans les capacités canoniques `reference-composition`,
 `reference-runtime`, `pixs-agent`, `pzt` et `authentication` ; elles ne
 démontrent pas une composition P0 implémentée ou qualifiée.
+
+Le parcours initial d'installation C08, adopté le 22 octobre 2026, sélectionne explicitement le PA système de l'hôte et PZT local pour préparer PostgreSQL avant les opérations applicatives PBO. Sur hôte physique ou VM, PA installe et configure le service si nécessaire et initie la première connexion technique ; dans Docker Pixs, le logiciel PostgreSQL est fourni dans l'image et PA initialise seulement les ressources persistantes et configurations manquantes. Les données existantes sont conservées. PBO reste seul propriétaire de ses migrations et de l'initialisation Core/Auth/Super Admin/premier tenant. Une composition sans ces exécutants ne peut pas revendiquer ce parcours révisé ; réseau distant désactivé et absence de transport PZT local sont deux situations distinctes.
+
+Le provisionnement opérateur de PA/PZT et la remise au workload PBO de ses seuls secrets de connexion utilisent la branche technique native protégée définie par `authorization`, indépendante de la base à ouvrir. Tout échange PBO–PA passe par PZT, y compris localement, avec références et métadonnées minimisées sans credential de management. La branche ne crée aucun droit métier ; les actes applicatifs conservent R01 Ed25519/600 secondes, gouvernance et transaction propriétaires. C01 INSTALLER reste distinct ; les autres décisions et le management ordinaire attendent PostgreSQL courant. Les versions, politiques, budgets, mécanismes Docker et recettes restent à qualifier.
 
 Les extensions déclarent l'un des niveaux de confiance `PLATFORM`, `TRUSTED`,
 `SANDBOXED` ou `DEVELOPMENT`. Le niveau autorise uniquement les frontières et

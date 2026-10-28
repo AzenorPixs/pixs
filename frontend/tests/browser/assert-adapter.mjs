@@ -1,54 +1,43 @@
-// Subset strict de node:assert/strict limite aux methodes reellement utilisees.
-class AssertionError extends Error {
-  constructor(message) { super(message); this.name = 'AssertionError'; }
-}
-
-// Strict : primitives via Object.is ; tableaux reellement utilises compares
-// en longueur puis element par element avec Object.is. Ni [] ni {} ne sont
-// assimiles a un autre type ; tout autre type non couvert est inegal.
+// Subset strict porte sur appels reels : ok/equal/notEqual/deepEqual/match/throws/rejects/fail + appel direct.
+class AssertionError extends Error { constructor(m) { super(m); this.name = 'AssertionError'; } }
+function fmt(v) { try { return JSON.stringify(v); } catch { return String(v); } }
+function protoOf(v) { return Object.getPrototypeOf(v); }
+function isPlain(v) { return v !== null && typeof v === 'object' && (protoOf(v) === Object.prototype || protoOf(v) === null); }
 function deepEqual(a, b) {
   if (Object.is(a, b)) return true;
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b) || a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (Object.hasOwn(a, i) !== Object.hasOwn(b, i)) return false;
-      if (Object.hasOwn(a, i) && !Object.is(a[i], b[i])) return false;
-    }
+  if (typeof a === 'string' || typeof b === 'string' || typeof a === 'boolean' || typeof b === 'boolean' || typeof a === 'number' || typeof b === 'number') return false;
+  if (a === null || b === null) return false;
+  if (typeof a !== 'object' || typeof b !== 'object') return false;
+  const aa = Array.isArray(a), bb = Array.isArray(b);
+  if (aa !== bb) return false;
+  if (aa) {
+    if (protoOf(a) !== Array.prototype || protoOf(b) !== Array.prototype) return false;
+    if (a.length !== b.length) return false;
+    if (Reflect.ownKeys(a).length !== a.length + 1 || Reflect.ownKeys(b).length !== b.length + 1) return false;
+    for (let i = 0; i < a.length; i++) { const da = Object.getOwnPropertyDescriptor(a, String(i)), db = Object.getOwnPropertyDescriptor(b, String(i)); if (!da || !db || !Object.hasOwn(da, 'value') || !Object.hasOwn(db, 'value')) return false; if (!deepEqual(da.value, db.value)) return false; }
     return true;
   }
-  return false;
+  if (!isPlain(a) || !isPlain(b)) return false;
+  if (protoOf(a) !== protoOf(b)) return false;
+  const ka = Reflect.ownKeys(a), kb = Reflect.ownKeys(b);
+  if (ka.length !== kb.length) return false;
+  for (const k of ka) { if (typeof k !== 'string') return false; if (!Object.hasOwn(b, k)) return false; const da = Object.getOwnPropertyDescriptor(a, k), db = Object.getOwnPropertyDescriptor(b, k); if (!da || !db || !Object.hasOwn(da, 'value') || !Object.hasOwn(db, 'value')) return false; if (!deepEqual(da.value, db.value)) return false; }
+  return true;
 }
-
-function fmt(value) { try { return JSON.stringify(value); } catch { return String(value); } }
-
-const assert = {
-  ok(value, message) {
-    if (!value) throw new AssertionError(message ?? 'Expected value to be truthy');
-  },
-  equal(actual, expected, message) {
-    if (!Object.is(actual, expected)) throw new AssertionError(message ?? `Expected ${fmt(actual)} to equal ${fmt(expected)}`);
-  },
-  deepEqual(actual, expected, message) {
-    if (!deepEqual(actual, expected)) throw new AssertionError(message ?? 'Expected values to be strictly deep-equal');
-  },
-  match(value, regexp, message) {
-    if (typeof value !== 'string' || !regexp.test(value)) throw new AssertionError(message ?? `Expected ${fmt(value)} to match ${regexp}`);
-  },
-  throws(fn, expectation, message) {
-    if (typeof fn !== 'function') throw new AssertionError('throws requires a function callback');
-    if (expectation === null || typeof expectation !== 'object' ||
-        Object.keys(expectation).length !== 1 || !Object.hasOwn(expectation, 'message') ||
-        typeof expectation.message !== 'string') {
-      throw new AssertionError('Unsupported throws expectation; expected {message:string}');
-    }
-    const want = expectation.message;
-    let caught; let threw = false;
-    try { fn(); } catch (e) { threw = true; caught = e; }
-    if (!threw) throw new AssertionError(message ?? 'Expected function to throw');
-    if (want !== undefined && String(caught?.message ?? caught) !== want) {
-      throw new AssertionError(message ?? `Expected error message "${want}", got "${caught?.message}"`);
-    }
-  },
-};
-
+function checkThrow(e, exp) {
+  if (exp === undefined) return;
+  if (exp !== null && typeof exp === 'object' && !Array.isArray(exp) && Object.keys(exp).length === 1 && Object.hasOwn(exp, 'message') && typeof exp.message === 'string') { if (String(e?.message ?? e) !== exp.message) throw new AssertionError('Expected message ' + fmt(exp.message) + ' got ' + fmt(String(e?.message ?? e))); return; }
+  if (exp instanceof RegExp) { if (typeof (e?.message ?? e) !== 'string' || !exp.test(String(e?.message ?? e))) throw new AssertionError('Expected ' + fmt(String(e?.message ?? e)) + ' to match ' + exp); return; }
+  if (typeof exp === 'function') { let r; try { r = exp(e); } catch (err) { throw new AssertionError('Predicate threw'); } if (r !== true) throw new AssertionError('Predicate returned ' + fmt(r)); return; }
+  throw new AssertionError('Unsupported throws expectation');
+}
+function assert(v, m) { if (!v) throw new AssertionError(m ?? 'Expected value to be truthy'); }
+assert.ok = (v, m) => { if (!v) throw new AssertionError(m ?? 'Expected value to be truthy'); };
+assert.equal = (a, b, m) => { if (!Object.is(a, b)) throw new AssertionError(m ?? ('Expected ' + fmt(a) + ' to equal ' + fmt(b))); };
+assert.notEqual = (a, b, m) => { if (Object.is(a, b)) throw new AssertionError(m ?? ('Expected not equal ' + fmt(a))); };
+assert.deepEqual = (a, b, m) => { if (!deepEqual(a, b)) throw new AssertionError(m ?? 'Expected values to be strictly deep-equal'); };
+assert.match = (v, re, m) => { if (typeof v !== 'string' || !(re instanceof RegExp) || !re.test(v)) throw new AssertionError(m ?? ('Expected ' + fmt(v) + ' to match ' + re)); };
+assert.fail = (m) => { throw new AssertionError(m ?? 'Failed'); };
+assert.throws = (fn, exp, m) => { if (typeof fn !== 'function') throw new AssertionError('throws requires function'); let e, caught = false; try { fn(); } catch (err) { caught = true; e = err; } if (!caught) throw new AssertionError(m ?? 'Expected function to throw'); checkThrow(e, exp); };
+assert.rejects = async (p, exp, m) => { let e, caught = false; try { await (typeof p === 'function' ? p() : p); } catch (err) { caught = true; e = err; } if (!caught) throw new AssertionError(m ?? 'Expected rejection'); checkThrow(e, exp); };
 export default assert;

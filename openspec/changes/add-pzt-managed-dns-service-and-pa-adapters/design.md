@@ -36,7 +36,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 ## Dépendances et interfaces
 
-- [add-essential-pbo-pzt-and-dns-modules](../add-essential-pbo-pzt-and-dns-modules/proposal.md).
+- [add-essential-pbo-pzt-and-dns-modules](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md).
 - [add-pa-authorized-instruction-execution](../add-pa-authorized-instruction-execution/proposal.md).
 - [add-pzt-private-address-plan-and-ipv6-lifecycle](../add-pzt-private-address-plan-and-ipv6-lifecycle/proposal.md).
 - [add-pzt-public-control-contracts-and-state-streams](../add-pzt-public-control-contracts-and-state-streams/proposal.md).
@@ -60,3 +60,22 @@ Aucun schéma ni état runtime modifié ici. Toute réalisation ultérieure qui 
 ## Limites du dossier
 
 Pas de PASS actuel ni d’achèvement produit revendiqué. L’autorisation de préparation ne permet ni d’activer la capacité dans P0 ni d’utiliser un compte connecté, publier un artefact ou envoyer une notification réelle.
+
+
+## Choix BIND 9 adopté le 24 octobre 2026
+
+Le [choix BIND 9 adopté](../adopt-bind9-managed-dns-and-packaging/proposal.md) est synchronisé le 24 octobre 2026 dans le
+[canon PZT](../../specs/pzt/spec.md#L13402). Z05 conserve la réalisation et la qualification
+du serveur BIND 9 fourni par Debian et de ses adapters PA ; les contrats
+publics de gestion restent ceux de PBO/pixs.dns et tous échanges PBO–PA
+restent via PZT. La présence de BIND 9 ne sélectionne aucun rôle serveur.
+
+La version, le placement, les interfaces d'application, les ressources et
+les paramètres de sécurité nécessaires restent à qualifier avant code.
+La recette devra prouver configuration et zones vérifiées avant application,
+droits et isolement des vues, DoT, TTL/cache, retraits/révocations, panne,
+concurrence, réponse perdue et reprise, selon A06c–A06k. Installation,
+configuration et activation restent ultérieures ; aucun résultat d'exécution
+n'est apporté par ce renvoi documentaire.
+
+Ce renvoi ne coche aucune tâche de réalisation du lot.

@@ -29,7 +29,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 ## Dépendances
 
 - [add-offline-eligible-local-projections](../add-offline-eligible-local-projections/proposal.md).
-- [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
+- [add-protected-core-http-commands-and-queries](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md).
 
 
 

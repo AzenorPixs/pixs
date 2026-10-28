@@ -46,3 +46,41 @@ Le parcours d’installation MUST séparer provisionnement opérateur PA/PZT, pr
 
 - **WHEN** le commit propriétaire PBO est confirmé mais la réponse ou le marqueur externe est perdu
 - **THEN** la reprise inspecte le résultat durable et ne réexécute ni préparation destructive PA ni création Core/Auth ; seule l’étape externe manquante admissible est reprise
+
+### Requirement: Confirmation C08 du retrait et inspection distincte
+
+C08 MUST confirmer le retrait irréversible PA avec C03 et C04 courants et mapping vérifié vers le signataire du mandat WITHDRAW_PA_INITIAL, distinct de R01 et E4. L'inspection Protégé MUST rester possible sous autorisation courante, distincte de get_postgresql_result.
+
+#### Scenario: Retrait confirmé avec mapping vérifié
+
+- **WHEN** la confirmation C08 lie le mandat, la cible, le plan et le signataire vérifié par C03 et C04 courants
+- **THEN** le retrait est constaté et seule l'étape externe manquante admissible peut être reprise, sans nouvelle préparation initiale
+- **AND** aucun booléen verified ni SuperAdmin auto-attribué ne vaut confirmation, sans exiger d'autorité ordinaire PA déjà active
+- **AND** les prérequis applicatifs, migrations, R01, Core, Auth et audits sont réellement constatés et vérifiés, avec résultats et audits rapprochés avant le retrait ; sinon le retrait est refusé
+
+#### Scenario: Confirmation insuffisante du retrait
+
+- **WHEN** la confirmation repose sur un booléen, un DTO à l'état RETIRED, un résultat PG_SUCCEEDED, un mode NORMAL ou D6 seul
+- **THEN** le retrait n'est pas constaté et le parcours reste non prêt pour l'admission s'appuyant sur sa fin
+
+#### Scenario: Garanties conservées de confirmation
+
+- **WHEN** la confirmation est évaluée pour la cible et le plan concernés
+- **THEN** l'inspection Protégé ne rouvre ni extension, ni préparation, ni retrait rejoué
+- **AND** les contrats de topologie D8/D6, de wire et de résolveurs restent à fermer en revue commune avant leur code, les qualifications réelles en phase 2 après réalisation, et l'adoption des principes ne vaut pas réalisation
+
+## ADDED Requirements
+
+### Requirement: Séquence observation, planning et confirmation avant effet
+
+Pour le profil PostgreSQL initial 1.1 E5 sélectionné, le parcours MUST séparer OBSERVE, PREPARE_PLAN, confirmation puis PREPARE critique et READ_RESULT, avec cinq guards même en REUSE ou effets vides et conformité complète avant SUCCEEDED, sans modifier les contrats 1.0 ni fallback.
+
+#### Scenario: Préconditions stagiées avant CREATE
+
+- **WHEN** une condition différée concerne exclusivement ROLE ou DATABASE UNOBSERVABLE avec SERVICE_START planifié avant, sans absence inférée, sans exclure leur présence conjointe
+- **THEN** la condition différée est vérifiée après démarrage, les cinq guards s'appliquent même en REUSE ou effets vides, la preuve actuelle d'ABSENT est exigée avant chaque CREATE et la conformité complète avant SUCCEEDED
+
+#### Scenario: Effets et bindings distincts
+
+- **WHEN** le planning est retourné avec projection C08 immuable liée à l'observation et bundle vérifié
+- **THEN** UNOBSERVABLE impose UNDETERMINED sans devenir absence, effects_binding engage le manifeste entier et effects_digest le seul tableau allowed_effects, sans confusion ni coercition, la présentation et la confirmation seize champs restant ultérieures avant mandat critique

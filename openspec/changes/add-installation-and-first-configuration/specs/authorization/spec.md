@@ -53,3 +53,43 @@ La préparation PA/PZT et la remise au workload PBO de ses seuls secrets de conn
 
 - **WHEN** une identité est correcte mais la politique est expirée, révoquée ou impossible à vérifier fraîchement
 - **THEN** aucun secret ni nouvel effet technique n’est admis et le service reste non prêt
+
+### Requirement: Retrait de l'autorité technique initiale PA
+
+L'autorité initiale PA MUST être retirée irréversiblement par withdraw_initial_authority, classe Critique, domaine PA_POSTGRESQL_WITHDRAWAL, permission WITHDRAW_PA_INITIAL. Le mandat MUST être signé nouveau distinct de R01 et E4. C08 MUST confirmer avec C03 et C04 courants et mapping vérifié vers le signataire.
+
+#### Scenario: Retrait de l'autorité initiale vérifié
+
+- **WHEN** un mandat de retrait courant, complet et non consommé est présenté pour la cible et le plan concernés
+- **THEN** PA vérifie la signature du mandat liée à la clé personnelle Ed25519 déjà préautorisée pour cette finalité, maintenue hors runtime et hors agents, ainsi que la clé et la politique courantes, la révocation, la validité et la fraîcheur UTC, les identités natives et la relation PZT, la cible, le plan et le contexte, puis enregistre durablement et irréversiblement la fin de toute nouvelle préparation initiale, sans supprimer la remise technique minimale canonique de connexion PBO
+- **AND** la clé d'administration PA et les clés PKI et TLS Z12 ne sont jamais réutilisées implicitement
+- **AND** aucun booléen verified ni SuperAdmin auto-attribué ne vaut confirmation, et le retrait n'exige aucune autorité ordinaire PA déjà active
+- **AND** les retraits PA et Z12 restent distincts par leurs propriétaires
+
+#### Scenario: Preuve insuffisante du retrait
+
+- **WHEN** la preuve repose seulement sur un DTO à l'état RETIRED, un résultat PG_SUCCEEDED, un mode NORMAL ou D6 seul, ou sur une permission R01, PA ou Z12 réutilisée implicitement
+- **THEN** le retrait est refusé et aucune fin de préparation initiale n'est constatée
+
+#### Scenario: Garanties conservées du retrait
+
+- **WHEN** le retrait est vérifié pour la cible et le plan concernés
+- **THEN** la consommation anti-rejeu, la quiescence et l'ancrage durable irréversible sont vérifiés, la branche minimale PBO est conservée sans autorité ordinaire anticipée
+- **AND** les contrats de topologie D8/D6, de wire et de résolveurs restent à fermer en revue commune avant leur code, les qualifications réelles en phase 2 après réalisation, et l'adoption des principes ne vaut pas réalisation
+
+## ADDED Requirements
+
+### Requirement: Confirmation C08 seize champs et permission distincte
+
+La confirmation C08 MUST lier installation, cible, opération, opérateur et politique à la projection, à l'observation, au plan, aux préconditions et aux effets vérifiés, selon le schéma fermé ci-dessous. Elle MUST rester distincte de la confirmation administrative de retrait PA, sans porter ni tableaux A07 futurs, ni signature, ni digest de futur mandat.
+
+#### Scenario: Confirmation liée sans tableaux futurs
+
+- **WHEN** C08 confirme le plan, les préconditions et les effets
+- **THEN** la confirmation lie les cinq bindings projection, observation, plan, préconditions et effets avec la politique sans porter de tableaux A07 futurs, de signature ni de digest de futur mandat
+
+#### Scenario: Seize champs exacts et acyclicité
+
+- **WHEN** la confirmation est présentée
+- **THEN** elle porte exactement schema pixs.c08.postgresql-confirmation.v1, schema_version 1.0.0, confirmation_ref, installation_ref, target_ref, operation_id, operator_ref, projection_binding, observation_binding, plan_binding, preconditions_binding, effects_binding, policy_ref, policy_version, confirmed_at et correlation_id, avec ContentBinding exact ref et version chaînes bornées et sha256 minuscule 64, confirmed_at UTC YYYY-MM-DDTHH:MM:SS.ffffffZ, sans coercition ni type nullable implicite
+- **AND** l'acyclicité exclut l'acte, la signature et le digest de futur mandat ainsi que les tableaux A07 futurs, sans exclure les bindings de plans déjà publiés, et cible, installation, opération, politique et références sont rapprochées avant consentement

@@ -35,7 +35,7 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
+- [add-protected-core-http-commands-and-queries](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md).
 - [compose-modular-frontend-with-core-api](../compose-modular-frontend-with-core-api/proposal.md).
 
 La création anticipée de ces dossiers ne signifie pas que leurs tâches sont réalisées. Les hôtes intermédiaires demeurent non prêts si une obligation manque ; C17 qualifie le paquet C18, C19 vérifie son identité de distribution.

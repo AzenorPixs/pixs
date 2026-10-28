@@ -24,6 +24,6 @@ Préparation documentaire du chemin P0 ; pas d’activation d’option extérieu
 
 ## Dépendances après audit transversal P0
 
-[C06](../add-protected-core-http-commands-and-queries/proposal.md), [C07](../activate-reference-runtime-composition/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C14](../add-essential-pbo-pzt-and-dns-modules/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md).
+[C06](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md), [C07](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C14](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

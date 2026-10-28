@@ -389,7 +389,7 @@ def consumer(args):
         policy_source = PolicySource(str(case / "policy.toml"), uid, policy.policy_id, 16384)
         checks["policy_loaded"] = load_c01_policy(policy_source) == policy
         source_texts = texts()
-        required = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt")
+        required = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt", "pixs.dns")
         prepared = prepare_host_plan(manifest_texts=source_texts, official_ids=required,
             required_ids=required, attestation_port=SyntheticProofPort(source_texts))
         template = build_settings_template(profile="web",

@@ -3,10 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
-    "build": "vite build",
+    "dev": "node scripts/run_frontend_build.mjs --mode STANDALONE --command serve",
+    "build": "node scripts/run_frontend_build.mjs --mode STANDALONE --command build",
+    "dev:composed": "node scripts/run_frontend_build.mjs --mode COMPOSED --command serve",
+    "build:composed": "node scripts/run_frontend_build.mjs --mode COMPOSED --command build",
     "test": "node tests/browser/catalog-browser.mjs",
-    "test:node": "node --test tests/shell.test.mjs"
+    "test:node": "node --test tests/shell.test.mjs tests/shell-contracts.test.mjs tests/composition-graph.test.mjs tests/presentation-contract.test.mjs tests/presentation-adapter.test.mjs tests/session-runtime.test.mjs tests/composition-runtime.test.mjs"
   },
   "dependencies": {
     "@tanstack/react-router": "1.170.41",

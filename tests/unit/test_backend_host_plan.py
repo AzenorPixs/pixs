@@ -13,7 +13,7 @@ from pixs.kernel.config.resolution import SecretReference, qualified_key
 from tests.conformity_fixtures import synthetic_attestations
 
 _ROOT = Path(__file__).parents[2]
-_REQUIRED = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt")
+_REQUIRED = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt", "pixs.dns")
 
 
 def component(name, kind="MODULE", extra=""):
@@ -23,7 +23,7 @@ def component(name, kind="MODULE", extra=""):
 
 def texts():
     actual = tuple((_ROOT / "src" / "pixs" / name / "component.toml").read_text(encoding="utf-8")
-                   for name in ("kernel", "core", "auth"))
+                   for name in ("kernel", "core", "auth", "dns"))
     return actual + (component("pixs.agent"), component("pixs.pzt"))
 
 
@@ -54,7 +54,7 @@ class HostPlanTests(unittest.TestCase):
         self.assertTrue(plan.unevaluated_dimensions)
         self.assertEqual(set(plan.registries), {"modules", "dependencies", "lifecycle", "services",
                                               "events", "configuration", "extensions"})
-        self.assertEqual(len(plan.registries["modules"]), 5)
+        self.assertEqual(len(plan.registries["modules"]), 6)
         self.assertTrue(plan.registries["services"])
         self.assertEqual(plan.registries["configuration"], ())
 
@@ -150,7 +150,7 @@ class HostPlanTests(unittest.TestCase):
                 return super().authenticate_and_read(manifests)
         plan = self.prepare(source, declarations=(declaration,), static=static,
                             attestation_port=MutatingPort(source))
-        self.assertEqual(len(plan.manifests), 5)
+        self.assertEqual(len(plan.manifests), 6)
         self.assertEqual(plan.configuration.resolved[0].value, 4)
 
     def test_provider_ambiguity_requires_explicit_selection(self):

@@ -15,6 +15,13 @@ from pixs.backend.bulk_export_manifest_record import BulkExportManifestRecord  #
 from pixs.backend.bulk_outbox_publication_record import BulkOutboxPublicationRecord  # noqa: E402,F401
 from pixs.backend.bulk_operation_record import BulkOperationRecord
 from pixs.backend import bulk_runtime_records as _bulk_runtime_records
+from pixs.backend.c09_job_records import C09JobExtensionRecord  # noqa: E402,F401
+from pixs.backend import c09_event_records as _c09_event_records  # noqa: E402,F401
+from pixs.backend.c10_receipt_record import C10ReceiptRecord
+from pixs.backend.c08_installation_result_record import C08InstallationResultRecord
+from pixs.backend.c08_mode_snapshot_record import C08ModeSnapshotRecord
+from pixs.backend.c08_mode_operation_receipt_record import C08ModeOperationReceiptRecord  # noqa: E402,F401
+from pixs.backend.c08_act_receipt_record import C08ActReceiptRecord  # noqa: E402,F401
 from pixs.kernel.jobs import JobState
 from pixs.kernel.manifest.semver import parse_version
 

@@ -104,3 +104,48 @@ C08 MUST remplacer les saisies de connexion par les seules références du provi
 
 - **WHEN** la publication autorisée et la résolution de la bonne version sont vérifiées
 - **THEN** la reprise conserve uniquement les références et métadonnées non secrètes nécessaires
+
+### Requirement: Séquence PA PZT PostgreSQL puis initialisation PBO
+
+Le parcours d’installation MUST séparer provisionnement opérateur PA/PZT, préparation PostgreSQL par PA, connexion et migrations PBO, acte R01 propriétaire puis marqueur et première configuration. Chaque phase MUST avoir propriétaire, plan, résultat et reprise inspectables. Les garanties de transport PZT, de séparation transactionnelle, de non-duplication et de disponibilité ci-dessous MUST être respectées.
+
+#### Scenario: Garanties de la séquence et de la reprise
+
+- **WHEN** le profil sélectionne cette capacité pour le parcours de préparation PostgreSQL
+- **THEN** Le parcours d'installation MUST distinguer les phases et propriétaires : provisionnement opérateur local de confiance PA/PZT indépendant de la base Pixs ; préparation PostgreSQL et première connexion technique par PA ; vérification de la cible et remise des seules références applicatives au workload PBO ; inspection et migrations par les contrats propriétaires PBO ; acte initial R01 Core/Auth/audit et résultat C08 ; marqueur externe et première configuration. Tous échanges PBO–PA MUST passer par PZT, même sur le même hôte ou conteneur. Chaque phase MUST posséder plan versionné, identité d'opération, état inspectable, preuves minimisées et conditions de reprise. Un reçu PA MUST attester seulement l'état technique observé et MUST NOT prouver un commit métier ou l'autorisation suivante. Un effet externe de service, rôle ou base MUST NOT être annoncé comme atomique avec la transaction Core/Auth/C05/C08. Après interruption, l'inspection de chaque propriétaire et le rapprochement des résultats MUST précéder tout rejeu ; la compensation d'une préparation externe MUST NOT supprimer une base ou des données sans autorisation destructive distincte. La disponibilité MUST attendre les prérequis, les références vérifiées, l'audit rapproché et les décisions applicatives courantes.
+
+#### Scenario: Panne entre préparation et migration
+
+- **WHEN** PA a confirmé PostgreSQL mais PBO est interrompu avant ses migrations ou son acte R01
+- **THEN** la reprise vérifie le résultat technique et la cible puis poursuit la seule phase autorisée sans recréer la base ni déclarer un compte créé
+
+#### Scenario: Commit métier et marqueur perdu
+
+- **WHEN** le commit propriétaire PBO est confirmé mais la réponse ou le marqueur externe est perdu
+- **THEN** la reprise inspecte le résultat durable et ne réexécute ni préparation destructive PA ni création Core/Auth ; seule l’étape externe manquante admissible est reprise
+
+### Requirement: Séquence observation, planning et confirmation avant effet
+
+Pour le profil PostgreSQL initial 1.1 E5 sélectionné, le parcours MUST séparer OBSERVE, PREPARE_PLAN, confirmation puis PREPARE critique et READ_RESULT, avec cinq guards même en REUSE ou effets vides et conformité complète avant SUCCEEDED, sans modifier les contrats 1.0 ni fallback.
+
+#### Scenario: Préconditions stagiées avant CREATE
+
+- **WHEN** une condition différée concerne exclusivement ROLE ou DATABASE UNOBSERVABLE avec SERVICE_START planifié avant, sans absence inférée, sans exclure leur présence conjointe
+- **THEN** la condition différée est vérifiée après démarrage, les cinq guards s'appliquent même en REUSE ou effets vides, la preuve actuelle d'ABSENT est exigée avant chaque CREATE et la conformité complète avant SUCCEEDED
+
+#### Scenario: Effets et bindings distincts
+
+- **WHEN** le planning est retourné avec projection C08 immuable liée à l'observation et bundle vérifié
+- **THEN** UNOBSERVABLE impose UNDETERMINED sans devenir absence, effects_binding engage le manifeste entier et effects_digest le seul tableau allowed_effects, sans confusion ni coercition, la présentation et la confirmation seize champs restant ultérieures avant mandat critique
+### Requirement: Amorçage technique borné du temps avant transport protégé
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — Amorçage temps borné
+
+L’amorçage du temps avant PZT et avant la base applicative MUST demeurer borné, acyclique et autorisé hors base applicative, sans droit métier et sans réseau direct PBO vers PA hors PZT. Le service préfourni, une horloge matérielle qualifiée ou une source indépendante qualifiée MAY être utilisé. Le service NTS MUST NOT prouver à lui seul le temps universel initial. Tout téléchargement des prérequis par un canal chiffré qui exigerait une heure non encore établie MUST NOT être entrepris. Les opérations entre PBO et PA MUST conserver exclusivement le transport protégé existant.
+
+#### Scenario: Amorçage sans heure connue
+
+- **WHEN** aucune heure universelle qualifiée n’est disponible avant le transport protégé
+- **THEN** la procédure bornée s’applique ou la branche est refusée sans auto-autorité par statut

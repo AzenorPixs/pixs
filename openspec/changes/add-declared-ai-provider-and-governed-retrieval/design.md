@@ -38,7 +38,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 - [add-pbo-runtime-secret-provider](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md).
 - [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
+- [add-protected-core-http-commands-and-queries](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
 
 

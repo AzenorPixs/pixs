@@ -21,7 +21,7 @@ from pixs.kernel.registry.registries import build_registries
 
 __all__ = ["AttestationPort", "HostPlanError", "PreparedHostPlan", "prepare_host_plan"]
 _PLAN_KEY = object()
-_PBO_REQUIRED = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt")
+_PBO_REQUIRED = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt", "pixs.dns")
 _REGISTRIES = ("modules", "dependencies", "lifecycle", "services", "events", "configuration", "extensions")
 
 
@@ -116,9 +116,9 @@ def prepare_host_plan(*, manifest_texts, official_ids, required_ids, declaration
                       attestation_port: AttestationPort | None = None) -> PreparedHostPlan:
     """Prépare un instantané fermé ; aucune activation de ressource ici.
 
-    Le profil PBO exige les cinq composants dont l'identité est adoptée.
-    DNS reste une obligation de qualification distincte : aucun identifiant
-    absent du canon n'est inventé et ce résultat ne certifie pas le P0.
+    Le profil PBO exige les six responsabilités de gestion adoptées,
+    dont PZT et DNS même sans réseau distant ni service DNS sélectionné.
+    Ce résultat ne certifie ni les exécutants ni le P0.
     """
     texts = _strings(manifest_texts)
     officials, required = _strings(official_ids), _strings(required_ids)

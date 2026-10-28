@@ -1,3 +1,17 @@
+## Périmètre après découpage du 26 octobre 2026
+
+Le présent lot porte uniquement `initial-application-bootstrap` : quatre
+exigences et six scénarios. Les neuf exigences d'administration, maintenance
+et audit sont portées par le lot compagnon
+`2026-10-26-specify-initial-administration-and-maintenance`.
+Les décisions initiales ci-dessous sont conservées comme historique du
+cadrage de septembre, et non comme description de l'état fonctionnel actuel.
+Les décisions d'administration qui y figurent sont reprises dans le design du
+lot compagnon ; elles ne créent aucun delta supplémentaire dans ce lot.
+La répartition des quatre fichiers de deltas est disjointe et conserve leurs
+octets. Les propositions et les deltas de chacun des deux lots doivent passer
+le strict avant réarchivage. Le canon reste inchangé par `--skip-specs`.
+
 ## Context
 
 Voir `proposal.md`. Le dépôt ne contient à ce stade aucune application

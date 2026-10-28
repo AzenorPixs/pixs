@@ -105,7 +105,7 @@ spécification `dependencies`.
 Toute ancienne chaîne fournie sans version dans
 `[provides].capabilities` ou `[implements].contracts` MUST être refusée en
 validation avec un diagnostic nommant le champ et l'entrée ; les fixtures
-historiques DOIVENT être adaptées et la version du composant MUST NOT servir
+historiques MUST être adaptées et la version du composant MUST NOT servir
 de proxy. Aucune preuve de conformité ne figure dans le manifest.
 
 #### Scenario: Capacité fournie sans version refusée

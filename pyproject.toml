@@ -11,3 +11,13 @@ dependencies = [
     "argon2-cffi==25.1.0",
     "cryptography==50.0.2",
 ]
+
+[build-system]
+requires = [
+    "setuptools",
+    # Dernières versions stables vérifiées au début de chaque campagne,
+    # puis figées pendant toute sa durée.
+    "Cython==3.3.0",
+    "Nuitka==4.3.1",
+]
+build-backend = "setuptools.build_meta"

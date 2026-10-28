@@ -5,6 +5,7 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
+import { build as buildVendor } from 'vite';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND = path.resolve(HERE, '..', '..');
@@ -16,13 +17,28 @@ const LOG_CAP = 8 * 1024;
 const GRACE_MS = 2000;
 const VERSION_CAP_MS = 5000;
 const CLOSE_CAP_MS = 2000;
-const CASE_COUNT = 3;
-const EXPECTED_CASES = Object.freeze(["canonical and French catalogues are complete, immutable and namespaced", "catalogue rejects duplicate, missing and invalid translations", "locale follows the first supported preference, then explicit fallback"]);
+const CASE_COUNT = 145;
+const EXPECTED_CASES = Object.freeze(["canonical and French catalogues are complete, immutable and namespaced", "catalogue rejects duplicate, missing and invalid translations", "locale follows the first supported preference, then explicit fallback", "façade : exports appelables et délégation des ports", "ports fermés : types, champs secrets et accesseurs refusés", "périmètres canoniques : plateforme, tenant, scope opaques et session UUIDv7", "snapshots : copies profondes immuables sans alias", "provider : époque et réponse courante contrôlées", "contexte actif : assurances et hints explicites", "contexte inactif : purge des faits et refus des secrets", "routes web : URL externe, traversée et Auth refusées", "queries : contexte du provider et enveloppe C06", "commands : attente serveur, idempotence et copie de l’entrée", "réponse retardée : aucun fait de l’ancien contexte exposé", "résultat connu, refus, panne et issue inconnue distingués", "descripteur : huit types nominaux gelés et concordants", "descripteur : onze points uniques, metadata gelée et catégorie concordante", "descripteur : concordance huit champs, owner_version et requires ordre-multiplicité", "descripteur : limits obligatoires et budgets avant boucles, creux et très grands refusés", "descripteur : facette entry Kernel non normalisée, point et garanties refusés", "descripteur : payload fermé, CSR et exports nommés, chemins privés refusés", "descripteur : chemins fermés, traversée et param canonique", "descripteur : permissions déclaratives, trust et slot modulaire public", "descripteur : catalogues namespacés, LF accepté et sans alias", "descripteur : accesseurs non appelés, exotiques et gelé accepté", "descripteur : tous les champs de facette et limites de volume sont contrôlés", "descripteur : accesseurs de chaque frontière refusés et copies profondes", "transport opaque : slash pourcent espace unicode encodes par segment", "transport : point point NUL surrogate isole refuses avant envoi", "resolveur proprietaire fictif acme.demo : snake namespace semver prerelease", "resolveur : absent collision version scopes secrets getters segments reserves refuses", "resolveur : kind name hostiles sans coercition ni getter, immuable sans alias", "core P T S et 22 15 : memberships refuse, create-group nominal, usurpation refusee", "bindShellApi second param utilise par query et command", "params core sous params : limit cursor ref types, ordre conserve, gele", "params proprietaires transmis sans tri core, snapshot gele", "préflight et graphe purs immuables, sans mutation des entrées", "owner et version du descripteur ne sont jamais réécrits pour concorder", "descripteur surnuméraire retire le propriétaire, pas son voisin", "descripteur absent obligatoire bloque même sans contribution conservée", "doublons sans arbitre et mandatory contradictoire ne devient pas optionnel", "empreinte module/capture et diagnostic owner sont recoupés", "exports réellement callable requis avant graphe", "SANDBOXED sans adapter et DEVELOPMENT en production refusés", "namespace réservé exige owner officiel et propriété concordante", "intersections avec routes protégées refusées, pas uniquement égalité", "paramètres répétés refusés dans une seule route", "deux routes en intersection sont toutes deux retirées, indépendant conservé", "paramètres de même nom sur deux routes ne provoquent pas erreur globale", "slots APPEND gardés dans ordre déclaré ; REJECT retire toutes les collisions", "catalogues en/fr complets et mêmes paramètres nommés", "catalogue appartient au namespace du composant", "clés de traduction en collision retirent les deux contributions", "navigation exige une route et son libellé de catalogue disponibles", "collision des clés UI_PERMISSION refuse les deux, sans créer un droit", "dépendance intra-composant prime sur tri alphabétique des identifiants", "cycles exacts, dépendants diagnostiqués séparément et indépendants gardés", "composante cyclique complète avec arête vers sommet déjà visité", "faits incomplets, index, candidats, edges et agrégat falsifiés refusés", "exigence manquante optionnelle isolée, obligatoire bloque", "refus après collision propagé vers dépendant obligatoire", "point public parent consommé avec dépendances commune et contribution prouvées", "point public sans dépendance frontend vers son fournisseur refusé", "fournisseur de point invalide retire aussi les consommateurs", "erreur de capture recoupée par owner_index et admission hors capture", "points privés ou sans relation commune ne sont pas consommables", "politique, version, budgets et accès de données stricts", "ordre de découverte des facettes et descripteurs sans effet sur résultat", "chaîne de 512 contributions résolue sans récursion du graphe", "navigation sans paramètres explicites ne consomme pas un libellé paramétré", "présentation : arbre fermé copié, profondément gelé et sans mutation", "présentation : alias autorisés copiés sans partager, cycles refusés", "présentation : styles, HTML, composants bruts et variantes inconnues refusés", "présentation : catalogue propriétaire et paramètres exacts des deux langues", "présentation : liens déclarés avec paramètres URL complets et sûrs", "présentation : seuls slots et composants publics admis par le contexte", "présentation : formulaire, liaison de champ et statut de commande sans exécution", "présentation : statut ne référence pas un id action absent", "présentation : champs ou cibles de liaison dupliqués refusés", "présentation : chemins de corps déclarés, pas prototype ni cible arbitraire", "présentation : formulaire imbriqué et champs ou submit sans formulaire refusés", "présentation : accesseurs jamais invoqués et tableaux creux refusés", "présentation : quotas explicites de nœuds, profondeur, données et corps", "présentation : bouton autonome et statut avant déclaration d’action", "présentation : bouton submit ne crée pas un faux id de résultat autonome", "présentation : section de formulaire conserve portée des champs et liaisons", "adapter : classes sémantiques et heading associé sans style ou HTML brut", "adapter : headings distincts ne partagent pas une clé objet convertie en chaîne", "adapter : Link injecté et segment URI encodé", "adapter : tous champs imbriqués rendus et submit hérite du formulaire", "adapter : submit conserve événement privé, valeurs copiées et gelées", "adapter : champ requis vide refusé avant appel commande", "adapter : bouton autonome a statut automatique sans confirmer retour du port", "adapter : rejet asynchrone signalé sans recopier le message privé", "adapter : PENDING empêche une deuxième commande même si port incohérent", "adapter : plusieurs statuts explicites ont ids uniques, sans statut auto doublé", "adapter : slots et composants restent des ports privés injectés", "adapter : ports fermés, états invalides, ids dupliqués et labels non textuels refusés", "construction sans reseau et ports fermes sans appel accesseur", "origine http bloque transport avant tout envoi reseau", "contexte actif verifie scope opaque session et meta separes", "correlation meta payload temps session invalides refuses sans partiel", "liaison proprietaire injectee fige sinon refus sans invention", "csrf amorce puis post protege porte session idempotence", "params requete gardent ordre doublons encodent scopes invalides refuses", "reponse retardee ignoree epoque changee abort observe", "expiration serveur purge delai technique sans vrai sommeil", "401 mismatch purge differee 403 invalide sans revoque inventee", "hors ligne bloque avant reseau retour ne rejoue rien", "canal ne transporte que invalidation sans secret ignore reste", "panne canal rend indisponible et notifie purge avant propagation", "connexion emet load verifie puis active sans fuite mot de passe", "reprise identique garde cle empreinte divergent refuse sans post", "deconnexion distinguee rejouable garde cle entete corps", "mutation pendante refuse double et ignore resultat obsolete", "arret nettoie timers requetes ecoutes remonte echec", "construction : options, graphe, fabriques et points invalides refusés", "visibilite : PUBLIC, AUTH, PLATEFORME, TENANT et permissions sans droit", "isolation : deux proprietaires avec meme action locale", "requete : PENDING puis LOADED, fabrique voit reponse gelee et cache actualise", "commande : CONFIRMED a 200 et REJECTED a 4xx", "commande : panne et 5xx donnent UNKNOWN rejouable a cle identique", "rejeu : autre contenu ou session bloque, query et 4xx ne resolvent pas UNKNOWN", "double soumission PENDING refusee", "champs : false, entier, null, listes, enregistrements, LF et ordre valides", "champs invalides refuses avant tout envoi", "INVALID via reportError sans ecraser PENDING ou UNKNOWN", "purge : avant notification, reponses anciennes ignorees et barrieres gardees", "resolution : resolver courant change, liaison absente refuse sans envoi", "actions retirees inexecutable, composants et slots seulement declares", "fabrique sans effets reseau navigation ou invalidation, vrai cycle refuse", "chaine 512 admise, version numerique, ecoutes et dispose", "champs DOM : ports fermes et accesseurs jamais invoques", "champs DOM : texte natif libelle borne et valeur courante", "champs DOM : booleen false conserve puis true lu sans chaine", "champs DOM : entier facultatif null et nombre avec bornes", "champs DOM : liste preserve LF ordre doublons et copie", "champs DOM : enregistrements conservent colonnes LF et doublons", "champs DOM : ajout retrait respectent minimum maximum et disabled", "champs DOM : focus apres ajout retrait et retour au bouton", "champs DOM : modele stable garde brouillon puis nouvelle cle le purge", "champs DOM : deux proprietaires et modeles restent isoles", "champs DOM : lecteur refuse absent doublon colonne et budget", "champs DOM : variantes fermees et signal badInput refuse explicitement", "adapter runtime : contexte lie authentique, copies et perimes refuses"]);
 
 const ROUTES = new Map([
   ['/', [path.join(HERE, 'runner.html'), 'text/html; charset=utf-8']],
   ['/tests/shell.test.mjs', [path.resolve(FRONTEND, 'tests', 'shell.test.mjs'), 'text/javascript; charset=utf-8']],
+  ['/tests/shell-contracts.test.mjs', [path.resolve(FRONTEND, 'tests', 'shell-contracts.test.mjs'), 'text/javascript; charset=utf-8']],
+  ['/src/shell/composition-descriptor-v1.js', [path.resolve(FRONTEND, 'src', 'shell', 'composition-descriptor-v1.js'), 'text/javascript; charset=utf-8']],
+  ['/tests/composition-graph.test.mjs', [path.resolve(FRONTEND, 'tests', 'composition-graph.test.mjs'), 'text/javascript; charset=utf-8']],
+  ['/src/shell/composition-graph-v1.js', [path.resolve(FRONTEND, 'src', 'shell', 'composition-graph-v1.js'), 'text/javascript; charset=utf-8']],
+  ['/tests/presentation-contract.test.mjs', [path.resolve(FRONTEND, 'tests', 'presentation-contract.test.mjs'), 'text/javascript; charset=utf-8']],
+  ['/src/shell/presentation-contract-v1.js', [path.resolve(FRONTEND, 'src', 'shell', 'presentation-contract-v1.js'), 'text/javascript; charset=utf-8']],
+  ['/tests/presentation-adapter.test.mjs', [path.resolve(FRONTEND, 'tests', 'presentation-adapter.test.mjs'), 'text/javascript; charset=utf-8']],
+  ['/src/shell/presentation-adapter-v1.js', [path.resolve(FRONTEND, 'src', 'shell', 'presentation-adapter-v1.js'), 'text/javascript; charset=utf-8']],
+  ['/src/shell/api-v1.js', [path.resolve(FRONTEND, 'src', 'shell', 'api-v1.js'), 'text/javascript; charset=utf-8']],
   ['/src/catalogs.js', [path.resolve(FRONTEND, 'src', 'catalogs.js'), 'text/javascript; charset=utf-8']],
+  ['/tests/session-runtime.test.mjs', [path.resolve(FRONTEND, 'tests/session-runtime.test.mjs'), 'text/javascript; charset=utf-8']],
+  ['/tests/composition-runtime.test.mjs', [path.resolve(FRONTEND, 'tests/composition-runtime.test.mjs'), 'text/javascript; charset=utf-8']],
+  ['/tests/presentation-fields.test.mjs', [path.resolve(FRONTEND, 'tests/presentation-fields.test.mjs'), 'text/javascript; charset=utf-8']],
+  ['/src/shell/session-runtime-v1.js', [path.resolve(FRONTEND, 'src/shell/session-runtime-v1.js'), 'text/javascript; charset=utf-8']],
+  ['/src/shell/composition-runtime-v1.js', [path.resolve(FRONTEND, 'src/shell/composition-runtime-v1.js'), 'text/javascript; charset=utf-8']],
+  ['/src/shell/presentation-fields-v1.js', [path.resolve(FRONTEND, 'src/shell/presentation-fields-v1.js'), 'text/javascript; charset=utf-8']],
   ['/t/test-adapter.mjs', [path.join(HERE, 'test-adapter.mjs'), 'text/javascript; charset=utf-8']],
   ['/t/assert-adapter.mjs', [path.join(HERE, 'assert-adapter.mjs'), 'text/javascript; charset=utf-8']],
 ]);
@@ -383,12 +399,44 @@ function finalize(records, serverClosed, errors) {
   };
 }
 
+
+async function prepareReactVendor() {
+  const directory = await fsp.mkdtemp(path.join(CACHE_ROOT, 'react-'));
+  const entry = path.join(FRONTEND, '__pixs_c11_test_react__.mjs');
+  try {
+    await buildVendor({
+      configFile: false, root: FRONTEND, envDir: false, envPrefix: [], publicDir: false,
+      logLevel: 'error',
+      define: { 'process.env.NODE_ENV': JSON.stringify('production') },
+      plugins: [{
+        name: 'pixs-c11-test-react', enforce: 'pre',
+        resolveId(id) { return id === entry ? entry : null; },
+        load(id) {
+          return id === entry
+            ? "export {createElement,useState,useRef,useEffect} from 'react'; export {createRoot} from 'react-dom/client'; export {flushSync} from 'react-dom';"
+            : null;
+        },
+      }],
+      build: { outDir: directory, emptyOutDir: false, sourcemap: false, minify: false,
+        lib: { entry, formats: ['es'], fileName: () => 'react.mjs' } },
+    });
+    ROUTES.set('/vendor/react.mjs', [path.join(directory, 'react.mjs'), 'text/javascript; charset=utf-8']);
+    return directory;
+  } catch (error) {
+    await fsp.rm(directory, { recursive: true, force: true });
+    throw error;
+  }
+}
+
 async function main() {
   if (process.argv.length !== 2) throw new Error("Unsupported runner arguments");
   const errors = [];
   const records = [];
   let serverClosed = false;
+  let vendorDirectory = null;
+  let vendorRemoved = false;
   try {
+    vendorDirectory = await prepareReactVendor();
     await listen();
     for (const browser of BROWSERS) {
       if (remaining() === 0) {
@@ -402,7 +450,12 @@ async function main() {
   }
   serverClosed = await closeServer();
   if (!serverClosed) violations.push('serveur_non_ferme');
+  if (vendorDirectory !== null && serverClosed && records.every(r => r.processClosed)) {
+    try { await fsp.rm(vendorDirectory, { recursive: true, force: true }); vendorRemoved = true; }
+    catch (error) { violations.push('nettoyage_vendor_' + String(error.message).slice(0, 150)); }
+  } else if (vendorDirectory !== null) violations.push('vendor_conserve_processus_ou_serveur_actif');
   const output = finalize(records, serverClosed, errors);
+  output.react_vendor_removed = vendorRemoved;
   process.stdout.write(JSON.stringify(output, null, 2) + '\n');
   process.exitCode = output.code;
 }

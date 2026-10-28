@@ -17,7 +17,7 @@ from pixs.core.dto import CommandEnvelope, CoreInputInvalid, CoreMutationResult
 from pixs.core.persistence.uuid7 import generate_uuid7
 from pixs.core.ports import BootstrapServicePorts, CorePortError, CoreServicePorts, TransactionProof
 from pixs.core.services_authorization_guard import acquire_catalog_guard
-from pixs.core.services_common import CoreServiceError, allow, check_request, check_stage, lock_scopes, make_proof, published_profile, utc_now
+from pixs.core.services_common import CoreServiceError, _OWNER, _published_profile_for_owner, allow, check_request, check_stage, lock_scopes, make_proof, utc_now
 from pixs.core.services_transaction_types import AppliedMutation, MutationContext
 
 __all__ = ["execute_mutation"]
@@ -151,7 +151,7 @@ def _stage_result(ctx: MutationContext, applied: AppliedMutation, payload_refs: 
     return result
 
 
-def _attempt(ports, *, envelope, alias, scopes, apply, payload_refs, facts_source, state, restore_only=False) -> CoreMutationResult:
+def _attempt(ports, *, envelope, alias, scopes, apply, payload_refs, facts_source, state, expected_owner, restore_only=False) -> CoreMutationResult:
     if type(restore_only) is not bool:
         raise CoreServiceError("MODE_INVALIDE") from None
     if type(scopes) is not tuple or len(scopes) == 0:
@@ -172,7 +172,7 @@ def _attempt(ports, *, envelope, alias, scopes, apply, payload_refs, facts_sourc
     facts, decision = allow(ports, request, under_locks=True, alias=alias, operation_id=envelope.operation_id, _facts_source=facts_source)
     state["facts"] = facts
     state["decision"] = decision
-    attestation, audit_waived, governance_waived = published_profile(ports, request, decision, alias=alias, operation_id=envelope.operation_id, token=token)
+    attestation, audit_waived, governance_waived = _published_profile_for_owner(ports, request, decision, alias=alias, operation_id=envelope.operation_id, token=token, expected_owner=expected_owner)
     state["audit_waived"] = audit_waived
     ctx = MutationContext(ports, envelope, alias, token, decision, attestation, audit_waived, governance_waived)
     state["ctx"] = ctx
@@ -208,7 +208,7 @@ def _attempt(ports, *, envelope, alias, scopes, apply, payload_refs, facts_sourc
     return _stage_result(ctx, applied, payload_refs, state=state)
 
 
-def _reconcile(ports, *, envelope, alias, scopes, facts_source, state) -> CoreMutationResult:
+def _reconcile(ports, *, envelope, alias, scopes, facts_source, state, expected_owner) -> CoreMutationResult:
     proof = state["proof"]
     if type(proof) is not TransactionProof:
         raise CoreServiceError("ISSUE_INCONNUE") from None
@@ -223,7 +223,7 @@ def _reconcile(ports, *, envelope, alias, scopes, facts_source, state) -> CoreMu
     newstate = {"token": generate_uuid7().hex, "command_type": state["command_type"], "facts": None, "decision": None, "audit_waived": False, "proof": None}
     try:
         with transaction.atomic(using=alias, durable=True):
-            result = _attempt(ports, envelope=envelope, alias=alias, scopes=scopes, apply=None, payload_refs=(), facts_source=facts_source, state=newstate, restore_only=True)
+            result = _attempt(ports, envelope=envelope, alias=alias, scopes=scopes, apply=None, payload_refs=(), facts_source=facts_source, state=newstate, expected_owner=expected_owner, restore_only=True)
             _, fresh = allow(ports, envelope.request, under_locks=True, alias=alias, operation_id=envelope.operation_id, _facts_source=facts_source)
             if fresh.policy_version != newstate["decision"].policy_version:
                 raise CoreServiceError("ISSUE_INCONNUE") from None
@@ -234,8 +234,12 @@ def _reconcile(ports, *, envelope, alias, scopes, facts_source, state) -> CoreMu
     return result
 
 
-def execute_mutation(*, ports, alias, envelope, resource_id, action_id, correlation_id, command_type, lock_scopes, apply, outbox_payload_refs=(), _facts_source=None) -> CoreMutationResult:
+def _execute_mutation_for_owner(*, ports, alias, envelope, resource_id, action_id, correlation_id, command_type, lock_scopes, apply, outbox_payload_refs=(), _facts_source=None, expected_owner) -> CoreMutationResult:
     if type(ports) not in (CoreServicePorts, BootstrapServicePorts):
+        raise CoreServiceError("PORTS_INVALIDES") from None
+    if type(expected_owner) is not str or expected_owner == "":
+        raise CoreServiceError("ENTREES_INVALIDES") from None
+    if type(ports) is BootstrapServicePorts and expected_owner != _OWNER:
         raise CoreServiceError("PORTS_INVALIDES") from None
     if type(alias) is not str or alias == "":
         raise CoreServiceError("ALIAS_INVALIDE") from None
@@ -264,7 +268,7 @@ def execute_mutation(*, ports, alias, envelope, resource_id, action_id, correlat
         state["facts"] = facts
         state["decision"] = decision
         with transaction.atomic(using=alias, durable=True):
-            result = _attempt(ports, envelope=envelope, alias=alias, scopes=lock_scopes, apply=apply, payload_refs=outbox_payload_refs, facts_source=_facts_source, state=state, restore_only=False)
+            result = _attempt(ports, envelope=envelope, alias=alias, scopes=lock_scopes, apply=apply, payload_refs=outbox_payload_refs, facts_source=_facts_source, state=state, expected_owner=expected_owner, restore_only=False)
             _, fresh = allow(ports, envelope.request, under_locks=True, alias=alias, operation_id=envelope.operation_id, _facts_source=_facts_source)
             if fresh.policy_version != state["decision"].policy_version:
                 raise CoreServiceError("VERSION_DIVERGENTE") from None
@@ -280,7 +284,11 @@ def execute_mutation(*, ports, alias, envelope, resource_id, action_id, correlat
         _refuse(principal, ports, envelope=envelope, alias=alias, state=state)
     except (DatabaseError, InterfaceError) as unavailable:
         if commit_attempted is True:
-            return _reconcile(ports, envelope=envelope, alias=alias, scopes=lock_scopes, facts_source=_facts_source, state=state)
+            return _reconcile(ports, envelope=envelope, alias=alias, scopes=lock_scopes, facts_source=_facts_source, state=state, expected_owner=expected_owner)
         principal = CoreServiceError("APPLICATION_INDISPONIBLE")
         principal.__cause__ = unavailable
         _refuse(principal, ports, envelope=envelope, alias=alias, state=state)
+
+
+def execute_mutation(*, ports, alias, envelope, resource_id, action_id, correlation_id, command_type, lock_scopes, apply, outbox_payload_refs=(), _facts_source=None) -> CoreMutationResult:
+    return _execute_mutation_for_owner(ports=ports, alias=alias, envelope=envelope, resource_id=resource_id, action_id=action_id, correlation_id=correlation_id, command_type=command_type, lock_scopes=lock_scopes, apply=apply, outbox_payload_refs=outbox_payload_refs, _facts_source=_facts_source, expected_owner=_OWNER)

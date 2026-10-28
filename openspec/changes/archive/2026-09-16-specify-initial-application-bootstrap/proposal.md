@@ -1,48 +1,34 @@
 ## Why
 
-Le référentiel décrit la pile de référence et les garanties de Pixs, mais ne
-définit pas encore la composition vérifiable de sa première application de
-développement. Il faut la spécifier avant toute implémentation afin de rendre
-le démarrage Django, le shell TanStack et le test intégré cohérents avec le
-socle modulaire.
+La proposition historique du 16 septembre 2026 définit la première composition
+de développement Django, PostgreSQL et TanStack. Son lot bootstrap est séparé
+des exigences d'administration, maintenance et audit pour rendre chaque
+proposition complète validable strictement. Ce découpage documentaire conserve
+les garanties historiques et ne les réapplique pas au canon actuel.
 
 ## What Changes
 
-- Ajouter une capacité qui définit la composition initiale de développement :
-  projet Django, configuration PostgreSQL externe, chargement de `pixs.kernel`
-  et `pixs.core`, conformité P0, composant d'exemple non métier, surface HTTP
-  minimale, shell TanStack et profil de test local.
-- Définir les frontières de sécurité, de configuration et de validation de
-  cette composition sans imposer de donnée métier, de fournisseur concret, de
-  secret ou d'artefact de production.
-- Ajouter les modes installateur, première configuration et administration
-  initiale, avec leurs états de référence externes et persistés, un Super Admin
-  opérateur initial vérifié et une politique d'autorisation déclarée.
-- Exiger que les paramètres PostgreSQL recueillis par l'installateur deviennent
-  des références externes vers un `SecretProvider`, sans persistance durable de
-  leur valeur.
-- Étendre les règles d'exploitation et d'audit pour les maintenances à portée
-  générale, granulaire et sous-granulaire, ainsi que pour toute activité du
-  panneau d'administration.
-- Limiter ce change à la spécification : il ne crée ni code, ni dépendance,
-  ni configuration exécutable.
+- Conserver les quatre exigences de composition P0, surface HTTP, shell et
+  profil local dans le seul lot bootstrap.
+- Préserver intégralement le fichier de deltas `initial-application-bootstrap`
+  corrigé le 26 octobre 2026 : quatre exigences et six scénarios.
+- Transférer les neuf exigences d'administration, maintenance et audit au lot
+  compagnon `specify-initial-administration-and-maintenance`, sans duplication.
+- Conserver le plan historique des douze tâches comme trace du périmètre
+  initial ; les validations courantes distinguent les deux lots.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `initial-application-bootstrap` : composition initiale vérifiable de
-  l'application de référence Django et TanStack.
-- `initial-administration` : premier démarrage, modes d'installation et de
-  configuration, compte Super Admin et panneau d'administration.
-
-### Modified Capabilities
-
-- `operations` : niveaux de maintenance et transitions de mode contrôlées.
-- `audit` : couverture exhaustive et persistante du panneau d'administration.
+- `initial-application-bootstrap` : capacité du lot historique de composition
+  Django et TanStack, déjà présente dans le canon ; aucune nouvelle adoption
+  canonique n'est effectuée par ce découpage.
 
 ## Impact
 
-Les futurs artefacts Django, frontend, provisionnement et administration
-devront satisfaire ces capacités. Aucun code, API publiée, dépendance, secret,
-base de données ou serveur n'est créé ou modifié par ce change.
+Ce lot reste exclusivement documentaire : aucun code, dépendance, configuration
+exécutable, donnée métier ou secret n'est produit. Le réarchivage utilise
+`--skip-specs` afin de préserver les évolutions ultérieures du canon.
+Le lot compagnon est conservé dans
+[son archive](../2026-10-26-specify-initial-administration-and-maintenance/proposal.md).

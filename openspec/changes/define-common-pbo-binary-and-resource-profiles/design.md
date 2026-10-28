@@ -4,6 +4,20 @@
 
 ARCHITECTURE_ADOPTÉE ; CANON_SYNCHRONISÉ ; RÉALISATION_NON_ENGAGÉE.
 
+Ce statut décrit la décision du 21 octobre 2026. Les six exigences du complément
+Nuitka par campagne adopté le 26 octobre 2026 sont également synchronisées au
+canon sur validation explicite du développeur, sans réapplication des deltas
+antérieurs ni réalisation produit.
+
+Le complément de métadonnées validé ensuite le 26 octobre 2026 précise le
+verrou `toolchain.nuitka` et ajoute quatre exigences. Il est synchronisé au
+canon sur validation explicite du développeur, sans réapplication des autres
+deltas ni réalisation du constructeur.
+
+Le complément de preuve officielle datée du 27 octobre 2026 ajoute deux
+exigences et six scénarios dans ce change, sans synchronisation du canon,
+code ni implémentation. Le verrou reste `toolchain.nuitka` des métadonnées PBO.
+
 Le binaire PBO commun réunit Kernel, pixs.core, pixs.auth, pixs.agent et pixs.pzt,
 avec les autres composants sélectionnés. Les frontières de propriété,
 contrats, migrations, permissions et dépendances restent celles des modules.
@@ -147,6 +161,184 @@ produit ni artefact, ni mesure, ni installation par cette formalisation.
 
 La sélection Cython pour les trois binaires PA remplace leur ancien choix Nuitka, avec les mêmes modes et frontières de privilèges. PZT conserve Cython. La restriction aux optimisations ciblées mesurées concerne uniquement l'usage de Cython à l'intérieur de PBO, dont la chaîne principale est Nuitka standalone.
 
+## Politique Nuitka par campagne — décision du développeur du 26 octobre 2026
+
+Le [delta normatif reference-runtime](specs/reference-runtime/spec.md) complète
+la construction PBO sur le modèle de la [politique Cython PA01](../add-pa-native-build-and-component-composition/design.md#politique-cython-par-campagne--décision-du-développeur-du-26-octobre-2026).
+Au début de chaque campagne de qualification PBO, la chaîne sélectionne la
+dernière version stable de Nuitka publiée et non retirée, après vérification
+datée de la source officielle [PyPI](https://pypi.org/project/Nuitka/). Les
+préversions et versions de développement sont exclues. La date de vérification,
+la source, la version exacte, la provenance et les empreintes des distributions
+utilisées sont enregistrées avec les métadonnées de chaîne de la campagne.
+
+La version exacte est verrouillée dans `toolchain.nuitka` pendant toute la campagne et pour reproduire
+ses artefacts. Les contrôles de construction comparent la version effectivement
+utilisée au verrou et refusent tout écart ; une contrainte ouverte ne remplace
+pas ce verrou. Une nouvelle publication ne modifie ni une campagne en cours
+ni ses preuves. La campagne suivante réévalue la dernière stable ; la seule
+reproduction d'un artefact conserve sa chaîne historique verrouillée.
+
+Un changement de version impose l'alignement de `pyproject.toml`, des métadonnées
+de chaîne, des contrôles de construction PBO, des tests concernés et de la
+documentation courante, puis la qualification de la nouvelle chaîne Nuitka
+standalone. Celle-ci couvre Python, Django et ses imports dynamiques,
+dépendances, compilateur C, ABI, plateformes, options, rôles et ressources
+embarquées. Les anciennes preuves restent rattachées à leurs versions et
+artefacts, sans transfert de qualification à la nouvelle chaîne.
+
+Une dernière stable invérifiable ou dont la compatibilité ne peut pas être
+qualifiée bloque la sélection ou la qualification concernée, sans repli
+implicite vers une ancienne version. La politique ne modifie pas implicitement
+CPython, le mode GIL, le compilateur C, l'ABI, les cibles, les dépendances,
+les rôles ou les choix Cython distincts de PA/PZT et des optimisations PBO.
+Le profil Nuitka standalone et les modes d'exploitation Standalone/ZT restent
+conservés. Le format des métadonnées et le verrou sont désormais définis par
+le complément ci-dessous ; les autres schémas et choix de chaîne restent ouverts.
+
+La sélection et son inscription documentaire ne valent ni autorisation
+d'installation, ni construction, ni qualification. Ce complément de six
+exigences et sept scénarios est adopté dans ce change et synchronisé au canon
+sur validation explicite du développeur le 26 octobre 2026 ; les deltas déjà
+synchronisés du 21 octobre restent historiques et ne sont pas réappliqués.
+
+## Métadonnées de campagne PBO et verrou Nuitka — complément du 26 octobre 2026
+
+Ce contrat reprend la séparation de PA01 entre validation de structure,
+sélection officielle, verrou de version et observation avant compilation.
+Il définit un document TOML de métadonnées de campagne, fourni explicitement
+au futur constructeur PBO, distinct du profil de ressources et de
+`pyproject.toml`. Aucun chemin de fichier ni option CLI par défaut n'est fixé.
+Ce document ne définit pas l'ensemble du profil de construction PBO et
+n'adopte aucune version Python, ABI, cible, dépendance ou option supplémentaire.
+
+### Schéma fermé v1
+
+Les seules clés racines sont `schema_version`, `campaign`, `toolchain`,
+`selection` et `distributions`, toutes obligatoires. Les trois tables
+`campaign`, `toolchain` et `selection` sont uniques ; `distributions` est une
+liste non vide de tables TOML `[[distributions]]`. Les clés de chaque table
+sont exactement celles indiquées ci-dessous. Les champs inconnus, absents,
+dupliqués ou mal typés sont refusés. Les fichiers texte sont UTF-8/LF.
+Une valeur textuelle est non vide et sans caractère de contrôle ; aucune
+variable d'environnement ni interpolation n'est évaluée.
+
+| Champ | Type et règle |
+| --- | --- |
+| `schema_version` | Texte exact `1.0.0`, version du seul schéma de métadonnées. |
+| `campaign.id` | Texte identifiant une campagne PBO de manière unique dans son historique ; pas de valeur implicite. Une reproduction conserve cet identifiant et les métadonnées figées. |
+| `campaign.component` | Texte exact `pbo`, sans désigner une campagne PA01 ou PZT. |
+| `toolchain.nuitka` | Texte de version publique PEP 440 normalisée, finale ou `.postN`, selon la même forme admise que `toolchain.cython` dans PA01. Refuser contraintes ouvertes, préversions, développement, versions locales et formes non normalisées. Une forme valide ne prouve pas sa publication ni sa qualification. |
+| `selection.verified_at` | Texte horodaté en UTC `YYYY-MM-DDTHH:MM:SS[.fraction]Z`, date civile valide de la vérification officielle ; pas de date TOML native, de date sans fuseau ni de valeur calculée implicitement. |
+| `selection.source_url` | Texte exact `https://pypi.org/pypi/Nuitka/json`, source du relevé de sélection. |
+| `selection.snapshot` | Chemin relatif POSIX, canonique et sans remontée, vers le relevé JSON conservé relativement au document de campagne. Le fichier réellement lu reste dans son dossier, sans lien symbolique. |
+| `selection.snapshot_sha256` | Texte de 64 caractères hexadécimaux minuscules, SHA-256 des octets du relevé conservé ; vérifié sur le fichier réel. |
+| `distributions[].filename` | Nom simple du fichier Nuitka utilisé, sans chemin ni doublon. |
+| `distributions[].url` | URL HTTPS de cette distribution, exactement celle déclarée dans le relevé officiel pour la version verrouillée ; aucune information d'authentification embarquée. |
+| `distributions[].sha256` | Texte de 64 caractères hexadécimaux minuscules, égal au SHA-256 officiel et à celui des octets effectivement utilisés. |
+
+Le validateur structurel n'effectue ni accès réseau ni installation. La
+preuve de sélection est vérifiée séparément avant de figer les métadonnées :
+le relevé officiel doit établir que `toolchain.nuitka` est la dernière stable
+publiée et non retirée à `selection.verified_at`, en excluant préversions et
+développement. Les fichiers retenus doivent être non retirés dans ce relevé.
+Le nom, l'URL et le condensat de chaque distribution utilisée doivent
+correspondre à ses données ; une distribution utilisée mais absente du
+document de campagne est refusée. Le relevé figé est conservé pour permettre
+la revue ultérieure de la sélection. Son empreinte seule ne prouve pas
+l'origine officielle ni la réalisation de cette vérification datée.
+
+### Verrou, observation et compte rendu
+
+La déclaration unique `Nuitka==<version exacte>` de `[build-system].requires`
+dans `pyproject.toml` doit correspondre à `toolchain.nuitka`. Les deux valeurs
+sont des contraintes d'entrée ; aucune ne vaut observation du compilateur
+réellement appelé. Les contrôles ne modifient pas le manifeste pour résoudre
+une divergence et n'installent aucun paquet implicitement.
+
+Avant toute compilation PBO, une sonde locale avec le même interpréteur et
+le même Nuitka que la construction produit exactement un objet structuré
+`{"version": "<version observée>"}`. Une sortie absente, mal typée, ambiguë
+ou non normalisée ferme la construction. La version observée doit être
+strictement égale au verrou ; même une stable plus récente est refusée.
+Le constructeur ne consulte pas PyPI et ne sélectionne aucune autre version.
+
+Le compte rendu `build-report.json` contient au minimum `campaign_id`,
+`campaign_metadata_sha256`, `profile_sha256` et `nuitka_version` avec
+`locked` et `observed`. Les empreintes portent respectivement sur les octets
+du document de campagne et du profil de construction PBO effectivement
+utilisés. Ce sont des entrées figées indépendantes ; le rapport dérivé n'est
+inclus dans aucune de ces empreintes, sans auto-condensat ni cycle. Le rapport
+trace aussi les distributions vérifiées et l'issue du contrôle. Si la sonde
+échoue, `observed` vaut `null` et aucune version n'est inventée ; si elle
+réussit avec un écart, les deux valeurs sont conservées et l'issue est un refus.
+Une entrée dont l'intégrité n'est pas vérifiée ne doit pas être présentée
+comme vérifiée dans le rapport. Aucun diagnostic n'expose une valeur secrète.
+
+Les refus distingués sont `PBO_CAMPAIGN_METADATA_INVALID` pour un schéma
+invalide, `PBO_CAMPAIGN_EVIDENCE_INVALID` pour une preuve absente ou incohérente,
+`PBO_BUILD_NUITKA_METADATA_INVALID` pour une sonde inexploitable et
+`PBO_BUILD_NUITKA_MISMATCH` pour une divergence entre déclaration, verrou et
+version observée. Ces codes sont des contrats à réaliser, sans contrôleur
+exécutable livré par cette rédaction.
+
+### Immutabilité et périmètre
+
+Après sélection validée, l'identité, le verrou, la date et les preuves de la
+campagne sont figés. Une nouvelle sélection exige une nouvelle campagne et
+la qualification correspondante ; elle ne réécrit pas les métadonnées ou
+preuves d'une campagne antérieure. Une reproduction réutilise ses entrées
+figées et vérifiées, sans nouvelle consultation de la dernière stable ni
+horodatage de sélection remplacé. Les anciens artefacts restent liés à leurs
+versions et à leurs campagnes.
+
+Les six exigences Nuitka initiales restent historiquement synchronisées.
+Ce complément précise dans le delta l'exigence de verrouillage et ajoute
+quatre exigences et six scénarios ; ces évolutions sont synchronisées au canon
+sur validation explicite du développeur le 26 octobre 2026, sans réapplication
+des autres deltas.
+Les tâches 2.1 à 2.5 restent non cochées. Aucun relevé PyPI, document de
+campagne réel, constructeur, sonde, installation, compilation ou qualification
+n'est produit par cette définition documentaire.
+
+## Preuve officielle datée Nuitka — complément du 27 octobre 2026
+
+Le développeur autorise la définition documentaire d'une [procédure de preuve PBO](PREUVE_SELECTION_PBO.md)
+équivalente à celle de PA01. L'observation directe de PyPI en HTTPS vérifié
+est datée en UTC ; les entrées et leurs empreintes sont figées puis revues
+explicitement par le développeur ou un responsable de campagne délégué.
+L'admission lie le manifeste exact et la campagne PBO dans un registre
+protégé, distinct du candidat et non modifiable par le constructeur ou son
+appelant. Le lecteur de confiance appartient au contexte de build autorisé,
+sans sélection d'un registre de remplacement par le demandeur.
+
+Le futur raccord contrôle l'admission et son état courant hors ligne,
+rapproche les octets effectivement utilisés, `toolchain.nuitka` et la
+déclaration exacte du manifeste Python, puis observe le compilateur avant
+toute compilation. Une admission PA01 ou une preuve auto-déclarée ne vaut
+pas admission PBO. Les entrées manquantes, altérées, retirées ou invérifiables
+restent bloquantes, sans ancienne version choisie implicitement.
+
+Le manifeste de preuve, l'admission et les retraits sont des documents
+distincts de l'enveloppe fermée v1. Aucune clé n'y est ajoutée ; le verrou
+Nuitka et les autres choix de chaîne restent conservés. Le rapport ajoute
+`selection_admission_ref`, `selection_admission_sha256` et
+`selection_manifest_sha256`, liés aux preuves vérifiées, sans auto-condensat.
+Les dates et preuves historiques restent conservées pour les reproductions.
+
+Comme pour PA01, ce mécanisme repose sur la collecte contrôlée, la validation
+HTTPS, l'horloge UTC, l'autorité de revue et le registre protégé ; il ne
+prétend pas fournir une signature de PyPI ni un horodatage public certifié.
+Emplacement, propriétaire, droits et conservation du registre seront
+qualifiés avant une admission réelle ; aucun chemin, UID ou droit réel n'est
+créé ou modifié par cette définition.
+
+Deux exigences et six scénarios sont ajoutés au delta reference-runtime,
+sans synchronisation du canon. Les groupes P01–P06 sont préparés, non
+exécutés. Aucun code, constructeur, relevé courant, admission réelle,
+stockage protégé, installation ou qualification n'est produit ; les tâches
+de réalisation restent non cochées.
+
 ## Distribution et points ouverts
 
 | Artefact | Contenu et ressources |
@@ -155,7 +347,9 @@ La sélection Cython pour les trois binaires PA remplace leur ancien choix Nuitk
 | Debian PA/PZT | Trois binaires PA et un PZT indépendant ; profils propres à leur environnement, sans PBO local requis. |
 | Docker | Binaire PBO commun, ressources PFO, deux binaires PA système/événements et PZT ; un rôle PBO explicite par conteneur, instances bornées et modes de session PA exclus. |
 
-Nuitka standalone est retenu pour PBO ; versions/options, noms/CLI, schémas de configuration, chargement des extensions,
+Nuitka standalone est retenu pour PBO ; la politique de version suit désormais
+la dernière stable par campagne définie ci-dessus. La version effective et sa
+compatibilité, les options, noms/CLI, autres schémas de configuration, chargement des extensions,
 valeurs par défaut et seuils restent à spécifier et qualifier avant réalisation.
 Le développement depuis les sources reste possible. Aucune option Python sans
 GIL, dépendance, nouveau rôle PA/PZT ou isolation système n'est adopté ici.
@@ -164,14 +358,19 @@ GIL, dépendance, nouveau rôle PA/PZT ou isolation système n'est adopté ici.
 
 | Propriétaire | Coordination à la reprise |
 | --- | --- |
-| Ce change | Définition du binaire PBO commun et politique transverse de ressources. |
+| Ce change | Définition du binaire PBO commun, politique Nuitka par campagne et politique transverse de ressources. |
 | activate-reference-runtime-composition | Activer le même socle et les profils sans retirer les obligations P0. |
 | separate-pa-pzt-and-pbo-management-modules | Préserver propriétaires, contrats, canaux et séparation PA/PZT ; sa conception est complétée par la présente décision. |
 | Lots PA/PZT et distributions existants | Qualifier compilation, sessions, propriétaire réseau, budgets et lifecycle dans leurs périmètres. |
 
-Les deltas de sept capacités sont déjà synchronisés au canon ; toute clôture
-doit reconnaître cet état sans double application. Les anciens audits et
-matrices restent historiques et sont à réconcilier avant réalisation. Le change
+Les deltas de sept capacités issus du 21 octobre sont déjà synchronisés au
+canon ; toute clôture doit reconnaître cet état sans double application. Les
+six exigences Nuitka par campagne du 26 octobre ont été synchronisées
+séparément sur validation explicite du développeur, sans rejouer les anciens deltas.
+Le complément de métadonnées et la précision `toolchain.nuitka` sont également
+synchronisés sur validation explicite du développeur le 26 octobre 2026 ; les
+anciens deltas ne sont pas rejoués.
+Les anciens audits et matrices restent historiques et sont à réconcilier avant réalisation. Le change
 reste ouvert ; ses tâches produit ne sont pas exécutées.
 
 ## Vérifications documentaires
@@ -263,3 +462,130 @@ soit 112 changes et 78 capacités, sans erreur ni avertissement. Les contrôles
 UTF-8/LF, blocs, 12 liens ajoutés, 13 schémas statiques et copies concordantes
 réussissent ; le diff ne présente pas d'erreur d'espacement. Aucun rendu par
 moteur Mermaid, test applicatif ou binaire qualifié n'est déduit de cette revue.
+
+### Complément Nuitka par campagne — vérifications du 26 octobre 2026 avant synchronisation
+
+La demande du développeur autorise la mise à jour de ce change selon la
+politique Cython PA01. Quatre fichiers sont modifiés : `proposal.md`,
+`design.md`, `tasks.md` et `specs/reference-runtime/spec.md`. Six exigences et
+sept scénarios sont ajoutés au delta ; les blocs antérieurs sont conservés
+à l'identique. Les états et identifiants des tâches existantes sont conservés,
+et les tâches produit 2.1 à 2.5 restent non cochées.
+
+Avec OpenSpec 1.15.0, les commandes
+`openspec validate define-common-pbo-binary-and-resource-profiles --strict --json --no-interactive`
+et `openspec validate --all --strict --json --no-interactive` retournent le code
+natif 0. Le contrôle global valide 185 éléments sur 185, soit 107 changes et
+78 capacités, avant et après modification, sans erreur ni avertissement.
+Les 86 diagnostics INFO sont identiques avant et après. Celui du change
+concerne le delta reference-composition déjà présent au canon et son refus
+d'archivage éventuel ; il est préexistant et ne vaut pas autorisation de rejouer
+les anciens deltas ni d'archiver ce dossier.
+
+Les contrôles documentaires des quatre fichiers réussissent : UTF-8/LF,
+clôture des blocs Markdown, liens locaux et ancres, présence des mots-clés
+normatifs et scénarios WHEN/THEN, six exigences et sept scénarios supplémentaires,
+ainsi que `git diff --check` limité à ce change. La comparaison des empreintes
+confirme que les sept capacités canoniques concernées, les autres fichiers du
+change et `pyproject.toml` restent inchangés par cette intervention.
+
+Le complément reste adopté dans ce change, non synchronisé au canon. Aucune
+nouvelle campagne produit n'est lancée et aucune version n'est sélectionnée
+par cette seule rédaction. Aucun constructeur, contrôle exécutable ou test
+applicatif n'est modifié ou exécuté ; aucune installation, compilation,
+qualification de chaîne, archive, publication, commit ou push n'est effectué.
+
+### Synchronisation ciblée Nuitka au canon — 26 octobre 2026
+
+Sur validation explicite du développeur, les seules six exigences Nuitka par
+campagne et leurs sept scénarios sont ajoutés à
+[reference-runtime au canon](../../specs/reference-runtime/spec.md). La comparaison
+au relevé précédant cette synchronisation confirme un ajout strict à la fin
+du fichier : les 18 exigences et 25 scénarios antérieurs sont inchangés ;
+la capacité compte désormais 24 exigences et 32 scénarios. Les six blocs
+ajoutés sont identiques au delta validé, sans doublon ni réapplication des
+deltas déjà synchronisés. Le delta source et les six autres capacités
+canoniques concernées par ce change restent inchangés.
+
+Quatre fichiers sont modifiés par cette synchronisation : le canon
+`openspec/specs/reference-runtime/spec.md`, ainsi que `proposal.md`, `design.md`
+et `tasks.md` du change pour leur suivi. Les états et identifiants des tâches
+restent inchangés ; les tâches produit 2.1 à 2.5 restent non cochées.
+Les autres fichiers du change et `pyproject.toml` sont inchangés.
+
+Avec OpenSpec 1.15.0, les validations strictes de la capacité reference-runtime,
+du change et de l'ensemble par `openspec validate --all --strict --json --no-interactive`
+retournent le code natif 0. Le contrôle global valide 185 éléments sur 185,
+soit 107 changes et 78 capacités, sans erreur ni avertissement. Les 86
+diagnostics INFO restent identiques au relevé précédant la synchronisation,
+y compris le diagnostic d'archivage préexistant sur reference-composition.
+Les contrôles UTF-8/LF, blocs Markdown, liens locaux et `git diff --check`
+réussissent sur les quatre fichiers concernés.
+
+La synchronisation documentaire est réalisée ; le change reste ouvert.
+Aucune installation, compilation, qualification de chaîne, exécution de test
+applicatif, archive, publication, commit ou push n'est effectué.
+
+### Complément de métadonnées PBO — vérifications du 26 octobre 2026 avant synchronisation
+
+La validation du développeur porte sur la définition des métadonnées de
+campagne et du verrou `toolchain.nuitka` dans ce change. Quatre fichiers sont
+modifiés par cette intervention : `proposal.md`, `design.md`, `tasks.md` et
+`specs/reference-runtime/spec.md`. Le delta précise une exigence existante,
+classée MODIFIED, et ajoute quatre exigences ADDED avec six scénarios. Les
+autres blocs normatifs antérieurs et les états des tâches sont conservés.
+Ce complément ne réapplique pas les deltas déjà synchronisés et ne modifie
+pas le canon : la précision du verrou et les quatre ajouts restent dans le change.
+
+OpenSpec 1.15.0 valide le change en mode strict et le contrôle
+`openspec validate --all --strict --json --no-interactive` retourne le code
+natif 0 avec 185 éléments valides sur 185, soit 107 changes et 78 capacités,
+sans erreur ni avertissement. Les 86 diagnostics INFO restent identiques au
+relevé précédant ce complément, dont le diagnostic d'archivage préexistant
+sur reference-composition. Le classement MODIFIED du verrou évite de le
+présenter comme une exigence nouvelle absente du canon.
+
+Les contrôles documentaires réussissent sur les quatre fichiers : UTF-8/LF,
+blocs Markdown, liens et ancres, concordance des champs, des codes de refus
+et du rapport entre design et delta, ainsi que `git diff --check`. Il s'agit
+de contrôles statiques des contrats, sans validateur PBO ni recette runtime
+réalisés ou exécutés. Les empreintes des 78 capacités canoniques et de
+`pyproject.toml` sont inchangées. Quatre documents du change PA01 ont évolué
+concurremment entre les relevés ; ils sont laissés intacts par cette intervention.
+
+Le change reste ouvert et les tâches produit restent non cochées. Aucun
+document de campagne réel, sélection courante, téléchargement, installation,
+constructeur, test produit, compilation, qualification, synchronisation
+supplémentaire, archivage, commit ou push n'est produit par cette rédaction.
+
+### Synchronisation ciblée des métadonnées PBO au canon — 26 octobre 2026
+
+Sur validation explicite du développeur, le complément est synchronisé dans
+[reference-runtime au canon](../../specs/reference-runtime/spec.md) : l'exigence
+de verrouillage est précisée avec `toolchain.nuitka`, et les quatre exigences
+de métadonnées, preuve de sélection, distributions et rapport sont ajoutées
+avec leurs six scénarios. La capacité passe de 24 exigences et 32 scénarios
+à 28 exigences et 38 scénarios. Les 23 autres exigences antérieures sont
+inchangées ; aucun delta déjà synchronisé n'est réappliqué.
+
+Les quinze blocs normatifs du delta reference-runtime concordent exactement
+avec le canon, chacun en un exemplaire. Le delta source reste inchangé par
+cette synchronisation. Quatre fichiers sont modifiés : le canon
+`openspec/specs/reference-runtime/spec.md`, ainsi que `proposal.md`, `design.md`
+et `tasks.md` du change pour leur suivi. Les empreintes des 77 autres capacités
+canoniques, des autres fichiers du change et de `pyproject.toml` sont inchangées.
+Les identifiants et états des tâches sont conservés, sans nouvelle coche produit.
+
+Avec OpenSpec 1.15.0, les validations strictes de reference-runtime, du change
+et de l'ensemble par `openspec validate --all --strict --json --no-interactive`
+retournent le code natif 0. Le contrôle global valide 185 éléments sur 185,
+soit 107 changes et 78 capacités, sans erreur ni avertissement. Les 86
+diagnostics INFO restent identiques au relevé précédant la synchronisation,
+dont le diagnostic d'archivage préexistant sur reference-composition.
+Les contrôles UTF-8/LF, blocs Markdown, liens et ancres, ainsi que
+`git diff --check`, réussissent sur les quatre fichiers de l'intervention.
+
+Le complément est synchronisé ; le change reste ouvert. Cette opération
+documentaire ne réalise aucun constructeur ou validateur PBO, ne produit
+aucun document de campagne réel et ne lance aucune installation, compilation,
+qualification, recette produit, archive, publication, commit ou push.

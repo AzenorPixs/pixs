@@ -107,7 +107,12 @@ PZT MUST distinguer identité, permission réseau et permission métier ; une po
 
 ### Requirement: Autorité métier et état de contrôle cohérents
 
-Django MUST porter autorisations et mutations applicatives ; PostgreSQL MUST faire autorité par périmètre pour les états de contrôle. PBO et autorités MUST NOT décider indépendamment de la validité d'un même mandat. Un seul primaire admissible MUST écrire ; redondance critique MUST utiliser durabilité synchrone et promotion après exclusion vérifiée. PA MUST NOT accéder directement aux tables ni déduire un commit PostgreSQL d'une signature reçue.
+Django MUST porter les autorisations et mutations applicatives ; PostgreSQL MUST rester l’autorité du contrôle et du management ordinaires. Avant sa disponibilité, seule la branche locale PA/PZT MAY utiliser sa source technique protégée indépendante. Cette exception MUST NOT créer de droit métier. Les garanties de coordination, de primaire unique, de durabilité et d’accès PA du scénario ci-dessous MUST s’appliquer.
+
+#### Scenario: Garanties de séparation du contrôle technique et applicatif
+
+- **WHEN** l’état de contrôle PZT est évalué avant ou après disponibilité de PostgreSQL
+- **THEN** Django MUST porter autorisations et mutations applicatives ; PostgreSQL MUST faire autorité par périmètre pour les états de contrôle applicatifs et le management ordinaire. Avant sa disponibilité, seule la branche locale de préparation technique PA/PZT définie dans cette capacité MAY utiliser sa source protégée indépendante ; elle MUST NOT décider un droit métier ou une mutation applicative. PBO et autorités MUST NOT décider indépendamment de la validité d'un même mandat. Un seul primaire admissible MUST écrire ; redondance critique MUST utiliser durabilité synchrone et promotion après exclusion vérifiée. PA MUST NOT accéder directement aux tables ni déduire un commit PostgreSQL d'une signature reçue.
 
 #### Scenario: Autorité métier et état de contrôle cohérents
 
@@ -8164,8 +8169,7 @@ les contrats structurels et les exceptions applicatives restent applicables.
 ##### Contrat détaillé A10i50
 
 Bornes qualifiées A10i49 A, cycle A10i48 A et contrôles A05/A12 maintenus.
-Adaptateurs système retenus pour autorités de validation, sans serveur, logiciel,
-protocole de synchronisation ou nouvelle source de temps concrète adoptés.
+Adaptateurs système retenus pour autorités de validation, avec service système géré par PA selon profil et besoin, sans nouveau démon ni protocole Pixs ; sans autre serveur, logiciel, protocole de synchronisation ou nouvelle source de temps concrète adoptés.
 
 | Choix validé | Provider | Qualification requise |
 | --- | --- | --- |
@@ -8191,8 +8195,7 @@ Une copie de l'état du collecteur sans fraîcheur retrouvée ne suffit pas.
 Docker/LXC Proxmox et Windows/Linux physiques/VM qualifiés séparément ; accès
 au temps ou métadonnées sans privilège système, montage ou changement de
 synchronisation implicitement accordés. Profil incapable de démontrer U<=1 seconde
-dans le premier jet refusé pour ce rôle ; PA ordinaire sans rôle de validation
-ne reçoit pas un service temporel supplémentaire par cette politique.
+dans le premier jet refusé pour ce rôle ; la présente politique MUST NOT accorder un service par PA, seul un service par horloge géré par PA lorsque le profil l’exige MAY être qualifié, sans préjuger sa qualification.
 
 Contrat explicite de confiance et qualité, fraîcheur/dérive/perte de
 source, cohérence des membres, correction/saut d'horloge et restauration testés.
@@ -8298,7 +8301,7 @@ borne d'erreur au plus 1 seconde A10i49 A et échéance immuable conservés.
 Premier jet configurable validé, à qualifier sans performance mesurée ou API installée.
 Interface API/IPC structurée validée A10i53 A.
 
-| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation |
+| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation en SYNCHRONISE |
 | --- | --- | --- | --- | --- |
 | A | 250 millisecondes | 2 | 1 seconde | 600 secondes |
 
@@ -8312,15 +8315,7 @@ sans crédit remis à zéro. Plafonds simultanés et budgets de sécurité plus 
 prioritaires, aucune acquisition commencée sans budget restant suffisant.
 Reprise sans preuve de temps restant : refus, D jamais repoussée.
 
-Âge maximal concerne la dernière preuve de référence/synchronisation admissible,
-pas la date à laquelle l'adaptateur a simplement lu une métrique ou un fichier.
-Calcul/identité de preuve, source et progression d'âge qualifiés, référence
-modifiée ou horloge reculante sans âge artificiellement réinitialisé.
-Âge nul/inconnu sans fraîcheur vraie présumée ; âge non vérifiable ou supérieur
-au plafond refuse création/admission. Âge inférieur au plafond n'autorise pas
-seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance
-A10i49/A10i50 toujours démontrées. Âge maximal 600 secondes sans permission de réemploi
-d'un ancien échantillon entre décisions, A10i51 A inchangé.
+Âge maximal concerne la dernière preuve de référence/synchronisation admissible, toujours réelle et vérifiable, pas la date à laquelle l’adaptateur a simplement lu une métrique ou un fichier. Calcul/identité de preuve, source et progression d’âge qualifiés, référence modifiée ou horloge reculante sans âge artificiellement réinitialisé. Âge non vérifiable MUST conduire au refus en tous modes. Âge invérifiable ou supérieur au plafond en mode SYNCHRONISE MUST conduire au refus de création/admission. Âge inférieur au plafond n’autorise pas seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance A10i49/A10i50 toujours démontrées. En mode SYNCHRONISE, âge maximal 600 secondes sans permission de réemploi d’un ancien échantillon entre décisions, A10i51 A inchangé. En mode distinct HORS_LIGNE, un âge supérieur à 600 secondes MAY être admis seulement si le modèle, la provenance et la continuité sont qualifiés, si le profil demeure valide et si la borne totale U(t) au point d’usage demeure inférieure ou égale à une seconde, avec acquisition actuelle et sans réarmement de droits, de budget ou d’échéance ; une lecture récente MUST NOT rajeunir la preuve amont et une nouvelle acquisition MUST NOT remettre à zéro un droit ; aucune durée magique n’est admise.
 Borne d'erreur 1 seconde distincte du budget global de lecture 1 seconde et de l'âge
 de preuve ; aucune mesure temporelle plus ancienne réputée exacte par budget large.
 
@@ -8359,6 +8354,35 @@ A10i52 A validé le 8 octobre 2026.
 - **WHEN** un profil revendique le traitement A10i52 et ses garanties dans un rôle déclaré
 - **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
 - **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+
+#### Scenario: Perte d’Internet avec incertitude démontrée
+
+- **WHEN** Internet est perdu mais que le modèle, la provenance et la continuité demeurent qualifiés avec U au point d’usage démontrée
+- **THEN** les opérations dépendantes bornées peuvent continuer sans remise à zéro de droit
+
+#### Scenario: Valeur à la borne puis au-delà
+
+- **WHEN** la borne totale se situe juste à une seconde avec comparaison conservatrice établie
+- **THEN** l’admission bornée peut intervenir sans prolongation d’échéance
+- **WHEN** elle dépasse la borne d’une unité de précision qualifiée
+- **THEN** la création ou l’admission est refusée sans nouvelle admission
+
+#### Scenario: Mesure locale ancienne et modèle périmé
+
+- **WHEN** une mesure locale ancienne est lue récemment ou que le modèle est périmé
+- **THEN** elle ne doit pas être proposée comme preuve courante et une nouvelle acquisition bornée ou un refus doit intervenir
+
+#### Scenario: Suspension, restauration et retour incohérent
+
+- **WHEN** une suspension, une reprise ou une restauration est observée
+- **THEN** la continuité doit être requalifiée avant toute admission
+- **WHEN** le retour d’Internet apporte une correction incohérente avec l’intervalle maintenu
+- **THEN** le chemin doit être refusé sans réécriture de l’échéance
+
+#### Scenario: Plateformes conteneur et machines virtuelles
+
+- **WHEN** la cible est LXC avec horloge hôte, VM avec horloge propre ou Windows avec fournisseur à qualifier
+- **THEN** le profil exact doit être démontré et toute divergence hôte et invité doit bloquer l’admission concernée
 
 ### Requirement: Contrat A10i53 — API native ou IPC documentée pour lecture structurée du temps — option A validée le 8 octobre 2026
 
@@ -13318,3 +13342,173 @@ La qualification du profil MUST évaluer les clauses PZT selon leurs rôles et c
 
 - **WHEN** un contrat principalement exécutant contient une obligation applicable à la gestion PBO du profil
 - **THEN** cette obligation reste vérifiée et n’est pas exclue par le classement général du contrat
+
+### Requirement: Amorçage local PA PZT indépendant de PostgreSQL
+
+Le parcours PA/PZT MUST disposer d’un provisionnement opérateur et d’une politique technique protégée indépendants de la base Pixs à préparer. Le profil local mTLS MUST limiter les échanges à la préparation technique autorisée, refuser tout repli PBO–PA hors PZT et rapprocher les résultats avant transfert au contrôle applicatif PostgreSQL selon les garanties ci-dessous.
+
+#### Scenario: Garanties de l’amorçage local PZT
+
+- **WHEN** le profil sélectionne cette capacité pour le parcours de préparation PostgreSQL
+- **THEN** Avant le premier échange PBO–PA, une procédure opérateur locale explicite MUST provisionner PA et PZT avec leurs identités propres, ancrages de confiance, configuration minimale, références de secrets et politique technique versionnée protégée, sans dépendre de la base Pixs à préparer ni d'une session future. Cette procédure MUST vérifier l'origine et l'autorisation du provisionnement ; le premier PBO rencontré MUST NOT devenir une autorité de confiance. Elle MUST permettre un profil PZT local mTLS pour les seuls échanges de préparation, d'inspection et de résultats techniques PostgreSQL explicitement autorisés ; elle MUST NOT ouvrir le réseau distant, le management ordinaire, un tenant ou une mutation métier. Les mandats MUST avoir cibles, actions fermées, bornes et validité explicites, anti-rejeu, révocation vérifiable et audit durable indépendant de PostgreSQL. Une politique absente, expirée, révoquée ou dont la fraîcheur ne peut être vérifiée MUST fermer l'admission. Le contrôle applicatif ordinaire MUST attendre PostgreSQL et ses décisions courantes. La transition MUST rapprocher preuves et résultats vers leurs propriétaires persistants puis terminer les mandats temporaires avant admission ordinaire ; des politiques divergentes MUST NOT faire autorité simultanément. Panne ou absence de PZT MUST bloquer les échanges PBO–PA, sans socket, loopback ou fichier de secours hors PZT. Le provisionnement local opérateur MUST NOT devenir un canal continu PBO–PA.
+
+#### Scenario: PZT local avant la base
+
+- **WHEN** la base Pixs est absente mais le provisionnement opérateur et le mandat technique local sont vérifiés
+- **THEN** les seuls échanges techniques prévus sont admis via PZT local mTLS ; aucune autorisation métier ou ouverture réseau distante n’est déduite
+
+#### Scenario: Autorité d’amorçage périmée
+
+- **WHEN** un échange présente un mandat expiré ou une politique locale dont la fraîcheur ne peut être vérifiée
+- **THEN** PZT refuse l’échange sans consulter une base inexistante ni ouvrir un canal de substitution
+
+#### Scenario: Relais de contrôle incomplet
+
+- **WHEN** PostgreSQL devient disponible mais le rapprochement des résultats et la fin des mandats temporaires ne sont pas confirmés
+- **THEN** le management ordinaire reste non prêt sans déclarer deux autorités concurrentes
+
+### Requirement: Amorçage PKI PZT autonome de première installation avant PostgreSQL
+
+La première installation MAY créer localement sa confiance PKI/PZT avant PostgreSQL par la cérémonie propriétaire Z12 consommée par C08. Cette seule exception aux décisions/engagements Django/PostgreSQL A10i6/A12a MUST satisfaire les garanties des scénarios ci-dessous ; hors de ce parcours, le contrôle ordinaire reste obligatoire.
+
+#### Scenario: Création initiale locale sous autorité technique vérifiée
+
+- **WHEN** une première installation admissible prépare localement les seules identités PKI nécessaires à PA système, PZT et PBO pour établir PostgreSQL
+- **THEN** Z12 MUST vérifier positivement origine native, opérateur, mandat explicite, installation, cible, exécutants, rôles fermés, opération/idempotence, plan/digest et politique/version courants, validité, révocation et fraîcheur ; aucune PKI privée opérationnelle ni identité PZT préémise ailleurs ne MUST être un prérequis
+- **AND** racine, intermédiaires principal/secours indépendants et terminaux MUST conserver leurs hiérarchie, séparation des clés, algorithmes, usages, durées/bornes et protection matérielle sélectionnés, sans repli logiciel ; la racine MUST rester sous cérémonie hors ligne et hors processus courants
+- **AND** le propriétaire Z12 MUST conserver un état technique durable protégé, versionné et fencé, un ancrage contre la restauration qualifié hors de ce domaine logiciel et un audit pré-base indépendant ; il MUST exposer des références publiques liées aux effets réels et un état courant inspectable, sans clé privée, credential PostgreSQL, faux engagement applicatif ni autorité déduite d’un DTO ou de la signature CA
+
+#### Scenario: Adoption et fin de l’autorité initiale avant admission ordinaire
+
+- **WHEN** PostgreSQL et les propriétaires courants sont disponibles pour adopter le premier lot local de confiance
+- **THEN** PKI, Core, Auth et C05 MUST vérifier et rapprocher indépendamment les références publiques, leurs octets, les effets et les résultats sous autorité courante ; aucune nouvelle PKI ou recertification systématique ne MUST être déduite du seul passage, et âges, validités, échéances et rotations requises MUST rester opposables
+- **AND** adoption PostgreSQL, retrait de l’autorité/canal/mandats initiaux et admission ordinaire MUST être des étapes distinctes prouvées ; aucune atomicité local/PostgreSQL ne MUST être présumée, et toute issue partielle ou incertaine MUST rester non prête et inspectable
+- **AND** le retrait initial MUST être irréversible, durable et attesté par une preuve actuelle vérifiée indépendamment avant admission ordinaire Django/A07/A12 ; C08 MUST consommer le contrat Z12 sans devenir un second émetteur ou registre, et aucune panne ultérieure de PostgreSQL ne MUST rouvrir l’amorçage
+
+### Requirement: Profil X.509 des terminaux de première installation Z12
+Pour la première installation PA/PZT/PBO avant PostgreSQL, Z12 MUST appliquer le profil terminal fermé ci-dessous avec des clés matérielles non exportables P-256 et des paires distinctes par usage TLS. Les liaisons de politique/plan/identité, durées A10i4 et chaîne D2 MUST rester vérifiées indépendamment de l'admission et du mandat PostgreSQL.
+
+#### Scenario: Émission initiale conforme sous autorité vérifiée
+- **WHEN** la cérémonie initiale D4 dispose du mandat courant, du plan protégé et des preuves réelles de clé matérielle et de possession pour les usages client et serveur sélectionnés
+- **THEN** les certificats émis respectent le profil terminal, les identités et endpoints explicitement liés au plan, avec des paires distinctes et une chaîne D2 vérifiée
+- **AND** conformité du profil, autorisation, engagement et effet observé restent distingués ; aucun mandat technique PostgreSQL n'est déduit des certificats
+- **AND** Pour la première installation PA/PZT/PBO avant PostgreSQL, Z12 MUST utiliser des clés ECDSA P-256 matérielles non exportables, sans repli logiciel, et des certificats terminaux X.509 v3 signés suivant le profil CA D2. Une paire et un certificat MUST être distincts pour chaque usage TLS client ou serveur ; aucune clé CA ou de signature opérateur MUST être réutilisée comme clé terminale.
+- **AND** Le certificat terminal MUST contenir uniquement les six extensions BasicConstraints, KeyUsage, SubjectAlternativeName, ExtendedKeyUsage, SubjectKeyIdentifier et AuthorityKeyIdentifier. BasicConstraints MUST être critique, CA=false, sans pathLenConstraint ; KeyUsage MUST être critique avec digitalSignature seul ; ExtendedKeyUsage MUST être critique avec exactement clientAuth ou exactement serverAuth, sans anyExtendedKeyUsage. SKI et AKI MUST être non critiques et correspondre aux clés et à l'émetteur réellement vérifiés. La chaîne CA D2 reste distincte : elle n'admet que BasicConstraints, KeyUsage, SKI et AKI et MUST refuser NameConstraints et toute autre extension hors de ce profil fermé.
+- **AND** Le Subject MUST être vide. Le SAN MUST être critique et contenir exactement une URI urn:uuid:<UUIDv7 d'instance terminale sous forme canonique minuscule>. Pour un certificat serveur, il MUST aussi contenir exactement l'iPAddress IPv4 loopback explicitement liée à l'endpoint dans le plan protégé ; pour un certificat client, cet iPAddress serveur MUST être absent. Aucun autre nom, CN/DNS de repli, adresse ou port par défaut MUST être ajouté. Les contrôles de chaîne, d'usage, d'URI d'instance et d'IP attendue MUST être indépendants ; loopback ou UUIDv7 seuls MUST NOT prouver identité native, fraîcheur ou autorité.
+- **AND** Le propriétaire courant MUST lier installation, cible, identité native d'instance, rôle, usage, clé, génération et certificat à la politique protégée/versionnée et au mandat applicable. Les preuves matérielles, la possession et la correspondance clé/certificat MUST être réellement vérifiées. Le profil structural ou cryptographique seul MUST NOT valoir autorisation d'émettre, admission applicative ou mandat PostgreSQL. Les durées A10i4 sont conservées : 24 heures nominales, renouvellement aux deux tiers de la validité effective (16 heures seulement pour 24 heures effectives), chevauchement au plus cinq minutes selon A10i3, avec validités bornées par la politique et la chaîne et sans remise à zéro des âges.
+
+#### Scenario: Refus d'identité, d'usage ou de chaîne inadmissibles
+- **WHEN** un certificat ou une demande présente CA=true, un usage ou une extension étrangers, un EKU double, une paire mutualisée entre usages, un Subject non vide, un SAN non critique ou étranger, une URI non canonique, une IP absente ou étrangère au plan serveur, ou une contrainte de noms hors du profil CA D2
+- **THEN** l'émission ou le chargement concerné est refusé avant utilisation TLS, sans repli CN/DNS, logiciel ou autre profil
+- **AND** ni la proximité réseau ni une chaîne signée seule ne rétablissent une identité, une permission ou une confiance absentes
+
+### Requirement: Résolution locale du matériel TLS sous propriétaire courant Z12
+La composition native locale privée MUST résoudre le matériel TLS depuis le propriétaire réellement compétent pour l'étape, après vérification actuelle de politique, identité, état et ancrage. D4/D6, le même OSSL_LIB_CTX privé et les refus ci-dessous MUST être respectés ; aucune référence ou donnée cliente ne constitue une preuve d'autorité.
+
+#### Scenario: Résolution locale depuis le propriétaire compétent
+- **WHEN** la composition locale demande le matériel d'un terminal et que le propriétaire compétent pour l'étape réelle vérifie toutes les liaisons, protections, preuves et bornes courantes
+- **THEN** le matériel public et la référence locale terminale sont liés au contexte OpenSSL privé avec une durée de vie contrôlée
+- **AND** aucune clé privée, autorité déduite du certificat ou permission applicative n'est transmise par cette résolution
+- **AND** Le matériel TLS MUST être résolu par une composition native locale privée depuis le propriétaire courant compétent. Avant toute fourniture ou utilisation, ce propriétaire MUST vérifier la politique protégée/versionnée, l'installation et la cible, les liaisons d'identité/rôle/usage/génération, l'état et l'époque courants, la validité/fraîcheur, la révocation et l'ancrage anti-restauration requis. Un instantané restaurable, un DTO bien formé, une référence opaque ou un booléen client MUST NOT remplacer ces vérifications. Toute source absente, périmée, contradictoire ou invérifiable MUST fermer l'opération concernée.
+- **AND** Avant PostgreSQL, le propriétaire initial Z12 D4 MUST vérifier l'origine native et le mandat opérateur lié au plan ; UID 0 seul ou une preuve C01/R01 réutilisée pour un autre usage MUST NOT suffire. Après l'adoption et le retrait attesté D6, seul le propriétaire ordinaire Django/A07/A12 courant MUST pouvoir autoriser la fourniture du matériel. Les références publiques adoptées, âges, validités et retraits connus MUST être conservés ; une panne PostgreSQL après ce passage MUST NOT rouvrir l'autorité initiale.
+- **AND** La résolution MUST fournir les seuls matériaux publics nécessaires et une référence opaque de clé terminale locale liée au même OSSL_LIB_CTX privé, avec possession et durée de vie réellement contrôlées. Les références de clés CA, les chemins ou ancres librement fournis par un appelant réseau, les clés privées ou blobs privés publics, les EVP_PKEY ou capsules Python publics et le repli logiciel MUST être refusés. Le contrôle de chaîne et la vérification du pair MUST rester nécessaires ; la résolution du matériel MUST NOT constituer l'autorisation applicative ni le mandat technique PostgreSQL, qui restent distincts.
+
+#### Scenario: Refus après restauration, retrait ou perte d'autorité
+- **WHEN** l'état ou la politique est restauré ancien, l'ancrage ou la fraîcheur est invérifiable, le propriétaire compétent est indisponible, une référence CA est proposée, ou une ancienne autorité initiale est sollicitée après clôture D6
+- **THEN** la fourniture ou l'utilisation concernée est refusée avant transport ou admission, et le matériel devenu inadmissible cesse d'être utilisable
+- **AND** une panne PostgreSQL après D6 ne rouvre pas la cérémonie initiale, ne remet pas les âges à zéro et ne rétablit aucun mandat retiré
+
+### Requirement: Fournisseur BIND 9 du DNS géré sur Debian et Docker Pixs
+
+Sur Debian et dans Docker Pixs, le fournisseur DNS retenu MUST être BIND 9 fourni par Debian. PBO/pixs.dns MUST conserver la gestion par contrats publics ; le PA désigné MUST porter installation, configuration et lifecycle du serveur distinct. Ce choix MUST NOT sélectionner ni activer implicitement le DNS dans C14. A06c–A06k et les contrôles applicables restent opposables.
+
+#### Scenario: Gestion PBO et exécution PA séparées
+
+- **WHEN** un rôle serveur DNS BIND 9 est sélectionné et admis sur une cible Debian ou Docker Pixs
+- **THEN** PBO administre le souhaité par les contrats publics du module DNS et le PA désigné applique les seules opérations autorisées au serveur distinct
+- **AND** aucune écriture de table privée inter-modules ni exécution directe par Django ne remplace ces propriétaires
+
+#### Scenario: Présence logicielle sans activation
+
+- **WHEN** BIND 9 est présent mais le rôle serveur DNS n'est pas sélectionné ou admis
+- **THEN** présence logicielle, configuration souhaitée, état appliqué et disponibilité MUST rester distincts ; aucun résultat de résolution absent n'est déduit du logiciel
+- **AND** les fonctions de gestion de pixs.dns restent distinctes de cette disponibilité ; un PA client MUST NOT devenir serveur par la seule présence du logiciel
+
+#### Scenario: Exécutant ou transport obligatoire indisponible
+
+- **WHEN** une application DNS requiert un PA désigné ou un transport PZT admissible indisponible
+- **THEN** l'opération reste bloquée ou d'issue explicitement inconnue selon les faits établis
+- **AND** aucun canal de substitution, succès ou mesure absents n'est fabriqué
+
+### Requirement: Transport PZT des enveloppes 1.1 et provenance A07
+
+Tous échanges PBO-PA MUST passer par PZT. Pour le profil PostgreSQL initial 1.1 E5 sélectionné, les enveloppes 1.1 fermées avec purposes OBSERVE, PREPARE_PLAN, PREPARE et READ_RESULT sont obligatoires, sans modifier les contrats 1.0 ni fallback. Les tableaux A07 MUST conserver ordre et doublons de leurs invocations réelles. Toute divergence MUST imposer refus ou replanification sans compensation destructive ni rejeu d'issue inconnue.
+
+#### Scenario: A07 complets par invocation réelle
+
+- **WHEN** un appel OBSERVE, PREPARE_PLAN, PREPARE ou READ_RESULT est transporté
+- **THEN** invocation, correlation_ids et causation_ids correspondent à l'invocation réelle avec ordre et doublons conservés
+
+#### Scenario: Divergence sans compensation destructive
+
+- **WHEN** une observation, un plan ou une réponse diverge ou est perdue
+- **THEN** le parcours ferme la résolution ou impose une nouvelle planification sans supprimer de base ni rejouer un mandat consommé
+### Requirement: Procédure exceptionnelle D18 avec UTC perdu
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — D18 exceptionnelle
+
+La procédure exceptionnelle MUST intervenir seulement lorsque le repère universel ne peut pas être démontré par la voie normale. Elle MUST NOT devenir une routine à chaque lancement. Aucun poste extérieur, aucun opérateur particulier et aucun système mondial de navigation par satellite ne sont imposés. Une heure qualifiée existante MAY être utilisée lorsqu’elle est disponible. Toute réparation ultérieure du temps MUST NOT rouvrir l’autorité initiale. Les règles actuelles relatives à la signature personnelle, au défi à usage unique et à l’enveloppe demeurent conservées lorsque la cérémonie est effectivement nécessaire. Aucun contournement des dates des certificats n’est admis.
+
+#### Scenario: UTC perdu sans routine
+
+- **WHEN** le repère universel ne peut pas être démontré alors qu’une opération datée est demandée
+- **THEN** la procédure exceptionnelle s’applique sous autorité explicite ou l’opération est refusée sans contournement des dates
+
+### Requirement: Vérifications spécialisées des propriétaires au raccord PA PZT
+
+Le raccord PA/PZT MUST composer explicitement les interfaces spécialisées : Z12 pour la confiance cryptographique applicable ; PZT pour canal/relation/routage ; PA pour admission/gardes/préconditions ; C08 pour intention/confirmation opérateur ; Agent pour origine/confirmation de gestion ; producteur temporel sélectionné pour le temps au point d'usage. Il MUST NOT créer une autorité unique nouvelle ni transférer ces responsabilités au Kernel.
+
+#### Scenario: Composition des vérifications propriétaires
+
+- **WHEN** un raccord PA/PZT est préparé ou sélectionné
+- **THEN** chaque contrôle reste attribué à son fournisseur compétent et la présence d'une interface abstraite ne vaut pas livraison du fournisseur concret
+
+### Requirement: Autorité courante recontrôlée avant chaque effet PA PZT
+
+Les conditions d'autorité requises MUST être vérifiées au point d'usage avant chaque effet. Un fournisseur requis absent ou une preuve courante manquante MUST entraîner un refus. Une signature correcte MUST NOT remplacer les autres conditions d'admission. L'adoption de cette répartition MUST NOT être présentée comme un raccord ou une qualification déjà réalisés.
+
+#### Scenario: Signature valide et autre condition d'admission absente
+
+- **WHEN** une signature est correcte mais qu'un fournisseur requis ou une preuve courante d'autorité manque
+- **THEN** l'effet est refusé sans admission déduite de la seule signature
+
+#### Scenario: Autorité changée après un premier contrôle
+
+- **WHEN** l'autorité applicable change entre deux effets
+- **THEN** les conditions courantes sont recontrôlées avant l'effet suivant et une condition devenue invalide le bloque
+
+### Requirement: Admission PZT des remises du relais Agent
+
+PZT MUST conserver admission, relation, identité et routage vers PA pour les demandes du relais Agent R1. Le relais MUST NOT contourner PZT ni remplacer ses gardes ou celles de PA. Un reçu PZT MUST rester distinct du succès technique et de la confirmation Agent. La sélection F1 de l'adaptateur MUST NOT être présentée comme un transport livré ou qualifié.
+
+##### Contrat détaillé validé R1 F1 — frontière PZT
+
+| Élément | Règle validée |
+| --- | --- |
+| Entrée | Remise par le relais PBO de l'outbox privée Agent après commit local vérifié ; le contexte initial C08/PA reste séparé et sans génération Agent fictive. |
+| Autorités | Relation, identité, admission et routage PZT courants ; gardes PA avant chaque effet inchangées ; une liaison ACTIVE ou un contrôle du relais ne vaut pas autorité permanente. |
+| Transport retenu | Adaptateur PZT ; pour E3 local, Cython/OpenSSL 3 mTLS déjà adopté. Aucun canal direct PBO–PA ni nouveau broker externe. |
+| Retour | ACK limité à son contrat de réception ; succès technique, résultat durable, origine, postcondition et confirmation restent des preuves distinctes. |
+| Livraison et preuve | Client/serveur, admission, routage et fournisseurs courants restent à réaliser et qualifier ; aucun port, endpoint, compte ou budget supplémentaire choisi ici. |
+
+#### Scenario: Liaison valide et garde PZT devenue invalide
+
+- **WHEN** une demande issue d'une liaison Agent valide arrive par le relais mais qu'une condition courante PZT est invalide
+- **THEN** PZT refuse l'admission ou le routage protégé sans se fonder sur la seule liaison ou sur un ancien contrôle du relais
+
+#### Scenario: Reçu PZT sans résultat technique
+
+- **WHEN** PZT accuse réception sans résultat technique durable PA vérifié
+- **THEN** le reçu ne vaut ni effet réussi ni confirmation Agent et le parcours reste soumis à la lecture et à la réconciliation propriétaires

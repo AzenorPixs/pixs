@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recettes des pages PZT et DNS</title>
+<script type="importmap">
+{
+  "imports": {
+    "node:test": "/t/test-adapter.mjs",
+    "node:assert/strict": "/t/assert-adapter.mjs"
+  }
+}
+</script>
+</head>
+<body>
+<pre id="status">pending</pre>
+<script type="module">
+import { cases } from '/t/test-adapter.mjs';
+
+const EXPECTED = ["C14 pages : session inactive sans formulaire ni action", "C14 pages : creation fermee et declarations sans autorite cliente", "C14 pages : lecture qualifiee et revision CAS derivee du serveur", "C14 pages : reponse dun ancien contexte fermee", "C14 pages : issue UNKNOWN conserve seulement le formulaire concerne", "C14 pages : mutation confirmee impose relecture avant nouvelle mutation", "C14 pages : listes ordonnees et references multiligne intactes", "C14 pages : TTL typés et depassements refuses avant transport", "C14 pages : adapter commun rend les champs reels sans HTML brut", "C14 pages : retrait et conservation visibles sans actions DNS incompatibles"];
+
+const MAX_BODY_BYTES = 65536;
+const utf8Size = (value) => new TextEncoder().encode(value).length;
+
+const params = new URL(location.href).searchParams;
+const runId = params.get('run_id') ?? '';
+const browser = params.get('browser') ?? '';
+
+async function post(payload) {
+  const body = JSON.stringify(payload);
+  if (utf8Size(body) > MAX_BODY_BYTES) {
+    const fallback = JSON.stringify({ run_id: runId, browser, phase: 'init_error', ok: false, error: 'result payload too large', caseCount: payload.cases?.length ?? 0 });
+    return send(fallback);
+  }
+  return send(body);
+}
+
+async function send(body) {
+  try {
+    const response = await fetch('/result', { method: 'POST', headers: { 'content-type': 'application/json' }, body });
+    if (!response.ok) {
+      document.getElementById('status').textContent = `post rejected: HTTP ${response.status}`;
+      return false;
+    }
+    return true;
+  } catch (e) {
+    document.getElementById('status').textContent = `post failed: ${String(e?.message ?? e)}`;
+    return false;
+  }
+}
+
+const results = [];
+try {
+  await import('/tests/c14-pages.test.mjs');
+  const names = cases.map(c => c.name);
+  const missing = EXPECTED.filter(n => !names.includes(n));
+  const extra = names.filter(n => !EXPECTED.includes(n));
+  const duplicate = names.length !== new Set(names).size;
+  if (missing.length > 0 || extra.length > 0 || duplicate) {
+    throw new Error(`registration mismatch: missing=${JSON.stringify(missing)} extra=${JSON.stringify(extra)} duplicate=${duplicate}`);
+  }
+  const records = Object.freeze(EXPECTED.map(n => Object.freeze({ ...cases.find(c => c.name === n) })));
+  for (const entry of records) {
+    try { await entry.fn(); results.push({ name: entry.name, status: 'pass' }); }
+    catch (e) { results.push({ name: entry.name, status: 'fail', error: String(e?.message ?? e).slice(0, 512) }); }
+  }
+  const ok = results.length === EXPECTED.length && results.every(r => r.status === 'pass');
+  document.getElementById('status').textContent = ok ? 'pass' : 'fail';
+  await post({ run_id: runId, browser, phase: 'result', ok, cases: results });
+} catch (e) {
+  document.getElementById('status').textContent = `init error: ${String(e?.message ?? e)}`;
+  await post({ run_id: runId, browser, phase: 'init_error', ok: false, error: String(e?.message ?? e).slice(0, 512) });
+}
+</script>
+</body>
+</html>

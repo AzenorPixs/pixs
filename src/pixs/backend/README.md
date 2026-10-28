@@ -293,3 +293,34 @@ Le SDK vérifie UID/unité via libsystemd, propriétés chargées du service, ma
 Le journal local d’amorçage est une exception temporaire limitée au mode INSTALLER. Répertoire privé et rétention sont imposés par la politique ; son emplacement d’exploitation reste hors paquet/dépôt. L’écriture exclusive, les FD sans suivi de symlink, verrous distincts, append complet et fsync précèdent les reçus vérifiés. Corruption, saturation ou résultat incertain bloquent sans purge/troncature. Les états OPEN/SEALED préparent la reprise future C05 avec preuve du commit propriétaire ; cette reprise n’est pas implémentée par C01.
 
 Les suites unitaires ont une régression globale observée de 1 945 tests réussis. Le harnais `tests/integration/test_c01_systemd_harness.py --plan` décrit une qualification hôte séparée ; son exécution manuelle root approuvée et sa vérification indépendante ont réussi : douze événements, deux versions consommées, rotation avec nouvelle invocation, révocation et deux unités absentes après nettoyage. Il utilise deux unités transitoires propres au RUN et des fixtures publiques connues. Le mode systemd-creds `--with-key=null` teste le transport fonctionnel sans qualifier confidentialité ou authenticité en production. Aucune disponibilité P0, qualification paquet C17/C18/C19 ou activation C07/C08 n’est déduite de ces tests.
+
+## Gestion PZT/DNS — assemblage C14
+
+Les services propriétaires pixs.pzt et pixs.dns portent les configurations souhaitées, retraits et lectures ; leurs tables et migrations restent distinctes. api_pzt_dns_catalog.py déclare onze opérations et deux plans API 1.0.0. api_pzt_dns_inputs.py construit les DTO publics à partir d’entrées fermées ; le sujet, le contexte, les identifiants de décision/opération et les métadonnées de commande viennent du serveur.
+
+C14ApiComposition dans api_pzt_dns_dispatch.py reçoit explicitement les alias PostgreSQL distincts, la source Auth, le service Auth, le store C04, le participant d’audit C05, l’horloge et les politiques de gestion PZT/DNS. Sa table interactive_commands est explicite. Le vérificateur C03 est neuf et lié à chaque transaction propriétaire. Une demande de dispense ne constitue aucune autorité : C04 recontrôle les droits et fanions courants.
+
+build_c14_api_urls(composition, http_composition) dans api_pzt_dns_boundary.py consomme les interfaces publiques ModuleHttp* du backend commun. L’hôte enregistre ces URLs spécifiques avant le catchall Core. Les index OpenAPI sont /api/v1/openapi/pzt-management.json et /api/v1/openapi/dns-management.json ; ils référencent des fragments -management-N.json bornés à 64 Kio avec empreinte SHA-256 et nombre d’octets. Le client suit x-documents et vérifie ces liens au lieu de présumer un document monolithique ; les opérations utilisent les contextes platform, tenants/{tenant_id} et tenants/{tenant_id}/scopes/{scope_id}, avec la branche web distincte de l’API Bearer. Les identifiants de tenant et de périmètre restent opaques.
+
+Pour le contexte WEB composé, le caller transmet explicitement le tuple public
+build_c14_module_bindings() à build_shell_context_urls(service,
+http_composition, module_bindings=...). Il monte ces URLs et les URLs C14
+avant le catchall Core. La projection meta.transport_resolver contient alors
+les 37 liaisons Core et les onze liaisons PZT/DNS réellement déclarées.
+Sans injection, elle reste Core seul. Ce catalogue de transport est séparé
+de data Auth et des permissions ; il ne constitue aucune autorisation.
+Le shell résout les chemins depuis ce contrat public versionné, sans importer
+le catalogue privé d'un module ni présumer qu'une liaison absente existe.
+
+Les appels WEB authentifiés peuvent fournir X-Shell-Session-ID avec le
+session_id UUIDv7 du dernier contexte serveur vérifié affiché. La frontière
+commune le compare à la session issue du cookie C03 avant le dispatch ; une
+différence produit CONTEXT_MISMATCH en400. Cette indication ne confère aucun
+droit. Son absence conserve les clients existants ; la branche Bearer reste
+hors de cette comparaison. Le bootstrap du contexte, le login et le CSRF
+ne réutilisent pas une ancienne indication. Les documents propriétaires
+déclarent le paramètre optionnel uniquement sur leurs opérations WEB.
+
+Les commandes HTTP acceptent authorization_intent optionnel avec waive_audit et waive_governance booléens stricts. Les Queries acceptent les intentions équivalentes sous forme de paramètres true ou false. Ces demandes sont séparées des faits d’authentification et restent liées à la requête et à l’opération générées côté serveur. Une issue de mutation inconnue produit HTTP 202 ; elle ne confirme pas un effet et n’autorise aucune réexécution aveugle avec une nouvelle clé.
+
+La composition exige les politiques, sources et frontières communes effectives ; elle ne fournit aucun défaut de gouvernance, budget, suffixe ou rétention. Les contributions frontend.mjs sont déclarées dans les manifests des deux propriétaires et consommées par la composition frontend contrôlée. L’état appliqué reste inconnu et les mesures absentes sans preuve d’exécutant. Ce raccord ne qualifie ni un transport PBO–PA, ni un service DNS actif, ni un paquet installé ou une composition P0 globale.

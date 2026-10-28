@@ -70,3 +70,22 @@ Le présent lot conserve son périmètre de réalisation, sans code engagé ici.
 Les copies requirements.md et empreintes de préparation sont historiques et
 doivent être réconciliées avec le canon avant réalisation ; le réseau ne
 redevient pas une responsabilité PA du fait d'une formulation héritée.
+
+
+## Choix BIND 9 adopté le 24 octobre 2026
+
+Le [choix BIND 9 adopté](../adopt-bind9-managed-dns-and-packaging/proposal.md) est synchronisé le 24 octobre 2026 dans
+[deb-package](../../specs/deb-package/spec.md#L113) et [pzt](../../specs/pzt/spec.md#L13402).
+Le PA désigné pour un rôle serveur DNS admis porte l'installation et la
+configuration du paquet BIND 9 de la distribution Debian prise en charge.
+Un PA client ne reçoit aucun rôle serveur de la seule présence du logiciel.
+
+Le paquet PA/PZT conserve ses quatre exécutables et son indépendance de
+PBO/PFO ; BIND 9 reste un logiciel serveur distinct. Le choix ne transforme
+pas le paquet PA en serveur DNS obligatoire pour tous les clients. Les
+dépendances et outils propres à la cible serveur restent identifiés et
+qualifiés, avec mandats, contrôle de version, reprise et état inspectable.
+[Z05](../add-pzt-managed-dns-service-and-pa-adapters/design.md) conserve
+les adapters et la recette DNS. Aucun paquet ou code n'est produit ici.
+
+Ce renvoi ne coche aucune tâche de réalisation du lot.

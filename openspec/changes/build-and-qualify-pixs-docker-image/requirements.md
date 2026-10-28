@@ -130,3 +130,19 @@ Le binaire d’événements système dans Docker MUST traiter le démarrage et l
 - **THEN** son événement PA reste borné au conteneur sans opération implicite sur l’hôte
 ~~~~
 
+
+
+## Référence BIND 9 adoptée le 24 octobre 2026
+
+La sélection BIND 9 et sa distribution sont désormais normatives, selon
+le [choix BIND 9 adopté](../adopt-bind9-managed-dns-and-packaging/proposal.md) et les exigences courantes suivantes :
+
+- [Logiciel BIND 9 fourni dans Docker Pixs sans activation implicite](../../specs/docker-image/spec.md#L131).
+- [Fournisseur BIND 9 du DNS géré sur Debian et Docker Pixs](../../specs/pzt/spec.md#L13402).
+
+Le [raccord propre à ce lot](design.md#choix-bind-9-adopté-le-24-octobre-2026)
+précise ses responsabilités et les qualifications futures. Ce complément
+est une référence au canon adopté, sans copie normative concurrente. Les
+relevés historiques ci-dessus conservent leur date ; leurs autres clauses,
+lignes et preuves restent à réconcilier avant réalisation. Aucune coche
+d'implémentation, installation, construction ou activation n'est ajoutée.

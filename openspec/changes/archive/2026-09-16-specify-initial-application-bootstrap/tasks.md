@@ -1,3 +1,9 @@
+Le plan ci-dessous est le plan historique commun aux treize exigences.
+Il est conservé sans nouvelle coche : tâches 1.1–3.2 pour le bootstrap,
+4.1–4.3 et 5.1 pour le lot compagnon ; 5.2–5.3 sont des contrôles communs
+comptés une seule fois dans le rapport de revalidation. Les coches historiques
+ne valent pas preuve actuelle de présentation ni de qualification produit.
+
 ## 1. Composition P0 initiale
 
 - [x] 1.1 Décrire la conformité de la composition initiale à

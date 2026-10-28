@@ -28,7 +28,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Dépendances
 
-- [add-essential-pbo-pzt-and-dns-modules](../add-essential-pbo-pzt-and-dns-modules/proposal.md).
+- [add-essential-pbo-pzt-and-dns-modules](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md).
 - [add-pa-authorized-instruction-execution](../add-pa-authorized-instruction-execution/proposal.md).
 - [add-pzt-private-address-plan-and-ipv6-lifecycle](../add-pzt-private-address-plan-and-ipv6-lifecycle/proposal.md).
 - [add-pzt-public-control-contracts-and-state-streams](../add-pzt-public-control-contracts-and-state-streams/proposal.md).

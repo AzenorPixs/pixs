@@ -36,12 +36,12 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
+- [activate-reference-runtime-composition](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md).
 - [add-installation-and-first-configuration](../add-installation-and-first-configuration/proposal.md).
-- [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
+- [add-reference-worker-scheduler-and-event-delivery](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md).
 - [compose-modular-frontend-with-core-api](../compose-modular-frontend-with-core-api/proposal.md).
 - [add-initial-administration-panel](../add-initial-administration-panel/proposal.md).
-- [add-essential-pbo-pzt-and-dns-modules](../add-essential-pbo-pzt-and-dns-modules/proposal.md).
+- [add-essential-pbo-pzt-and-dns-modules](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md).
 - [add-runtime-observability-and-operations](../add-runtime-observability-and-operations/proposal.md).
 - [add-upgrade-backup-and-restore-contracts](../add-upgrade-backup-and-restore-contracts/proposal.md).
 
@@ -63,7 +63,7 @@ PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capac
 
 ## Dépendances après audit transversal P0
 
-[C07](../activate-reference-runtime-composition/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md).
+[C07](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.
 
@@ -116,3 +116,22 @@ satisfaire et à recouper avant qualification du profil et du paquet.
 Les contrats de transport/contrôle et leurs garanties restent dans les lots
 propriétaires ; réconcilier deltas proposés, copies et empreintes de préparation
 avec le canon actuel avant réalisation. Aucune tâche produit n'est réalisée.
+
+
+## Choix BIND 9 adopté le 24 octobre 2026
+
+Le [choix BIND 9 adopté](../adopt-bind9-managed-dns-and-packaging/proposal.md) est synchronisé le 24 octobre 2026 dans
+[deb-package](../../specs/deb-package/spec.md#L113) et [pzt](../../specs/pzt/spec.md#L13402).
+C18 conserve le paquet PBO/PFO avec la gestion pixs.dns, sans incorporer
+les exécutants PA/PZT. La présence de PBO ou du module DNS n'impose ni
+installation ni activation du serveur BIND 9 sur chaque hôte.
+
+L'installation et la configuration du serveur Debian relèvent du PA
+désigné pour un rôle serveur explicitement admis, avec la réalisation DNS
+dans [Z05](../add-pzt-managed-dns-service-and-pa-adapters/design.md) et
+la distribution des exécutants dans [PA09](../build-and-publish-independent-pa-debian-package/design.md).
+Version, dépendances système et effets des scripts de paquet sont à
+qualifier dans le plan réel ; aucune construction ni installation de paquet
+n'est réalisée par cette mise à jour de références.
+
+Ce renvoi ne coche aucune tâche de réalisation du lot.

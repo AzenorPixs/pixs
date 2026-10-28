@@ -44,7 +44,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 ## Dépendances et interfaces
 
-- [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
+- [add-protected-core-http-commands-and-queries](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md).
 - [complete-bulk-owner-admission-and-import-mapping](../complete-bulk-owner-admission-and-import-mapping/proposal.md).
 - [integrate-bulk-worker-jobs-and-cancellation](../integrate-bulk-worker-jobs-and-cancellation/proposal.md).
 

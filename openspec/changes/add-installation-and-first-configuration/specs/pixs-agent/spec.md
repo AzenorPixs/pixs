@@ -19,3 +19,42 @@ Le PA système du profil sélectionné MUST préparer PostgreSQL sur hôte physi
 
 - **WHEN** un mandat PA de préparation PostgreSQL demande une mutation de table métier ou un code reçu de PBO
 - **THEN** PA la refuse sans transférer de privilège ni inventer un résultat applicatif
+
+### Requirement: Retrait irréversible de la préparation initiale PA
+
+Le PA système MUST retirer irréversiblement sa préparation initiale par withdraw_initial_authority, classe Critique, domaine PA_POSTGRESQL_WITHDRAWAL, permission WITHDRAW_PA_INITIAL. Le mandat MUST être nouveau distinct de R01 et E4, avec signature, clé, politique et validité courantes vérifiées.
+
+#### Scenario: Retrait de la préparation initiale attesté
+
+- **WHEN** un mandat de retrait courant et non consommé est vérifié pour la cible et le plan concernés, avec quiescence constatée
+- **THEN** PA ancre durablement et irréversiblement la fin de toute nouvelle préparation initiale et refuse toute nouvelle préparation initiale sous l'autorité retirée
+- **AND** la signature, la clé et la politique courantes, la révocation, la validité et la fraîcheur UTC, les identités natives et la relation PZT, la cible, le plan et le contexte, l'anti-rejeu et l'ancrage durable sont vérifiés, sans inventer d'autorité ordinaire déjà admise
+- **AND** la remise minimale canonique PBO est conservée
+
+#### Scenario: Retrait rejoué ou étendu
+
+- **WHEN** un mandat déjà consommé est rejoué, ou une inspection est utilisée pour rouvrir une extension ou une préparation
+- **THEN** PA refuse sans nouvel effet et conserve l'état de retrait
+
+#### Scenario: Garanties conservées du retrait PA
+
+- **WHEN** le retrait est vérifié pour la cible et le plan concernés
+- **THEN** un DTO à l'état RETIRED, un résultat PG_SUCCEEDED, un mode NORMAL ou D6 seul ne prouve pas le retrait
+- **AND** le retrait appartient à une famille administrative distincte des trois opérations conservées inspect_postgresql, prepare_postgresql et get_postgresql_result, sans quatrième ajout au catalogue 1.0 et sans inspection administrative via get_postgresql_result
+- **AND** les contrats de topologie D8/D6, de wire et de résolveurs restent à fermer en revue commune avant leur code, les qualifications réelles en phase 2 après réalisation, et l'adoption des principes ne vaut pas réalisation
+
+## ADDED Requirements
+
+### Requirement: Préparation confirmée sous enveloppe 1.1 et plan PA
+
+Pour le profil PostgreSQL initial 1.1 E5 sélectionné, la préparation PA MUST suivre OBSERVE, PREPARE_PLAN, confirmation puis PREPARE critique et READ_RESULT, sans modifier les contrats 1.0 ni fallback. Le request_digest MUST engager tous les octets de l'enveloppe. Les bindings MUST être vérifiés par leurs propriétaires. Docker, INITIALIZE_START, RECREATE et DATABASE_DROP MUST être refusés avant tout effet sans conversion silencieuse.
+
+#### Scenario: Enveloppe et confirmation liées avant effet
+
+- **WHEN** une préparation est demandée avec observation et planning vérifiés
+- **THEN** PA retourne l'observation puis le planning avant toute confirmation C08, avec projection C08 immuable liée à l'observation et bundle vérifié, et la confirmation C08 seize champs porte le plan, les préconditions et les effets avant l'acte signé, avec request_digest engageant toute l'enveloppe 1.1 et READ_RESULT distincte
+
+#### Scenario: Refus sans conversion silencieuse
+
+- **WHEN** un plan contient RECREATE, DATABASE_DROP ou une branche Docker non sélectionnée
+- **THEN** PA refuse le plan entier avant tout effet sans le convertir en CREATE

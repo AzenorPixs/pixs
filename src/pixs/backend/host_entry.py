@@ -10,7 +10,7 @@ Appelle réellement ``resolve_runtime_settings`` puis exige
 une fois seulement : ``settings.configured`` ou ``apps.ready`` refuse avant
 consommation. Payload conservé, ``DEBUG False``, ``ALLOWED_HOSTS`` conservés.
 ``INSTALLED_APPS`` explicite = ``DJANGO_REQUIRED_APPS`` C03 +
-``PixsCoreConfig`` public. Deux alias ``default`` / ``peer`` issus de la même
+``PixsCoreConfig``, ``PixsPztConfig`` et ``PixsDnsConfig`` publics. Deux alias ``default`` / ``peer`` issus de la même
 configuration, copies fraîches, sans option/secret depuis une requête.
 ``ROOT_URLCONF`` local, ``urlpatterns`` via ``build_declared_urlpatterns`` :
 seul public autorisé = ``liveness_route`` dont handler est exactement
@@ -200,7 +200,9 @@ def build_installer_host(template, source, mode, purpose, plan, adapters_factory
         raise InstallerHostError("mot de passe runtime exigé")
 
     from pixs.auth.apps import DJANGO_REQUIRED_APPS
-    installed = tuple(DJANGO_REQUIRED_APPS) + (_REQUIRED_APPS_SUFFIX,)
+    installed = tuple(DJANGO_REQUIRED_APPS) + (
+        _REQUIRED_APPS_SUFFIX, "pixs.pzt.apps.PixsPztConfig", "pixs.dns.apps.PixsDnsConfig",
+    )
     databases = {"default": dict(default_cfg), "peer": dict(default_cfg)}
 
     urlconf = ModuleType("pixs_installer_urlconf")

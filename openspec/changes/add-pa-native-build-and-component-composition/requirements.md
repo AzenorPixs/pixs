@@ -111,3 +111,22 @@ Les binaires PA définis par pixs-agent MUST constituer une couche d’exécutio
 - **THEN** il ne devient pas une implémentation alternative de l’autorité métier PBO
 ~~~~
 
+
+## Rapprochement avec le canon courant — reprise CISMP7 du 22 octobre 2026
+
+Les six copies et empreintes historiques ci-dessus restent intactes. La table suivante repère leurs exigences correspondantes dans le canon relu sous accès de lecture CAB ; elle ne régénère aucune preuve historique et ne constitue aucun delta normatif. Les titres, lignes et empreintes ci-dessous décrivent cette relecture datée et devront être recontrôlés si le canon évolue.
+
+| Bloc historique | Source actuelle et ligne | Exigence courante | Scénarios du bloc | SHA-256 du bloc courant |
+| --- | --- | --- | ---: | --- |
+| pixs-agent / 11 | [openspec/specs/pixs-agent/spec.md](../../specs/pixs-agent/spec.md), ligne 64 | Trois binaires PA et six modes distincts de PZT | 1 | `5cd5cae10cd478a8ffb30c4e15180dfdc341506019583f78882f62ec99106408` |
+| pixs-agent / 20 | [openspec/specs/pixs-agent/spec.md](../../specs/pixs-agent/spec.md), ligne 78 | Compilation différenciée validée | 1 | `49d91499d8f83f1c794a0c59612a178648ad502a5b43f2965eba5f1f79a072e6` |
+| pixs-agent / 47 | [openspec/specs/pixs-agent/spec.md](../../specs/pixs-agent/spec.md), ligne 108 | Composition au build et catalogue fermé | 1 | `0ed896227fd4520562a556c15ca86d634e059dc29313794ff743d8324201c20b` |
+| pixs-agent / 218 | [openspec/specs/pixs-agent/spec.md](../../specs/pixs-agent/spec.md), ligne 296 | Paramètres ouverts et absence d'implémentation implicite | 1 | `2fe8f8e831ff5c8809f75a824394b629f715e43baab2b850615835c04c39ba78` |
+| pzt / 21 | [openspec/specs/pzt/spec.md](../../specs/pzt/spec.md), ligne 77 | Module essentiel pixs.pzt et exécutable PZT indépendant | 1 | `1063497b290fd7bb8e8abad2dad81ac19bb67f139b4c911c98be000279df7b7c` |
+| reference-runtime / 168 | [openspec/specs/reference-runtime/spec.md](../../specs/reference-runtime/spec.md), ligne 221 | Couche exécutable PA séparée | 1 | `409ab89f825b092bd0b952bce1b1e35b9f4b326cd4c20d55d333a5a993bb892f` |
+
+Méthode d’empreinte : bloc UTF-8 depuis son titre `### Requirement:` jusqu’au titre suivant de même niveau exclu, blancs terminaux retirés, puis un unique LF final ajouté ; tous les scénarios du bloc sont inclus. Six exigences et six scénarios sont repérés. Une empreinte n’est pas une preuve d’implémentation.
+
+La correspondance actuelle retient trois binaires et six modes PA, plus PZT indépendant et son mode `pzt-daemon`, avec Cython pour les deux chaînes distinctes. Elle conserve le catalogue fermé, les paramètres non décidés, les responsabilités de `pixs.agent`/`pixs.pzt` et l’absence d’autorité métier des exécutants. Les copies Nuitka ou du quatrième binaire rattaché à PA restent uniquement historiques.
+
+Les candidats CPython 3.14.9 avec GIL/Cython 3.3.0, la distribution en répertoire et la première cible Debian 13 x86_64 physique/VM sont consignés dans [le premier lot validé](design.md). Leur validation ne qualifie pas la chaîne ni une plateforme et ne modifie pas les exigences canoniques.

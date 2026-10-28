@@ -67,3 +67,25 @@ trois exécutables hors PBO/PFO dans Docker : deux PA et PZT indépendant. Le
 binaire utilisateur PA reste exclu. Les snapshots requirements.md doivent
 être réconciliés avec le canon actuel avant réalisation ; aucune image n'est
 construite ni qualifiée pendant cet alignement documentaire.
+
+
+## Choix BIND 9 adopté le 24 octobre 2026
+
+Le [choix BIND 9 adopté](../adopt-bind9-managed-dns-and-packaging/proposal.md) est synchronisé le 24 octobre 2026 dans
+[docker-image](../../specs/docker-image/spec.md#L131) et [pzt](../../specs/pzt/spec.md#L13402).
+Le lot image devra fournir BIND 9 issu de Debian et ses dépendances
+identifiées, sans lancement DNS implicite. Configuration d'instance, données
+persistantes, journaux mutables, clés privées et secrets restent hors des
+couches de l'image. La recette inspectera toutes les couches et les effets
+des scripts de paquet ; effacer une donnée dans une couche ultérieure ne
+prouve pas son absence de l'image.
+
+L'activation ultérieure requiert un rôle serveur admis et l'application
+puis la supervision du processus BIND 9 distinct par le PA désigné, avec
+[Z05](../add-pzt-managed-dns-service-and-pa-adapters/design.md). Ce choix
+n'ajoute aucun port, montage, utilisateur ni privilège implicite et conserve
+l'exclusion des fonctions PA utilisateur. Le profil Docker C08 et les
+budgets réellement autorisés restent à respecter. Aucune image n'est
+construite, lancée ou qualifiée par cette adoption normative.
+
+Ce renvoi ne coche aucune tâche de réalisation du lot.

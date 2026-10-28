@@ -38,7 +38,7 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 - [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
 - [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
-- [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
+- [add-protected-core-http-commands-and-queries](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md).
 - [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
 
 

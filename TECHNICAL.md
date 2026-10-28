@@ -1270,6 +1270,18 @@ Une panne du coffre bloque les nouvelles résolutions obligatoires. Les credenti
 
 Le produit, sa version, son backend, la méthode d’authentification et de protection des clés, les durées et la topologie restent à décider avant réalisation. OpenBao est une référence d’étude, pas un choix imposé. Le change [add-distributed-runtime-secret-vault](openspec/changes/add-distributed-runtime-secret-vault/proposal.md) prépare les deltas de `secrets-providers` et `reference-composition`. Cette préparation n’active aucun profil distribué et n’ajoute pas de coffre obligatoire au P0 initial local. Les garanties restent à implémenter et qualifier ; les deltas ne sont pas synchronisés au canon à cette étape.
 
+### 21.3 Connexion technique avant PostgreSQL — C08 adopté le 22 octobre 2026
+
+Le parcours [C08 PA/PZT → PostgreSQL → PBO](openspec/changes/add-installation-and-first-configuration/design.md) est intégré aux huit capacités canoniques concernées. Une procédure opérateur locale explicite provisionne les identités propres PA/PZT, ancrages, références de secrets et politique technique protégée/versionnée indépendamment de la base Pixs. Le premier PBO découvert, UID 0 ou la seule possession d'une clé ne constituent pas une confiance suffisante. Le profil PZT local mTLS borne les actions techniques, cibles, validités, anti-rejeu, révocations et audit ; une preuve absente ou non fraîche ferme l'admission sans canal PBO–PA de substitution.
+
+Le PA système prépare PostgreSQL et initie sa première connexion technique. Sur physique/VM, sa capacité du catalogue fermé installe et configure le service si nécessaire ; sous Docker Pixs, elle utilise le logiciel fourni et initialise seulement les ressources absentes, sans effacer ni réinitialiser l'existant. Ses accès techniques au service, rôle et base ne permettent ni accès aux tables métier, ni migrations applicatives, ni création Core/Auth/Super Admin/tenant. PBO conserve ces responsabilités par ses contrats propriétaires et son acte R01.
+
+Avant chaque ouverture de la base, la remise des seuls secrets de connexion au workload PBO vérifié est évaluée sous la branche technique native de `authorization`. Identité, rôle, mode réel, finalité, cible, référence/version, politique courante, validité, révocation et audit durable indépendant sont vérifiés sans appel circulaire à Auth PostgreSQL. Les messages de management PBO–PA, tous transportés par PZT, portent seulement des références et métadonnées minimisées. La publication externe reste distincte du provider de lecture ; PA et C08 ne deviennent pas writers génériques de secrets. Le transport Debian local reste `LoadCredentialEncrypted` ; le mécanisme Docker doit être déclaré et qualifié séparément.
+
+Les résultats techniques et l'audit pré-base sont rapprochés avec leurs propriétaires persistants et C05 de manière idempotente avant disponibilité. Les mandats temporaires de préparation prennent fin après rapprochement ; les décisions métier et le management ordinaire attendent l'autorité PostgreSQL courante. Un reçu PA n'est ni un commit Core/Auth ni une autorisation d'étape suivante. Les effets externes sur service/rôle/base ne sont pas atomiques avec la transaction Core/Auth/C05/C08 ; après interruption, inspection et réconciliation précèdent tout rejeu. Une compensation destructive exige son autorisation distincte. R01 Ed25519/600 secondes, C01 INSTALLER, marqueur externe et première configuration gardent leurs frontières.
+
+Cette adoption est documentaire. Les paramètres de confiance/fraîcheur, protections, versions, budgets, supervision, stockage et recettes B/S/G/P restent à détailler et qualifier dans les tâches futures C08 et leurs dépendances ; aucun service ou résultat fonctionnel n'est produit.
+
 ## 22. Lifecycle des composants
 
 Les états de lifecycle sont des dimensions distinctes et ne doivent pas être réduits à un enum unique. Les phases de composition de référence sont :
@@ -11136,8 +11148,7 @@ A10i49 A validé le 8 octobre 2026.
 ### A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026
 
 Bornes qualifiées A10i49 A, cycle A10i48 A et contrôles A05/A12 maintenus.
-Adaptateurs système retenus pour autorités de validation, sans serveur, logiciel,
-protocole de synchronisation ou nouvelle source de temps concrète adoptés.
+Adaptateurs système retenus pour autorités de validation, avec service système géré par PA selon profil et besoin, sans nouveau démon ni protocole Pixs ; sans autre serveur, logiciel, protocole de synchronisation ou nouvelle source de temps concrète adoptés.
 
 | Choix validé | Provider | Qualification requise |
 | --- | --- | --- |
@@ -11163,8 +11174,7 @@ Une copie de l'état du collecteur sans fraîcheur retrouvée ne suffit pas.
 Docker/LXC Proxmox et Windows/Linux physiques/VM qualifiés séparément ; accès
 au temps ou métadonnées sans privilège système, montage ou changement de
 synchronisation implicitement accordés. Profil incapable de démontrer U<=1 seconde
-dans le premier jet refusé pour ce rôle ; PA ordinaire sans rôle de validation
-ne reçoit pas un service temporel supplémentaire par cette politique.
+dans le premier jet refusé pour ce rôle ; la présente politique MUST NOT accorder un service par PA, seul un service par horloge géré par PA lorsque le profil l’exige MAY être qualifié, sans préjuger sa qualification.
 
 Contrat explicite de confiance et qualité, fraîcheur/dérive/perte de
 source, cohérence des membres, correction/saut d'horloge et restauration testés.
@@ -11176,8 +11186,7 @@ PBO/Django gouverne configuration et diagnostics sans secret, A10i22 B maintenu,
 PA sans accès SQL direct. Usage de temps pour autres contrats A05/CA/purge
 reste à qualifier séparément ; aucune amélioration système implicite.
 
-A validée pour réutiliser l'infrastructure sous preuve de qualité commune ;
-service temporel Pixs dédié alternatif non retenu. Coûts CPU/RAM/I/O/réseau
+A validée pour réutiliser l’infrastructure sous preuve de qualité commune ; pas de nouveau démon ni de protocole Pixs et composant système conforme réutilisé ou géré par PA sous profil autorisé. Le contrat privé C.Z12_TIME_OBS/v2 est défini au §15.3.1 du change Z12 et C.Z12_CHRONY_OBS/v1 demeure inchangé ; la présente section ne qualifie aucune disponibilité par sa seule rédaction et le nom de temps v2 reste privé. Coûts CPU/RAM/I/O/réseau
 à mesurer, aucune précision,
 disponibilité ou ressource universellement meilleure. Aucune implémentation,
 synchronisation d'hôte, configuration, certificat ou OpenSpec modifiés ici.
@@ -11242,7 +11251,7 @@ borne d'erreur au plus 1 seconde A10i49 A et échéance immuable conservés.
 Premier jet configurable validé, à qualifier sans performance mesurée ou API installée.
 Interface API/IPC structurée validée A10i53 A.
 
-| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation |
+| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation en SYNCHRONISE |
 | --- | --- | --- | --- | --- |
 | A | 250 millisecondes | 2 | 1 seconde | 600 secondes |
 
@@ -11256,15 +11265,7 @@ sans crédit remis à zéro. Plafonds simultanés et budgets de sécurité plus 
 prioritaires, aucune acquisition commencée sans budget restant suffisant.
 Reprise sans preuve de temps restant : refus, D jamais repoussée.
 
-Âge maximal concerne la dernière preuve de référence/synchronisation admissible,
-pas la date à laquelle l'adaptateur a simplement lu une métrique ou un fichier.
-Calcul/identité de preuve, source et progression d'âge qualifiés, référence
-modifiée ou horloge reculante sans âge artificiellement réinitialisé.
-Âge nul/inconnu sans fraîcheur vraie présumée ; âge non vérifiable ou supérieur
-au plafond refuse création/admission. Âge inférieur au plafond n'autorise pas
-seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance
-A10i49/A10i50 toujours démontrées. Âge maximal 600 secondes sans permission de réemploi
-d'un ancien échantillon entre décisions, A10i51 A inchangé.
+Âge maximal concerne la dernière preuve de référence/synchronisation admissible, toujours réelle et vérifiable, pas la date à laquelle l’adaptateur a simplement lu une métrique ou un fichier. Calcul/identité de preuve, source et progression d’âge qualifiés, référence modifiée ou horloge reculante sans âge artificiellement réinitialisé. Âge non vérifiable MUST conduire au refus en tous modes. Âge invérifiable ou supérieur au plafond en mode SYNCHRONISE MUST conduire au refus de création/admission. Âge inférieur au plafond n’autorise pas seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance A10i49/A10i50 toujours démontrées. En mode SYNCHRONISE, âge maximal 600 secondes sans permission de réemploi d’un ancien échantillon entre décisions, A10i51 A inchangé. En mode distinct HORS_LIGNE, un âge supérieur à 600 secondes MAY être admis seulement si le modèle, la provenance et la continuité sont qualifiés, si le profil demeure valide et si la borne totale U(t) au point d’usage demeure inférieure ou égale à une seconde, avec acquisition actuelle et sans réarmement de droits, de budget ou d’échéance ; une lecture récente MUST NOT rajeunir la preuve amont et une nouvelle acquisition MUST NOT remettre à zéro un droit ; aucune durée magique n’est admise.
 Borne d'erreur 1 seconde distincte du budget global de lecture 1 seconde et de l'âge
 de preuve ; aucune mesure temporelle plus ancienne réputée exacte par budget large.
 

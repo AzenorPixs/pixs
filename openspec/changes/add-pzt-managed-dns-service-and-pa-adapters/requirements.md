@@ -899,3 +899,18 @@ contrats et qualification restent à préciser.
 - **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
 ~~~~
 
+
+
+## Référence BIND 9 adoptée le 24 octobre 2026
+
+La sélection BIND 9 et sa distribution sont désormais normatives, selon
+le [choix BIND 9 adopté](../adopt-bind9-managed-dns-and-packaging/proposal.md) et les exigences courantes suivantes :
+
+- [Fournisseur BIND 9 du DNS géré sur Debian et Docker Pixs](../../specs/pzt/spec.md#L13402).
+
+Le [raccord propre à ce lot](design.md#choix-bind-9-adopté-le-24-octobre-2026)
+précise ses responsabilités et les qualifications futures. Ce complément
+est une référence au canon adopté, sans copie normative concurrente. Les
+relevés historiques ci-dessus conservent leur date ; leurs autres clauses,
+lignes et preuves restent à réconcilier avant réalisation. Aucune coche
+d'implémentation, installation, construction ou activation n'est ajoutée.

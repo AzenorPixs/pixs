@@ -552,6 +552,12 @@ Le packaging Debian doit pouvoir déclarer séparément les unités de service c
 
 L'image Docker fournit une exécution conteneurisée reproductible de Pixs.
 
+Le parcours C08 adopté le 22 octobre 2026 exige que l'image Docker Pixs fournisse aussi le logiciel PostgreSQL, sans cluster préinitialisé, identité, configuration effective, secret ni données dans ses couches. Le profil d'exécution sélectionne explicitement PA système, PZT local et PostgreSQL cohébergé ; PA prépare uniquement les ressources manquantes et conserve le stockage existant. PBO garde ses migrations et initialisations applicatives. Cette composition est à construire et qualifier ; sa définition ne prouve aucun artefact livré.
+
+Le [design C08, profils 1.5](openspec/changes/add-installation-and-first-configuration/design.md) porte les choix D1–D3 adoptés le 23 octobre 2026 : Debian 13 x86_64 physique/VM et Docker Linux amd64 ; base candidate Docker Official Image postgres:16.15-trixie à verrouiller par digest avant construction, métadonnées ENTRYPOINT/CMD/STOPSIGNAL/VOLUME héritées explicitement traitées et initialisation PostgreSQL réservée à PA ; init Docker et Supervisor 4.2.5-3 au premier plan, nouvelle dépendance de l’image seulement ; fournisseur Docker distinct de C01 Debian, par fichiers versionnés montés en lecture seule avec identité native, politique courante, révocation, arrêt attesté des consommateurs et audit à réaliser et qualifier. Les budgets partagés, comptes, dépendances, stockage persistant et lifecycle doivent être déclarés et prouvés avant qualification ; aucun secret ne transite par PZT. Cette adoption documentaire n’installe rien, ne construit ni ne télécharge une image, ne modifie aucun service, volume, droit ou infrastructure et ne qualifie aucun artefact.
+
+Le choix E3 C08 est adopté par décision explicite du développeur : le PZT local HTTP/JSON sur TCP IPv4 loopback utilise TLS 1.3 avec authentification mutuelle et un adaptateur Cython vers libssl/libcrypto OpenSSL 3. Cette dépendance runtime PZT ne sélectionne pas une bibliothèque TLS Python supplémentaire ; versions exactes, provenance, ABI, providers et empreintes sont à verrouiller avant construction et recette. La suite A10h est explicitement fournie, sans valeur initiale inventée, et 0-RTT reste interdit. Aucun endpoint, port, groupe, matériel/provider de clé ou budget n'est déduit de la CLI OpenSSL inventoriée. Les échanges PBO–PA restent exclusivement sous PZT, sans credential. Le [design C08, préparation 1.6](openspec/changes/add-installation-and-first-configuration/design.md) conserve les responsabilités Z12/PA01 et les limites des contrats encore documentaires. Cet accord n'autorise aucune installation sur l'hôte actuel et ne prouve aucun artefact ou transport qualifié.
+
 Elle doit encapsuler les composants nécessaires à l'exécution de l'application tout en maintenant la configuration, les secrets et les données persistantes hors de l'image lorsque leur nature l'exige.
 
 Principe :
@@ -562,6 +568,7 @@ Image Pixs
    ├── runtime système
    ├── runtime Python
    ├── application Pixs
+   ├── logiciel PostgreSQL sans cluster ni données
    ├── dépendances applicatives
    ├── frontend construit
    └── entrypoint
@@ -571,7 +578,8 @@ Image Pixs
            │
            ├── configuration externe
            ├── secrets externes
-           ├── PostgreSQL externe
+           ├── service PostgreSQL sélectionné et supervisé
+           ├── données PostgreSQL sur stockage persistant hors image
            └── stockage persistant si nécessaire
 ```
 
@@ -792,7 +800,9 @@ Le port applicatif interne définitif sera fixé dans la spécification Docker/r
 
 La publication d'un port sur l'hôte relève du déploiement du conteneur et ne doit pas être confondue avec l'exposition interne de l'image.
 
-Les dépendances externes, notamment PostgreSQL, doivent être accessibles au travers d'une configuration réseau explicite et non au moyen d'adresses codées en dur dans l'image.
+Le PostgreSQL cohébergé du profil C08 et les éventuelles dépendances externes doivent être accessibles au travers d'une configuration explicite et non au moyen d'adresses codées en dur dans l'image. PostgreSQL reste privé ; sa présence n'autorise aucune publication de port implicite. Les échanges PBO–PA, même dans le conteneur, passent exclusivement par PZT local mTLS ; les messages de management ne transportent aucun credential.
+
+Le profil déclare supervision, ordre de démarrage, signaux, arrêt contrôlé, budgets partagés, cible de stockage persistant et propriétaire admissible unique de préparation. Les données restent hors image et hors couche éphémère. Un redémarrage ou une réplication conserve le cluster existant sans cloner d'identité PA/PZT ni créer un propriétaire concurrent. Les permissions du conteneur ne sont pas étendues implicitement à l'hôte. Le mécanisme de secrets Docker et les garanties du démarrage pré-base doivent être sélectionnés et qualifiés selon `secrets-providers`, `authorization` et `installation-provisioning` ; les preuves systemd Debian ne qualifient pas ce transport Docker.
 
 Les tests de packaging doivent confirmer que seul le profil `web` est exposable publiquement par défaut, que les ports ou endpoints des workers, schedulers et stores de coordination restent privés et que l'interface de management dispose d'une frontière d'accès distincte. Une modification de l'exposition réseau ne doit pas accorder de permission métier ni contourner l'authentification ou l'autorisation.
 
@@ -2064,3 +2074,6 @@ contrats et seuils nécessaires seront fixés avant la recette correspondante.
 | R66 | PA Linux et Windows sur machines physiques et virtuelles | Chaque cible demandée dispose d'un backend, d'adapters système/session, de réseau, DNS et filtrage qualifiés ; aucune exclusion n'est déduite de l'environnement Debian du projet. |
 | R67 | PA Docker et LXC sous Proxmox | Le profil vérifie le noyau effectif, le placement, les droits minimaux et l'isolation ; aucun repli en espace utilisateur ne suppose des privilèges absents. |
 | R68 | Snapshot, clone, restauration ou migration d'une VM ou d'un conteneur | Les identités, liaisons de clés et preuves TPM/vTPM sont réévaluées ; aucun accès ni identité clonée n'est accepté implicitement. |
+## 48. Logiciel et service de temps préfournis
+
+Le logiciel de temps est disponible avant les étapes qui en ont besoin, fourni par l’image Docker, selon un graphe d’amorçage acyclique. Pour Debian et VM, le plan PA suit un paquet et un service conformes. Les versions et provenances restent à qualifier avant usage. Aucun prérequis téléchargé par TLS n’est admis avant une heure et un TLS admissibles. Le client NTS amont authentifié demeure distingué du serveur local, dont l’activation reste conditionnelle au profil déclaré. Depuis un conteneur LXC, l’horloge de l’hôte n’est jamais modifiée par le conteneur. Ce cadrage n’ajoute implicitement ni droit, ni montage, ni volume, et ne qualifie aucun artefact par sa seule rédaction.

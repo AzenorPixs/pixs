@@ -74,3 +74,19 @@ Le présent lot conserve son périmètre de réalisation, sans code engagé ici.
 Les copies requirements.md et empreintes de préparation sont historiques et
 doivent être réconciliées avec le canon avant réalisation ; le réseau ne
 redevient pas une responsabilité PA du fait d'une formulation héritée.
+
+## Proposition de texte documentaire pour consigner des choix validés — premier lot 1A-2B-3A du 26 octobre 2026
+
+Source : décision humaine du 26 octobre 2026 validant 1A-2B-3A. Texte RSMP proposé, distinct des choix acquis, sans code ni qualification.
+
+Portée fonctionnelle produit : gestion bornée d'un service explicitement autorisé et inscrit au catalogue livré, par OBSERVE, PREPARE_PLAN, START, STOP, READ_RESULT. Catalogue au build : allowlist fermée des opérations et services autorisés. Mandat courant : cible et effets autorisés pour l'exécution concernée, distincts de la whitelist. Essais : exclusivement service factice dédié en environnement de test autorisé, sans toucher services existants de l'hôte de développement.
+
+Le choix fonctionnel initial OBSERVE/PREPARE_PLAN/START/STOP/READ_RESULT est acquis. Restent à fermer avant réalisation applicable : identifiants API, schémas, paramètres, effets, postconditions, durabilité et budgets. Confirmation, idempotence et postcondition ne sont pas implicites.
+
+Choix 1A Debian 13 physique/VM, PA système seul. Choix 3A connecté via PZT avec autorité courante, sans effet hors ligne. Exclusions premier lot : aucun service PA/PZT/CAB/SSH/PostgreSQL piloté, aucun nom libre ni commande arbitraire, pas de sessions utilisateur, conteneurs produit ou hors ligne, pas de SQL direct. PBO-PA via PZT. PA03 et dépendances PZT restent exigibles, aucune livraison déduite.
+
+Critères observables : mandat périmé ou révoqué bloqué, crash incertain réconcilié sans double effet, acteur initial conservé. Sessions utilisateur, autres plateformes et hors ligne différés, aucune obligation de la suite PA04 supprimée. Premier lot non équivalent à livraison PA04, sans exigence canonique nouvelle.
+
+## Lien delta et contrats proposés — 1A-2B-3A inchangés
+
+Choix 1A-2B-3A acquis conservés. Delta proposé en specs/pixs-agent/spec.md et descriptions en contracts.md, non appliqués. START/STOP portent sur service produit explicitement autorisé, essai seul sur factice dédié sans toucher existants. Preuve d’effet par propriétaire courant liée à cible/génération/artefact. Barrières restantes explicites : schémas, identifiants, versions, confiance, durabilité, bornes, budgets et dépendances non adoptés ; aucun prêt à coder.

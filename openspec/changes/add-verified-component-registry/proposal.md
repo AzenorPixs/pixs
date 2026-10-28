@@ -28,7 +28,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Dépendances
 
-- [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
+- [activate-reference-runtime-composition](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md).
 - [publish-first-qualified-pbo-release](../publish-first-qualified-pbo-release/proposal.md).
 
 
