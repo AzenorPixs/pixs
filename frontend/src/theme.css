@@ -25,6 +25,11 @@
   --focus-width: 3px;
   --focus-offset: 3px;
   --page-padding: clamp(1rem, 4vw, 2rem);
+  --layout-field-min: 16rem;
+  --checkbox-size: 1.25rem;
+  --state-disabled-opacity: .65;
+  --z-index-skip: 1;
+  --skip-link-hidden-shift: translateY(-200%);
 }
 :root[data-theme='dark'] {
   color-scheme: dark;
@@ -57,5 +62,104 @@ h1 { margin-block: 0 var(--space); font-size: var(--heading-size); font-weight: 
 p { margin-block: 0 var(--space); }
 .eyebrow { color: var(--muted); font-size: var(--small-size); }
 footer { color: var(--muted); margin-block-start: var(--space-large); font-size: var(--small-size); }
-.skip-link { position: absolute; inset-block-start: var(--space); inset-inline-start: var(--space); transform: translateY(-200%); padding: var(--space-small) var(--space); background: var(--panel); border: var(--border-width) solid var(--border); border-radius: var(--radius); z-index: 1; }
+.skip-link { position: absolute; inset-block-start: var(--space); inset-inline-start: var(--space); transform: var(--skip-link-hidden-shift); padding: var(--space-small) var(--space); background: var(--panel); border: var(--border-width) solid var(--border); border-radius: var(--radius); z-index: var(--z-index-skip); }
 .skip-link:focus { transform: none; }
+
+/* Présentations composées : styles sémantiques, thèmes et repli responsive. */
+[data-mode='COMPOSED'] form,
+[data-mode='COMPOSED'] .present-section-stack {
+  display: grid;
+  gap: var(--space);
+}
+[data-mode='COMPOSED'] .present-section-row,
+[data-mode='COMPOSED'] .presentation-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: var(--space);
+}
+[data-mode='COMPOSED'] .present-section-row > *,
+[data-mode='COMPOSED'] .presentation-row > label {
+  flex: 1 1 var(--layout-field-min);
+  min-inline-size: 0;
+}
+[data-mode='COMPOSED'] input,
+[data-mode='COMPOSED'] textarea,
+[data-mode='COMPOSED'] button {
+  max-inline-size: 100%;
+  min-block-size: var(--control-height);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-small);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+}
+[data-mode='COMPOSED'] input,
+[data-mode='COMPOSED'] textarea {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+[data-mode='COMPOSED'] textarea {
+  resize: vertical;
+  min-block-size: calc(var(--control-height) * 2);
+  white-space: pre-wrap;
+}
+[data-mode='COMPOSED'] .present-field-boolean {
+  flex-direction: row;
+  align-items: center;
+  min-block-size: var(--control-height);
+}
+[data-mode='COMPOSED'] input[type='checkbox'] {
+  inline-size: var(--checkbox-size);
+  min-block-size: var(--checkbox-size);
+  block-size: var(--checkbox-size);
+  accent-color: var(--accent);
+}
+[data-mode='COMPOSED'] button { cursor: pointer; overflow-wrap: anywhere; }
+[data-mode='COMPOSED'] .present-button-primary {
+  background: var(--accent);
+  color: var(--panel);
+  border-color: var(--accent);
+}
+[data-mode='COMPOSED'] button:disabled { cursor: default; opacity: var(--state-disabled-opacity); }
+[data-mode='COMPOSED'] fieldset {
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--space);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius);
+}
+[data-mode='COMPOSED'] legend {
+  max-inline-size: 100%;
+  padding-inline: var(--space-small);
+  overflow-wrap: anywhere;
+}
+[data-mode='COMPOSED'] [data-pixs-list] {
+  display: grid;
+  gap: var(--space);
+}
+[data-mode='COMPOSED'] .present-heading-section {
+  font-size: var(--brand-size);
+  line-height: var(--heading-line-height);
+}
+[data-mode='COMPOSED'] .present-text-muted { color: var(--muted); }
+[data-mode='COMPOSED'] .present-status-command,
+[data-mode='COMPOSED'] .present-status-query {
+  display: block;
+  padding-inline-start: var(--space-small);
+  border-inline-start: var(--focus-width) solid var(--border);
+  overflow-wrap: anywhere;
+}
+[data-mode='COMPOSED'] [data-command-state='UNKNOWN'] { border-inline-start-style: dashed; }
+[data-mode='COMPOSED'] nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space);
+  padding: 0;
+  list-style: none;
+}
+[data-mode='COMPOSED'] a[aria-current='page'] {
+  font-weight: var(--strong-weight);
+  text-decoration: underline;
+}

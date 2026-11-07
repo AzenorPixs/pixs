@@ -1,4 +1,6 @@
-# add-initial-bulk-operation-status-v1
+# B20 — add-initial-bulk-operation-status-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 

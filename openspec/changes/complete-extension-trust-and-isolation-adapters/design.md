@@ -44,8 +44,8 @@ Ces barrières n’empêchent pas la rédaction conditionnelle du dossier. Avant
 
 ## Dépendances et interfaces
 
-- [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
-- [compose-modular-frontend-with-core-api](../compose-modular-frontend-with-core-api/proposal.md).
+- [activate-reference-runtime-composition](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md).
+- [compose-modular-frontend-with-core-api](../archive/2026-10-24-compose-modular-frontend-with-core-api/proposal.md).
 - [qualify-first-pbo-composition](../qualify-first-pbo-composition/proposal.md).
 
 

@@ -1,3 +1,7 @@
+# C33 — Fondation backend P0
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 La pile de référence validée impose Django et PostgreSQL, tandis que le socle actuel ne contient pas encore de backend Django. Le développeur a explicitement autorisé Django et psycopg pour le backend P0. Cette évolution prépare une fondation minimale, sans prétendre réaliser l'ensemble du backend P0.

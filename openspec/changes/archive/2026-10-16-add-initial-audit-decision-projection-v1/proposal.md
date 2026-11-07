@@ -1,3 +1,7 @@
+# C83 — Projection des décisions d’autorisation vers l’audit v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 La norme AuditDecisionProjectionV1 est validée et publiée dans la référence commune 22 par le RSMP approuvé. Les événements PDP et audit générique existent, mais leur contrôle explicite de correspondance n'est pas implémenté. Ce lot apporte uniquement le profil préparatoire purement mémoire et ses preuves, sans prétendre réaliser un audit persistant.

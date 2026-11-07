@@ -1,3 +1,7 @@
+# B30 — Primitive de demande d’annulation Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 Le canon Bulk v1 B02 enveloppe/CAS et B06 machine coopérative est validé. Le flag `cancellation_requested` existe en extension 27 champs mais aucune primitive interne ne permet de le poser après autorisation de la couche supérieure sans décider un CANCEL autoritatif.
 

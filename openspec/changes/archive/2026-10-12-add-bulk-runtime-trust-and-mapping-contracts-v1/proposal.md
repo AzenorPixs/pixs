@@ -1,3 +1,7 @@
+# B41 — Contrats de confiance et de mapping du runtime Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Les validateurs mémoire Bulk et la persistance SQL/CAS/baux sont livrés séparément. Le runtime a maintenant besoin de contrats de données contrôlés et de ports composés côté serveur pour poursuivre les exigences Bulk déjà approuvées sans confondre références opaques, autorité et capacité technique.

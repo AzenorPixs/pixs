@@ -1,3 +1,7 @@
+# B21 — Lien de scope des opérations en masse v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le profil structurel préparatoire BulkScopeLink v1 est désormais défini dans la spécification validée bulk-operations, mais sa représentation mémoire et sa validation pure ne sont pas implémentées. Ce change réalise uniquement ce profil, sans élargir les garanties générales BulkOperation ou ScopeContext.

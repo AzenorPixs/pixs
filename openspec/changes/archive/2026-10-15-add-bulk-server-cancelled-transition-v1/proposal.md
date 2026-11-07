@@ -1,4 +1,6 @@
-# Proposition — add-bulk-server-cancelled-transition-v1
+# B54 — Proposition — add-bulk-server-cancelled-transition-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 

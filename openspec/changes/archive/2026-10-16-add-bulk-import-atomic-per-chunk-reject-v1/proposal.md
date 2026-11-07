@@ -1,4 +1,6 @@
-# Proposal — add-bulk-import-atomic-per-chunk-reject-v1
+# B55 — Proposal — add-bulk-import-atomic-per-chunk-reject-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 Le canon Bulk v1 prévoit des imports mutateurs, tandis que l’orchestration livrée couvre VALIDATE_ONLY et les demandes/transitions d’annulation. Ce premier sous-lot couvre uniquement IMPORT ATOMIC_PER_CHUNK avec REJECT, avec validation complète préalable et participation propriétaire PostgreSQL explicitement déclarée.

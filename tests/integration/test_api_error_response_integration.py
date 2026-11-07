@@ -57,7 +57,21 @@ assert getattr(r1, "streaming", False) is False
 assert r1.content.decode("utf-8").encode("utf-8") == r1.content
 body = json.loads(r1.content.decode("utf-8"))
 assert body == build_infrastructure_error(cid, internal_error=None)
-assert body["message"] == "Erreur interne du service."
+assert body["message"] == "Internal service error."
+assert body["error_code"] == "INTERNAL_ERROR"
+assert set(body) == {"error_code", "message", "details", "field_errors", "correlation_id"}
+r_fr = build_infrastructure_response(cid, internal_error=None, language="fr")
+body_fr = json.loads(r_fr.content.decode("utf-8"))
+assert body_fr == build_infrastructure_error(cid, internal_error=None, language="fr")
+assert body_fr["message"] == "Erreur interne du service."
+assert body_fr == {**body, "message": "Erreur interne du service."}
+assert body_fr["error_code"] == body["error_code"]
+assert body_fr["details"] == body["details"] == {}
+assert body_fr["field_errors"] == body["field_errors"] == []
+assert body_fr["correlation_id"] == body["correlation_id"]
+r_de = build_infrastructure_response(cid, internal_error=None, language="de")
+body_de = json.loads(r_de.content.decode("utf-8"))
+assert body_de == body
 assert r3.content == r1.content and r3 is not r1
 old = bytes(r1.content)
 r1.content = b"mute"

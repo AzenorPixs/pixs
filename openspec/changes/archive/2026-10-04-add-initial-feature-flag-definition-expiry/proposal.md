@@ -1,4 +1,6 @@
-# Proposition — add-initial-feature-flag-definition-expiry
+# O48 — Proposition — add-initial-feature-flag-definition-expiry
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

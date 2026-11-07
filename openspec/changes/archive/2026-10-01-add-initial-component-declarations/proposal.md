@@ -1,4 +1,6 @@
-# Déclarations initiales des composants
+# C38 — Déclarations initiales des composants
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -6,7 +6,7 @@ Le runtime exécute le binaire PBO commun selon des profils web, worker et sched
 ```mermaid
 flowchart TB
     H["Ressources réellement accordées à chaque environnement"] --> Q["Configuration versionnée — rôles, processus, concurrence et budgets"]
-    Q --> E["Exploitation PBO — Standalone ou ZT"]
+    Q --> E["Instance Pixs — Standalone / ZT / Domaine"]
     E --> B["Binaire PBO Nuitka standalone — Kernel, Core, Auth, Agent et module PZT"]
     B --> W["web — nombre de processus configuré"]
     B --> J["worker — nombre de processus configuré"]
@@ -20,24 +20,24 @@ Ce schéma décrit les rôles et budgets, sans fixer de valeur numérique ni de 
 
 ## Requirements
 
-### Requirement: Modes d'exploitation PBO Standalone et ZT
+### Requirement: Modes d'exploitation de l'Instance Pixs
 
-PBO MUST distinguer Standalone, instance autonome sans autorité Pixs extérieure, et ZT, participation autorisée au réseau gouverné via PZT. Les deux MUST utiliser le même binaire Nuitka standalone et conserver pixs.pzt. L'activation de PZT MUST être un choix explicite distinct du mode : Standalone MAY utiliser PZT pour les échanges PBO–PA autorisés. Le passage Standalone/ZT MUST être explicite, sans bascule automatique après panne ou révocation.
+Les modes d'exploitation MUST appartenir à l'Instance Pixs selon pixs-instance : Standalone, ZT et Domaine. Ils MUST utiliser le même binaire PBO Nuitka standalone et conserver les modules essentiels. Standalone MAY utiliser PZT pour PA ; le premier Domaine MUST exiger ZT complètement initialisé. Panne ou révocation MUST NOT changer implicitement le mode ou autoriser un canal PBO–PA hors PZT.
 
-#### Scenario: Exploitation Standalone sans réseau activé
+#### Scenario: Standalone avec PA
 
-- **WHEN** PBO fonctionne en mode Standalone avec un profil sans réseau PZT activé
-- **THEN** les capacités locales sélectionnées restent disponibles sous leurs dépendances, les modules essentiels restent composés et aucun échange PBO–PA ni résultat réseau n'est inventé
+- **WHEN** une Instance Standalone sollicite PA
+- **THEN** elle utilise un transport PZT admissible sans devenir automatiquement une Instance en mode ZT.
 
-#### Scenario: Exploitation ZT
+#### Scenario: Premier Domaine
 
-- **WHEN** le mode ZT est demandé pour le même binaire PBO
-- **THEN** la participation au réseau gouverné exige configuration, exécutant PZT admissible, identités, permissions, mandats et preuves du profil, sans repli hors PZT ni retour autonome implicite si ces préconditions manquent
+- **WHEN** une création de Domaine vise une Instance dont le ZT n’est pas complètement initialisé
+- **THEN** la transition est bloquée avec ses prérequis manquants.
 
-#### Scenario: Transport PZT en mode Standalone
+#### Scenario: Mode Domaine
 
-- **WHEN** une instance PBO Standalone sollicite un PA local ou distant dans son périmètre autorisé
-- **THEN** elle conserve son autonomie de gouvernance et utilise PZT avec les contrôles requis ; l'absence ou l'invalidité de ce transport bloque l'échange sans canal de substitution
+- **WHEN** une Instance active son premier Domaine après vérifications
+- **THEN** son mode devient Domaine et aucune panne ne réactive Standalone.
 
 ### Requirement: Profil de ressources par environnement d'exécution
 
@@ -224,3 +224,32 @@ PZT ; le contrôle PBO–PZT MUST conserver ses interfaces sécurisées.
 
 - **WHEN** un hôte distant comprend PBO/PFO, PA et PZT
 - **THEN** son PBO peut gérer les exécutants locaux ou distants dans ses seuls périmètres autorisés, sans priorité implicite sur un autre PBO
+### Requirement: Contrat commun runtime et Kernel agnostique du FOURNISSEUR
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — Contrat runtime commun
+
+Le contrat d’exécution MUST exposer une interface commune en lecture à Kernel, Core, Auth, PA et PZT. Kernel MUST demeurer agnostique du FOURNISSEUR et MUST NOT porter de logique de fournisseur de temps. Les mécanismes génériques de temps demeurent admis lorsqu’ils restent indépendants de tout fournisseur concret. Les dépendances MUST être déclarées et le graphe de démarrage MUST demeurer acyclique. Les fonctions indépendantes du temps MUST pouvoir continuer pendant une dégradation. Seuls les effets dont la fenêtre ou l’exigence ne peut pas être prouvée MUST être refusés. Le présent texte MUST NOT prolonger un certificat ni un mandat par une dégradation du temps.
+
+Le contrat `pixs.time.evidence` version `2.0.0`, catégorie `API`, propriétaire `pixs.kernel` est une déclaration pure. Les quatre méthodes exigées sont `time_diagnostic(use_ref:TimePublicRef)->TimeDiagnostic`, `time_require_use(use_ref:TimePublicRef)->None`, `time_ceremony_diagnostic(ceremony_ref:TimePublicRef)->TimeDiagnostic`, `time_ceremony_require_use(ceremony_ref:TimePublicRef)->None`. `TimePublicRef` est un sélecteur non autoritaire lié à l’opération courante dont l’appelant ne choisit jamais le producteur, le producteur attendu est injecté par composition. `outcome` vaut exactement `OBSERVED`, `REFUSED` ou `IN_DOUBT`. `TimeDiagnostic` comporte exactement `outcome`, `producer_ref`, `clock_domain_ref`, `detail_ref`. Le producteur vérifie nativement au point d’usage, aucun objet Python, pointeur ou descripteur comme preuve transportée. `None`, DTO et ancienne observation ne sont en aucun cas une permission. Core, Auth, Agent et PZT décident sur l’intervalle entier y compris transitions `DENY` et `ALLOW`, avec décisions et gardes métier inchangées.
+
+#### Scenario: Garde d’usage avec intervalle prouvé
+
+- **WHEN** le producteur courant fournit un intervalle vérifié avec incertitude bornée
+- **THEN** le consommateur l’emploie pour sa seule décision courante sans le mémoriser comme preuve
+
+#### Scenario: Report distant non probant
+
+- **WHEN** seul un report distant ou monotone étranger est disponible sans corrélation locale qualifiée
+- **THEN** le consommateur rend un diagnostic seul sans bail ni observation positive
+
+#### Scenario: Fonction indépendante pendant dégradation
+
+- **WHEN** une fonction ne dépend pas du temps courant et que la preuve de temps est invalide
+- **THEN** elle peut continuer sous son propre contrat sans prolongation de droit
+
+#### Scenario: Projection forgée ne prouve pas
+
+- **WHEN** une projection diagnostique, un `None` ou un DTO est réinjecté comme permission
+- **THEN** le consommateur refuse sans bail ni observation positive

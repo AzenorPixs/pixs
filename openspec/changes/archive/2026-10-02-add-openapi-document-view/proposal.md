@@ -1,4 +1,6 @@
-# Document OpenAPI réel servi en HTTP
+# C49 — Document OpenAPI réel servi en HTTP
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

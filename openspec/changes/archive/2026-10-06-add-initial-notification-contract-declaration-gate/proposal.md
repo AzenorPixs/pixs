@@ -1,4 +1,6 @@
-# Proposition — Liaison des gardes déclaratives de notification au contrat validé
+# O59 — Proposition — Liaison des gardes déclaratives de notification au contrat validé
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

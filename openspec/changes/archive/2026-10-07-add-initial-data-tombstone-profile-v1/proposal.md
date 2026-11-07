@@ -1,4 +1,6 @@
-# Profil structurel préparatoire de tombstone v1
+# C74 — Profil structurel préparatoire de tombstone v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

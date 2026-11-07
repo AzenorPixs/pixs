@@ -1,5 +1,29 @@
 # Conception — C18
 
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Cible consolidée du 31 octobre 2026 — ACL-PIXS-2026-10-31-E3-R1
+
+Distribution PBO/PFO distincte de PA/PZT et capacités requises selon le profil, sans service activé par présence logicielle.
+
+Les orientations du modèle validé remplacent précisément les formulations antérieures incompatibles avec ce périmètre. Les autres clauses restent applicables. Les sections antérieures et leurs références sont conservées pour traçabilité ; elles ne doivent pas être utilisées pour réintroduire une décision remplacée. Les preuves et cases cochées ne qualifient que leur version d'origine.
+
+### Sources et responsabilités courantes
+
+- [deb-package](../../specs/deb-package/spec.md).
+- [pixs-instance](../../specs/pixs-instance/spec.md).
+- [reference-composition](../../specs/reference-composition/spec.md).
+
+Le canon courant prévaut sur ses copies de préparation. Le périmètre présent est documentaire : aucun code, test produit, migration, service, secret, publication ou Git n'est exécuté. Les choix de fournisseurs manquants restent à qualifier avant réalisation.
+
+### Refus et critères de réalisation
+
+Les scénarios des sources et de requirements.md doivent être reliés à des résultats vérifiables par unité. Réception n'est pas application ; donnée ancienne n'est pas état courant. Une autorisation expirée/révoquée ou une dépendance requise non qualifiée bloque l'usage concerné. La validation documentaire ne fait pas réussir les recettes futures.
+
+### Préservation de l'historique et articulation des travaux
+
+Les titres, codes, identifiants de tâches et de sous-lots, libellés, cases, statistiques et preuves antérieurs sont conservés. Les compléments sont rattachés aux unités existantes sans renumérotation ni validation produit anticipée. Les ouvertures C95/C96/C97/N08/PA12/Z28/Z29/Z30/Z31/Z32 portent leurs seules parts résiduelles ; elles ne relancent pas les archives.
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
+
 ## Statut et périmètre autorisé
 
 PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 a été adopté et archivé le 18 octobre 2026 ; ses précisions normatives sont intégrées au canon. Les arbitrages propres au présent change restent à lever avant réalisation.
@@ -36,12 +60,12 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
-- [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
+- [activate-reference-runtime-composition](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md).
 - [add-installation-and-first-configuration](../add-installation-and-first-configuration/proposal.md).
-- [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
-- [compose-modular-frontend-with-core-api](../compose-modular-frontend-with-core-api/proposal.md).
+- [add-reference-worker-scheduler-and-event-delivery](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md).
+- [compose-modular-frontend-with-core-api](../archive/2026-10-24-compose-modular-frontend-with-core-api/proposal.md).
 - [add-initial-administration-panel](../add-initial-administration-panel/proposal.md).
-- [add-essential-pbo-pzt-and-dns-modules](../add-essential-pbo-pzt-and-dns-modules/proposal.md).
+- [add-essential-pbo-pzt-and-dns-modules](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md).
 - [add-runtime-observability-and-operations](../add-runtime-observability-and-operations/proposal.md).
 - [add-upgrade-backup-and-restore-contracts](../add-upgrade-backup-and-restore-contracts/proposal.md).
 
@@ -59,11 +83,18 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 
 ## Hors profil
 
-PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+Le profil `pbo-p0-debian-local-v1` sélectionne PA système et PZT local pour
+préparer PostgreSQL, conformément au [canon de composition](../../specs/reference-composition/spec.md).
+Ce parcours local et ses exécutants doivent être qualifiés ; leur disponibilité
+ne se déduit pas de la seule présence des modules PBO. Le réseau PZT distant,
+les autres rôles PA, le service DNS exécuté par PA, l’image Docker et les
+capacités optionnelles restent hors sélection, sauf obligation du profil
+explicitement sélectionné. Cette délimitation ne vaut ni réalisation ni
+qualification du parcours local.
 
 ## Dépendances après audit transversal P0
 
-[C07](../activate-reference-runtime-composition/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md).
+[C07](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md), [C11](../archive/2026-10-24-compose-modular-frontend-with-core-api/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.
 
@@ -116,3 +147,22 @@ satisfaire et à recouper avant qualification du profil et du paquet.
 Les contrats de transport/contrôle et leurs garanties restent dans les lots
 propriétaires ; réconcilier deltas proposés, copies et empreintes de préparation
 avec le canon actuel avant réalisation. Aucune tâche produit n'est réalisée.
+
+
+## Choix BIND 9 adopté le 24 octobre 2026
+
+Le [choix BIND 9 adopté](../adopt-bind9-managed-dns-and-packaging/proposal.md) est synchronisé le 24 octobre 2026 dans
+[deb-package](../../specs/deb-package/spec.md#L113) et [pzt](../../specs/pzt/spec.md#requirement-fournisseur-bind-9-du-dns-géré-sur-debian-et-docker-pixs).
+C18 conserve le paquet PBO/PFO avec la gestion pixs.dns, sans incorporer
+les exécutants PA/PZT. La présence de PBO ou du module DNS n'impose ni
+installation ni activation du serveur BIND 9 sur chaque hôte.
+
+L'installation et la configuration du serveur Debian relèvent du PA
+désigné pour un rôle serveur explicitement admis, avec la réalisation DNS
+dans [Z05](../add-pzt-managed-dns-service-and-pa-adapters/design.md) et
+la distribution des exécutants dans [PA09](../build-and-publish-independent-pa-debian-package/design.md).
+Version, dépendances système et effets des scripts de paquet sont à
+qualifier dans le plan réel ; aucune construction ni installation de paquet
+n'est réalisée par cette mise à jour de références.
+
+Ce renvoi ne coche aucune tâche de réalisation du lot.

@@ -1,5 +1,7 @@
 # Références normatives — B11
 
+Réconciliation documentaire du 1er novembre 2026 — GSCM3 : les seules copies divergentes et leurs références sont actualisées depuis le canon courant. Aucun delta normatif, tâche, case ou preuve de réalisation n’est modifié. Les trois exclusions runtime déjà canoniques sont référencées séparément sans retirer leurs garanties.
+
 Ce fichier est une copie de référence pour préparer le lot, pas un delta OpenSpec ni une source de vérité indépendante. Les blocs complets ci-dessous conservent conditions, scénarios, valeurs validées et indications historiques. Le canon courant prévaut ; toute dérive impose une relecture avant réalisation.
 
 La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécution, ni fonction manquante. Les lignes NE et les structures déjà livrées restent à auditer/réutiliser. Les dérogations applicatives et contrats structurels gardent leurs frontières.
@@ -15,10 +17,10 @@ La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécuti
 | bulk-operations / 101 | [Entête structurel préparatoire BulkOperationHeader v1](../../specs/bulk-operations/spec.md#L101) | P | REUTILISATION_A_QUALIFIER |
 | bulk-operations / 112 | [Référence et variante du profil BulkOperationHeader v1](../../specs/bulk-operations/spec.md#L112) | P | REUTILISATION_A_QUALIFIER |
 | bulk-operations / 124 | [Version du profil BulkOperationHeader v1](../../specs/bulk-operations/spec.md#L124) | P | REUTILISATION_A_QUALIFIER |
-| bulk-operations / 140 | [Validation pure et limites de BulkOperationHeader v1](../../specs/bulk-operations/spec.md#L140) | P | REUTILISATION_A_QUALIFIER |
+| bulk-operations / 149 | [Validation pure et limites de BulkOperationHeader v1](../../specs/bulk-operations/spec.md#L149) | P | REUTILISATION_A_QUALIFIER |
 | bulk-operations / 154 | [Profil structurel préparatoire BulkOperationStatus v1](../../specs/bulk-operations/spec.md#L154) | P | REUTILISATION_A_QUALIFIER |
 | bulk-operations / 165 | [Référence et état du profil BulkOperationStatus v1](../../specs/bulk-operations/spec.md#L165) | P | REUTILISATION_A_QUALIFIER |
-| bulk-operations / 182 | [Validation pure et limites de BulkOperationStatus v1](../../specs/bulk-operations/spec.md#L182) | P | REUTILISATION_A_QUALIFIER |
+| bulk-operations / 201 | [Validation pure et limites de BulkOperationStatus v1](../../specs/bulk-operations/spec.md#L201) | P | REUTILISATION_A_QUALIFIER |
 | bulk-operations / 199 | [Profil structurel préparatoire BulkScopeLink v1](../../specs/bulk-operations/spec.md#L199) | P | REUTILISATION_A_QUALIFIER |
 | bulk-operations / 211 | [Validation pure de BulkScopeLink v1](../../specs/bulk-operations/spec.md#L211) | P | REUTILISATION_A_QUALIFIER |
 | bulk-operations / 223 | [Limites du lien de périmètre BulkScopeLink v1](../../specs/bulk-operations/spec.md#L223) | P | REUTILISATION_A_QUALIFIER |
@@ -49,7 +51,10 @@ La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécuti
 | bulk-operations / 498 | [Limites du socle BulkOperationRecord v1](../../specs/bulk-operations/spec.md#L498) | P | REUTILISATION_A_QUALIFIER |
 | bulk-operations / 507 | [Runtime Bulk v1 B01 — Périmètre exécutable](../../specs/bulk-operations/spec.md#L507) | P | COMPLETER_OU_INTEGRER |
 | bulk-operations / 631 | [Runtime Bulk v1 B07 — Modes et conflits](../../specs/bulk-operations/spec.md#L631) | P | COMPLETER_OU_INTEGRER |
-| bulk-operations / 688 | [Runtime Bulk v1 B14 — Retour au cycle](../../specs/bulk-operations/spec.md#L688) | P | COMPLETER_OU_INTEGRER |
+| bulk-operations / 716 | [Runtime Bulk v1 B14 — Retour au cycle](../../specs/bulk-operations/spec.md#L716) | P | COMPLETER_OU_INTEGRER |
+| bulk-operations / 96 | [Absence de garanties runtime de BulkJobLink v1](../../specs/bulk-operations/spec.md#L96) | CLARIFICATION_EXISTANTE | CONSERVATION_SANS_CODE |
+| bulk-operations / 161 | [Absence d'effets runtime de BulkOperationHeader v1](../../specs/bulk-operations/spec.md#L161) | CLARIFICATION_EXISTANTE | CONSERVATION_SANS_CODE |
+| bulk-operations / 213 | [Absence d'effets runtime de BulkOperationStatus v1](../../specs/bulk-operations/spec.md#L213) | CLARIFICATION_EXISTANTE | CONSERVATION_SANS_CODE |
 
 ## Blocs sources complets
 
@@ -124,7 +129,7 @@ normalisation ; operation_id et job_id MUST être distincts dans cette représen
 
 ### Référence bulk-operations--d2d14e770c
 
-Source : `openspec/specs/bulk-operations/spec.md`, ligne 84. SHA-256 du bloc : `b89cbf3fd25a66d951ad7730fca1dc9fc016ef2e34ec81396552214a7961a02c`.
+Source : `openspec/specs/bulk-operations/spec.md`, ligne 84. SHA-256 du bloc : `44fe69e209669444048523c242f3a7ad2d76d0d5911102bf2c35c2f4bdc0bd69`.
 
 ~~~~text
 ### Requirement: Validation pure et limites de BulkJobLink v1
@@ -133,11 +138,6 @@ La validation de BulkJobLink v1 MUST porter uniquement sur son type exact et les
 deux références déclarées, en contrôlant les types avant toute comparaison. Elle
 MUST produire des diagnostics statiques VALIDATE, triés et dédupliqués, sans
 reproduire les valeurs ni invoquer les comportements d'un objet étranger.
-Elle MUST NOT résoudre une référence, effectuer une entrée/sortie, ni établir
-l'existence, la légitimité, l'autorisation, la cardinalité globale, l'unicité globale,
-la corrélation, la causalité, le périmètre, la déduplication ou la persistance.
-Les exigences générales BulkOperation et Jobs restent intégralement applicables ;
-ce profil ne constitue pas leur implémentation complète.
 
 #### Scenario: Lien structurel invalide refusé
 
@@ -204,7 +204,7 @@ normalisation. Cette validation de forme MUST NOT décider une compatibilité de
 
 ### Référence bulk-operations--8f491acc2c
 
-Source : `openspec/specs/bulk-operations/spec.md`, ligne 140. SHA-256 du bloc : `5d3e4aa2346b016939ac64dd3a58c5f319600ad358faf1bd8a46d7abe38caa54`.
+Source : `openspec/specs/bulk-operations/spec.md`, ligne 149. SHA-256 du bloc : `7913760b7455395a31af8900d2899e11de147ded58b0b2900ba4addc9d857a5d`.
 
 ~~~~text
 ### Requirement: Validation pure et limites de BulkOperationHeader v1
@@ -212,9 +212,7 @@ Source : `openspec/specs/bulk-operations/spec.md`, ligne 140. SHA-256 du bloc : 
 La validation MUST refuser un objet de type étranger au profil avant tout accès à ses
 attributs, puis contrôler les types des champs avant parsing ou comparaison. Elle MUST
 produire des diagnostics statiques VALIDATE triés et dédupliqués, sans écho des valeurs
-ni invocation de comportement étranger. Elle MUST NOT effectuer d'entrée/sortie, résoudre
-des références, prouver existence ou autorisation, persister, rattacher des Jobs, évaluer
-une compatibilité, exécuter un import/export ou remplacer les exigences générales BulkOperation.
+ni invocation de comportement étranger.
 
 #### Scenario: Structure invalide diagnostiquée sans effet
 
@@ -264,7 +262,7 @@ substitution ou valeur par défaut MUST NOT être admise.
 
 ### Référence bulk-operations--37ea2ccac3
 
-Source : `openspec/specs/bulk-operations/spec.md`, ligne 182. SHA-256 du bloc : `41b9fc35527c6b39e6b50525b5cb668aecb5fe1c85bde37a21aad8f772c30955`.
+Source : `openspec/specs/bulk-operations/spec.md`, ligne 201. SHA-256 du bloc : `ad9521379d00c7c813873ee4f60f9013d9245ea5175500254560d16c55c25ca8`.
 
 ~~~~text
 ### Requirement: Validation pure et limites de BulkOperationStatus v1
@@ -272,12 +270,7 @@ Source : `openspec/specs/bulk-operations/spec.md`, ligne 182. SHA-256 du bloc : 
 La validation MUST refuser tout objet de type étranger au profil avant d'accéder à
 ses attributs, puis vérifier les types des champs avant toute comparaison. Elle
 MUST produire des diagnostics statiques VALIDATE triés et dédupliqués, sans écho
-des valeurs ni invocation de comportement étranger. Elle MUST NOT effectuer
-d'entrée/sortie, résoudre une référence, prouver une existence ou une autorisation,
-rattacher des Jobs, persister, décider une transition, un ordre ou une terminalité,
-mesurer une progression ni exécuter un import/export. Les exigences générales
-BulkOperation restent intégralement applicables ; ce profil ne constitue pas leur
-implémentation complète.
+des valeurs ni invocation de comportement étranger.
 
 #### Scenario: Objet étranger refusé avant ses hooks
 
@@ -818,7 +811,7 @@ Pour le runtime Bulk v1, la capacité MUST respecter intégralement les clauses 
 
 ### Référence bulk-operations--eb892f49cf
 
-Source : `openspec/specs/bulk-operations/spec.md`, ligne 688. SHA-256 du bloc : `60bc3b41bfac21c167dae8ba9e0adc3e3c89582755e9c24694f3b4b1729efc31`.
+Source : `openspec/specs/bulk-operations/spec.md`, ligne 716. SHA-256 du bloc : `90b7c8ba930f38ae90cc81ab19d121d19a22d5676a574243b8d9cbc5fd22e31e`.
 
 ~~~~text
 ### Requirement: Runtime Bulk v1 B14 — Retour au cycle
@@ -850,7 +843,7 @@ Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk
 ### B02 — Enveloppe et progression
 
 - Le contrat interne BulkExecutionV1 MUST respecter exactement les champs et types de l’annexe normative ; toutes les clés, y compris nullables, MUST être explicites.
-- Les textes runtime MUST être des str exactes, non vides, UTF-8 strict et sans NUL ; les entiers MUST être des int exacts, bool exclu. Aucun contrôle runtime MUST modifier le profil préparatoire Record v1.
+- Les textes runtime MUST être des str exactes, non vides, UTF-8 strict et sans NUL ; les entiers MUST être des int exacts, bool exclu. Un contrôle runtime MUST NOT modifier le profil préparatoire Record v1.
 - Les références MUST rester opaques ; leur présence MUST NOT prouver existence ou autorisation. Un scope None MUST NOT désigner PLATFORM ou un tenant global.
 - La progression MUST suivre l’annexe ProgressV1, être persistée et actualisée sans double comptage après reprise. Une validation positive MUST NOT être comptée comme mutation appliquée.
 - Une révision MUST être contrôlée par compare-and-swap ; une version obsolète MUST refuser l’évolution, sans écraser un checkpoint concurrent.
@@ -890,7 +883,7 @@ Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk
 - ATOMIC_PER_CHUNK MUST engager et checkpoint chaque chunk atomiquement ; une erreur MUST conserver les chunks déjà engagés et refuser de les rejouer comme nouveaux effets.
 - BEST_EFFORT MUST être autorisé par le module et engager chaque élément avec ses invariants ; succès et rejets MUST être distincts et diagnostiqués.
 - Les modes et stratégies MUST être choisis explicitement par le producteur serveur ; REJECT reste le rejet de conflit par défaut du contrat général et ATOMIC_PER_CHUNK le mode déclaré des gros imports.
-- CREATE_ONLY, UPDATE_ONLY et UPSERT MUST être explicitement supportés et autorisés par le propriétaire ; aucune valeur None MUST être transformée implicitement par le profil Record.
+- CREATE_ONLY, UPDATE_ONLY et UPSERT MUST être explicitement supportés et autorisés par le propriétaire ; une valeur None MUST NOT être transformée implicitement par le profil Record.
 - Une garantie atomique absente MUST refuser le mode avant mutation ; le runtime MUST NOT basculer vers BEST_EFFORT ou une transaction d’une autre source.
 
 ### B12 — Export et résultats
@@ -1632,3 +1625,64 @@ Les clauses et schémas ci-dessous sont normatifs par les exigences Runtime Bulk
 Contrats internes de runtime, pas de nouveau wire format ou endpoint public. Les signatures Python définitives et le découpage physique des tables sont des choix d’implémentation sous les schémas logiques validés, sans ajouter de champ ni de sémantique.
 ~~~~
 
+## Références distinctes des frontières préparatoires
+
+Ces exigences existent déjà dans le canon. Elles explicitent les exclusions auparavant regroupées dans les copies des exigences de validation ; elles ne créent aucun travail d’implémentation ni tâche supplémentaire.
+
+### Référence bulk-operations--fa42c7562d
+
+Source : `openspec/specs/bulk-operations/spec.md`, ligne 96. SHA-256 du bloc : `215c73297f8d6dbea2f5831bdb8c280cb436b8102faeb3638a081cf98552739b`.
+
+~~~~text
+### Requirement: Absence de garanties runtime de BulkJobLink v1
+
+La validation de BulkJobLink v1 MUST NOT résoudre une référence, effectuer une
+entrée/sortie, ni établir l'existence, la légitimité, l'autorisation, la cardinalité
+globale, l'unicité globale, la corrélation, la causalité, le périmètre, la
+déduplication ou la persistance. Les exigences générales BulkOperation et Jobs
+restent intégralement applicables ; ce profil ne constitue pas leur implémentation
+complète.
+
+#### Scenario: Lien valide sans preuve runtime
+
+- **WHEN** un lien BulkJobLink v1 satisfait les contrôles structurels
+- **THEN** ce résultat n'exécute aucune résolution ni entrée/sortie et ne démontre aucune des garanties runtime exclues du profil
+~~~~
+
+### Référence bulk-operations--6b69de89c6
+
+Source : `openspec/specs/bulk-operations/spec.md`, ligne 161. SHA-256 du bloc : `0872f6bbd3af585c620009843efe4347b37e86b241eba1199644ddf8b4a08cf5`.
+
+~~~~text
+### Requirement: Absence d'effets runtime de BulkOperationHeader v1
+
+La validation de BulkOperationHeader v1 MUST NOT effectuer d'entrée/sortie, résoudre
+des références, prouver existence ou autorisation, persister, rattacher des Jobs,
+évaluer une compatibilité, exécuter un import/export ou remplacer les exigences
+générales BulkOperation.
+
+#### Scenario: Entête valide sans exécution métier
+
+- **WHEN** un entête BulkOperationHeader v1 satisfait les contrôles structurels
+- **THEN** aucune opération runtime exclue du profil n'est exécutée et les exigences générales BulkOperation restent applicables
+~~~~
+
+### Référence bulk-operations--51f2f19eb3
+
+Source : `openspec/specs/bulk-operations/spec.md`, ligne 213. SHA-256 du bloc : `898e46669e6e283e45fd92067684c41e3a8cddcdb99946ecbe649ce02a9b7ce1`.
+
+~~~~text
+### Requirement: Absence d'effets runtime de BulkOperationStatus v1
+
+La validation de BulkOperationStatus v1 MUST NOT effectuer d'entrée/sortie,
+résoudre une référence, prouver une existence ou une autorisation, rattacher des
+Jobs, persister, décider une transition, un ordre ou une terminalité, mesurer une
+progression ni exécuter un import/export. Les exigences générales BulkOperation
+restent intégralement applicables ; ce profil ne constitue pas leur implémentation
+complète.
+
+#### Scenario: Statut valide sans décision de lifecycle
+
+- **WHEN** un statut BulkOperationStatus v1 satisfait les contrôles structurels
+- **THEN** aucune transition, progression ni autre opération runtime exclue du profil n'est décidée ou exécutée
+~~~~

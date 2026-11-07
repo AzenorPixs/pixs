@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-26
+goal: Reconstituer la traçabilité documentaire de la baseline du 16 septembre 2026 sans modifier les archives ni le canon.
+skip_specs: true

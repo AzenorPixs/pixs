@@ -1,4 +1,20 @@
 schema: spec-driven
 created: 2026-10-17
-# Préparation de la réalisation du canon existant ; aucun nouveau comportement normatif prévu.
+# Extension initiale avant PostgreSQL D4/D5/D6 validée le 23 octobre 2026 ; deltas pzt et authorization.
 skip_specs: true
+# Extension D7/D8 : profil terminal initial et résolution locale propriétaire adoptés le 23 octobre 2026 ; seul delta pzt complété, sans qualification runtime.
+
+# D9/D10 adoptés le 23 octobre 2026 : ancrage NV PKI dédié et propriétaire CA natif privé ; complément documentaire borné, sans effet NV, installation ni qualification runtime.
+
+# D14/D15 adoptés le 24 octobre 2026 : observations natives libsystemd/chrony, UTC et garde du secret NV PKI host+tpm2.
+# Complément documentaire : sources en première phase ; construction, tests et validation produit en seconde phase ; aucune qualification ni nouvelle coche.
+
+# D16 adopté le 24 octobre 2026 : secrets CA/parent/terminaux dédiés, distincts du NV ; credentials host+tpm2 natifs et remise racine hors ligne par FD privé scellé RO.
+# Transcription documentaire bornée à cinq fichiers ; aucune nouvelle coche, qualification, utilisation de secret ou opération TPM/NV.
+
+# D17 adopté le 25 octobre 2026 : rôle administratif M1 Z12 en conception, transcription bornée cinq fichiers, sans activation ni mise à disposition runtime, sans qualification ni effet.
+
+# D18 adopté le 25 octobre 2026 : cérémonie UTC extérieure signée.
+# Portée cinq fichiers, sans effet, sans clé, heure, TPM, NV.
+# Reprise temps du 26 octobre 2026 : cadrage documentaire conjoint des cinq capacités ; schéma, created et skip_specs inchangés, sans code ni installation ni activation ni archive.
+# ACL-PIXS-2026-10-31-E3-R1 : anciens deltas déplacés après contrôle de couverture ; réalisation future du canon, historique et tâches conservés.

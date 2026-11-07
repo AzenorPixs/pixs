@@ -1,5 +1,2083 @@
 # Références normatives — Z12
 
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Références courantes du périmètre validé
+
+Les copies plus anciennes conservées dans ce fichier sont historiques. Seuls les blocs ci-dessous correspondent au référentiel de la cible consolidée. Ils ne sont pas des deltas à synchroniser et ne prouvent aucune implémentation.
+
+| Capacité | Exigence | Scénarios | Référence |
+|---|---|---:|---|
+| pzt | Identités de service, PKI et attestation | 1 | pzt-bc9564fb7f1c |
+| pzt | Contrat A10i6 — PKI privée dédiée à PZT — option A validée le 6 octobre 2026 | 1 | pzt-e431aa18f5e8 |
+| pzt | Contrat A10i7 — Émetteur CA dédié par autorité logique habilitée — option A validée le 6 octobre 2026 | 1 | pzt-c495be98c708 |
+| pzt | Contrat A10i8 — Profils explicites de protection des clés CA intermédiaires — option A validée le 6 octobre 2026 | 2 | pzt-17bcf999ec16 |
+| pzt | Contrat A10i9 — Reprise de clé opérationnelle et traitement de la compromission | 2 | pzt-b7fa2acd5d8a |
+| pzt | Contrat A10i10 — Secours PKIZT avec reprise de la même clé | 2 | pzt-8814ce6d73b5 |
+| pzt | Contrat A10i11 — Bascule CA automatisable sous mandat préalable — option A validée le 6 octobre 2026 | 1 | pzt-b13e0b77bc85 |
+| pzt | Contrat A10i12 — Exclusion active et vérifiée du signataire CA — option A validée le 6 octobre 2026 | 1 | pzt-2861446db046 |
+| pzt | Contrat A10i13 — Mécanismes d'exclusion adaptés au profil CA — option A validée le 7 octobre 2026 | 1 | pzt-682c5c0e2eb6 |
+| pzt | Contrat A10i14 — Clés CA ECDSA P-256 et signatures SHA-256 — option A validée le 7 octobre 2026 | 1 | pzt-eaaeb3dc4f6d |
+| pzt | Contrat A10i15 — Nouvelle paire à chaque renouvellement normal des CA intermédiaires — option A validée le 7 octobre 2026 | 1 | pzt-404c5c0f0cdb |
+| pzt | Contrat A10i16 — Durées et anticipation des CA intermédiaires — option A validée le 7 octobre 2026 | 1 | pzt-2f5f5ffe7f16 |
+| pzt | Contrat A10i17 — Durée et anticipation de la racine hors ligne — choix du développeur validé le 7 octobre 2026 | 1 | pzt-1f982e4c4c92 |
+| pzt | Contrat A10i18 — Nouvelle paire indépendante à chaque succession racine — option A validée le 7 octobre 2026 | 1 | pzt-d8ea97c93cee |
+| pzt | Contrat A10i19 — Coexistence bornée des ancrages racine sur les PA — option A validée le 7 octobre 2026 | 1 | pzt-eb278bbef836 |
+| pzt | Contrat A10i20 — Plafond de coexistence des ancrages racine — option A validée le 7 octobre 2026 | 1 | pzt-f7438ce06054 |
+| pzt | Contrat A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026 | 1 | pzt-a748dfe07c0d |
+| pzt | Contrat A10i52 — Budgets bornés d’acquisition et fraîcheur de preuve de temps — option A validée le 8 octobre 2026 | 6 | pzt-e2c8f7a09bd3 |
+| pzt | Amorçage PKI PZT autonome de première installation avant PostgreSQL | 2 | pzt-3b359feda9ad |
+| pzt | Profil X.509 des terminaux de première installation Z12 | 2 | pzt-4fac1c989695 |
+| pzt | Résolution locale du matériel TLS sous propriétaire courant Z12 | 2 | pzt-b57aebf27710 |
+| pzt | Procédure exceptionnelle D18 avec UTC perdu | 1 | pzt-5390c48ad1d1 |
+| pixs-agent | Gestion du service de temps par PA et pixs.agent | 1 | pixs-agent-71315ab86f89 |
+| runtime | Contrat commun runtime et Kernel agnostique du FOURNISSEUR | 4 | runtime-9ed7a8c48d44 |
+| installation-provisioning | Amorçage technique borné du temps avant transport protégé | 1 | installation-provisioning-572932f05bac |
+| authorization | Garde technique du temps indépendante de la base | 1 | authorization-08db346aa8b8 |
+| zt-pki | PKI propre et autorités multiples | 1 | zt-pki-35b43ca99bc1 |
+| zt-pki | PG propre et clés opérationnelles répliquées | 1 | zt-pki-4c7ec15b616c |
+| zt-pki | Protection individualisée et habilitations séparées | 1 | zt-pki-eb43ece12358 |
+| zt-pki | Émetteur unique et secours encadré | 1 | zt-pki-5dd5b9ed6de1 |
+| zt-pki | ACME public et génération de clés | 1 | zt-pki-2ae6168f0a0c |
+| zt-pki | Challenges et coordination ACME | 1 | zt-pki-e3e8cdbdb3dd |
+| zt-pki | Renouvellement anticipé et déploiement vérifié | 1 | zt-pki-ba327c12b293 |
+| zt-pki | Remise TLS ciblée aux RPZT | 1 | zt-pki-790b4d1f8594 |
+| zt-pki | Récupération par autorité et racine distincte | 1 | zt-pki-829050040a60 |
+| zt-pki | Confiance d'amorçage distincte et retrait vérifié | 2 | zt-pki-c23b35888a50 |
+| brick-redundancy | Remplacement sans déplacement direct | 1 | brick-redundancy-ce67ff7e1fde |
+| brick-redundancy | Mode par famille et exceptions | 1 | brick-redundancy-78e23fa4ab8f |
+| brick-redundancy | Conditions de reprise propres à la brique | 1 | brick-redundancy-29e8a1e997e2 |
+| brick-redundancy | Unicité de l’autorité et automatisation | 1 | brick-redundancy-b7eb34bb70c2 |
+| brick-redundancy | Observation et démantèlement | 1 | brick-redundancy-8df77aef5446 |
+| brick-redundancy | Compatibilité de versions par famille | 1 | brick-redundancy-73cbc72a8e34 |
+| brick-redundancy | Références PostgreSQL répliquées et garanties conservées | 1 | brick-redundancy-9c403ec6ed51 |
+
+### Référence courante pzt-bc9564fb7f1c
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 185. SHA-256 : `bc9564fb7f1cd412b48f79c122a2d7e8f8abc51f6e4842a5d204ebc261429fbf`.
+
+Scénarios : Identités de service, PKI et attestation.
+
+~~~~text
+### Requirement: Identités de service, PKI et attestation
+
+Le transport partagé MUST conserver des identités et permissions de services distinctes. X.509 et liaison WireGuard JWS MUST être liés à l'identité et au contexte courant. Les profils TPM/vTPM, mesures, fraîcheur et références signées/versionnées MUST suivre A10a–A10f ; posture déclarée MUST NOT être présentée comme une attestation. Clone, snapshot ou cohébergement MUST NOT créer une confiance implicite.
+
+#### Scenario: Identités de service, PKI et attestation
+
+- **WHEN** un clone réutilise une ancienne configuration et une preuve TPM
+- **THEN** identité et preuves sont réévaluées avant admission
+~~~~
+
+### Référence courante pzt-e431aa18f5e8
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4278. SHA-256 : `e431aa18f5e8ad8bdaa0abcc3bba06d9900392d267d3569d382fd33a2bd06e11`.
+
+Scénarios : Conformité du traitement A10i6.
+
+~~~~text
+### Requirement: Contrat A10i6 — PKI privée dédiée à PZT — option A validée le 6 octobre 2026
+
+Le rôle chargé du traitement A10i6 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i6
+
+Option A validée : PKI privée dédiée à PZT, racine protégée hors ligne et
+émission courante des certificats terminaux A10b/A10i–A10i5 par autorités
+intermédiaires en ligne dédiées au périmètre autorisé. Ancrages explicitement
+provisionnés A02 ; aucune confiance implicite depuis la découverte ou les
+magasins publics de l'OS. Le PA ordinaire ne devient pas autorité d'émission.
+Les autorités de certification et leurs clés restent distinctes des autorités
+métier PZT et des signataires opérationnels A12c–A12g.
+
+La clé privée racine reste hors des processus courants PBO/PZT/PA ; les clés
+privées des intermédiaires restent dans leur service d'émission protégé, sans
+exposition à l'administration PBO ou aux PA ordinaires. PBO pilote politiques
+et demandes autorisées par contrats publics. Opérations racine exceptionnelles
+sous procédure explicite ; racine non sollicitée à chaque renouvellement terminal.
+Cycle de vie des CA, publication de leur état de révocation et remplacement
+de racine restent à spécifier. Le rattachement des émetteurs aux périmètres
+est validé en A10i7, sans nombre, placement ou topologie automatiquement adoptés.
+
+Django conserve la décision courante A10i, engagement/audit A07/A12 et contrôles
+de demande/possession/périmètre. Certificat signé sans décision admissible ne
+vaut ni admission ni droit ; chaîne, ancrage, usages, identité, clé et dates
+vérifiés avant activation. Signature CA sans preuve cryptographique d'engagement
+PostgreSQL. Renouvellement, chevauchement, révocation connue et refus fermé
+A05 conservés ; panne d'émetteur sans validité ou permission prolongée.
+Aucun raccordement à une PKI d'organisation ou secours par une autre racine
+retenu par cette validation. Aucun logiciel CA ou protocole d'émission
+choisi ; algorithme de clé/signature CA validé séparément en A10i14. ECDSA
+P-256 des terminaux A10i5 ne fixe pas les clés CA ; aucune brique NetBird
+ou AD CS n'est adoptée.
+
+A10i6 A est validé le 6 octobre 2026 pour une installation PZT autonome,
+avec exploitation et protection des CA dédiées à prévoir. Charge d'émission,
+validation et compatibilité à qualifier côté services et PA sur les cibles
+Linux/Windows physiques/VM et Docker/LXC Proxmox, sans coût ou disponibilité
+promis. La [RFC 5280, section 4.2.1.9](https://www.rfc-editor.org/rfc/rfc5280.html#section-4.2.1.9)
+définit les contraintes CA et [sa section 6.1](https://www.rfc-editor.org/rfc/rfc5280.html#section-6.1)
+la validation de chaîne. La séparation racine hors ligne/émetteur en ligne
+est un choix Pixs, illustré par le [modèle PKI Microsoft](https://learn.microsoft.com/en-us/training/modules/certificate-services-root-issuing-authority/),
+sans adoption de ce logiciel. Recette : chaîne/ancrage autorisés, CA ou demande
+hors périmètre, émission refusée/incertaine, clés CA inaccessibles au PA ordinaire,
+indisponibilité, révocation et reprise sans droits réactivés.
+
+##### Application au PA — A10i6
+
+Option A validée : PKI privée dédiée PZT, racine protégée hors ligne et
+intermédiaires d'émission en ligne dédiés au périmètre autorisé pour les
+certificats terminaux A10b/A10i–A10i5. Ancrages A02 explicitement provisionnés,
+sans confiance implicite par découverte ou magasins publics OS. Le PA ordinaire
+ne devient pas CA ; CA/clés distinctes des autorités métier PZT et signataires
+opérationnels A12c–A12g.
+
+Clé racine hors processus courants PBO/PZT/PA, clés intermédiaires dans service
+protégé sans exposition à l'administration PBO ou aux PA ordinaires. Pilotage
+PBO par contrats publics, opérations racine exceptionnelles sous procédure
+explicite, aucune signature racine à chaque renouvellement terminal. Cycle de
+vie/révocation CA et remplacement racine à spécifier ; rattachement des émetteurs
+validé en A10i7 sans nombre, placement ou topologie implicitement retenus.
+Django conserve décision A10i, engagement/audit A07/A12 et contrôles de demande/
+possession/périmètre. Certificat signé sans décision admissible sans admission/
+droit ; chaîne/ancrage/usages/identité/clé/dates vérifiés avant activation.
+Signature CA sans preuve cryptographique d'engagement PostgreSQL. A05 et
+renouvellement/chevauchement/retrait conservés ; panne d'émetteur sans validité
+ou permission prolongée. Clé privée terminale toujours locale A10i2.
+Aucun raccordement PKI d'organisation ou autre racine de secours retenu ;
+logiciel/protocole CA non choisis, algorithme CA validé séparément en A10i14 ;
+clés CA non imposées par ECDSA P-256 terminal, aucun composant NetBird ou AD CS adopté.
+
+A10i6 A validé le 6 octobre 2026 pour autonomie PZT, avec exploitation/protection
+des CA dédiées. Charge service/PA et compatibilité Linux/Windows physiques/VM,
+Docker/LXC Proxmox à qualifier sans coût ou disponibilité promis ; RFC 5280
+et modèle racine hors ligne/émetteur en ligne référencés dans cadrage PZT. Recette :
+ancrages/chaînes autorisés, CA/demande hors périmètre, refus/incertitude d'émission,
+clés CA inaccessibles au PA ordinaire, indisponibilité/révocation/reprise sans
+droits réactivés.
+
+#### Scenario: Conformité du traitement A10i6
+
+- **WHEN** un profil revendique le traitement A10i6 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-c495be98c708
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4368. SHA-256 : `c495be98c7085651b124aacaff08289e21050f51e4526c6176775dd0be592da9`.
+
+Scénarios : Conformité du traitement A10i7.
+
+~~~~text
+### Requirement: Contrat A10i7 — Émetteur CA dédié par autorité logique habilitée — option A validée le 6 octobre 2026
+
+Le rôle chargé du traitement A10i7 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i7
+
+Option A validée : émetteur intermédiaire dédié par autorité logique PZT
+habilitée à émettre dans un même domaine de confiance explicitement défini,
+avec clé CA propre, référence/version et périmètre explicites. Création sous
+mandat ; toutes les sous-autorités ne reçoivent pas un droit d'émettre. Plusieurs
+membres de la même autorité logique ne créent pas une CA par membre. Protection
+des clés validée en A10i8 ; placement, redondance et nombre de services restent
+à arbitrer, sans copie privée ou partage multi-instance implicites.
+
+CA et autorité logique métier PZT sont des objets distincts. Aucun domaine
+indépendant rattaché implicitement à une racine commune ; frontières des domaines,
+racines et topologie de certification à spécifier. La hiérarchie CA ne reproduit
+pas automatiquement la hiérarchie métier PZT, ni chaque machine, VM, conteneur
+ou membre multimaître. Émetteur mutualisé entre autorités logiques non retenu.
+
+Chaque vérification associe identité attendue, rattachement courant, domaine
+et émetteurs autorisés à une politique versionnée obtenue d'une source de
+confiance ; ni certificat reçu ni nom d'issuer ne choisissent cette politique.
+Une chaîne valide vers la même racine ne suffit pas : émetteur/clé/référence
+et périmètre vérifiés, chemins alternatifs, certifications croisées ou délégations
+CA non autorisées refusés. Contraintes X.509 et règles PZT qualifiées avec les
+bibliothèques retenues ; aucun champ/extension d'identité précis adopté ici.
+Django conserve les décisions d'émission A10i ; A02, A05, A10i–A10i6 et A12
+restent applicables. Compromission/révocation connue retire les accès dépendants ;
+restauration ou changement d'émetteur sans habilitation réactivée.
+
+A10i7 A est validé le 6 octobre 2026 pour faciliter retrait ciblé et séparation
+des clés par autorité logique. Ce cloisonnement dépend du contrôle effectif des
+émetteurs admis ; une racine compromise affecte son domaine, sans indépendance
+cryptographique des branches sous cette racine. Coût CPU/RAM, stockage, émission,
+inventaire et exploitation à qualifier, sans multiplicateur de PA ou serveurs
+imposé. La [RFC 5280, section 6.2](https://www.rfc-editor.org/rfc/rfc5280.html#section-6.2)
+permet des restrictions applicatives de chemin ; ce découpage est un choix Pixs.
+Recette : émetteur correct ou frère interdit, nom falsifié, chemin alternatif,
+autorité hors mandat, membres multiples, changement de rattachement, révocation
+d'émetteur et restauration.
+
+##### Application au PA — A10i7
+
+Option A validée : intermédiaire dédié par autorité logique PZT habilitée à
+émettre dans un même domaine explicitement défini ; clé CA propre, référence/
+version/périmètre et création sous mandat. Sous-autorités sans droit d'émission
+automatique ; membres multiples sans CA par membre. Protection des clés validée
+en A10i8, placement/redondance/nombre de services à arbitrer sans copie privée
+ou partage multi-instance implicites. Émetteur mutualisé non retenu.
+CA et autorité logique métier distinctes, domaines indépendants sans racine
+commune implicite. Frontières/racines/topologie à spécifier ; aucune hiérarchie
+CA copiée des parents métier ni CA automatique par machine, VM ou conteneur.
+
+Identité attendue/rattachement courant/domaine/émetteurs admis depuis politique
+versionnée de confiance, jamais choisis par certificat reçu ou nom issuer.
+Même racine sans acceptation implicite : émetteur/clé/référence/périmètre vérifiés ;
+chemins alternatifs, certifications croisées ou délégations CA non autorisées
+refusés. Contraintes X.509/règles PZT qualifiées par bibliothèque, aucun champ/
+extension d'identité adopté. Django conserve émission A10i ; A02/A05/A10i–A10i6/
+A12 conservés. Révocation/compromission connues retirant accès dépendants ;
+restauration ou changement d'émetteur sans anciennes habilitations réactivées.
+A10i7 A validé le 6 octobre 2026 pour retrait ciblé et clés séparées par autorité
+logique, sous contrôle effectif des émetteurs admis ; racine compromise affectant
+son domaine, branches sans indépendance cryptographique sous la même racine.
+CPU/RAM/stockage/émission/inventaire/exploitation à qualifier sans nombre de PA/
+serveurs imposé ; RFC 5280 section 6.2 référencée dans cadrage PZT. Recette : émetteur
+correct/frère interdit, nom falsifié, chemin alternatif, hors mandat, membres
+multiples, rattachement/révocation/restauration.
+
+#### Scenario: Conformité du traitement A10i7
+
+- **WHEN** un profil revendique le traitement A10i7 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-17bcf999ec16
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4448. SHA-256 : `17bcf999ec16124fa280617a9f83c49d8db0344d90af6cd1c673ddffb7e7190d`.
+
+Scénarios : Conformité du traitement A10i8; Matériel incompatible.
+
+~~~~text
+### Requirement: Contrat A10i8 — Profils explicites de protection des clés CA intermédiaires — option A validée le 6 octobre 2026
+
+Le rôle concerné MUST appliquer les clauses détaillées ci-dessous avec ses habilitations, bornes et preuves courantes. Il MUST NOT présenter comme effectué un contrôle ou effet absent.
+
+##### Contrat détaillé consolidé — Contrat A10i8
+
+Chaque autorité opérationnelle MUST déclarer son profil de protection compatible avec zt-pki : clé chiffrée en PG et synchronisée, enveloppes par PKIZT et déverrouillage individuel protégé. Un fournisseur logiciel ou matériel MUST être explicitement sélectionné et qualifié sans profil déduit d'un OS, TPM, VM ou conteneur. Un profil matériel incompatible avec ce stockage/reprise MUST NOT être annoncé conforme ni provoquer un repli logiciel implicite. Racine hors ligne, clés TLS terminales, WireGuard/TPM et signataires A12 MUST rester distincts. Les accès émission/déchiffrement/administration MUST rester séparés ; la clé MUST NOT être exposée à PBO/PA ordinaires, aux artefacts, diagnostics ou journaux. Un provider ou une protection indisponible MUST empêcher l'émission protégée, sans droit, périphérique ou montage implicite.
+
+#### Scenario: Conformité du traitement A10i8
+
+- **WHEN** un PKIZT demande le déverrouillage d’une autorité
+- **THEN** ses habilitations et sa protection individuelle sont vérifiées avant tout usage.
+
+#### Scenario: Matériel incompatible
+
+- **WHEN** le profil exige un matériel dont la reprise de même clé selon zt-pki n’est pas démontrée
+- **THEN** le profil reste non qualifié sans promettre une réplication ou protection équivalente.
+~~~~
+
+### Référence courante pzt-b7fa2acd5d8a
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4466. SHA-256 : `b7fa2acd5d8ae25344f6656f9150a178a70d00d1ad101aba259cfe05c4f3a87b`.
+
+Scénarios : Conformité du traitement A10i9; Clé suspectée compromise.
+
+~~~~text
+### Requirement: Contrat A10i9 — Reprise de clé opérationnelle et traitement de la compromission
+
+Le rôle concerné MUST appliquer les clauses détaillées ci-dessous avec ses habilitations, bornes et preuves courantes. Il MUST NOT présenter comme effectué un contrôle ou effet absent.
+
+##### Contrat détaillé consolidé — Contrat A10i9
+
+Après perte ou remplacement d'un émetteur, un PKIZT habilité MUST pouvoir reprendre la même autorité et clé opérationnelle chiffrée synchronisée selon zt-pki et brick-redundancy. Avant émission, la reprise MUST vérifier habilitations, possession/déverrouillage, état courant d'émission/révocation, validités et exclusion de l'ancien émetteur sans numéro de certificat réutilisé. Une issue incertaine MUST bloquer l'émission jusqu'à réconciliation. Une compromission connue/suspectée MUST interdire la réutilisation non vérifiée et suivre un remplacement/retrait autorisé, sans réhabilitation de l'hôte par une seule rotation. La récupération choisie par autorité MUST traiter l'indisponibilité de tous les moyens de déverrouillage ; elle MUST NOT restaurer d'anciens droits. Racine hors ligne, signataires A12 et rotation normale MUST conserver leurs contrats propres.
+
+#### Scenario: Conformité du traitement A10i9
+
+- **WHEN** l’émetteur principal est perdu sans compromission suspectée
+- **THEN** un PKIZT habilité peut reprendre la même clé protégée après les contrôles et l’exclusion requis.
+
+#### Scenario: Clé suspectée compromise
+
+- **WHEN** la clé synchronisée est suspectée compromise
+- **THEN** elle n’est pas utilisée pour maintenir l’autorité par le seul fait d’être répliquée.
+~~~~
+
+### Référence courante pzt-8814ce6d73b5
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4484. SHA-256 : `8814ce6d73b5072c64259276695e167a09189cd0cb5201437027d9a56f124880`.
+
+Scénarios : Conformité du traitement A10i10; Ancien signataire encore admissible.
+
+~~~~text
+### Requirement: Contrat A10i10 — Secours PKIZT avec reprise de la même clé
+
+Le rôle concerné MUST appliquer les clauses détaillées ci-dessous avec ses habilitations, bornes et preuves courantes. Il MUST NOT présenter comme effectué un contrôle ou effet absent.
+
+##### Contrat détaillé consolidé — Contrat A10i10
+
+Le secours PKIZT MUST être un membre identifié et habilité par autorité avec protection de déverrouillage individuelle, copie chiffrée synchronisée de la même clé et état d'émission cohérent. Une autorité MUST conserver un émetteur actif unique ; préparation et accès à la copie MUST NOT autoriser l'émission. L'activation MUST suivre A10i11–A10i13 et zt-pki sous mandat, preuve de l'exclusion, état courant et engagement admissible. La reprise MUST préserver révocations, identifiants et droits courants. Une panne commune, compromission suspectée ou état incohérent MUST empêcher une reprise présentée comme sûre. La même clé entre répliques d'une autorité MUST NOT devenir une clé commune à des autorités différentes ; la continuité et l’indépendance de panne MUST NOT être déduites du nombre de copies.
+
+#### Scenario: Conformité du traitement A10i10
+
+- **WHEN** un secours détient la clé chiffrée mais aucun mandat actif d’émission
+- **THEN** il reste inactif comme émetteur.
+
+#### Scenario: Ancien signataire encore admissible
+
+- **WHEN** l’ancien signataire n’est pas effectivement exclu
+- **THEN** la prise d’autorité est refusée sans double émission.
+~~~~
+
+### Référence courante pzt-b13e0b77bc85
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4502. SHA-256 : `b13e0b77bc85d62490fb2703aa79d193bd386f8dcad9b4ca2c08bf43c2486820`.
+
+Scénarios : Conformité du traitement A10i11.
+
+~~~~text
+### Requirement: Contrat A10i11 — Bascule CA automatisable sous mandat préalable — option A validée le 6 octobre 2026
+
+Le rôle chargé du traitement A10i11 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i11
+
+Option A validée : activation du secours A10i10 automatisable depuis PBO sous
+politique et mandat de bascule préalables explicites, limités à l'émetteur,
+au secours identifié, aux causes techniques admissibles, à une durée finie et
+aux opérations autorisées. Mandat conditionnel distinct du mandat actif
+d'émission : il ne rend pas la réserve signataire avant engagement admissible.
+Critères déterministes vérifiés à l'incident, décision Django actuelle et
+engagement A07/A12 requis ; aucune autorité locale de bascule au PA ou à la CA.
+
+Conditions cumulatives : défaillance technique qualifiée couverte, absence de
+suspicion de compromission selon l'évaluation autorisée requise, identité/
+périmètre et mandat courants, secours valide/protégé A10i8, exclusion vérifiable
+du principal, état/versions/identifiants réconciliés et PostgreSQL admissible
+A12. Qualification du signal, seuils, fenêtres et délais à préciser avant profil
+actif ; preuve d'exclusion validée en A10i12. Timeout ou silence ne prouvent
+pas seuls l'exclusion ou une panne sans compromission. Hors mandat, suspicion
+ou preuve insuffisante : automatique refusé, arbitrage opérateur ; retraits
+immédiats A05 sans attente d'opérateur. L'opérateur ne dispense pas des contrôles
+ou de l'exclusion pour maintenir le service.
+
+Opération typée/versionnée/idempotente A07 ; identité/générations, préconditions,
+permissions et résultat traçables. Un seul droit d'émission actif ; réponse
+perdue/engagement incertain réconciliés avant nouvelle tentative, aucun retour
+automatique au principal ou droit prolongé. Engagement, application par les
+émetteurs et preuve d'émission admissible distingués PBO ; ACK ou commande
+acceptée sans réussite présumée. Migration A10i9 et réserve suivante sous
+mandats propres, aucune autorisation globale donnée par la bascule. Contrôle
+PBO–PA toujours PZT, sans commande locale de secours. Hiérarchie, admission,
+clés et coordination A12 conservées ; contrôleur, topologie et migration
+terminale non choisis par cet arbitrage.
+
+A10i11 A est validé le 6 octobre 2026 pour incidents techniques couverts sans
+nouvelle intervention humaine, conditions d'activation maintenues. Le
+[NIST SP 800-57 partie 1, sections 7.1–7.2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf)
+distingue pré-activation et usage actif d'une clé ; automatisation et mandats
+retenus par Pixs sans automatisme prescrit par cette référence. Ressources,
+délais, critères et disponibilité à qualifier sur les cibles prévues, sans
+immédiateté, RTO garanti ou gain CPU/RAM promis. Recette : mandat valide/absent/
+expiré, hors cause, secours invalide, suspicion, principal non exclu,
+état/engagement incertains, doublon, preuve d'application et opérateur sans relâchement.
+
+##### Application au PA — A10i11
+
+Option A validée : activation A10i10 automatisable PBO sous politique/mandat
+préalable explicite, émetteur/secours/causes techniques/durée finie/opérations
+bornés. Mandat conditionnel distinct du mandat d'émission actif ; réserve
+inactive avant engagement admissible. Critères déterministes à l'incident,
+décision Django actuelle et engagement A07/A12, sans autorité locale PA/CA.
+Conditions cumulatives : cause technique qualifiée couverte, évaluation de
+sécurité requise sans suspicion, identité/périmètre/mandat courants, secours
+valide/protégé A10i8, principal exclu de façon vérifiable, état/versions/
+identifiants réconciliés et PostgreSQL admissible A12. Signal/seuils/fenêtres/
+délais à qualifier avant profil actif ; preuve d'exclusion validée en A10i12.
+Timeout/silence seuls sans preuve d'exclusion ou panne sûre. Hors mandat/
+suspicion/preuve insuffisante : automatique refusé, arbitrage opérateur ;
+retraits A05 immédiats sans attente, opérateur sans dispense de sécurité/exclusion.
+
+Opération typée/versionnée/idempotente A07, générations/préconditions/permissions/
+résultat traçables ; un seul droit d'émission actif. Réponse perdue/commit incertain
+réconciliés avant reprise, aucun principal restauré ou droit prolongé. Engagement/
+application/preuve d'émission admissible distingués PBO, ACK seul sans réussite.
+Migration A10i9 et réserve suivante sous mandats propres, sans autorisation globale.
+PBO–PA par PZT sans commande locale de secours ; admission/clés/hiérarchie/A12
+conservés, contrôleur/topologie/migration terminale non choisis ici.
+A10i11 A validé le 6 octobre 2026 ; incidents techniques couverts sans nouvelle
+intervention humaine, contrôles maintenus. NIST SP 800-57 sections 7.1–7.2
+(source cadrage PZT), mandat/automatisation Pixs sans automatisme NIST prescrit.
+Ressources/délais/critères/disponibilité à qualifier sans immédiateté/RTO/gain CPU/RAM.
+Recette : mandat valide/absent/expiré, hors cause, secours invalide/suspicion,
+principal non exclu, état/engagement incertains, doublon/application, opérateur sans relâchement.
+
+#### Scenario: Conformité du traitement A10i11
+
+- **WHEN** un profil revendique le traitement A10i11 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-2861446db046
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4588. SHA-256 : `2861446db046d08cbc0e5ce831a9d273eb81057a172039b93356daba3c4fec43`.
+
+Scénarios : Conformité du traitement A10i12.
+
+~~~~text
+### Requirement: Contrat A10i12 — Exclusion active et vérifiée du signataire CA — option A validée le 6 octobre 2026
+
+Le rôle chargé du traitement A10i12 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i12
+
+Preuve requise A10i10/A10i11 avant d'autoriser le secours à émettre. Exclusion
+du signataire CA distincte de la promotion PostgreSQL A12b, du retrait des
+certificats terminaux et de la destruction de clé ; aucun outil ou privilège
+hôte, montage, périphérique ou contrôleur Proxmox choisi implicitement.
+
+L'option A validée impose une exclusion active par mécanisme qualifié extérieur
+au processus CA, au point de signature/provider ou à sa frontière d'exécution.
+Inhibition effective et persistante de l'usage de l'ancienne génération, ou
+arrêt de son périmètre avec redémarrage interdit tant qu'il reste retiré, selon
+un profil approuvé. Preuve actuelle liée à l'identité du signataire,
+clé/génération, cible exacte, opération/version et état appliqué, produite par
+le contrôleur de confiance compétent et vérifiée par Django. Un ACK d'arrêt,
+la seule révocation d'un credential réseau ou d'un accès fichier ne prouvent
+pas qu'une clé logicielle déjà chargée ne peut plus signer. Profil sans
+mécanisme d'exclusion démontrable : activation automatique bloquée ; aucune
+coupure hôte ou arrêt d'autres services sans mandat couvrant précisément cette
+cible et ses impacts. L'expiration d'un bail ne remplace pas cette preuve active.
+
+Source A12 admissible, génération/époque d'émission engagée et vérifiée à chaque
+demande ; effet d'exclusion conservé à l'activation du secours. Principale
+retirée sans réactivation par reconnexion, clone ou restauration ; pas de voie
+alternative de signature autorisée. Preuve perdue/contradictoire, clé
+potentiellement compromise ou état inconnu : pas de bascule automatique,
+retrait A05 et arbitrage autorisé. Preuve de contrôle dans le modèle de
+confiance qualifié, sans garantie contre tout hôte/provider compromis.
+Nouvelle émission liée à décision/registre courants A07/A12 ; antidater un
+certificat ne lui confère pas l'admissibilité. Certificats antérieurs non
+compromis traités par migration A10i9, sans rejet collectif implicite ou grâce.
+
+A10i12 A est validé le 6 octobre 2026. Contrôle qualifié et autorisé par profil
+Linux/Windows physique/VM ou Docker/LXC Proxmox ; mécanismes détaillés validés
+en A10i13. Ni support universel ni supériorité CPU/RAM ou délai garanti ; coûts
+et délais à qualifier. La [documentation PostgreSQL sur la bascule](https://www.postgresql.org/docs/current/warm-standby-failover.html)
+illustre le besoin d'éviter le retour d'un ancien primaire ; référence de
+coordination, sans assimiler sa procédure à une preuve de fencing CA ou choisir
+une version PostgreSQL. Recette : clé déjà chargée, arrêt non appliqué,
+redémarrage/clone, mauvais signataire, exclusion levée après activation,
+restauration, partition, preuve périmée et certificat tardif antidaté.
+
+##### Application au PA — A10i12
+
+Preuve A10i10/A10i11 avant émission secours, distincte de promotion PostgreSQL
+A12b/retrait de certificats/destruction de clé ; aucun outil/droit hôte/montage/
+périphérique/contrôleur Proxmox implicitement choisi.
+L'option A validée impose un mécanisme qualifié extérieur au processus CA,
+point de signature/provider ou frontière d'exécution ; inhibition effective
+persistante de l'ancienne génération ou arrêt de périmètre avec redémarrage
+interdit tant que retiré. Preuve actuelle signataire/clé/génération/cible/
+opération/version/état appliqué, contrôleur de confiance compétent et
+vérification Django. ACK d'arrêt ou retrait d'accès réseau/fichier seul sans
+preuve pour clé logicielle déjà chargée. Mécanisme non démontrable bloquant
+pour automatique ; arrêt/coupure hôte ou autres services sans mandat précis
+de cible/impacts interdits. Expiration d'un bail sans remplacement de preuve active.
+
+Source A12 admissible et génération/époque engagées/vérifiées à chaque demande,
+effet d'exclusion conservé à activation. Retrait sans réactivation par
+reconnexion/clone/restauration ou autre voie de signature autorisée. Preuve
+perdue/contradictoire, compromis possible ou état inconnu : automatique refusé,
+retrait A05/arbitrage autorisé. Modèle de confiance qualifié sans garantie
+contre tout hôte/provider compromis. Émission liée à décision/registre A07/A12
+courants, antidatage sans admissibilité ; anciens certificats non compromis
+traités par migration A10i9 sans retrait collectif implicite/grâce.
+A10i12 A validé le 6 octobre 2026 ; qualification Linux/Windows physiques/VM,
+Docker/LXC Proxmox, mécanismes détaillés validés en A10i13. Aucun support/coût/
+CPU/RAM/délai universel promis. Référence PostgreSQL bascule cadrage PZT, sans
+preuve CA déduite ou version choisie. Recette : clé chargée, arrêt non appliqué,
+redémarrage/clone, mauvais signataire, exclusion levée après activation,
+restauration/partition/preuve périmée et certificat tardif antidaté.
+
+#### Scenario: Conformité du traitement A10i12
+
+- **WHEN** un profil revendique le traitement A10i12 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-682c5c0e2eb6
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4673. SHA-256 : `682c5c0e2eb68f28805c4fa081209ee192a523a7b91fcbc1b49de110cbac49f2`.
+
+Scénarios : Conformité du traitement A10i13.
+
+~~~~text
+### Requirement: Contrat A10i13 — Mécanismes d'exclusion adaptés au profil CA — option A validée le 7 octobre 2026
+
+Le rôle chargé du traitement A10i13 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i13
+
+Ce choix précise l'application d'A10i12 aux profils de protection A10i8.
+Les cibles Linux/Windows physiques/VM et Docker/LXC sous Proxmox ont des
+qualifications propres. Le mécanisme et son périmètre sont approuvés avant
+activation du profil, avec contrôleur compétent, identité de cible, impacts
+et contrat de preuve ; aucun provider, outil système ou droit hôte
+supplémentaire choisi implicitement.
+
+L'option A validée retient une méthode adaptée au profil, sélectionnée de
+manière déterministe au préalable. Pour une clé matérielle, inhibition ciblée
+de clé/génération seulement si le provider permet de démontrer l'exclusion
+persistante, y compris des sessions et capacités déjà accordées ; la
+non-exportabilité seule ne suffit pas. Sinon, et pour une clé logicielle déjà
+chargée, exclusion du périmètre d'exécution du signataire par un contrôleur
+extérieur qualifié : arrêt effectif et interdiction de redémarrage/réutilisation
+de l'ancienne génération. Le périmètre doit couvrir les processus et sessions
+conservant une voie de signature ; un service déclaré arrêté ne suffit pas.
+
+Le profil déclare une seule méthode autorisée ; échec sans escalade automatique
+vers arrêt de VM, conteneur ou hôte. Changer de méthode exige une nouvelle
+qualification et un mandat couvrant les impacts. Contrat de preuve commun,
+adapters distincts lorsque les capacités des cibles diffèrent. Principal et
+secours contrôlables séparément, même sur le même hôte ; aucune machine
+physique distincte imposée par ce choix. L'exclusion du principal ne neutralise
+pas le secours ni d'autres signataires admis.
+
+Aucun arrêt global du PBO, de l'hôte ou d'autres services implicite. Cible
+réellement arrêtée/inhibée et génération retirée vérifiées, sans confusion par
+nom ou IP ; chemins de reprise, démarrage automatique, clone et restauration
+couverts par le profil. Contrôleur injoignable, preuve périmée ou périmètre
+incomplet : bascule automatique refusée. Les commandes vers un contrôleur
+externe suivent un contrat de contrôle explicitement autorisé ; aucun droit
+de contournement PBO–PA hors PZT accordé. Une cible retirée ne reçoit pas une
+commande métier locale pour se réautoriser. Mandats A10i11, autorité Django/A12
+et contrôles courants conservés ; topologie et implémentation restent à qualifier.
+
+A10i13 A est validé le 7 octobre 2026 pour limiter l'action au périmètre
+nécessaire qualifié, avec les deux profils A10i8 conservés. Aucun gain de
+ressources ou délai universel promis ; adapters et coûts à qualifier.
+La [documentation Docker sur les politiques de redémarrage](https://docs.docker.com/engine/containers/start-containers-automatically/)
+distingue les reprises après arrêt et redémarrage du daemon ; ces politiques
+font partie de la qualification, sans constituer seules une preuve A10i12.
+Recette : session matérielle préexistante, clé logicielle chargée, provider sans
+inhibition qualifiée, contrôleur indisponible, arrêt partiel, redémarrage
+automatique/restauration, mauvaise cible, escalade refusée et secours affecté.
+
+##### Application au PA — A10i13
+
+Application d'A10i12 aux profils A10i8, sans provider/outil/droit hôte adopté.
+Qualification propre aux cibles Linux/Windows physiques/VM, Docker/LXC Proxmox ;
+méthode/périmètre approuvés avant activation, contrôleur compétent, cible,
+impacts et contrat de preuve déclarés.
+L'option A validée retient une méthode adaptée au profil, sélection déterministe
+préalable. Clé matérielle : inhibition ciblée clé/génération si exclusion
+persistante qualifiable, sessions/capacités préexistantes incluses ;
+non-exportabilité seule insuffisante. Sinon, et pour clé logicielle chargée :
+exclusion du périmètre d'exécution du signataire par contrôleur extérieur
+qualifié, arrêt effectif et interdiction de redémarrage/réutilisation de
+l'ancienne génération. Processus/sessions pouvant encore signer couverts ;
+service déclaré arrêté insuffisant.
+Une méthode autorisée par profil, échec sans escalade vers arrêt VM/conteneur/
+hôte ; changement sous nouvelle qualification et mandat d'impacts. Contrat de
+preuve commun, adapters adaptés aux capacités des cibles. Principal/secours
+contrôlables séparément même sur même hôte, sans machine physique distincte
+imposée ; secours et autres signataires admis préservés par l'exclusion.
+
+Pas d'arrêt global PBO/hôte/autres services implicite. Cible réelle et génération
+vérifiées sans confusion nom/IP, reprises/démarrages automatiques/clones/
+restaurations couverts. Contrôleur inaccessible, preuve périmée ou périmètre
+incomplet bloquants pour automatique. Contrôle externe seulement par contrat
+explicitement autorisé, aucun contournement PBO–PA hors PZT ou commande métier
+locale de réautorisation. Mandats A10i11, Django/A12 et contrôles courants
+maintenus ; topologie/implémentation ouvertes.
+A10i13 A validé le 7 octobre 2026 : action limitée au périmètre nécessaire
+qualifié, deux profils A10i8 conservés, adapters/coûts à qualifier sans gain
+CPU/RAM/délai universel promis. Référence Docker politiques de redémarrage
+cadrage PZT, sans preuve A10i12 déduite. Recette : sessions matérielles préexistantes/
+clé chargée, provider sans inhibition qualifiée, contrôleur indisponible,
+arrêt partiel, redémarrage/restauration, mauvaise cible, escalade refusée,
+secours affecté.
+
+#### Scenario: Conformité du traitement A10i13
+
+- **WHEN** un profil revendique le traitement A10i13 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-eaaeb3dc4f6d
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4769. SHA-256 : `eaaeb3dc4f6d67f45b18f6fc750e43198217cab17da8c0c0ee118357f324473b`.
+
+Scénarios : Conformité du traitement A10i14.
+
+~~~~text
+### Requirement: Contrat A10i14 — Clés CA ECDSA P-256 et signatures SHA-256 — option A validée le 7 octobre 2026
+
+Le rôle chargé du traitement A10i14 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i14
+
+L'option A validée fixe les clés CA ECDSA P-256 (`secp256r1`) et signatures de
+certificats ECDSA avec SHA-256 (`ecdsa-with-SHA256`) pour la racine hors ligne
+A10i6 et les intermédiaires d'émission, principal et secours A10i7–A10i13.
+Chaque CA conserve sa paire indépendante ; aucun partage avec un PA, un service
+TLS ou un signataire opérationnel, même avec le même algorithme. La clé terminale
+ECDSA P-256 A10i5, les signatures opérationnelles Ed25519 A12e, WireGuard et le
+chiffrement AES/ChaCha A10h conservent leurs profils et usages distincts.
+
+Clé publique et signature X.509 conformes aux [RFC 5480](https://www.rfc-editor.org/rfc/rfc5480.html)
+et [RFC 5758](https://www.rfc-editor.org/rfc/rfc5758.html), sans transposer
+l'encodage JWS aux signatures de certificats. Génération de clés, aléa/nonce
+de signature et contrôle de validité confiés à un provider qualifié ; aucun
+algorithme cryptographique redéveloppé par Pixs. Profil explicite pour la PKI
+dédiée, sans sélection automatique ni repli vers Ed25519, RSA ou autre
+algorithme CA. Capacités requises du provider sous-jacent conservées.
+
+Génération/signature CA et validation complète des chaînes qualifiées sur les
+services d'émission et extrémités PA Linux/Windows physiques/VM, Docker/LXC
+Proxmox. Provider matériel requis mais incompatible : activation bloquée,
+sans export de clé ni repli logiciel. La [RFC 8446, section 4.2.3](https://www.rfc-editor.org/rfc/rfc8446.html#section-4.2.3)
+distingue les signatures de certificats des signatures d'authentification TLS ;
+compatibilité réelle vérifiée des deux côtés. Protection A10i8, secours PKIZT reprenant la même clé, exclusion
+et autorité Django/A12 conservées. Durées CA, procédure
+racine, révocation et remplacement d'ancrages restent ouverts ; renouvellement
+normal des clés intermédiaires validé en A10i15. Changer le profil exige une
+migration autorisée, sans changement de clé ou d'ancrage implicite. Aucun
+provider, matériel ou logiciel CA adopté.
+
+A10i14 A est validé le 7 octobre 2026 pour conserver la famille ECDSA retenue
+pour les terminaux et limiter la diversité des profils X.509/TLS à qualifier.
+Choix de cohérence Pixs, sans garantie de support universel ni classement absolu
+de sécurité, performances ou consommation. Recette : signatures racine/
+intermédiaire/terminal, chaîne et usages, deux extrémités TLS, provider logiciel/
+matériel, aléa/nonce, encodages invalides, clé/algorithme incohérents et refus de repli.
+
+##### Application au PA — A10i14
+
+L'option A validée fixe les clés CA ECDSA P-256 (`secp256r1`), signatures
+X.509 ECDSA SHA-256 (`ecdsa-with-SHA256`), pour racine hors ligne A10i6 et
+intermédiaires principal/secours A10i7–A10i13. Paires indépendantes par CA,
+sans partage avec PA/service TLS/signataire opérationnel. Clé terminale
+ECDSA P-256 A10i5, signatures opérationnelles Ed25519 A12e, WireGuard et
+AES/ChaCha A10h conservés, usages distincts même avec algorithme commun.
+RFC 5480/5758 référencées dans cadrage PZT, sans encodage JWS transposé.
+Génération/aléa/nonce et signatures par provider qualifié ; aucune cryptographie
+redéveloppée par Pixs. Profil explicite sans sélection automatique ni repli
+Ed25519/RSA/autre algorithme CA, capacités requises du provider conservées.
+Signature CA/validation complète des chaînes qualifiées sur services d'émission
+et PA Linux/Windows physiques/VM, Docker/LXC Proxmox. Matériel requis incompatible
+bloquant, sans export/repli logiciel. RFC 8446 section 4.2.3 : signatures de
+certificats et authentification TLS distinctes, capacités réelles à vérifier
+des deux côtés. Protection A10i8, secours PKIZT avec même clé, exclusion et Django/A12
+maintenus. Durées CA/procédure racine/révocation/remplacement d'ancrages ouverts ;
+renouvellement normal des clés intermédiaires validé en A10i15. Évolution de
+profil sous migration autorisée, sans changement implicite de clé/ancrage.
+Aucun provider/matériel/logiciel CA choisi.
+A10i14 A validé le 7 octobre 2026 pour cohérence avec famille ECDSA terminale
+et diversité limitée des profils à qualifier, sans garantie universelle de
+support ni classement sécurité/performances/consommation. Recette : signatures
+racine/intermédiaire/terminal, chaîne/usages, extrémités TLS, providers logiciel/
+matériel, aléa/nonce, encodages invalides, incohérence clé/algorithme, refus de repli.
+
+#### Scenario: Conformité du traitement A10i14
+
+- **WHEN** un profil revendique le traitement A10i14 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-404c5c0f0cdb
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4847. SHA-256 : `404c5c0f0cdbb1bbfe9cc9d943a9d7e196add6cfc4529d6af1a993f27509b640`.
+
+Scénarios : Conformité du traitement A10i15.
+
+~~~~text
+### Requirement: Contrat A10i15 — Nouvelle paire à chaque renouvellement normal des CA intermédiaires — option A validée le 7 octobre 2026
+
+Le rôle chargé du traitement A10i15 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i15
+
+L'option A validée concerne le renouvellement planifié d'un intermédiaire
+intact et non compromis, principal ou réserve. Elle complète A10i9
+(perte/remplacement) sans modifier la racine hors ligne, les clés TLS terminales
+A10i2 ou les clés opérationnelles A12e. Un certificat renouvelé n'accorde pas
+de droit nouveau et ne réactive pas un signataire retiré.
+
+Nouvelle paire CA indépendante ECDSA P-256 à chaque renouvellement normal,
+nouveau certificat intermédiaire signé sous procédure racine autorisée,
+nouvelle référence de clé/génération et provisionnement contrôlé des émetteurs
+admis. Pas de dérivation de l'ancienne clé ni recertification de cette même clé
+comme renouvellement normal. Une nouvelle génération peut être préparée et certifiée sous procédure de
+rotation explicite si son profil, sa validité et son mandat conviennent. Les
+répliques PKIZT reprennent la même clé au sein d'une génération ; sa préparation
+n'autorise pas l'activation d'une nouvelle génération.
+
+Procédure racine explicite et autorisée, sans mise en ligne permanente de sa
+clé ni signature locale autonome du PA. Django/A07/A12 vérifient identité,
+périmètre, politique, état, chaîne, usages, validités et possession avant
+engagement/application. Renouvellement actif et préparation de réserve
+distingués ; une seule génération admissible pour les nouvelles émissions
+par émetteur. Changement de signataire actif : exclusion A10i12/A10i13 vérifiée
+avant activation du suivant, sous mandat de rotation planifiée propre.
+A10i11 ne couvre pas implicitement cette rotation par son mandat d'incident technique.
+
+Certificats terminaux antérieurs non compromis : maintien seulement dans une
+migration explicite bornée A10i9, avec chaîne, émetteur admis et contrôles
+courants, sans grâce à expiration/révocation. Retrait de l'ancien signataire
+pour nouvelle émission distinct de l'acceptation transitoire des certificats
+antérieurs. Renouvellement manqué ou état incertain sans prolongation de
+validité, restauration d'anciens droits ou retour automatique. Clés anciennes
+retirées et cycle de réserve réconciliés ; conservation éventuelle pour un
+usage de révocation distinct seulement sous mandat explicite, sans droit
+implicite de nouvelle émission. Durées et préparation validées en A10i16 ;
+cryptopériodes, transition et procédure racine détaillée à qualifier.
+
+A10i15 A est validé le 7 octobre 2026 pour renouveler effectivement la clé de
+signature et identifier distinctement ses générations, avec préparation et
+distribution contrôlée des références publiques. Aucun gain CPU/RAM universel
+ni délai garanti. La [RFC 5280, section 6.1](https://www.rfc-editor.org/rfc/rfc5280.html#section-6.1)
+définit la validation de chaîne ; renouvellement et migration bornée sont des
+règles Pixs, sans rotation à chaque renouvellement imposée par cette référence.
+Recette : nouvelle clé, recertification de même clé refusée, réserve préparée,
+procédure racine indisponible, état incertain, exclusion manquée, certificat
+antérieur admissible/retiré et reprise après restauration.
+
+##### Application au PA — A10i15
+
+L'option A validée concerne un intermédiaire intact/non compromis, principal
+ou réserve ; A10i9 perte/remplacement conservé, racine hors ligne distincte.
+Clés terminales A10i2/opérationnelles A12e inchangées ; nouveau certificat sans
+droits nouveaux ou réactivation d'un signataire retiré.
+Nouvelle paire CA indépendante ECDSA P-256 à chaque renouvellement normal,
+certificat sous procédure racine autorisée, référence clé/génération nouvelle
+et provisionnement contrôlé des émetteurs admis. Aucune dérivation ou
+recertification de l'ancienne clé comme renouvellement normal. Une génération de renouvellement peut être préparée sous mandat avec profil/
+validité contrôlés sans activation implicite. Ses répliques partagent sa même
+clé chiffrée selon zt-pki et A10i10.
+
+Procédure racine explicite autorisée, sans clé racine en ligne permanente ou
+signature PA autonome. Django/A07/A12 : identité/périmètre/politique/état/
+chaîne/usages/validités/possession avant engagement/application. Renouvellement
+actif/préparation réserve distingués, une génération de nouvelles émissions
+admissible par émetteur. Changement de signataire actif après exclusion
+A10i12/A10i13 sous mandat propre de rotation planifiée ; mandat d'incident
+A10i11 sans couverture implicite.
+Anciens certificats terminaux non compromis admissibles seulement en migration
+explicite bornée A10i9 avec chaîne/émetteur/contrôles courants, sans grâce à
+expiration/révocation ; retrait du signataire pour émission distinct de leur
+acceptation transitoire. Échec/incertitude sans prolongation, restauration
+d'anciens droits ni retour automatique. Clés retirées/cycle réserve réconciliés ;
+éventuel usage de révocation distinct sous mandat explicite, sans nouvelle
+émission implicite. Durées/préparation validées en A10i16 ; cryptopériodes,
+transition/procédure racine détaillée à qualifier.
+A10i15 A validé le 7 octobre 2026 : clé effectivement renouvelée/générations
+distinctes, préparation/distribution de références publiques, sans gain CPU/RAM
+universel ou délai garanti. RFC 5280 section 6.1 référencée dans cadrage PZT :
+validation de chaîne, rotation/migration règles Pixs. Recette : nouvelle clé,
+recertification même clé refusée, réserve, racine indisponible, état incertain,
+exclusion manquée, anciens certificats admissibles/retirés, restauration.
+
+#### Scenario: Conformité du traitement A10i15
+
+- **WHEN** un profil revendique le traitement A10i15 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-2f5f5ffe7f16
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 4943. SHA-256 : `2f5f5ffe7f16dd57f6b9c952feb7409d33cf99a566c6bd2bb90af34f9283a661`.
+
+Scénarios : Conformité du traitement A10i16.
+
+~~~~text
+### Requirement: Contrat A10i16 — Durées et anticipation des CA intermédiaires — option A validée le 7 octobre 2026
+
+Le rôle chargé du traitement A10i16 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i16
+
+L'option A validée retient un premier jet configurable depuis PBO pour
+certificats des intermédiaires principal et réserve, avec renouvellement à
+nouvelle paire A10i15. Les certificats terminaux conservent A10i4. Durée et
+anticipation de la racine validées séparément en A10i17, cryptopériodes de ses
+clés non fixées ici. Valeurs Pixs à qualifier, non prescriptions universelles
+de la RFC 5280 ou du NIST.
+
+| Paramètre | Valeur nominale validée |
+| --- | --- |
+| Validité du certificat intermédiaire | 365 jours |
+| Début de préparation du renouvellement | 240 jours après notBefore |
+| Marge restante au début de préparation | 125 jours |
+
+Un jour vaut 24 heures ; dates UTC et horloge qualifiée. Durée effective issue
+de notBefore/notAfter contrôlés, sans période nominale ajoutée à l'activation.
+Le seuil est la fraction 240/365 de la validité effective ; si cette validité
+est raccourcie, préparation avancée selon cette fraction. À réception après
+le seuil : préparation immédiatement nécessaire, sans remise à zéro du temps.
+Préparation et signature racine, provisionnement des références, mandat de
+rotation, exclusion et application prouvée sont des étapes distinctes ;
+atteindre le seuil n'autorise ni émission racine autonome ni bascule.
+Échéance de rotation définie par le plan autorisé avant expiration, avec marge
+opérationnelle qualifiée ; préparation commencée sans achèvement prouvé ne
+vaut pas renouvellement réussi.
+
+Réserve : dates de son propre certificat, âge réel de sa clé et validité
+résiduelle suivis dès préparation, sans nouveau compteur à l'activation ou
+après restauration. Réserve trop proche de son expiration pour satisfaire
+le profil de transition refusée ; renouvellement/préparation d'une autre
+génération sous mandat, sans activation pour contourner une échéance.
+Chaque paire a un âge suivi depuis sa génération ; durée de certificat et
+cryptopériode ne sont pas assimilées, aucune remise à zéro de l'âge de clé.
+Les limites de clé et marges admissibles doivent être déclarées et qualifiées
+avant activation du profil ; cet arbitrage ne fixe pas leur valeur numérique.
+
+PBO expose dates, seuil, temps restant et état des étapes sans secrets ;
+configuration typée/versionnée, politique autorisée et contrôles Django/A12.
+Mandats, révocations et validités plus courts restent prioritaires.
+Expiration ou retrait d’admissibilité de l’intermédiaire : aucune nouvelle émission admissible ni
+chaîne utilisant cet intermédiaire acceptée hors validités courantes ;
+retrait A05 sans grâce, ancien terminal traité par migration A10i9/A10i15.
+Le profil Pixs borne la validité des nouveaux certificats terminaux par la
+validité résiduelle de leur intermédiaire ; validité insuffisante diagnostiquée,
+sans délivrer implicitement 24 heures au-delà de la CA. Incohérence de dates,
+horloge non qualifiable, renouvellement manqué ou résultat incertain :
+refus fermé et arbitrage autorisé, sans restauration d'anciens droits.
+
+A10i16 A est validé le 7 octobre 2026 comme premier jet, avec marge nominale
+de 125 jours pour la procédure racine hors ligne et la rotation contrôlée.
+Fréquence moindre sans gain CPU/RAM global présumé ; retrait immédiat connu
+en cas de compromission maintenu. Qualification exploitation/charge sur
+Linux/Windows physiques/VM et Docker/LXC Proxmox, sans disponibilité garantie.
+La [RFC 5280, section 4.1.2.5](https://www.rfc-editor.org/rfc/rfc5280.html#section-4.1.2.5)
+définit les dates de validité ; ni cadence Pixs ni durée d'usage d'une clé
+prescrites par ces dates seules. Recette : seuil nominal/raccourci,
+certificat reçu tard, réserve ancienne, procédure racine indisponible,
+rotation inachevée, terminal proche d'expiration CA, horloge/restauration,
+révocation prioritaire et configuration invalide.
+
+##### Application au PA — A10i16
+
+L'option A validée retient un premier jet PBO configurable pour certificats
+intermédiaires principal/réserve, avec nouvelle paire A10i15. Terminaux A10i4
+maintenus ; durée/anticipation racine validées en A10i17, cryptopériodes de
+ses clés non fixées ici. Valeurs Pixs à qualifier, aucune prescription
+universelle RFC 5280/NIST.
+
+| Paramètre | Valeur nominale validée |
+| --- | --- |
+| Validité du certificat intermédiaire | 365 jours |
+| Début de préparation du renouvellement | 240 jours après notBefore |
+| Marge restante au début de préparation | 125 jours |
+
+Jour de 24 heures, UTC/horloge qualifiée ; durée effective notBefore/notAfter,
+sans durée nominale ajoutée à activation. Seuil fraction 240/365 de validité
+effective ; raccourcissement avançant la préparation. Réception après seuil :
+préparation immédiatement nécessaire, temps non réinitialisé. Préparation/
+signature racine/provisionnement/mandat/exclusion/application distincts ;
+seuil sans émission racine autonome ou bascule autorisée. Échéance planifiée
+avant expiration et marge opérationnelle qualifiée ; préparation sans
+achèvement prouvé ne vaut pas renouvellement réussi.
+Réserve : propres dates, âge réel de clé et validité résiduelle depuis
+préparation, sans compteur renouvelé par activation/restauration. Résiduel
+insuffisant pour transition bloquant ; nouvelle préparation sous mandat,
+sans activation contournant échéance. Âge de clé depuis génération sans remise
+à zéro, distinct de validité du certificat ; limites de clé/marges déclarées
+et qualifiées avant activation, valeurs numériques non fixées ici.
+
+PBO : dates/seuil/temps restant/étapes sans secrets, configuration typée/
+versionnée, politique autorisée, Django/A12. Validités/mandats plus courts et
+révocation prioritaires. CA expirée ou retirée des émetteurs admis sans nouvelle émission admissible
+ou chaîne acceptée hors validités courantes ; A05 sans grâce, anciens terminaux
+sous migration A10i9/A10i15. Profil Pixs : validité d'un nouveau terminal bornée
+par résiduel de son intermédiaire, insuffisance diagnostiquée, sans 24 heures
+implicites au-delà de CA. Dates incohérentes/horloge non qualifiable/échec/
+incertitude : refus fermé/arbitrage, aucun ancien droit restauré.
+A10i16 A validé le 7 octobre 2026, premier jet/marge nominale 125 jours pour
+procédure racine et rotation contrôlée, sans gain global CPU/RAM déduit,
+retrait connu immédiat maintenu. Qualification exploitation/charge Linux/
+Windows physiques/VM, Docker/LXC Proxmox sans disponibilité garantie.
+RFC 5280 section 4.1.2.5 référencée dans cadrage PZT : dates de validité, sans
+cadence/cryptopériode Pixs déduites. Recette : seuil nominal/raccourci,
+réception tardive, réserve ancienne/racine indisponible, rotation inachevée,
+terminal proche expiration CA, horloge/restauration, révocation/configuration invalide.
+
+#### Scenario: Conformité du traitement A10i16
+
+- **WHEN** un profil revendique le traitement A10i16 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-1f982e4c4c92
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 5064. SHA-256 : `1f982e4c4c925d9c963e93a9a2b851a0ef6a1c40d334449ca442a7f14caaf655`.
+
+Scénarios : Conformité du traitement A10i17.
+
+~~~~text
+### Requirement: Contrat A10i17 — Durée et anticipation de la racine hors ligne — choix du développeur validé le 7 octobre 2026
+
+Le rôle chargé du traitement A10i17 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i17
+
+Choix explicite du développeur pour la durée nominale du certificat racine
+A10i6/A10i14 et la préparation de sa succession. Ni clé racine en ligne ni renouvellement
+terminal par racine ; intermédiaires A10i16 inchangés. Nouvelle paire racine
+indépendante validée en A10i18 ; procédure de succession, coexistence
+des ancrages, sauvegarde et cryptopériodes détaillées restent distinctes.
+
+| Paramètre | Valeur nominale validée |
+| --- | --- |
+| Durée du certificat racine | 7300 jours, soit 20 années nominales de 365 jours |
+| Début de préparation de la succession | 5840 jours après notBefore, soit 16 années nominales de 365 jours |
+| Marge restante au début de préparation | 1460 jours |
+
+Jour de 24 heures, UTC/horloge qualifiée ; années indicatives, calculs en jours.
+Seuil de préparation à quatre cinquièmes de la validité effective contrôlée
+notBefore/notAfter, avancé si durée raccourcie. Réception après seuil :
+préparation nécessaire immédiatement, sans compteur recommencé à installation,
+restauration ou reprise. Préparation sous procédure racine autorisée, suivi
+PBO des étapes et échéances ; seuil sans signature ou adoption automatique
+sur les PA. Succession achevée et prouvée avant l'échéance admise par politique,
+avec marge opérationnelle qualifiée. Échec sans auto-prolongation.
+
+Admissibilité de chaque ancrage explicitement bornée/versionnée dans PZT,
+au plus tard à notAfter du certificat racine de ce profil, avec contrôle
+indépendant des seules règles du magasin OS ou du validateur TLS.
+Racine retirée, échéance dépassée ou contexte non vérifiable : refus des
+chaînes dépendantes et retrait A05, sans maintien implicite d'anciens droits.
+La [RFC 5280, sections 6.1 et 6.2](https://www.rfc-editor.org/rfc/rfc5280.html#section-6.1)
+traite l'ancrage comme entrée de validation et n'impose pas l'application
+de toutes les informations de son certificat auto-signé ; borne d'admission
+validée ici comme règle Pixs, pas expiration uniforme garantie par la RFC.
+Le profil validé borne aussi les certificats intermédiaires nouvellement
+émis par l'échéance d'admissibilité de leur ancrage ; réduction de durée et
+besoin de succession diagnostiqués, sans 365 jours implicites au-delà.
+
+Durée du certificat distincte de l'âge et des périodes d'usage de la clé
+racine, suivis selon politique qualifiée ; même certificat ou réinstallation
+sans remise à zéro de l'âge. Valeur nominale sans garantie de sécurité de
+l'algorithme sur toute cette période. Compromission/suspicion connue traitée
+immédiatement selon A05 et procédure autorisée, sans attente du seuil.
+Changement d'ancrage nécessite provisionnement authentifié explicite A02 et
+contrôles courants Django/A12 ; ni téléchargement découvert ni recertification
+ne prolonge automatiquement la confiance. Aucun root matériel/provider ou
+protocole de succession choisi ; Linux/Windows physiques/VM et Docker/LXC
+Proxmox à qualifier, clé racine hors processus courants PBO/PZT/PA conservée.
+
+A10i17 est validé selon le choix du développeur le 7 octobre 2026 : 20 années
+nominales, préparation à 16 années nominales et marge de 1460 jours. Année
+nominale de 365 jours, sans assimilation aux anniversaires calendaires.
+Paramètres PBO configurables et qualifiés ; ces dates ne prescrivent ni usage
+ininterrompu de la clé pendant 20 ans ni garantie algorithmique jusqu'à cette
+échéance. Politique de sécurité courante et limites de clé peuvent imposer
+une succession anticipée, sans attendre le seuil de préparation normal.
+Aucun classement universel sécurité/CPU/RAM/disponibilité ni durée prescrite
+par la RFC 5280. Recette prévue : seuil nominal/raccourci, validateur ignorant dates
+racine, borne PZT expirée, intermédiaire dépassant ancrage, succession manquée,
+PA hors ligne, horloge/restauration, retrait connu et configuration invalide.
+
+##### Application au PA — A10i17
+
+Choix explicite du développeur : durée du certificat racine A10i6/A10i14 et
+préparation de succession ; pas de
+clé racine en ligne ou renouvellement terminal par racine. A10i16 conservé.
+Nouvelle paire racine indépendante validée en A10i18 ; procédure/coexistence d'ancrages,
+sauvegarde/cryptopériodes détaillées distinctes, non choisies ici.
+
+| Paramètre | Valeur nominale validée |
+| --- | --- |
+| Durée du certificat racine | 7300 jours, soit 20 années nominales de 365 jours |
+| Début de préparation de la succession | 5840 jours après notBefore, soit 16 années nominales de 365 jours |
+| Marge restante au début de préparation | 1460 jours |
+
+Jour de 24 heures, UTC/horloge qualifiée, années indicatives/calcul en jours.
+Seuil quatre cinquièmes de validité effective notBefore/notAfter, avancé si
+raccourcie ; réception après seuil sans compteur remis à zéro par installation/
+restauration/reprise. Procédure racine autorisée, suivi PBO, seuil sans signature/
+adoption PA automatique ; succession prouvée avant échéance admise et marge
+qualifiée, échec sans prolongation.
+Ancrage explicitement borné/versionné PZT au plus tard à notAfter de ce profil
+racine, contrôle distinct du seul magasin OS/validateur TLS. Retrait/échéance/
+contexte invérifiable : chaînes dépendantes refusées, A05 sans anciens droits
+maintenus. RFC 5280 sections 6.1/6.2 référencées dans cadrage PZT : ancrage entrée
+de validation, informations du certificat auto-signé pas toutes imposées ;
+borne d'admission validée comme règle Pixs, sans expiration uniforme déduite de la RFC.
+Intermédiaire nouvellement émis borné par échéance de son ancrage, durée
+raccourcie/besoin de succession diagnostiqués, sans 365 jours au-delà.
+
+Certificat distinct de l'âge/périodes d'usage de clé racine, suivi qualifié ;
+réinstallation/même certificat sans âge réinitialisé. Aucune sécurité
+algorithmique garantie sur durée nominale. Compromission/suspicion connue :
+A05/procédure autorisée immédiats sans attendre seuil. Nouvel ancrage sous
+provisionnement authentifié explicite A02 et Django/A12, découverte/
+recertification sans confiance prolongée automatiquement. Matériel/provider/
+protocole de succession non choisis ; cibles Linux/Windows physiques/VM,
+Docker/LXC Proxmox à qualifier, clé racine hors processus courants PBO/PZT/PA.
+A10i17 choix du développeur validé le 7 octobre 2026 : 20 années nominales,
+préparation à 16 années nominales, marge 1460 jours. Année nominale de 365 jours,
+sans anniversaires calendaires déduits ; paramètres PBO configurables/qualifiés.
+Durée sans usage continu de clé imposé ni assurance algorithmique sur 20 ans ;
+politique courante/limites de clé pouvant imposer succession anticipée avant
+seuil normal. Aucun classement sécurité/CPU/RAM/disponibilité ni durée RFC
+5280 prescrite. Recette
+prévue : seuil nominal/raccourci, validateur ignorant dates racine, borne PZT
+expirée, intermédiaire dépassant ancrage, succession manquée, PA hors ligne,
+horloge/restauration/retrait connu/configuration invalide.
+
+#### Scenario: Conformité du traitement A10i17
+
+- **WHEN** un profil revendique le traitement A10i17 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-d8ea97c93cee
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 5185. SHA-256 : `d8ea97c93ceedf39d5fb4209c81c092d61ee626f52330f1410400573d268d9f7`.
+
+Scénarios : Conformité du traitement A10i18.
+
+~~~~text
+### Requirement: Contrat A10i18 — Nouvelle paire indépendante à chaque succession racine — option A validée le 7 octobre 2026
+
+Le rôle chargé du traitement A10i18 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i18
+
+L'option A validée concerne la succession planifiée d'une racine intacte et
+non compromise, dont durée et anticipation sont validées en A10i17. Protection
+hors ligne A10i6, profil ECDSA P-256/SHA-256 A10i14 et renouvellement indépendant
+des intermédiaires A10i15/A10i16 conservés ; aucun renouvellement implicite
+des ancrages ou pouvoir autonome d'émission des PA.
+
+Nouvelle paire racine indépendante ECDSA P-256 pour chaque succession normale,
+certificat racine auto-signé et nouvelle référence de clé/génération. Nouvelle
+clé générée/protégée sous procédure racine qualifiée, sans dérivation, copie
+ou réutilisation de la précédente ; clé privée hors processus courants
+PBO/PZT/PA. Recertification de la même clé non retenue pour la succession
+normale. Nouvel ancrage public provisionné explicitement aux extrémités
+autorisées, avec preuve d'application avant son usage. Les intermédiaires
+de la génération suivante sont certifiés sous cette racine selon A10i15,
+sans adoption automatique de l'ancien arbre. Changement de clé sans nouveau
+domaine métier ou nouvelle autorité d'admission implicite.
+
+PBO prépare le plan et suit les références publiques sans recevoir la clé
+privée ; mandats racine explicites, décision Django/A07/A12, contrôle de
+périmètre, dates, algorithme, usages et engagement/application distingués.
+Certificat auto-signé ou signature valide seul sans droit de nouvelle
+confiance ; installation dans un magasin OS sans preuve de politique PZT
+appliquée insuffisante. La [RFC 5280, section 8](https://www.rfc-editor.org/rfc/rfc5280.html#section-8)
+souligne le caractère critique de la distribution authentifiée des clés CA ;
+protocole et procédure Pixs restent à spécifier, sans adoption d'un outil CA.
+Même nom ou empreinte d'un ancien certificat sans décision courante insuffisant.
+
+Migration des intermédiaires/terminaux et retrait final seulement sous plan
+autorisé borné ; coexistence bornée des ancrages validée en A10i19. Ancienne
+racine exclue de toute nouvelle certification à l'engagement de la succession ;
+vérification des certificats antérieurs possible seulement dans la politique
+transitoire explicite et avant sa borne A10i17, sans grâce pour retrait/
+compromission ou expiration. Nouvelle certification, admission et droit métier
+restent distincts. PA hors ligne ou migration incomplète : pas d'extension
+automatique, réadmission/récupération A02 sous procédure authentifiée.
+Signature croisée, restauration de clé perdue, clonage ou retour arrière
+ne constituent pas une procédure autorisée par ce choix.
+
+Perte, suspicion, protection invérifiable ou état incertain : renouvellement
+normal bloqué, A05 et procédure racine exceptionnelle autorisée, à définir ;
+aucune recertification pour déclarer la clé sûre ou effacer son historique.
+Cryptopériodes, retrait de clé, sauvegarde, contrôles et moyens matériels
+restent à qualifier. Cibles Linux/Windows physiques/VM, Docker/LXC Proxmox
+conservées, sans changement implicite de privilège ou dépendance.
+A10i18 A est validé le 7 octobre 2026 pour renouveler effectivement le secret
+racine et distinguer les générations, avec provisionnement/migration des
+ancrages à préparer ; aucun gain CPU/RAM ou disponibilité universels promis.
+Recette : nouvelle clé, recertification même clé refusée, faux ancrage ou
+mauvais périmètre, preuve d'installation absente, cryptopériode dépassée,
+racine retirée, certificats antérieurs autorisés/retirés, PA hors ligne et restauration.
+
+##### Application au PA — A10i18
+
+L'option A validée concerne une racine intacte/non compromise en succession
+planifiée, durée/anticipation A10i17 conservées. Protection hors ligne A10i6,
+ECDSA P-256/SHA-256 A10i14 et intermédiaires A10i15/A10i16 maintenus, sans
+confiance prolongée implicitement ou émission PA autonome.
+Nouvelle paire racine indépendante ECDSA P-256, certificat auto-signé et
+référence clé/génération nouvelle. Génération/protection qualifiées, sans
+dérivation/copie/réutilisation de l'ancienne clé, privée hors processus
+courants PBO/PZT/PA ; recertification même clé non retenue en succession
+normale. Nouvel ancrage public provisionné explicitement, preuve appliquée
+avant usage. Intermédiaires suivants certifiés sous nouvelle racine selon
+A10i15, ancien arbre non adopté implicitement ; aucun nouveau domaine métier
+ou autorité d'admission induit.
+Plan PBO/références publiques sans clé privée, mandats racine explicites,
+Django/A07/A12, périmètre/dates/algorithme/usages vérifiés, engagement/application
+distincts. Auto-signature/signature valide sans droit de confiance, magasin
+OS seul sans politique PZT appliquée insuffisant. RFC 5280 section 8 référencée
+dans cadrage PZT : distribution authentifiée critique, procédure/protocole Pixs
+ouverts, aucun outil CA choisi. Nom/ancienne empreinte seuls sans décision
+courante insuffisants.
+Migration/retrait final sous plan autorisé borné, coexistence des ancrages
+validée en A10i19. Ancienne racine sans nouvelle certification à engagement ;
+certificats antérieurs seulement sous politique transitoire explicite avant
+borne A10i17, sans grâce pour retrait/compromission/expiration. Certification/
+admission/droits distincts. PA hors ligne/migration incomplète sans extension,
+récupération A02 authentifiée. Signature croisée/restauration de clé perdue/
+clonage/retour arrière sans autorisation déduite de ce choix.
+Perte/suspicion/protection invérifiable/état incertain : normal bloqué,
+A05/procédure racine exceptionnelle autorisée à définir, aucune recertification
+rendant la clé sûre ou effaçant son historique. Cryptopériodes/retrait/sauvegarde/
+contrôles/matériel à qualifier ; cibles Linux/Windows physiques/VM, Docker/LXC
+Proxmox conservées sans privilège/dépendance implicites.
+A10i18 A validé le 7 octobre 2026 : secret renouvelé/générations distinctes,
+provisionnement/migration d'ancrages à préparer, aucun gain CPU/RAM/disponibilité
+universel promis. Recette : nouvelle clé, même clé recertifiée refusée, faux
+ancrage/périmètre incorrect, preuve absente, cryptopériode dépassée, racine
+retirée, anciens certificats admissibles/retirés, PA hors ligne/restauration.
+
+#### Scenario: Conformité du traitement A10i18
+
+- **WHEN** un profil revendique le traitement A10i18 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-eb278bbef836
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 5291. SHA-256 : `eb278bbef83684f3611a3eb1958e0d4d49166efe26a69b9d14ff09cf75c673c0`.
+
+Scénarios : Conformité du traitement A10i19.
+
+~~~~text
+### Requirement: Contrat A10i19 — Coexistence bornée des ancrages racine sur les PA — option A validée le 7 octobre 2026
+
+Le rôle chargé du traitement A10i19 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i19
+
+L'option A validée concerne une succession normale non compromise A10i18,
+dans le même domaine PZT. Durées A10i17 et certificats A10i4/A10i16 bornés ;
+la marge racine de 1460 jours n'est pas une durée de coexistence d'ancrages.
+Contrôles PZT et mandats courants maintenus, sans confiance générale dans
+toute chaîne portant l'un des noms de racine.
+
+Coexistence autorisée, versionnée et bornée des ancrages courant et suivant
+dans le périmètre de migration. Provisionnement authentifié du nouvel ancrage
+via contrôle PZT admissible et mandat explicite, preuve de politique appliquée
+puis vérification de la nouvelle chaîne avant migration des associations.
+Plan distinguant préparation, engagement de la génération d'émission,
+migration des credentials et retrait final ; génération unique admissible
+pour nouvelles émissions par émetteur conservée, sans deux signataires actifs
+déduits des deux ancrages. Après engagement de la nouvelle génération,
+ancienne branche sans nouvelle émission admissible ; seuls ses certificats
+antérieurs autorisés restent acceptables pendant la fenêtre bornée.
+Retrait anticipé si convergence prouvée, sinon retrait au plus tard à l'échéance
+engagée même avec PA non migrés. Plafond de 30 jours validé en A10i20, jamais déduit d'une
+validité racine/intermédiaire ou prolongée par dernier contact.
+
+Références explicites de clés/générations/ancrages et émetteurs admis,
+identité/usages/périmètre/validités vérifiés ; chaîne valide seule sans droits.
+Django/A07/A12 distingue ancrage distribué, politique engagée/appliquée et
+association effectivement prouvée sous nouvelle chaîne. TLS 1.3, suite A10h,
+attestation fraîche A10c et droits A05 contrôlés lors des reconnexions.
+Coexistence de références sans duplication de commande métier ou élargissement
+de périmètre ; contrôle PBO–PA toujours PZT. Aucune signature croisée ou
+confiance par découverte adoptée. Plan incomplet, résultat incertain ou preuve
+absente : nouvelles étapes suspendues/réconciliées, sans retour implicite à
+l'ancienne génération. Retrait connu/compromission/expiration : A05 prioritaire,
+aucune fenêtre de grâce et récupération racine exceptionnelle distincte.
+Reprise/restauration/clone ou PA hors ligne sans prolongation ou anciens droits
+réactivés. Profils et coûts qualifiés Linux/Windows physiques/VM, Docker/LXC
+Proxmox ; aucun logiciel CA/provider ou nouveau privilège choisi.
+
+A10i19 A est validé le 7 octobre 2026 pour faciliter une migration progressive
+des PA avec préparation et preuves avant retrait, deux références d'ancrage
+contrôlées pendant une fenêtre finie. La [RFC 5280, section 6.2](https://www.rfc-editor.org/rfc/rfc5280.html#section-6.2)
+laisse le choix des ancrages à la politique locale ; fenêtre et procédure
+Pixs non prescrites par cette référence. Aucun gain universel CPU/RAM ou
+continuité garantie. Recette : ancrage non autorisé, mauvais émetteur,
+preuve distribuée/appliquée distincte, nouvelle association, PA hors ligne,
+fenêtre expirée, retrait connu, double émission refusée, engagement incertain,
+clone/restauration et ancienne chaîne après retrait.
+
+##### Application au PA — A10i19
+
+L'option A validée concerne une succession normale non compromise A10i18 dans
+même domaine PZT, durées A10i17/certificats A10i4/A10i16 bornés. Marge racine
+1460 jours sans durée de coexistence déduite ; contrôles/mandats courants,
+noms de racine seuls sans confiance.
+Coexistence ancrages courant/suivant autorisée/versionnée/bornée au périmètre.
+Provisionnement authentifié sous contrôle PZT admissible et mandat explicite,
+preuve appliquée/nouvelle chaîne avant migration des associations. Préparation/
+engagement génération d'émission/migration credentials/retrait final distincts ;
+une génération de nouvelles émissions admissible par émetteur, deux ancrages
+sans deux signataires actifs. Après engagement de nouvelle génération, ancienne
+branche sans nouvelle émission admissible, seuls certificats antérieurs
+autorisés acceptables dans fenêtre. Retrait anticipé si convergence prouvée,
+sinon à échéance engagée même si PA non migrés. Plafond de 30 jours validé en A10i20,
+aucune validité ou dernier contact la prolongeant implicitement.
+Références clés/générations/ancrages/émetteurs explicites, identité/usages/
+périmètre/validités contrôlés, chaîne valide seule sans droits. Django/A07/A12 :
+distribution, engagement/application et nouvelle association prouvée distingués.
+Reconnexion TLS 1.3/suite A10h/attestation fraîche A10c/droits A05 ; coexistence
+sans commande métier doublée ou périmètre élargi. PBO–PA toujours PZT,
+signature croisée/découverte sans confiance implicite. Plan incomplet/
+incertitude/preuve absente : suspension/réconciliation sans retour implicite ;
+retrait connu/compromission/expiration A05 prioritaire, aucune grâce,
+récupération exceptionnelle racine distincte. Reprise/restauration/clone/
+hors ligne sans prolongation ou anciens droits réactivés. Qualification Linux/
+Windows physiques/VM, Docker/LXC Proxmox, sans logiciel CA/provider/privilège adopté.
+A10i19 A validé le 7 octobre 2026 : migration progressive avec préparation/
+preuves, deux références contrôlées en fenêtre finie. RFC 5280 section 6.2
+référencée cadrage PZT : politique locale d'ancrages, sans fenêtre/procédure Pixs
+prescrites. Aucun gain CPU/RAM/continuité universel promis. Recette : faux
+ancrage/émetteur, distribution/application distinctes, association nouvelle,
+hors ligne, fenêtre expirée/retrait connu, double émission refusée,
+engagement incertain, clone/restauration, ancienne chaîne après retrait.
+
+#### Scenario: Conformité du traitement A10i19
+
+- **WHEN** un profil revendique le traitement A10i19 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-f7438ce06054
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 5387. SHA-256 : `f7438ce06054d3d0977f38925f563abaeff869b9c413664e659385c6d5942f26`.
+
+Scénarios : Conformité du traitement A10i20.
+
+~~~~text
+### Requirement: Contrat A10i20 — Plafond de coexistence des ancrages racine — option A validée le 7 octobre 2026
+
+Le rôle chargé du traitement A10i20 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i20
+
+Premier jet validé, configurable depuis PBO pour la fenêtre A10i19 d'une succession
+normale non compromise. Préparation de la racine A10i17 (marge 1460 jours),
+validité terminale et chevauchement de credentials A10i4, ainsi que validité
+intermédiaire A10i16 restent distincts. Une fenêtre d'ancrages ne prolonge
+aucun certificat, mandat, droit, preuve d'attestation ou période d'usage de clé.
+
+| Choix validé | Plafond nominal de coexistence | Retrait anticipé |
+| --- | --- | --- |
+| A | 30 jours | Dès convergence prouvée sous plan autorisé |
+
+Jour de 24 heures. Début commun à l'engagement versionné Django/A07/A12 qui
+autorise pour la première fois les deux ancrages dans le périmètre ; début UTC
+et échéance finie déclarés avant activation. Installation préalable du nouvel
+ancrage possible comme référence inactive, sans acceptation des deux racines
+avant cet engagement. Le plafond couvre préparation admise, migration et
+retrait ; pas de second compteur au changement de génération d'émission.
+Application tardive à un PA, reconnexion, redémarrage, clone ou restauration
+sans remise à zéro : seul le reliquat de l'échéance commune demeure utilisable.
+Horloge/temps restant invérifiables : coexistence non activée ou accès dépendant
+retiré selon A05, sans présumer un nouveau délai entier.
+
+Plan autorisé avec budgets et marge qualifiés pour provisionnement, preuves,
+engagement d'émission, renouvellement des terminaux et retrait final avant
+l'échéance. Seuls les PA maintenus dans le périmètre et leurs associations
+courantes prouvées comptent pour la convergence ; PA hors ligne/absence d'ACK
+sans preuve de migration ou exclusion implicite du plan. Sortie de périmètre
+requiert sa décision autorisée. Retrait anticipé versionné après preuve ;
+échéance maximale jamais prolongée par non-convergence, relance ou dernier contact.
+
+Fin effective au plus tard à échéance commune ou borne d'admissibilité de
+l'ancien ancrage A10i17, avec retrait connu/compromission prioritaires A05.
+Chaque chaîne, credential et permission conserve sa validité propre plus
+courte. Après engagement d'émission, anciens certificats terminaux durent
+au plus leur validité résiduelle A10i4, pas 30 jours ; chevauchement individuel
+toujours au plus 5 minutes. La fenêtre ne donne donc pas à un PA hors ligne
+un droit de retour de 30 jours : expiration sans grâce, récupération A02
+authentifiée si nécessaire. Ancien ancrage et accès/sessions/tickets dépendants
+retirés à la fin ; nouvelles associations sous chaîne nouvelle, attestation
+A10c et droits courants. Échec/incertitude sans retour automatique, réconciliation
+et diagnostic sans secret, retrait à échéance sans dépendre d'un ancien canal.
+
+A validée pour permettre un calendrier de migration plus souple sur cibles
+Linux/Windows physiques/VM et Docker/LXC Proxmox, avec plafond fini et retrait
+plus tôt lorsque prouvé. Qualification calendrier,
+charge, ressources et contrôles, sans gain CPU/RAM ou continuité garantis.
+Valeur Pixs validée, pas une durée prescrite par la [RFC 5280](https://www.rfc-editor.org/rfc/rfc5280.html#section-6.2).
+Recette prévue : début commun, application tardive, engagement d'émission
+sans compteur neuf, convergence partielle, hors ligne, certificat expiré,
+fenêtre de credentials 5 minutes, retrait anticipé/à terme, temps invérifiable,
+restauration et configuration invalide. A10i20 A validé le 7 octobre 2026.
+
+##### Application au PA — A10i20
+
+Premier jet validé PBO configurable pour fenêtre A10i19, succession normale non
+compromise. Marge racine 1460 jours A10i17, validité terminale/chevauchement
+A10i4 et intermédiaire A10i16 distincts ; fenêtre sans certificat/mandat/
+droit/attestation/période d'usage de clé prolongés.
+
+| Choix validé | Plafond nominal de coexistence | Retrait anticipé |
+| --- | --- | --- |
+| A | 30 jours | Dès convergence prouvée sous plan autorisé |
+
+Jour de 24 heures, début commun à engagement versionné Django/A07/A12
+autorisant pour première fois deux ancrages, début UTC/échéance finie avant
+activation. Référence nouvelle préinstallable inactive, sans deux racines
+acceptées avant engagement. Plafond couvrant préparation admise/migration/
+retrait, aucun compteur neuf à engagement d'émission. Application tardive/
+reconnexion/redémarrage/clone/restauration sans remise à zéro, reliquat commun
+seul utilisable. Horloge/reliquat invérifiables : activation refusée ou accès
+dépendant retiré A05, sans nouveau délai entier présumé.
+Plan/budgets/marge qualifiés pour provisionnement/preuves/engagement émission/
+renouvellement terminal/retrait avant terme. Convergence : PA maintenus au
+périmètre/associations courantes prouvées ; hors ligne/absence ACK sans preuve
+ou sortie implicite. Sortie sous décision autorisée ; retrait anticipé
+versionné/prouvé, plafond jamais prolongé par non-convergence/relance/contact.
+
+Fin au plus tard à échéance commune ou borne d'ancien ancrage A10i17, retrait
+connu/compromission A05 prioritaires. Validités propres plus courtes maintenues.
+Après engagement émission, anciens terminaux bornés par validité résiduelle
+A10i4, pas 30 jours ; chevauchement individuel au plus 5 minutes. Aucun droit
+de retour hors ligne de 30 jours, expiration sans grâce/récupération A02
+authentifiée. Ancien ancrage/accès/sessions/tickets dépendants retirés à terme ;
+association nouvelle sous nouvelle chaîne/A10c/droits courants. Échec/
+incertitude sans retour automatique, réconciliation/diagnostic sans secret,
+retrait à échéance sans dépendance à ancien canal.
+A validée pour calendrier plus souple Linux/Windows physiques/VM,
+Docker/LXC Proxmox, plafond fini/retrait anticipé prouvé. Calendrier/charge/ressources/contrôles
+à qualifier sans gain CPU/RAM/continuité promis ; valeur Pixs non prescrite
+par RFC 5280 référencée cadrage PZT. Recette prévue : début commun/application
+tardive, engagement émission sans compteur neuf, convergence partielle/hors
+ligne, expiration terminal/5 minutes credentials, retrait anticipé/à terme,
+temps invérifiable/restauration/configuration invalide. A10i20 A validé le 7 octobre 2026.
+
+#### Scenario: Conformité du traitement A10i20
+
+- **WHEN** un profil revendique le traitement A10i20 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-a748dfe07c0d
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 7769. SHA-256 : `a748dfe07c0d38f3e5dd5e68bdd85066eb5c5354f560bdacf9efd6fddad7fe10`.
+
+Scénarios : Conformité du traitement A10i50.
+
+~~~~text
+### Requirement: Contrat A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026
+
+Le rôle chargé du traitement A10i50 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i50
+
+Bornes qualifiées A10i49 A, cycle A10i48 A et contrôles A05/A12 maintenus.
+Adaptateurs système retenus pour autorités de validation, avec service système géré par PA selon profil et besoin, sans nouveau démon ni protocole Pixs ; sans autre serveur, logiciel, protocole de synchronisation ou nouvelle source de temps concrète adoptés.
+
+| Choix validé | Provider | Qualification requise |
+| --- | --- | --- |
+| A | Adaptateurs par plateforme lisant l'horloge système et la qualité de synchronisation de l'infrastructure approuvée | Temps, borne et fraîcheur démontrés pour le profil exact OS/hôte/VM/conteneur |
+
+Utiliser les services de synchronisation approuvés de l'infrastructure,
+avec interface PZT commune en lecture : estimation UTC, borne d'erreur,
+origine/état de qualification, âge de preuve et correspondance à mesure
+monotone. Lecture à chaque contrôle validée A10i51 A, champs/format/unités/API à préciser.
+Adaptateurs Linux et Windows
+conditionnés aux capacités du profil exact, sans OS déclaré compatible par
+son seul nom ou statut « synchronisé ». Statistiques du service exploitables
+comme données d'entrée, jamais assimilées automatiquement à borne de sécurité.
+Absence de métrique/preuve admissible, origine inconnue ou incohérence bloque
+création/admission A10i49 ; aucune valeur zéro ou marge fixe substituées.
+PZT ne règle pas automatiquement l'horloge hôte et ne crée pas un second
+disciplineur système. Logiciels/configuration/sources d'infrastructure, confiance
+et accès de collecte à qualifier, aucune dépendance installée par ce choix.
+
+VM/conteneur : dépendances de temps, horloges exposées, source hôte/invité,
+suspension/reprise/restauration et éventuelles métriques indirectes documentées.
+Une copie de l'état du collecteur sans fraîcheur retrouvée ne suffit pas.
+Docker/LXC Proxmox et Windows/Linux physiques/VM qualifiés séparément ; accès
+au temps ou métadonnées sans privilège système, montage ou changement de
+synchronisation implicitement accordés. Profil incapable de démontrer U<=1 seconde
+dans le premier jet refusé pour ce rôle ; la présente politique MUST NOT accorder un service par PA, seul un service par horloge géré par PA lorsque le profil l’exige MAY être qualifié, sans préjuger sa qualification.
+
+Contrat explicite de confiance et qualité, fraîcheur/dérive/perte de
+source, cohérence des membres, correction/saut d'horloge et restauration testés.
+PZT conserve calcul prudent des bornes A10i49, échéance immuable et contrôle au
+point d'admission. Changement de provider/profil uniquement autorisé/versionné
+et compatible, sans renégociation depuis un message reçu. Aucun « temps signé »,
+TPM, majorité de sources ou précision nominale suffisant seul sans qualification.
+PBO/Django gouverne configuration et diagnostics sans secret, A10i22 B maintenu,
+PA sans accès SQL direct. Usage de temps pour autres contrats A05/CA/purge
+reste à qualifier séparément ; aucune amélioration système implicite.
+
+A validée pour réutiliser l'infrastructure sous preuve de qualité commune ;
+service temporel Pixs dédié alternatif non retenu. Coûts CPU/RAM/I/O/réseau
+à mesurer, aucune précision,
+disponibilité ou ressource universellement meilleure. Aucune implémentation,
+synchronisation d'hôte, configuration, certificat ou OpenSpec modifiés ici.
+[Microsoft, Windows Time Service](https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-top)
+décrit un service système et ses conditions, [RFC 5905, section 11](https://www.rfc-editor.org/rfc/rfc5905.html#section-11)
+des statistiques de qualité ; références sans choix de W32Time/NTP obligatoire
+ou conformité/borne PZT automatiquement démontrées. Recette : métrique absente,
+statut synchronisé mais preuve insuffisante, preuve ancienne, source non autorisée,
+temps hôte/invité divergents, suspension/restauration et collecte non bornée.
+A10i50 A validé le 8 octobre 2026.
+
+#### Scenario: Conformité du traitement A10i50
+
+- **WHEN** un profil revendique le traitement A10i50 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence courante pzt-e2c8f7a09bd3
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 7897. SHA-256 : `e2c8f7a09bd3685ced3216f441231f54b167ed7a018b27d6561ca26835cff34f`.
+
+Scénarios : Conformité du traitement A10i52; Perte d’Internet avec incertitude démontrée; Valeur à la borne puis au-delà; Mesure locale ancienne et modèle périmé; Suspension, restauration et retour incohérent; Plateformes conteneur et machines virtuelles.
+
+~~~~text
+### Requirement: Contrat A10i52 — Budgets bornés d’acquisition et fraîcheur de preuve de temps — option A validée le 8 octobre 2026
+
+Le rôle chargé du traitement A10i52 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i52
+
+Lecture cohérente à chaque création/admission A10i51 A, adaptateurs A10i50 A,
+borne d'erreur au plus 1 seconde A10i49 A et échéance immuable conservés.
+Premier jet configurable validé, à qualifier sans performance mesurée ou API installée.
+Interface API/IPC structurée validée A10i53 A.
+
+| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation en SYNCHRONISE |
+| --- | --- | --- | --- | --- |
+| A | 250 millisecondes | 2 | 1 seconde | 600 secondes |
+
+Acquisition = lecture cohérente de temps/qualité et contrôle du résultat du même
+provider/profil. Nombre inclut première acquisition ; acquisition supplémentaire
+seulement pour lecture techniquement transitoire qualifiée ou mesure devenue
+inadmissible avant usage, pas de répétition d'une admission/décision déjà engagée.
+Budget global depuis début de la première acquisition jusqu'à mesure admissible
+au point de décision, attentes locales/I/O incluses ; pauses et redémarrage
+sans crédit remis à zéro. Plafonds simultanés et budgets de sécurité plus courts
+prioritaires, aucune acquisition commencée sans budget restant suffisant.
+Reprise sans preuve de temps restant : refus, D jamais repoussée.
+
+Âge maximal concerne la dernière preuve de référence/synchronisation admissible, toujours réelle et vérifiable, pas la date à laquelle l’adaptateur a simplement lu une métrique ou un fichier. Calcul/identité de preuve, source et progression d’âge qualifiés, référence modifiée ou horloge reculante sans âge artificiellement réinitialisé. Âge non vérifiable MUST conduire au refus en tous modes. Âge invérifiable ou supérieur au plafond en mode SYNCHRONISE MUST conduire au refus de création/admission. Âge inférieur au plafond n’autorise pas seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance A10i49/A10i50 toujours démontrées. En mode SYNCHRONISE, âge maximal 600 secondes sans permission de réemploi d’un ancien échantillon entre décisions, A10i51 A inchangé. En mode distinct HORS_LIGNE, un âge supérieur à 600 secondes MAY être admis seulement si le modèle, la provenance et la continuité sont qualifiés, si le profil demeure valide et si la borne totale U(t) au point d’usage demeure inférieure ou égale à une seconde, avec acquisition actuelle et sans réarmement de droits, de budget ou d’échéance ; une lecture récente MUST NOT rajeunir la preuve amont et une nouvelle acquisition MUST NOT remettre à zéro un droit ; aucune durée magique n’est admise.
+Borne d'erreur 1 seconde distincte du budget global de lecture 1 seconde et de l'âge
+de preuve ; aucune mesure temporelle plus ancienne réputée exacte par budget large.
+
+Même contexte/époque/version et domaine de mesure pour chaque acquisition,
+origine/qualité inconnue, événement de temps non couvert ou refus de confiance
+arrêtent le traitement ; aucune acquisition répétée destinée à attendre que
+le contrôle de sécurité soit contournable. Nouvelle lecture récente sans source
+qualifiée ne corrige pas une preuve trop ancienne. Signature ou statut
+« synchronisé » seuls ne suffisent pas à admettre une borne de sécurité ;
+diagnostic sans secret sur dépassement/échec.
+Contrat de blocage/annulation/libération des ressources à qualifier pour toutes
+APIs, même bloquantes ; pas de durée système réellement garantie par simple timeout.
+Résultat trop tard ou après D refusé, aucun U=0, cache/repli de provider ou grâce.
+
+Valeurs/profil approuvés/versionnés via PBO/Django/A07/A12 avant activation,
+compatibilités et modèles de dérive/fraîcheur à qualifier sur Linux/Windows
+physiques/VM et Docker/LXC Proxmox. Dossiers/temps de validation A10i39/A10i40,
+relances A10i42 et réconciliation A10i43 sans nouveau crédit accordé.
+A10i22 B/A05 prioritaires et PA sans SQL direct, aucune acquisition de preuve
+de clôture courante imposée aux PA ordinaires. Aucun nom de variable, service,
+source/protocole NTP, règle d'horloge, fichier ou OpenSpec modifié ici.
+
+A validée comme premier jet borné/sobre ; profil élargi alternatif non retenu,
+garanties de borne/cohérence et budgets appliqués simultanément.
+Valeurs Pixs validées et à qualifier par mesures, sans cadence d'infrastructure supposée
+compatible ou besoin de la modifier automatiquement. Coûts/CPU/RAM/I/O et
+disponibilité à qualifier, aucune supériorité universelle ou réussite garantie.
+Recette : durée/âge exacts et plus une unité de précision qualifiée, acquisition
+bloquée, deuxième lecture cohérente, troisième interdite, preuve ancienne
+lue récemment, U(t)>1 seconde malgré âge acceptable, suspension/reprise,
+attente franchissant D et refus sans droit/admission réactivés.
+A10i52 A validé le 8 octobre 2026.
+
+#### Scenario: Conformité du traitement A10i52
+
+- **WHEN** un profil revendique le traitement A10i52 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+
+#### Scenario: Perte d’Internet avec incertitude démontrée
+
+- **WHEN** Internet est perdu mais que le modèle, la provenance et la continuité demeurent qualifiés avec U au point d’usage démontrée
+- **THEN** les opérations dépendantes bornées peuvent continuer sans remise à zéro de droit
+
+#### Scenario: Valeur à la borne puis au-delà
+
+- **WHEN** la borne totale se situe juste à une seconde avec comparaison conservatrice établie
+- **THEN** l’admission bornée peut intervenir sans prolongation d’échéance
+- **WHEN** elle dépasse la borne d’une unité de précision qualifiée
+- **THEN** la création ou l’admission est refusée sans nouvelle admission
+
+#### Scenario: Mesure locale ancienne et modèle périmé
+
+- **WHEN** une mesure locale ancienne est lue récemment ou que le modèle est périmé
+- **THEN** elle ne doit pas être proposée comme preuve courante et une nouvelle acquisition bornée ou un refus doit intervenir
+
+#### Scenario: Suspension, restauration et retour incohérent
+
+- **WHEN** une suspension, une reprise ou une restauration est observée
+- **THEN** la continuité doit être requalifiée avant toute admission
+- **WHEN** le retour d’Internet apporte une correction incohérente avec l’intervalle maintenu
+- **THEN** le chemin doit être refusé sans réécriture de l’échéance
+
+#### Scenario: Plateformes conteneur et machines virtuelles
+
+- **WHEN** la cible est LXC avec horloge hôte, VM avec horloge propre ou Windows avec fournisseur à qualifier
+- **THEN** le profil exact doit être démontré et toute divergence hôte et invité doit bloquer l’admission concernée
+~~~~
+
+### Référence courante pzt-3b359feda9ad
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 12978. SHA-256 : `3b359feda9adfe09e5b30896f4caa99e22c6416a3c6647c63162ccb34c7cd422`.
+
+Scénarios : Création initiale locale sous autorité technique vérifiée; Établissement de la PKI normale et retrait de la confiance initiale.
+
+~~~~text
+### Requirement: Amorçage PKI PZT autonome de première installation avant PostgreSQL
+
+La première installation MAY établir une confiance technique PKI/PZT avant PostgreSQL par Z12 consommée par C08. Cette confiance MUST rester distincte de la PKI ZT normale, limitée et bornée aux opérations d'amorçage autorisées. Elle MUST être retirée après établissement et vérification de la PKI normale, selon les étapes ci-dessous, sans réouverture ultérieure par panne PostgreSQL.
+
+#### Scenario: Création initiale locale sous autorité technique vérifiée
+
+- **WHEN** une première installation admissible prépare les identités techniques PA système, PZT et PBO nécessaires à l'ouverture de PostgreSQL
+- **THEN** Z12 MUST vérifier origine native, opérateur, mandat explicite, installation, cible, exécutants, rôles fermés, opération/idempotence, plan/digest, politique/version courants, validité, révocation et fraîcheur ; une PKI opérationnelle déjà émise ailleurs MUST NOT être un prérequis
+- **AND** la racine technique hors ligne, les éventuels intermédiaires de secours et les terminaux MUST conserver leurs protections matérielles, usages et clés séparés selon le profil d'amorçage, sans les confondre avec les autorités opérationnelles PKIZT répliquées en PG
+- **AND** Z12 MUST conserver état durable protégé/versionné/fencé, ancrage anti-restauration qualifié et audit pré-base indépendant, sans secret publié ni autorité applicative déduite de la signature ou d'un DTO
+
+#### Scenario: Établissement de la PKI normale et retrait de la confiance initiale
+
+- **WHEN** PostgreSQL et les propriétaires courants sont disponibles pour préparer la confiance opérationnelle
+- **THEN** ils MUST rapprocher les références, effets et résultats d'amorçage avec leurs preuves courantes ; PKIZT MUST établir la PKI normale distincte selon zt-pki, avec ses clés opérationnelles chiffrées dans sa PG, habilitations et protections individualisées
+- **AND** les identités, autorisations, âges et retraits connus MUST être préservés par une transition explicite de certificats et d'ancrages ; les seuls justificatifs initiaux MUST NOT être reconnus automatiquement comme des justificatifs ordinaires
+- **AND** le transport et les usages normaux requis MUST être vérifiés avant retrait de la confiance, des canaux et mandats initiaux ; la coexistence MUST être bornée par un plan autorisé et MUST NOT devenir un accès normal durable
+- **AND** rapprochement, établissement PKIZT, bascule vérifiée, retrait irréversible de l'autorité initiale et admission ordinaire MUST rester des étapes distinctes prouvées sans atomicité local/PG présumée ; toute issue inconnue ou partielle MUST rester inspectable et non prête pour les usages dépendants
+- **AND** C08 MUST consommer les contrats propriétaires sans devenir émetteur ou registre concurrent ; après retrait attesté, une panne PG MUST NOT rouvrir l'amorçage ni restaurer ses anciens mandats
+~~~~
+
+### Référence courante pzt-4fac1c989695
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 12998. SHA-256 : `4fac1c9896955b859950a5f457e373851361ee9acabd90bbd993076407746f65`.
+
+Scénarios : Émission initiale conforme sous autorité vérifiée; Refus d'identité, d'usage ou de chaîne inadmissibles.
+
+~~~~text
+### Requirement: Profil X.509 des terminaux de première installation Z12
+Pour la première installation PA/PZT/PBO avant PostgreSQL, Z12 MUST appliquer le profil terminal fermé ci-dessous avec des clés matérielles non exportables P-256 et des paires distinctes par usage TLS. Les liaisons de politique/plan/identité, durées A10i4 et chaîne D2 MUST rester vérifiées indépendamment de l'admission et du mandat PostgreSQL.
+
+#### Scenario: Émission initiale conforme sous autorité vérifiée
+- **WHEN** la cérémonie initiale D4 dispose du mandat courant, du plan protégé et des preuves réelles de clé matérielle et de possession pour les usages client et serveur sélectionnés
+- **THEN** les certificats émis respectent le profil terminal, les identités et endpoints explicitement liés au plan, avec des paires distinctes et une chaîne D2 vérifiée
+- **AND** conformité du profil, autorisation, engagement et effet observé restent distingués ; aucun mandat technique PostgreSQL n'est déduit des certificats
+- **AND** Pour la première installation PA/PZT/PBO avant PostgreSQL, Z12 MUST utiliser des clés ECDSA P-256 matérielles non exportables, sans repli logiciel, et des certificats terminaux X.509 v3 signés suivant le profil CA D2. Une paire et un certificat MUST être distincts pour chaque usage TLS client ou serveur ; une clé CA ou de signature opérateur MUST NOT être réutilisée comme clé terminale.
+- **AND** Le certificat terminal MUST contenir uniquement les six extensions BasicConstraints, KeyUsage, SubjectAlternativeName, ExtendedKeyUsage, SubjectKeyIdentifier et AuthorityKeyIdentifier. BasicConstraints MUST être critique, CA=false, sans pathLenConstraint ; KeyUsage MUST être critique avec digitalSignature seul ; ExtendedKeyUsage MUST être critique avec exactement clientAuth ou exactement serverAuth, sans anyExtendedKeyUsage. SKI et AKI MUST être non critiques et correspondre aux clés et à l'émetteur réellement vérifiés. La chaîne CA D2 reste distincte : elle n'admet que BasicConstraints, KeyUsage, SKI et AKI et MUST refuser NameConstraints et toute autre extension hors de ce profil fermé.
+- **AND** Le Subject MUST être vide. Le SAN MUST être critique et contenir exactement une URI urn:uuid:<UUIDv7 d'instance terminale sous forme canonique minuscule>. Pour un certificat serveur, il MUST aussi contenir exactement l'iPAddress IPv4 loopback explicitement liée à l'endpoint dans le plan protégé ; pour un certificat client, cet iPAddress serveur MUST être absent. Un autre nom, un CN/DNS de repli, une autre adresse ou un port par défaut MUST NOT être ajouté. Les contrôles de chaîne, d'usage, d'URI d'instance et d'IP attendue MUST être indépendants ; loopback ou UUIDv7 seuls MUST NOT prouver identité native, fraîcheur ou autorité.
+- **AND** Le propriétaire courant MUST lier installation, cible, identité native d'instance, rôle, usage, clé, génération et certificat à la politique protégée/versionnée et au mandat applicable. Les preuves matérielles, la possession et la correspondance clé/certificat MUST être réellement vérifiées. Le profil structural ou cryptographique seul MUST NOT valoir autorisation d'émettre, admission applicative ou mandat PostgreSQL. Les durées A10i4 sont conservées : 24 heures nominales, renouvellement aux deux tiers de la validité effective (16 heures seulement pour 24 heures effectives), chevauchement au plus cinq minutes selon A10i3, avec validités bornées par la politique et la chaîne et sans remise à zéro des âges.
+
+#### Scenario: Refus d'identité, d'usage ou de chaîne inadmissibles
+- **WHEN** un certificat ou une demande présente CA=true, un usage ou une extension étrangers, un EKU double, une paire mutualisée entre usages, un Subject non vide, un SAN non critique ou étranger, une URI non canonique, une IP absente ou étrangère au plan serveur, ou une contrainte de noms hors du profil CA D2
+- **THEN** l'émission ou le chargement concerné est refusé avant utilisation TLS, sans repli CN/DNS, logiciel ou autre profil
+- **AND** ni la proximité réseau ni une chaîne signée seule ne rétablissent une identité, une permission ou une confiance absentes
+~~~~
+
+### Référence courante pzt-b57aebf27710
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 13015. SHA-256 : `b57aebf2771033db14876c2fc07dc2ca32f1ac20ac52c16fbf7c0f4c657c9dfd`.
+
+Scénarios : Résolution locale depuis le propriétaire compétent; Refus après restauration, retrait ou perte d'autorité.
+
+~~~~text
+### Requirement: Résolution locale du matériel TLS sous propriétaire courant Z12
+La composition native locale privée MUST résoudre le matériel TLS depuis le propriétaire réellement compétent pour l'étape, après vérification actuelle de politique, identité, état et ancrage. D4/D6, le même OSSL_LIB_CTX privé et les refus ci-dessous MUST être respectés ; aucune référence ou donnée cliente ne constitue une preuve d'autorité.
+
+#### Scenario: Résolution locale depuis le propriétaire compétent
+- **WHEN** la composition locale demande le matériel d'un terminal et que le propriétaire compétent pour l'étape réelle vérifie toutes les liaisons, protections, preuves et bornes courantes
+- **THEN** le matériel public et la référence locale terminale sont liés au contexte OpenSSL privé avec une durée de vie contrôlée
+- **AND** aucune clé privée, autorité déduite du certificat ou permission applicative n'est transmise par cette résolution
+- **AND** Le matériel TLS MUST être résolu par une composition native locale privée depuis le propriétaire courant compétent. Avant toute fourniture ou utilisation, ce propriétaire MUST vérifier la politique protégée/versionnée, l'installation et la cible, les liaisons d'identité/rôle/usage/génération, l'état et l'époque courants, la validité/fraîcheur, la révocation et l'ancrage anti-restauration requis. Un instantané restaurable, un DTO bien formé, une référence opaque ou un booléen client MUST NOT remplacer ces vérifications. Toute source absente, périmée, contradictoire ou invérifiable MUST fermer l'opération concernée.
+- **AND** Avant PostgreSQL, le propriétaire initial Z12 D4 MUST vérifier l'origine native et le mandat opérateur lié au plan ; UID 0 seul ou une preuve C01/R01 réutilisée pour un autre usage MUST NOT suffire. Après établissement de la PKI normale distincte, bascule vérifiée et retrait attesté D6, seul le propriétaire ordinaire Django/A07/A12 courant MUST autoriser la fourniture du matériel normal ; les références initiales MUST NOT être réutilisées comme autorité ordinaire. La traçabilité, les âges, validités et retraits connus MUST être conservés ; une panne PostgreSQL après ce passage MUST NOT rouvrir l'autorité initiale.
+- **AND** La résolution MUST fournir les seuls matériaux publics nécessaires et une référence opaque de clé terminale locale liée au même OSSL_LIB_CTX privé, avec possession et durée de vie réellement contrôlées. Les références de clés CA, les chemins ou ancres librement fournis par un appelant réseau, les clés privées ou blobs privés publics, les EVP_PKEY ou capsules Python publics et le repli logiciel MUST être refusés. Le contrôle de chaîne et la vérification du pair MUST rester nécessaires ; la résolution du matériel MUST NOT constituer l'autorisation applicative ni le mandat technique PostgreSQL, qui restent distincts.
+
+#### Scenario: Refus après restauration, retrait ou perte d'autorité
+- **WHEN** l'état ou la politique est restauré ancien, l'ancrage ou la fraîcheur est invérifiable, le propriétaire compétent est indisponible, une référence CA est proposée, ou une ancienne autorité initiale est sollicitée après clôture D6
+- **THEN** la fourniture ou l'utilisation concernée est refusée avant transport ou admission, et le matériel devenu inadmissible cesse d'être utilisable
+- **AND** une panne PostgreSQL après D6 ne rouvre pas la cérémonie initiale, ne remet pas les âges à zéro et ne rétablit aucun mandat retiré
+~~~~
+
+### Référence courante pzt-5390c48ad1d1
+
+Source : [pzt](../../specs/pzt/spec.md), ligne 13058. SHA-256 : `5390c48ad1d1969d434be45e5615b05bed681f5cf6b9f6bfd5a5cbbd228fdeba`.
+
+Scénarios : UTC perdu sans routine.
+
+~~~~text
+### Requirement: Procédure exceptionnelle D18 avec UTC perdu
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — D18 exceptionnelle
+
+La procédure exceptionnelle MUST intervenir seulement lorsque le repère universel ne peut pas être démontré par la voie normale. Elle MUST NOT devenir une routine à chaque lancement. Aucun poste extérieur, aucun opérateur particulier et aucun système mondial de navigation par satellite ne sont imposés. Une heure qualifiée existante MAY être utilisée lorsqu’elle est disponible. Toute réparation ultérieure du temps MUST NOT rouvrir l’autorité initiale. Les règles actuelles relatives à la signature personnelle, au défi à usage unique et à l’enveloppe demeurent conservées lorsque la cérémonie est effectivement nécessaire. Aucun contournement des dates des certificats n’est admis.
+
+#### Scenario: UTC perdu sans routine
+
+- **WHEN** le repère universel ne peut pas être démontré alors qu’une opération datée est demandée
+- **THEN** la procédure exceptionnelle s’applique sous autorité explicite ou l’opération est refusée sans contournement des dates
+~~~~
+
+### Référence courante pixs-agent-71315ab86f89
+
+Source : [pixs-agent](../../specs/pixs-agent/spec.md), ligne 454. SHA-256 : `71315ab86f897cf7471f92804636a514213117b4730a4dd5264f8f4e7aca27f2`.
+
+Scénarios : Mandat de cible exacte pour le service de temps.
+
+~~~~text
+### Requirement: Gestion du service de temps par PA et pixs.agent
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — Service de temps PA
+
+Le service de temps système MUST être installé, réutilisé, configuré et supervisé par PA sous politique explicite, capacité catalogue fermé et mandat de cible exacte. PA MUST conserver un propriétaire unique par horloge système. pixs.agent MUST gérer les opérations PA hors responsabilité du réseau PZT, et tous les échanges PBO vers PA MUST passer par PZT ; le temps amont demeure un service système selon profil et MUST NOT devenir un canal de commande PBO vers PA. PA MUST NOT modifier l’horloge d’un hôte partagé depuis un conteneur LXC. Sur Linux, chrony demeure retenu avec ses dépendances déclarées. Les autres profils MUST qualifier leurs adaptateurs avant activation. Dans une image isolée, le paquet est fourni par l’image sans mutation de l’hôte. Un service NTP local MAY être utilisé seulement lorsque la topologie l’exige et sous profil déclaré. Aucun montage, aucun changement de privilège et aucune discipline supplémentaire ne sont induits. Les fonctions indépendantes du temps MUST pouvoir continuer pendant une dégradation.
+
+#### Scenario: Mandat de cible exacte pour le service de temps
+
+- **WHEN** PA reçoit un mandat de cible exacte avec un profil valide
+- **THEN** PA installe ou réutilise le service déclaré, vérifie l’état appliqué et refuse toute cible étrangère ou capacité hors catalogue
+~~~~
+
+### Référence courante runtime-9ed7a8c48d44
+
+Source : [runtime](../../specs/runtime/spec.md), ligne 227. SHA-256 : `9ed7a8c48d448b3e568c04091394dae49576118ab2e51750256784e92d96e97e`.
+
+Scénarios : Garde d’usage avec intervalle prouvé; Report distant non probant; Fonction indépendante pendant dégradation; Projection forgée ne prouve pas.
+
+~~~~text
+### Requirement: Contrat commun runtime et Kernel agnostique du FOURNISSEUR
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — Contrat runtime commun
+
+Le contrat d’exécution MUST exposer une interface commune en lecture à Kernel, Core, Auth, PA et PZT. Kernel MUST demeurer agnostique du FOURNISSEUR et MUST NOT porter de logique de fournisseur de temps. Les mécanismes génériques de temps demeurent admis lorsqu’ils restent indépendants de tout fournisseur concret. Les dépendances MUST être déclarées et le graphe de démarrage MUST demeurer acyclique. Les fonctions indépendantes du temps MUST pouvoir continuer pendant une dégradation. Seuls les effets dont la fenêtre ou l’exigence ne peut pas être prouvée MUST être refusés. Le présent texte MUST NOT prolonger un certificat ni un mandat par une dégradation du temps.
+
+Le contrat `pixs.time.evidence` version `2.0.0`, catégorie `API`, propriétaire `pixs.kernel` est une déclaration pure. Les quatre méthodes exigées sont `time_diagnostic(use_ref:TimePublicRef)->TimeDiagnostic`, `time_require_use(use_ref:TimePublicRef)->None`, `time_ceremony_diagnostic(ceremony_ref:TimePublicRef)->TimeDiagnostic`, `time_ceremony_require_use(ceremony_ref:TimePublicRef)->None`. `TimePublicRef` est un sélecteur non autoritaire lié à l’opération courante dont l’appelant ne choisit jamais le producteur, le producteur attendu est injecté par composition. `outcome` vaut exactement `OBSERVED`, `REFUSED` ou `IN_DOUBT`. `TimeDiagnostic` comporte exactement `outcome`, `producer_ref`, `clock_domain_ref`, `detail_ref`. Le producteur vérifie nativement au point d’usage, aucun objet Python, pointeur ou descripteur comme preuve transportée. `None`, DTO et ancienne observation ne sont en aucun cas une permission. Core, Auth, Agent et PZT décident sur l’intervalle entier y compris transitions `DENY` et `ALLOW`, avec décisions et gardes métier inchangées.
+
+#### Scenario: Garde d’usage avec intervalle prouvé
+
+- **WHEN** le producteur courant fournit un intervalle vérifié avec incertitude bornée
+- **THEN** le consommateur l’emploie pour sa seule décision courante sans le mémoriser comme preuve
+
+#### Scenario: Report distant non probant
+
+- **WHEN** seul un report distant ou monotone étranger est disponible sans corrélation locale qualifiée
+- **THEN** le consommateur rend un diagnostic seul sans bail ni observation positive
+
+#### Scenario: Fonction indépendante pendant dégradation
+
+- **WHEN** une fonction ne dépend pas du temps courant et que la preuve de temps est invalide
+- **THEN** elle peut continuer sous son propre contrat sans prolongation de droit
+
+#### Scenario: Projection forgée ne prouve pas
+
+- **WHEN** une projection diagnostique, un `None` ou un DTO est réinjecté comme permission
+- **THEN** le consommateur refuse sans bail ni observation positive
+~~~~
+
+### Référence courante installation-provisioning-572932f05bac
+
+Source : [installation-provisioning](../../specs/installation-provisioning/spec.md), ligne 140. SHA-256 : `572932f05bac0217d3da3394db0c86a8ba94c7f98cd6c8a38a5515c690abc685`.
+
+Scénarios : Amorçage sans heure connue.
+
+~~~~text
+### Requirement: Amorçage technique borné du temps avant transport protégé
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — Amorçage temps borné
+
+L’amorçage du temps avant PZT et avant la base applicative MUST demeurer borné, acyclique et autorisé hors base applicative, sans droit métier et sans réseau direct PBO vers PA hors PZT. Le service préfourni, une horloge matérielle qualifiée ou une source indépendante qualifiée MAY être utilisé. Le service NTS MUST NOT prouver à lui seul le temps universel initial. Tout téléchargement des prérequis par un canal chiffré qui exigerait une heure non encore établie MUST NOT être entrepris. Les opérations entre PBO et PA MUST conserver exclusivement le transport protégé existant.
+
+#### Scenario: Amorçage sans heure connue
+
+- **WHEN** aucune heure universelle qualifiée n’est disponible avant le transport protégé
+- **THEN** la procédure bornée s’applique ou la branche est refusée sans auto-autorité par statut
+~~~~
+
+### Référence courante authorization-08db346aa8b8
+
+Source : [authorization](../../specs/authorization/spec.md), ligne 211. SHA-256 : `08db346aa8b88e73d93afedf41ac8bb5391897c0520fd5d2a136ba0768003e98`.
+
+Scénarios : Prérequis d’autorité non prouvés.
+
+~~~~text
+### Requirement: Garde technique du temps indépendante de la base
+
+La branche technique du temps MUST NOT conférer de pouvoir R01/SuperAdmin/droit métier/renouvellement PKI. Elle MUST vérifier ses prérequis d’autorité sous politique protégée, opérateur explicite, catalogue, cible et exécutant vérifiés, sans supposer une validité universelle et sans créer d’auto-autorité, sinon elle MUST refuser. D6 MUST NOT rouvrir une autorité initiale de PKI.
+
+#### Scenario: Prérequis d’autorité non prouvés
+
+- **WHEN** les prérequis d’autorité ne sont pas vérifiés avant temps universel prouvable
+- **THEN** la branche est refusée sans auto-autorité
+~~~~
+
+### Référence courante zt-pki-35b43ca99bc1
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 11. SHA-256 : `35b43ca99bc19a1cc2886c63ff2dadf004ebc019e0a1623e1e57607614315e75`.
+
+Scénarios : Deux Domaines partagent ZT.
+
+~~~~text
+### Requirement: PKI propre et autorités multiples
+
+Chaque ZT MUST disposer d'une PKI propre avec racine protégée hors ligne et au moins un PKIZT exécuté par PZT. Au moins une autorité opérationnelle MUST être initialisée ; plusieurs autorités MAY être ajoutées explicitement avec identité, clé, périmètre et politiques propres. Ajouter un membre ou une organisation MUST NOT créer implicitement une autorité.
+
+#### Scenario: Deux Domaines partagent ZT
+
+- **WHEN** le même ZT dessert deux Domaines
+- **THEN** la PKI reste propre au ZT et les autorités supplémentaires sont créées explicitement selon les besoins.
+~~~~
+
+### Référence courante zt-pki-4c7ec15b616c
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 20. SHA-256 : `4c7ec15b616c8b8295e4863f64b3e4a465038f629ad42aed8ba274ea7623d2fb`.
+
+Scénarios : Reprise d’autorité.
+
+~~~~text
+### Requirement: PG propre et clés opérationnelles répliquées
+
+PKIZT MUST conserver données et clés privées des autorités opérationnelles chiffrées dans une PG indépendante de PBO/CZT/DZT et bases Instance/Domaine, synchronisée selon les garanties PG zt-controller. Un PKIZT habilité MUST pouvoir reprendre la même autorité avec la même clé et son état courant d'émission/révocation.
+
+#### Scenario: Reprise d’autorité
+
+- **WHEN** le secours habilité reprend une autorité admissible
+- **THEN** il retrouve la même clé protégée et l’état cohérent au lieu de créer systématiquement une nouvelle autorité.
+~~~~
+
+### Référence courante zt-pki-eb43ece12358
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 29. SHA-256 : `eb43ece12358a900332f64387ce6d3505c0aea4c05abefa1268fb77fb1c9ac1c`.
+
+Scénarios : Réplique non habilitée.
+
+~~~~text
+### Requirement: Protection individualisée et habilitations séparées
+
+Les enveloppes des clés chiffrées MUST être répliquées avec protection individualisée par PKIZT. Chaque PKIZT MUST conserver son propre moyen protégé de déverrouillage. Les droits d'administration, déchiffrement et émission MUST être séparés par autorité ; l'accès à PG MUST NOT suffire à utiliser une clé.
+
+#### Scenario: Réplique non habilitée
+
+- **WHEN** un membre possède la copie PG mais aucune habilitation de déchiffrement d’une autorité
+- **THEN** il ne peut pas déverrouiller ou utiliser sa clé.
+~~~~
+
+### Référence courante zt-pki-5dd5b9ed6de1
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 38. SHA-256 : `5dd5b9ed6de180323769cc74609618707446830a9e84aeee09488fa23a677742`.
+
+Scénarios : Ancien signataire non exclu.
+
+~~~~text
+### Requirement: Émetteur unique et secours encadré
+
+Une autorité MUST posséder un émetteur actif unique. L'activation du secours MAY être automatique sous politique/mandat, avec contrôles de reprise et exclusion de l'ancien émetteur. L'habilitation d'une autre autorité MUST NOT suffire et un ancien état restauré MUST être réconcilié avant émission.
+
+#### Scenario: Ancien signataire non exclu
+
+- **WHEN** le secours ne peut prouver que l’ancien émetteur est empêché d’émettre
+- **THEN** la reprise d’autorité n’est pas engagée.
+~~~~
+
+### Référence courante zt-pki-2ae6168f0a0c
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 47. SHA-256 : `2ae6168f0a0c414767a99f8ae8b52c96dcdd3ed4d9b18f73c67870597438d38a`.
+
+Scénarios : Demande publique.
+
+~~~~text
+### Requirement: ACME public et génération de clés
+
+PKIZT MUST pouvoir gérer des certificats publiquement reconnus via ACME selon les profils autorisés. La clé privée MUST être générée/protégée côté PKIZT ; compte ACME et clés de certificats MUST suivre leurs protections chiffrées et synchronisées. L'autorité publique MUST NOT être présentée comme fournisseur de la clé privée.
+
+#### Scenario: Demande publique
+
+- **WHEN** un profil autorise un certificat ACME
+- **THEN** PKIZT conserve la clé privée et soumet la demande contenant la clé publique à signer.
+~~~~
+
+### Référence courante zt-pki-e3e8cdbdb3dd
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 56. SHA-256 : `e3e8cdbdb3dd1c0442050aed5ee076e3f5eb7d4b33694fe76a9a9458c6fe05ac`.
+
+Scénarios : Deux coordonnateurs.
+
+~~~~text
+### Requirement: Challenges et coordination ACME
+
+DNS-01, HTTP-01 et TLS-ALPN-01 MUST être sélectionnables par profil avec orchestration autorisée DZT/RPZT. Un certificat MUST avoir un coordonnateur ACME actif unique et un état durable permettant la reprise sans double opération non maîtrisée.
+
+#### Scenario: Deux coordonnateurs
+
+- **WHEN** deux PKIZT tentent de gérer le même certificat
+- **THEN** un seul est admissible à coordonner les opérations courantes.
+~~~~
+
+### Référence courante zt-pki-ba327c12b293
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 65. SHA-256 : `ba327c12b293ee06bbc12a70370bb17386dd700089e7ab0af38230953b5cec06`.
+
+Scénarios : Certificat non servi.
+
+~~~~text
+### Requirement: Renouvellement anticipé et déploiement vérifié
+
+Le renouvellement MUST être automatique et anticipé selon le profil, avec ARI lorsqu'il est disponible. La réussite MUST distinguer obtention du certificat, distribution et activation réellement vérifiée sur les services ; l'émission MUST NOT prouver le déploiement.
+
+#### Scenario: Certificat non servi
+
+- **WHEN** un certificat renouvelé existe mais RPZT sert encore l’ancien
+- **THEN** le déploiement reste incomplet et ne peut être annoncé réussi.
+~~~~
+
+### Référence courante zt-pki-790b4d1f8594
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 74. SHA-256 : `790b4d1f85949dec88a03d074756efcd37cc36d11652e4dc9e2449f12c9ee58e`.
+
+Scénarios : Publication partagée explicitement.
+
+~~~~text
+### Requirement: Remise TLS ciblée aux RPZT
+
+Les éléments TLS MUST être distribués uniquement aux RPZT habilités, avec protection individualisée. Un certificat/clé distinct par RPZT MUST être le défaut ; un partage MAY être choisi explicitement par publication. Les secrets MUST NOT être exposés dans les consultations, diagnostics ou artefacts.
+
+#### Scenario: Publication partagée explicitement
+
+- **WHEN** un profil choisit la même clé pour plusieurs RPZT
+- **THEN** chaque destinataire habilité reçoit sa propre protection sans rendre la clé lisible aux autres acteurs.
+~~~~
+
+### Référence courante zt-pki-829050040a60
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 83. SHA-256 : `829050040a60bf4f7f751a728f96bd8372220ff0a690f21d6a7bbbf87624e964`.
+
+Scénarios : Clé compromise.
+
+~~~~text
+### Requirement: Récupération par autorité et racine distincte
+
+Chaque autorité MUST choisir sa procédure de récupération par profil. Les protections de racine hors ligne et de rotation normale MUST rester distinctes de la reprise d'une autorité opérationnelle. Une compromission suspectée MUST empêcher la réutilisation non vérifiée de la même clé.
+
+#### Scenario: Clé compromise
+
+- **WHEN** une clé de secours est suspectée compromise
+- **THEN** la réplication ne la rend pas admissible et la procédure autorisée traite le renouvellement ou retrait nécessaire.
+~~~~
+
+### Référence courante zt-pki-c23b35888a50
+
+Source : [zt-pki](../../specs/zt-pki/spec.md), ligne 92. SHA-256 : `c23b35888a50538a3598c632ec854bde796684c506e6f66d773e44cd8e036346`.
+
+Scénarios : Confiance technique encore seule disponible; Réutilisation après retrait.
+
+~~~~text
+### Requirement: Confiance d'amorçage distincte et retrait vérifié
+
+La PKI normale MUST être distincte de la confiance technique pré-PostgreSQL de C08/Z12. Cette confiance initiale MUST rester limitée et bornée, puis être retirée après établissement et vérification de la PKI normale et de ses usages requis. La transition MUST conserver la traçabilité des identités, les retraits connus et des preuves de bascule, sans exporter les clés matérielles initiales pour en faire des clés opérationnelles PG.
+
+#### Scenario: Confiance technique encore seule disponible
+
+- **WHEN** PostgreSQL est disponible mais la PKI normale ou ses usages n'ont pas été vérifiés
+- **THEN** la transition reste incomplète dans ses bornes d'amorçage et aucun justificatif initial n'est promu implicitement en justificatif normal
+
+#### Scenario: Réutilisation après retrait
+
+- **WHEN** une ancienne confiance d'amorçage est invoquée après son retrait attesté
+- **THEN** elle est refusée même en cas de panne de la PG opérationnelle
+~~~~
+
+### Référence courante brick-redundancy-ce67ff7e1fde
+
+Source : [brick-redundancy](../../specs/brick-redundancy/spec.md), ligne 11. SHA-256 : `ce67ff7e1fde4ca9f4b7ad0badf7054c4e1fe46c1db73b174b19e30bd470ee1a`.
+
+Scénarios : Second PZT.
+
+~~~~text
+### Requirement: Remplacement sans déplacement direct
+
+Une brique MUST être remplacée par initialisation d'une seconde brique identifiée, synchronisation, vérification puis activation/reprise avant démantèlement selon ses critères. La procédure MUST NOT déplacer implicitement le processus ou copier l'identité d'un nouveau membre.
+
+#### Scenario: Second PZT
+
+- **WHEN** un PZT supplémentaire est initialisé pour remplacer un rôle
+- **THEN** il reçoit son identité et son admission propres avant de reprendre le rôle autorisé.
+~~~~
+
+### Référence courante brick-redundancy-78e23fa4ab8f
+
+Source : [brick-redundancy](../../specs/brick-redundancy/spec.md), ligne 20. SHA-256 : `78e23fa4ab8fa0bb63d03ef7d2eed6192c067b88caebb136646f31b66c88d7e2`.
+
+Scénarios : Exception au mode.
+
+~~~~text
+### Requirement: Mode par famille et exceptions
+
+Chaque famille MUST définir son mode d'autorité et de synchronisation par défaut. Une brique MAY y déroger par configuration explicite ; une exception incompatible avec le mode de famille MUST être justifiée et tracée. La dérogation MUST NOT supprimer une garantie spécifique obligatoire du rôle.
+
+#### Scenario: Exception au mode
+
+- **WHEN** un administrateur propose une exception de mode
+- **THEN** sa justification, sa portée et ses contrôles sont enregistrés avant admission.
+~~~~
+
+### Référence courante brick-redundancy-29e8a1e997e2
+
+Source : [brick-redundancy](../../specs/brick-redundancy/spec.md), ligne 29. SHA-256 : `29e8a1e997e28be127916e1f936f38f70b6562b68b46d5dab57cff4629b3a465`.
+
+Scénarios : Copies requises absentes.
+
+~~~~text
+### Requirement: Conditions de reprise propres à la brique
+
+Chaque brique MUST déclarer ses exigences de synchronisation et l'éventuel état partiel admissible avec limites explicites. La procédure MUST vérifier les critères courants avant activation. La règle générale MUST NOT abaisser le minimum PG synchrone ni permettre la perte d'une écriture confirmée dans un profil qui la protège.
+
+#### Scenario: Copies requises absentes
+
+- **WHEN** une reprise CZT ne satisfait pas son minimum synchrone configuré
+- **THEN** la règle générale d’état partiel ne permet pas de la confirmer.
+~~~~
+
+### Référence courante brick-redundancy-b7eb34bb70c2
+
+Source : [brick-redundancy](../../specs/brick-redundancy/spec.md), ligne 38. SHA-256 : `b7eb34bb70c29f74664bbd69e8874a6819b8e6ecf8a60cc8c2626164191d7f65`.
+
+Scénarios : Ancien maître isolé.
+
+~~~~text
+### Requirement: Unicité de l’autorité et automatisation
+
+Un rôle à maître unique MUST empêcher l'ancien et le nouveau maître d'exercer simultanément. La reprise MAY être automatique sous politique et mandat préalablement autorisés ; sinon un administrateur MUST confirmer. Une injoignabilité seule MUST NOT prouver l'exclusion.
+
+#### Scenario: Ancien maître isolé
+
+- **WHEN** l’ancien maître est injoignable mais son exclusion n’est pas démontrée
+- **THEN** la prise d’autorité reste bloquée selon le contrat du rôle.
+~~~~
+
+### Référence courante brick-redundancy-8df77aef5446
+
+Source : [brick-redundancy](../../specs/brick-redundancy/spec.md), ligne 47. SHA-256 : `8df77aef54469a86d9737a29a58a9b52c8f4fc211a4ac422a8bb6a1a5f8b9175`.
+
+Scénarios : Nouvel actif non vérifié.
+
+~~~~text
+### Requirement: Observation et démantèlement
+
+Chaque brique MUST définir la vérification du nouvel actif, l'éventuelle période d'observation, le statut de l'ancienne et ses critères de démantèlement. L'ancienne MAY rester secours passif, copie de retrait ou autre état déclaré ; elle MUST NOT reprendre des droits expirés ou révoqués.
+
+#### Scenario: Nouvel actif non vérifié
+
+- **WHEN** le service de remplacement n’a pas satisfait les contrôles
+- **THEN** le démantèlement n’est pas autorisé sur sa seule activation administrative.
+~~~~
+
+### Référence courante brick-redundancy-73cbc72a8e34
+
+Source : [brick-redundancy](../../specs/brick-redundancy/spec.md), ligne 56. SHA-256 : `73cbc72a8e34d14d7ef69dc78d17ffb7d5f3c0e0fcfd1898d8a241e4867f752c`.
+
+Scénarios : Versions hors plage.
+
+~~~~text
+### Requirement: Compatibilité de versions par famille
+
+Chaque famille MUST déclarer si des versions identiques sont requises ou si une plage de compatibilité est admise. Une paire non qualifiée MUST être refusée pour synchronisation/reprise ; la présence des binaires MUST NOT prouver la compatibilité.
+
+#### Scenario: Versions hors plage
+
+- **WHEN** une réplique est installée dans une version non admise
+- **THEN** la synchronisation protégée ou la reprise concernée reste bloquée avec diagnostic.
+~~~~
+
+### Référence courante brick-redundancy-9c403ec6ed51
+
+Source : [brick-redundancy](../../specs/brick-redundancy/spec.md), ligne 65. SHA-256 : `9c403ec6ed51a5c3ebdc3db0b60ff70c1382311adacdd6a3fc42fdc997c6fd23`.
+
+Scénarios : Copies distinctes.
+
+~~~~text
+### Requirement: Références PostgreSQL répliquées et garanties conservées
+
+Les bases PG Instance, Domaine, CZT, DZT et PKIZT MUST pouvoir disposer de répliques synchrones avec un primaire d'écriture unique. Leur minimum de confirmations MUST être configurable sans réduction automatique en panne ; promotion MUST exclure l'ancien primaire et préserver les écritures confirmées. Une réplication MUST rester celle d'une même base logique sans fusion de Domaines.
+
+#### Scenario: Copies distinctes
+
+- **WHEN** deux PG de Domaines différents sont déclarées
+- **THEN** elles ne deviennent pas répliques d’une même base par partage de serveur ou de ZT.
+~~~~
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
+
 Ce fichier est une copie de référence pour préparer le lot, pas un delta OpenSpec ni une source de vérité indépendante. Les blocs complets ci-dessous conservent conditions, scénarios, valeurs validées et indications historiques. Le canon courant prévaut ; toute dérive impose une relecture avant réalisation.
 
 La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécution, ni fonction manquante. Les lignes NE et les structures déjà livrées restent à auditer/réutiliser. Les dérogations applicatives et contrats structurels gardent leurs frontières.
@@ -8,22 +2086,29 @@ La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécuti
 
 | Source / ligne | Exigence | Statut de matrice | Disposition |
 |---|---|---|---|
-| pzt / 120 | [Identités de service, PKI et attestation](../../specs/pzt/spec.md#L120) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 4325 | [Contrat A10i6 — PKI privée dédiée à PZT — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4325) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 4415 | [Contrat A10i7 — Émetteur CA dédié par autorité logique habilitée — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4415) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 4495 | [Contrat A10i8 — Profils explicites de protection des clés CA intermédiaires — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4495) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 4585 | [Contrat A10i9 — Nouvelle clé CA et recertification après perte — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4585) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 4680 | [Contrat A10i10 — Secours CA indépendant pré-certifié — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4680) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 4772 | [Contrat A10i11 — Bascule CA automatisable sous mandat préalable — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4772) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 4858 | [Contrat A10i12 — Exclusion active et vérifiée du signataire CA — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4858) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 4943 | [Contrat A10i13 — Mécanismes d'exclusion adaptés au profil CA — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L4943) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 5039 | [Contrat A10i14 — Clés CA ECDSA P-256 et signatures SHA-256 — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5039) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 5117 | [Contrat A10i15 — Nouvelle paire à chaque renouvellement normal des CA intermédiaires — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5117) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 5213 | [Contrat A10i16 — Durées et anticipation des CA intermédiaires — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5213) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 5334 | [Contrat A10i17 — Durée et anticipation de la racine hors ligne — choix du développeur validé le 7 octobre 2026](../../specs/pzt/spec.md#L5334) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 5455 | [Contrat A10i18 — Nouvelle paire indépendante à chaque succession racine — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5455) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 5561 | [Contrat A10i19 — Coexistence bornée des ancrages racine sur les PA — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5561) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 5657 | [Contrat A10i20 — Plafond de coexistence des ancrages racine — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5657) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 185 | [Identités de service, PKI et attestation](../../specs/pzt/spec.md#L185) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 4447 | [Contrat A10i6 — PKI privée dédiée à PZT — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4447) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 4537 | [Contrat A10i7 — Émetteur CA dédié par autorité logique habilitée — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4537) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 4617 | [Contrat A10i8 — Profils explicites de protection des clés CA intermédiaires — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4617) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 4707 | [Contrat A10i9 — Nouvelle clé CA et recertification après perte — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4707) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 4802 | [Contrat A10i10 — Secours CA indépendant pré-certifié — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4802) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 4894 | [Contrat A10i11 — Bascule CA automatisable sous mandat préalable — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4894) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 4980 | [Contrat A10i12 — Exclusion active et vérifiée du signataire CA — option A validée le 6 octobre 2026](../../specs/pzt/spec.md#L4980) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 5065 | [Contrat A10i13 — Mécanismes d'exclusion adaptés au profil CA — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5065) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 5161 | [Contrat A10i14 — Clés CA ECDSA P-256 et signatures SHA-256 — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5161) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 5239 | [Contrat A10i15 — Nouvelle paire à chaque renouvellement normal des CA intermédiaires — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5239) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 5335 | [Contrat A10i16 — Durées et anticipation des CA intermédiaires — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5335) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 5456 | [Contrat A10i17 — Durée et anticipation de la racine hors ligne — choix du développeur validé le 7 octobre 2026](../../specs/pzt/spec.md#L5456) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 5577 | [Contrat A10i18 — Nouvelle paire indépendante à chaque succession racine — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5577) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 5683 | [Contrat A10i19 — Coexistence bornée des ancrages racine sur les PA — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5683) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 5779 | [Contrat A10i20 — Plafond de coexistence des ancrages racine — option A validée le 7 octobre 2026](../../specs/pzt/spec.md#L5779) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| openspec/specs/pzt/spec.md : L8161 | [Contrat A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L8161) | ND | CONCEPTION_ADOPTEE_A_REALISER_ET_QUALIFIER |
+| openspec/specs/pzt/spec.md : L8289 | [Contrat A10i52 — Budgets bornés d’acquisition et fraîcheur de preuve de temps — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L8289) | ND | CONCEPTION_ADOPTEE_A_REALISER_ET_QUALIFIER |
+| openspec/specs/pzt/spec.md : L13456 | [Procédure exceptionnelle D18 avec UTC perdu](../../specs/pzt/spec.md#requirement-procédure-exceptionnelle-d18-avec-utc-perdu) | ND | CONCEPTION_ADOPTEE_A_REALISER_ET_QUALIFIER |
+| openspec/specs/pixs-agent/spec.md : L454 | [Gestion du service de temps par PA et pixs.agent](../../specs/pixs-agent/spec.md#L454) | ND | CONCEPTION_ADOPTEE_A_REALISER_ET_QUALIFIER |
+| openspec/specs/runtime/spec.md : L227 | [Contrat commun runtime et Kernel agnostique du FOURNISSEUR](../../specs/runtime/spec.md#L227) | ND | CONCEPTION_ADOPTEE_A_REALISER_ET_QUALIFIER |
+| openspec/specs/installation-provisioning/spec.md : L140 | [Amorçage technique borné du temps avant transport protégé](../../specs/installation-provisioning/spec.md#L140) | ND | CONCEPTION_ADOPTEE_A_REALISER_ET_QUALIFIER |
+| openspec/specs/authorization/spec.md : L211 | [Garde technique du temps indépendante de la base](../../specs/authorization/spec.md#L211) | ND | CONCEPTION_ADOPTEE_A_REALISER_ET_QUALIFIER |
 
 ## Blocs sources complets
 
@@ -31,7 +2116,7 @@ Les délimitations textuelles empêchent de confondre ces copies avec des change
 
 ### Référence pzt--60b0ba04d0
 
-Source : `openspec/specs/pzt/spec.md`, ligne 120. SHA-256 du bloc : `4a8ba1d3aebf494827b65c31c43fae0969ba6b13912768b412a8a8bda4e05f4e`.
+Source : `openspec/specs/pzt/spec.md`, ligne 185. SHA-256 du bloc : `4a8ba1d3aebf494827b65c31c43fae0969ba6b13912768b412a8a8bda4e05f4e`.
 
 ~~~~text
 ### Requirement: Identités de service, PKI et attestation
@@ -46,7 +2131,7 @@ Le transport partagé MUST conserver des identités et permissions de services d
 
 ### Référence pzt--fefc801de8
 
-Source : `openspec/specs/pzt/spec.md`, ligne 4325. SHA-256 du bloc : `d45cea874242f027f69f3c377904c548d859ed181d512195f8838daebcbe187d`.
+Source : `openspec/specs/pzt/spec.md`, ligne 4447. SHA-256 du bloc : `d45cea874242f027f69f3c377904c548d859ed181d512195f8838daebcbe187d`.
 
 ~~~~text
 ### Requirement: Contrat A10i6 — PKI privée dédiée à PZT — option A validée le 6 octobre 2026
@@ -142,7 +2227,7 @@ droits réactivés.
 
 ### Référence pzt--002cacafae
 
-Source : `openspec/specs/pzt/spec.md`, ligne 4415. SHA-256 du bloc : `2f6ba44fade9403340c9cff5ff5d6397bfbe83f991f15277ff84fe8456a19609`.
+Source : `openspec/specs/pzt/spec.md`, ligne 4537. SHA-256 du bloc : `2f6ba44fade9403340c9cff5ff5d6397bfbe83f991f15277ff84fe8456a19609`.
 
 ~~~~text
 ### Requirement: Contrat A10i7 — Émetteur CA dédié par autorité logique habilitée — option A validée le 6 octobre 2026
@@ -228,7 +2313,7 @@ multiples, rattachement/révocation/restauration.
 
 ### Référence pzt--19d4898890
 
-Source : `openspec/specs/pzt/spec.md`, ligne 4495. SHA-256 du bloc : `0f9923a70dee811ec618a29562ef94eefcf6bf6ca45ffac4b9472148ff567f90`.
+Source : `openspec/specs/pzt/spec.md`, ligne 4617. SHA-256 du bloc : `0f9923a70dee811ec618a29562ef94eefcf6bf6ca45ffac4b9472148ff567f90`.
 
 ~~~~text
 ### Requirement: Contrat A10i8 — Profils explicites de protection des clés CA intermédiaires — option A validée le 6 octobre 2026
@@ -324,7 +2409,7 @@ diagnostics sans secret, panne/clone/restauration et refus de repli.
 
 ### Référence pzt--e870aee0a4
 
-Source : `openspec/specs/pzt/spec.md`, ligne 4585. SHA-256 du bloc : `10b293e5a8039e89a27985e8ebd32d71b1a0c745410e8c13787385589c7b14d3`.
+Source : `openspec/specs/pzt/spec.md`, ligne 4707. SHA-256 du bloc : `10b293e5a8039e89a27985e8ebd32d71b1a0c745410e8c13787385589c7b14d3`.
 
 ~~~~text
 ### Requirement: Contrat A10i9 — Nouvelle clé CA et recertification après perte — option A validée le 6 octobre 2026
@@ -425,7 +2510,7 @@ recertification/migration sans clé perdue ou ancien droit repris.
 
 ### Référence pzt--f14c94acdf
 
-Source : `openspec/specs/pzt/spec.md`, ligne 4680. SHA-256 du bloc : `d7b54a6a32822494d6a07b2d43547495df1bab67294be43e58c9b6d502943747`.
+Source : `openspec/specs/pzt/spec.md`, ligne 4802. SHA-256 du bloc : `d7b54a6a32822494d6a07b2d43547495df1bab67294be43e58c9b6d502943747`.
 
 ~~~~text
 ### Requirement: Contrat A10i10 — Secours CA indépendant pré-certifié — option A validée le 6 octobre 2026
@@ -523,7 +2608,7 @@ panne commune/migration/réapprovisionnement sans ancienne génération réactiv
 
 ### Référence pzt--c560650e6f
 
-Source : `openspec/specs/pzt/spec.md`, ligne 4772. SHA-256 du bloc : `72db96ca99779e0392cc7b11f044ca843dec50233ff9a799e8d463c5222382a9`.
+Source : `openspec/specs/pzt/spec.md`, ligne 4894. SHA-256 du bloc : `72db96ca99779e0392cc7b11f044ca843dec50233ff9a799e8d463c5222382a9`.
 
 ~~~~text
 ### Requirement: Contrat A10i11 — Bascule CA automatisable sous mandat préalable — option A validée le 6 octobre 2026
@@ -615,7 +2700,7 @@ principal non exclu, état/engagement incertains, doublon/application, opérateu
 
 ### Référence pzt--e0a8407845
 
-Source : `openspec/specs/pzt/spec.md`, ligne 4858. SHA-256 du bloc : `634da90e6b752f79caa057ac7c83467e9b990ae156836b9f0f81df1289de8fd3`.
+Source : `openspec/specs/pzt/spec.md`, ligne 4980. SHA-256 du bloc : `634da90e6b752f79caa057ac7c83467e9b990ae156836b9f0f81df1289de8fd3`.
 
 ~~~~text
 ### Requirement: Contrat A10i12 — Exclusion active et vérifiée du signataire CA — option A validée le 6 octobre 2026
@@ -706,7 +2791,7 @@ restauration/partition/preuve périmée et certificat tardif antidaté.
 
 ### Référence pzt--a721c1d30e
 
-Source : `openspec/specs/pzt/spec.md`, ligne 4943. SHA-256 du bloc : `dbe2ebfc4acf1054f3ea7efdb974e3a0f23ed8937c0ef1153618a8218c3e44cf`.
+Source : `openspec/specs/pzt/spec.md`, ligne 5065. SHA-256 du bloc : `dbe2ebfc4acf1054f3ea7efdb974e3a0f23ed8937c0ef1153618a8218c3e44cf`.
 
 ~~~~text
 ### Requirement: Contrat A10i13 — Mécanismes d'exclusion adaptés au profil CA — option A validée le 7 octobre 2026
@@ -808,7 +2893,7 @@ secours affecté.
 
 ### Référence pzt--7f00749de1
 
-Source : `openspec/specs/pzt/spec.md`, ligne 5039. SHA-256 du bloc : `5720a7fd11583cab54d8bde0efc84889213ac40ba6319ea6fa6d840734dd65fe`.
+Source : `openspec/specs/pzt/spec.md`, ligne 5161. SHA-256 du bloc : `5720a7fd11583cab54d8bde0efc84889213ac40ba6319ea6fa6d840734dd65fe`.
 
 ~~~~text
 ### Requirement: Contrat A10i14 — Clés CA ECDSA P-256 et signatures SHA-256 — option A validée le 7 octobre 2026
@@ -892,7 +2977,7 @@ matériel, aléa/nonce, encodages invalides, incohérence clé/algorithme, refus
 
 ### Référence pzt--bf2838d7ed
 
-Source : `openspec/specs/pzt/spec.md`, ligne 5117. SHA-256 du bloc : `4b2c34874bd252be323272521704e5450e6a9fb4e4c60bf65c2dc3d58797bd25`.
+Source : `openspec/specs/pzt/spec.md`, ligne 5239. SHA-256 du bloc : `4b2c34874bd252be323272521704e5450e6a9fb4e4c60bf65c2dc3d58797bd25`.
 
 ~~~~text
 ### Requirement: Contrat A10i15 — Nouvelle paire à chaque renouvellement normal des CA intermédiaires — option A validée le 7 octobre 2026
@@ -994,7 +3079,7 @@ exclusion manquée, anciens certificats admissibles/retirés, restauration.
 
 ### Référence pzt--eacd53b171
 
-Source : `openspec/specs/pzt/spec.md`, ligne 5213. SHA-256 du bloc : `15460b2ecd147fc855a10757085dcb2bcb68d4e480d9bdfdca054de4c8d26753`.
+Source : `openspec/specs/pzt/spec.md`, ligne 5335. SHA-256 du bloc : `15460b2ecd147fc855a10757085dcb2bcb68d4e480d9bdfdca054de4c8d26753`.
 
 ~~~~text
 ### Requirement: Contrat A10i16 — Durées et anticipation des CA intermédiaires — option A validée le 7 octobre 2026
@@ -1121,7 +3206,7 @@ terminal proche expiration CA, horloge/restauration, révocation/configuration i
 
 ### Référence pzt--48e3ce692f
 
-Source : `openspec/specs/pzt/spec.md`, ligne 5334. SHA-256 du bloc : `1db6cdedd0fa318329c49d820ad0b8fbc584f474f244f288546fa2d566663838`.
+Source : `openspec/specs/pzt/spec.md`, ligne 5456. SHA-256 du bloc : `1db6cdedd0fa318329c49d820ad0b8fbc584f474f244f288546fa2d566663838`.
 
 ~~~~text
 ### Requirement: Contrat A10i17 — Durée et anticipation de la racine hors ligne — choix du développeur validé le 7 octobre 2026
@@ -1248,7 +3333,7 @@ horloge/restauration/retrait connu/configuration invalide.
 
 ### Référence pzt--f0853e6e7c
 
-Source : `openspec/specs/pzt/spec.md`, ligne 5455. SHA-256 du bloc : `40fa29bc4a6803fd86fb32c40add1bf27572180c5305b5f22ff59e04b20c7a61`.
+Source : `openspec/specs/pzt/spec.md`, ligne 5577. SHA-256 du bloc : `40fa29bc4a6803fd86fb32c40add1bf27572180c5305b5f22ff59e04b20c7a61`.
 
 ~~~~text
 ### Requirement: Contrat A10i18 — Nouvelle paire indépendante à chaque succession racine — option A validée le 7 octobre 2026
@@ -1360,7 +3445,7 @@ retirée, anciens certificats admissibles/retirés, PA hors ligne/restauration.
 
 ### Référence pzt--9f26981801
 
-Source : `openspec/specs/pzt/spec.md`, ligne 5561. SHA-256 du bloc : `900337c4250cda683f1f3b520b2c067a697f220f311c160964d6f31ebb558ced`.
+Source : `openspec/specs/pzt/spec.md`, ligne 5683. SHA-256 du bloc : `900337c4250cda683f1f3b520b2c067a697f220f311c160964d6f31ebb558ced`.
 
 ~~~~text
 ### Requirement: Contrat A10i19 — Coexistence bornée des ancrages racine sur les PA — option A validée le 7 octobre 2026
@@ -1462,7 +3547,7 @@ engagement incertain, clone/restauration, ancienne chaîne après retrait.
 
 ### Référence pzt--67b216110f
 
-Source : `openspec/specs/pzt/spec.md`, ligne 5657. SHA-256 du bloc : `e87e3ed14a0a051000a986f23c0d98526dede540fc67916c502016eec398ed73`.
+Source : `openspec/specs/pzt/spec.md`, ligne 5779. SHA-256 du bloc : `e87e3ed14a0a051000a986f23c0d98526dede540fc67916c502016eec398ed73`.
 
 ~~~~text
 ### Requirement: Contrat A10i20 — Plafond de coexistence des ancrages racine — option A validée le 7 octobre 2026
@@ -1575,3 +3660,384 @@ temps invérifiable/restauration/configuration invalide. A10i20 A validé le 7 o
 - **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
 ~~~~
 
+
+## Extension initiale adoptée le 23 octobre 2026
+
+Les deux blocs suivants reproduisent intégralement les nouvelles clauses canoniques applicables à la seule première installation avant PostgreSQL. Les seize copies précédentes et leurs renvois restent intacts.
+
+### Source pzt / 13351 — amorçage initial
+
+Source : [canon pzt](../../specs/pzt/spec.md#requirement-amorçage-pki-pzt-autonome-de-première-installation-avant-postgresql). SHA-256 du bloc UTF-8 : f842decd8bc1d4b21b72acbc847de42828785a4730e0d2d79b9e11beb68139d3
+
+~~~~markdown
+### Requirement: Amorçage PKI PZT autonome de première installation avant PostgreSQL
+
+La première installation MAY créer localement sa confiance PKI/PZT avant PostgreSQL par la cérémonie propriétaire Z12 consommée par C08. Cette seule exception aux décisions/engagements Django/PostgreSQL A10i6/A12a MUST satisfaire les garanties des scénarios ci-dessous ; hors de ce parcours, le contrôle ordinaire reste obligatoire.
+
+#### Scenario: Création initiale locale sous autorité technique vérifiée
+
+- **WHEN** une première installation admissible prépare localement les seules identités PKI nécessaires à PA système, PZT et PBO pour établir PostgreSQL
+- **THEN** Z12 MUST vérifier positivement origine native, opérateur, mandat explicite, installation, cible, exécutants, rôles fermés, opération/idempotence, plan/digest et politique/version courants, validité, révocation et fraîcheur ; aucune PKI privée opérationnelle ni identité PZT préémise ailleurs ne MUST être un prérequis
+- **AND** racine, intermédiaires principal/secours indépendants et terminaux MUST conserver leurs hiérarchie, séparation des clés, algorithmes, usages, durées/bornes et protection matérielle sélectionnés, sans repli logiciel ; la racine MUST rester sous cérémonie hors ligne et hors processus courants
+- **AND** le propriétaire Z12 MUST conserver un état technique durable protégé, versionné et fencé, un ancrage contre la restauration qualifié hors de ce domaine logiciel et un audit pré-base indépendant ; il MUST exposer des références publiques liées aux effets réels et un état courant inspectable, sans clé privée, credential PostgreSQL, faux engagement applicatif ni autorité déduite d’un DTO ou de la signature CA
+
+#### Scenario: Adoption et fin de l’autorité initiale avant admission ordinaire
+
+- **WHEN** PostgreSQL et les propriétaires courants sont disponibles pour adopter le premier lot local de confiance
+- **THEN** PKI, Core, Auth et C05 MUST vérifier et rapprocher indépendamment les références publiques, leurs octets, les effets et les résultats sous autorité courante ; aucune nouvelle PKI ou recertification systématique ne MUST être déduite du seul passage, et âges, validités, échéances et rotations requises MUST rester opposables
+- **AND** adoption PostgreSQL, retrait de l’autorité/canal/mandats initiaux et admission ordinaire MUST être des étapes distinctes prouvées ; aucune atomicité local/PostgreSQL ne MUST être présumée, et toute issue partielle ou incertaine MUST rester non prête et inspectable
+- **AND** le retrait initial MUST être irréversible, durable et attesté par une preuve actuelle vérifiée indépendamment avant admission ordinaire Django/A07/A12 ; C08 MUST consommer le contrat Z12 sans devenir un second émetteur ou registre, et aucune panne ultérieure de PostgreSQL ne MUST rouvrir l’amorçage
+~~~~
+
+### Source authorization / 180 — amorçage initial
+
+Source : [canon authorization](../../specs/authorization/spec.md#L180). SHA-256 du bloc UTF-8 : 17bb3b590935cf6cad5a1b8eaf39e932b6f0103dd5eaebdc271b8ca28dd2ba55
+
+~~~~markdown
+### Requirement: Autorité technique PKI Z12 bornée à la première installation
+
+La cérémonie Z12 de première installation MAY évaluer une identité native et une autorité technique protégée, indépendantes de la base cible, pour ses seules opérations PKI initiales. Cette exception MUST respecter les garanties ci-dessous, sans Subject métier, pouvoir R01 ou admission ordinaire ; sa clôture MUST précéder le contrôle courant.
+
+#### Scenario: Sujet natif et mandat initial positivement vérifiés
+
+- **WHEN** Z12 reçoit une opération PKI initiale nécessaire au parcours de préparation PostgreSQL avant existence de son autorité applicative
+- **THEN** une composition de confiance MUST vérifier identité native, provenance du lanceur opérateur, politique protégée/versionnée, mandat courant distinct de R01 et ses liens installation/cible/exécutants/rôles/plan/opération, plus validité, révocation, fraîcheur, audit et ancrage anti-restauration qualifié
+- **AND** le contexte MUST rester PLATFORM sans tenant_id ni scope_id ; UID 0, premier PBO, proximité, booléen client, clé, certificat ou fichier simplement présent MUST NOT constituer seuls cette autorité
+- **AND** cette branche MUST autoriser uniquement les opérations PKI initiales fermées du propriétaire Z12 ; renouvellement, bascule et management ordinaires, effets Core/Auth, droits métier, pouvoirs R01 ou exception Super Admin MUST NOT en être déduits ; C01 et R01 MUST conserver leurs limites
+
+#### Scenario: État ancien ou autorité retirée sans droit restauré
+
+- **WHEN** identité, mandat, politique, cible, version, époque, validité, révocation, audit ou ancrage sont invérifiables, qu’une concurrence est contradictoire, qu’une réponse/issue est perdue, qu’un état est restauré, ou que l’autorité initiale est retirée
+- **THEN** le système MUST refuser le nouvel effet et conserver une situation bloquée ou incertaine inspectable ; il MUST réconcilier preuves, effets réels et conditions courantes avant toute reprise, sans rejouer un mandat consommé, produire une seconde PKI ou réactiver un droit
+- **AND** absence de PostgreSQL, de journal ou de fichier MUST NOT prouver une première installation ; une restauration, un clone ou une perte de l’ancrage MUST NOT rouvrir automatiquement la cérémonie ou convertir le contrôle ordinaire en autorité technique initiale
+~~~~
+
+
+## Complément D7/D8 adopté le 23 octobre 2026
+
+Sources : [delta PZT](historique-deltas-avant-e3/pzt/spec.md) et [canon PZT](../../specs/pzt/spec.md). Les deux blocs ci-dessous sont copiés à l’identique ; leur adoption documentaire ne qualifie ni réalisation ni matériel.
+
+### Requirement: Profil X.509 des terminaux de première installation Z12
+Pour la première installation PA/PZT/PBO avant PostgreSQL, Z12 MUST appliquer le profil terminal fermé ci-dessous avec des clés matérielles non exportables P-256 et des paires distinctes par usage TLS. Les liaisons de politique/plan/identité, durées A10i4 et chaîne D2 MUST rester vérifiées indépendamment de l'admission et du mandat PostgreSQL.
+
+#### Scenario: Émission initiale conforme sous autorité vérifiée
+- **WHEN** la cérémonie initiale D4 dispose du mandat courant, du plan protégé et des preuves réelles de clé matérielle et de possession pour les usages client et serveur sélectionnés
+- **THEN** les certificats émis respectent le profil terminal, les identités et endpoints explicitement liés au plan, avec des paires distinctes et une chaîne D2 vérifiée
+- **AND** conformité du profil, autorisation, engagement et effet observé restent distingués ; aucun mandat technique PostgreSQL n'est déduit des certificats
+- **AND** Pour la première installation PA/PZT/PBO avant PostgreSQL, Z12 MUST utiliser des clés ECDSA P-256 matérielles non exportables, sans repli logiciel, et des certificats terminaux X.509 v3 signés suivant le profil CA D2. Une paire et un certificat MUST être distincts pour chaque usage TLS client ou serveur ; aucune clé CA ou de signature opérateur MUST être réutilisée comme clé terminale.
+- **AND** Le certificat terminal MUST contenir uniquement les six extensions BasicConstraints, KeyUsage, SubjectAlternativeName, ExtendedKeyUsage, SubjectKeyIdentifier et AuthorityKeyIdentifier. BasicConstraints MUST être critique, CA=false, sans pathLenConstraint ; KeyUsage MUST être critique avec digitalSignature seul ; ExtendedKeyUsage MUST être critique avec exactement clientAuth ou exactement serverAuth, sans anyExtendedKeyUsage. SKI et AKI MUST être non critiques et correspondre aux clés et à l'émetteur réellement vérifiés. La chaîne CA D2 reste distincte : elle n'admet que BasicConstraints, KeyUsage, SKI et AKI et MUST refuser NameConstraints et toute autre extension hors de ce profil fermé.
+- **AND** Le Subject MUST être vide. Le SAN MUST être critique et contenir exactement une URI urn:uuid:<UUIDv7 d'instance terminale sous forme canonique minuscule>. Pour un certificat serveur, il MUST aussi contenir exactement l'iPAddress IPv4 loopback explicitement liée à l'endpoint dans le plan protégé ; pour un certificat client, cet iPAddress serveur MUST être absent. Aucun autre nom, CN/DNS de repli, adresse ou port par défaut MUST être ajouté. Les contrôles de chaîne, d'usage, d'URI d'instance et d'IP attendue MUST être indépendants ; loopback ou UUIDv7 seuls MUST NOT prouver identité native, fraîcheur ou autorité.
+- **AND** Le propriétaire courant MUST lier installation, cible, identité native d'instance, rôle, usage, clé, génération et certificat à la politique protégée/versionnée et au mandat applicable. Les preuves matérielles, la possession et la correspondance clé/certificat MUST être réellement vérifiées. Le profil structural ou cryptographique seul MUST NOT valoir autorisation d'émettre, admission applicative ou mandat PostgreSQL. Les durées A10i4 sont conservées : 24 heures nominales, renouvellement aux deux tiers de la validité effective (16 heures seulement pour 24 heures effectives), chevauchement au plus cinq minutes selon A10i3, avec validités bornées par la politique et la chaîne et sans remise à zéro des âges.
+
+#### Scenario: Refus d'identité, d'usage ou de chaîne inadmissibles
+- **WHEN** un certificat ou une demande présente CA=true, un usage ou une extension étrangers, un EKU double, une paire mutualisée entre usages, un Subject non vide, un SAN non critique ou étranger, une URI non canonique, une IP absente ou étrangère au plan serveur, ou une contrainte de noms hors du profil CA D2
+- **THEN** l'émission ou le chargement concerné est refusé avant utilisation TLS, sans repli CN/DNS, logiciel ou autre profil
+- **AND** ni la proximité réseau ni une chaîne signée seule ne rétablissent une identité, une permission ou une confiance absentes
+
+### Requirement: Résolution locale du matériel TLS sous propriétaire courant Z12
+La composition native locale privée MUST résoudre le matériel TLS depuis le propriétaire réellement compétent pour l'étape, après vérification actuelle de politique, identité, état et ancrage. D4/D6, le même OSSL_LIB_CTX privé et les refus ci-dessous MUST être respectés ; aucune référence ou donnée cliente ne constitue une preuve d'autorité.
+
+#### Scenario: Résolution locale depuis le propriétaire compétent
+- **WHEN** la composition locale demande le matériel d'un terminal et que le propriétaire compétent pour l'étape réelle vérifie toutes les liaisons, protections, preuves et bornes courantes
+- **THEN** le matériel public et la référence locale terminale sont liés au contexte OpenSSL privé avec une durée de vie contrôlée
+- **AND** aucune clé privée, autorité déduite du certificat ou permission applicative n'est transmise par cette résolution
+- **AND** Le matériel TLS MUST être résolu par une composition native locale privée depuis le propriétaire courant compétent. Avant toute fourniture ou utilisation, ce propriétaire MUST vérifier la politique protégée/versionnée, l'installation et la cible, les liaisons d'identité/rôle/usage/génération, l'état et l'époque courants, la validité/fraîcheur, la révocation et l'ancrage anti-restauration requis. Un instantané restaurable, un DTO bien formé, une référence opaque ou un booléen client MUST NOT remplacer ces vérifications. Toute source absente, périmée, contradictoire ou invérifiable MUST fermer l'opération concernée.
+- **AND** Avant PostgreSQL, le propriétaire initial Z12 D4 MUST vérifier l'origine native et le mandat opérateur lié au plan ; UID 0 seul ou une preuve C01/R01 réutilisée pour un autre usage MUST NOT suffire. Après l'adoption et le retrait attesté D6, seul le propriétaire ordinaire Django/A07/A12 courant MUST pouvoir autoriser la fourniture du matériel. Les références publiques adoptées, âges, validités et retraits connus MUST être conservés ; une panne PostgreSQL après ce passage MUST NOT rouvrir l'autorité initiale.
+- **AND** La résolution MUST fournir les seuls matériaux publics nécessaires et une référence opaque de clé terminale locale liée au même OSSL_LIB_CTX privé, avec possession et durée de vie réellement contrôlées. Les références de clés CA, les chemins ou ancres librement fournis par un appelant réseau, les clés privées ou blobs privés publics, les EVP_PKEY ou capsules Python publics et le repli logiciel MUST être refusés. Le contrôle de chaîne et la vérification du pair MUST rester nécessaires ; la résolution du matériel MUST NOT constituer l'autorisation applicative ni le mandat technique PostgreSQL, qui restent distincts.
+
+#### Scenario: Refus après restauration, retrait ou perte d'autorité
+- **WHEN** l'état ou la politique est restauré ancien, l'ancrage ou la fraîcheur est invérifiable, le propriétaire compétent est indisponible, une référence CA est proposée, ou une ancienne autorité initiale est sollicitée après clôture D6
+- **THEN** la fourniture ou l'utilisation concernée est refusée avant transport ou admission, et le matériel devenu inadmissible cesse d'être utilisable
+- **AND** une panne PostgreSQL après D6 ne rouvre pas la cérémonie initiale, ne remet pas les âges à zéro et ne rétablit aucun mandat retiré
+
+## Reprise temps du 26 octobre 2026 — références documentaires adoptées
+
+### Référence pzt--bd78adb3
+
+Source : `openspec/specs/pzt/spec.md`, ligne 8161. SHA-256 du bloc : `14de157d9817ba5b76247dcabfb854ed26c0339cc0509571ee60ea504cd90617`.
+
+~~~~text
+### Requirement: Contrat A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026
+
+Le rôle chargé du traitement A10i50 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i50
+
+Bornes qualifiées A10i49 A, cycle A10i48 A et contrôles A05/A12 maintenus.
+Adaptateurs système retenus pour autorités de validation, avec service système géré par PA selon profil et besoin, sans nouveau démon ni protocole Pixs ; sans autre serveur, logiciel, protocole de synchronisation ou nouvelle source de temps concrète adoptés.
+
+| Choix validé | Provider | Qualification requise |
+| --- | --- | --- |
+| A | Adaptateurs par plateforme lisant l'horloge système et la qualité de synchronisation de l'infrastructure approuvée | Temps, borne et fraîcheur démontrés pour le profil exact OS/hôte/VM/conteneur |
+
+Utiliser les services de synchronisation approuvés de l'infrastructure,
+avec interface PZT commune en lecture : estimation UTC, borne d'erreur,
+origine/état de qualification, âge de preuve et correspondance à mesure
+monotone. Lecture à chaque contrôle validée A10i51 A, champs/format/unités/API à préciser.
+Adaptateurs Linux et Windows
+conditionnés aux capacités du profil exact, sans OS déclaré compatible par
+son seul nom ou statut « synchronisé ». Statistiques du service exploitables
+comme données d'entrée, jamais assimilées automatiquement à borne de sécurité.
+Absence de métrique/preuve admissible, origine inconnue ou incohérence bloque
+création/admission A10i49 ; aucune valeur zéro ou marge fixe substituées.
+PZT ne règle pas automatiquement l'horloge hôte et ne crée pas un second
+disciplineur système. Logiciels/configuration/sources d'infrastructure, confiance
+et accès de collecte à qualifier, aucune dépendance installée par ce choix.
+
+VM/conteneur : dépendances de temps, horloges exposées, source hôte/invité,
+suspension/reprise/restauration et éventuelles métriques indirectes documentées.
+Une copie de l'état du collecteur sans fraîcheur retrouvée ne suffit pas.
+Docker/LXC Proxmox et Windows/Linux physiques/VM qualifiés séparément ; accès
+au temps ou métadonnées sans privilège système, montage ou changement de
+synchronisation implicitement accordés. Profil incapable de démontrer U<=1 seconde
+dans le premier jet refusé pour ce rôle ; la présente politique MUST NOT accorder un service par PA, seul un service par horloge géré par PA lorsque le profil l’exige MAY être qualifié, sans préjuger sa qualification.
+
+Contrat explicite de confiance et qualité, fraîcheur/dérive/perte de
+source, cohérence des membres, correction/saut d'horloge et restauration testés.
+PZT conserve calcul prudent des bornes A10i49, échéance immuable et contrôle au
+point d'admission. Changement de provider/profil uniquement autorisé/versionné
+et compatible, sans renégociation depuis un message reçu. Aucun « temps signé »,
+TPM, majorité de sources ou précision nominale suffisant seul sans qualification.
+PBO/Django gouverne configuration et diagnostics sans secret, A10i22 B maintenu,
+PA sans accès SQL direct. Usage de temps pour autres contrats A05/CA/purge
+reste à qualifier séparément ; aucune amélioration système implicite.
+
+A validée pour réutiliser l'infrastructure sous preuve de qualité commune ;
+service temporel Pixs dédié alternatif non retenu. Coûts CPU/RAM/I/O/réseau
+à mesurer, aucune précision,
+disponibilité ou ressource universellement meilleure. Aucune implémentation,
+synchronisation d'hôte, configuration, certificat ou OpenSpec modifiés ici.
+[Microsoft, Windows Time Service](https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-top)
+décrit un service système et ses conditions, [RFC 5905, section 11](https://www.rfc-editor.org/rfc/rfc5905.html#section-11)
+des statistiques de qualité ; références sans choix de W32Time/NTP obligatoire
+ou conformité/borne PZT automatiquement démontrées. Recette : métrique absente,
+statut synchronisé mais preuve insuffisante, preuve ancienne, source non autorisée,
+temps hôte/invité divergents, suspension/restauration et collecte non bornée.
+A10i50 A validé le 8 octobre 2026.
+
+#### Scenario: Conformité du traitement A10i50
+
+- **WHEN** un profil revendique le traitement A10i50 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+~~~~
+
+### Référence pzt--df657ce1
+
+Source : `openspec/specs/pzt/spec.md`, ligne 8289. SHA-256 du bloc : `a6b6b2457e52617030e6aca7af73d08eba23a4c45cfa85f3ab317f3ab72c4f1f`.
+
+~~~~text
+### Requirement: Contrat A10i52 — Budgets bornés d’acquisition et fraîcheur de preuve de temps — option A validée le 8 octobre 2026
+
+Le rôle chargé du traitement A10i52 MUST satisfaire les clauses opératoires,
+bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
+une alternative rejetée, élargir son périmètre ou présenter comme effectué
+un contrôle/effet absent. Les règles de lecture normative précédentes,
+les contrats structurels et les exceptions applicatives restent applicables.
+
+##### Contrat détaillé A10i52
+
+Lecture cohérente à chaque création/admission A10i51 A, adaptateurs A10i50 A,
+borne d'erreur au plus 1 seconde A10i49 A et échéance immuable conservés.
+Premier jet configurable validé, à qualifier sans performance mesurée ou API installée.
+Interface API/IPC structurée validée A10i53 A.
+
+| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation en SYNCHRONISE |
+| --- | --- | --- | --- | --- |
+| A | 250 millisecondes | 2 | 1 seconde | 600 secondes |
+
+Acquisition = lecture cohérente de temps/qualité et contrôle du résultat du même
+provider/profil. Nombre inclut première acquisition ; acquisition supplémentaire
+seulement pour lecture techniquement transitoire qualifiée ou mesure devenue
+inadmissible avant usage, pas de répétition d'une admission/décision déjà engagée.
+Budget global depuis début de la première acquisition jusqu'à mesure admissible
+au point de décision, attentes locales/I/O incluses ; pauses et redémarrage
+sans crédit remis à zéro. Plafonds simultanés et budgets de sécurité plus courts
+prioritaires, aucune acquisition commencée sans budget restant suffisant.
+Reprise sans preuve de temps restant : refus, D jamais repoussée.
+
+Âge maximal concerne la dernière preuve de référence/synchronisation admissible, toujours réelle et vérifiable, pas la date à laquelle l’adaptateur a simplement lu une métrique ou un fichier. Calcul/identité de preuve, source et progression d’âge qualifiés, référence modifiée ou horloge reculante sans âge artificiellement réinitialisé. Âge non vérifiable MUST conduire au refus en tous modes. Âge invérifiable ou supérieur au plafond en mode SYNCHRONISE MUST conduire au refus de création/admission. Âge inférieur au plafond n’autorise pas seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance A10i49/A10i50 toujours démontrées. En mode SYNCHRONISE, âge maximal 600 secondes sans permission de réemploi d’un ancien échantillon entre décisions, A10i51 A inchangé. En mode distinct HORS_LIGNE, un âge supérieur à 600 secondes MAY être admis seulement si le modèle, la provenance et la continuité sont qualifiés, si le profil demeure valide et si la borne totale U(t) au point d’usage demeure inférieure ou égale à une seconde, avec acquisition actuelle et sans réarmement de droits, de budget ou d’échéance ; une lecture récente MUST NOT rajeunir la preuve amont et une nouvelle acquisition MUST NOT remettre à zéro un droit ; aucune durée magique n’est admise.
+Borne d'erreur 1 seconde distincte du budget global de lecture 1 seconde et de l'âge
+de preuve ; aucune mesure temporelle plus ancienne réputée exacte par budget large.
+
+Même contexte/époque/version et domaine de mesure pour chaque acquisition,
+origine/qualité inconnue, événement de temps non couvert ou refus de confiance
+arrêtent le traitement ; aucune acquisition répétée destinée à attendre que
+le contrôle de sécurité soit contournable. Nouvelle lecture récente sans source
+qualifiée ne corrige pas une preuve trop ancienne. Signature ou statut
+« synchronisé » seuls ne suffisent pas à admettre une borne de sécurité ;
+diagnostic sans secret sur dépassement/échec.
+Contrat de blocage/annulation/libération des ressources à qualifier pour toutes
+APIs, même bloquantes ; pas de durée système réellement garantie par simple timeout.
+Résultat trop tard ou après D refusé, aucun U=0, cache/repli de provider ou grâce.
+
+Valeurs/profil approuvés/versionnés via PBO/Django/A07/A12 avant activation,
+compatibilités et modèles de dérive/fraîcheur à qualifier sur Linux/Windows
+physiques/VM et Docker/LXC Proxmox. Dossiers/temps de validation A10i39/A10i40,
+relances A10i42 et réconciliation A10i43 sans nouveau crédit accordé.
+A10i22 B/A05 prioritaires et PA sans SQL direct, aucune acquisition de preuve
+de clôture courante imposée aux PA ordinaires. Aucun nom de variable, service,
+source/protocole NTP, règle d'horloge, fichier ou OpenSpec modifié ici.
+
+A validée comme premier jet borné/sobre ; profil élargi alternatif non retenu,
+garanties de borne/cohérence et budgets appliqués simultanément.
+Valeurs Pixs validées et à qualifier par mesures, sans cadence d'infrastructure supposée
+compatible ou besoin de la modifier automatiquement. Coûts/CPU/RAM/I/O et
+disponibilité à qualifier, aucune supériorité universelle ou réussite garantie.
+Recette : durée/âge exacts et plus une unité de précision qualifiée, acquisition
+bloquée, deuxième lecture cohérente, troisième interdite, preuve ancienne
+lue récemment, U(t)>1 seconde malgré âge acceptable, suspension/reprise,
+attente franchissant D et refus sans droit/admission réactivés.
+A10i52 A validé le 8 octobre 2026.
+
+#### Scenario: Conformité du traitement A10i52
+
+- **WHEN** un profil revendique le traitement A10i52 et ses garanties dans un rôle déclaré
+- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
+- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+
+#### Scenario: Perte d’Internet avec incertitude démontrée
+
+- **WHEN** Internet est perdu mais que le modèle, la provenance et la continuité demeurent qualifiés avec U au point d’usage démontrée
+- **THEN** les opérations dépendantes bornées peuvent continuer sans remise à zéro de droit
+
+#### Scenario: Valeur à la borne puis au-delà
+
+- **WHEN** la borne totale se situe juste à une seconde avec comparaison conservatrice établie
+- **THEN** l’admission bornée peut intervenir sans prolongation d’échéance
+- **WHEN** elle dépasse la borne d’une unité de précision qualifiée
+- **THEN** la création ou l’admission est refusée sans nouvelle admission
+
+#### Scenario: Mesure locale ancienne et modèle périmé
+
+- **WHEN** une mesure locale ancienne est lue récemment ou que le modèle est périmé
+- **THEN** elle ne doit pas être proposée comme preuve courante et une nouvelle acquisition bornée ou un refus doit intervenir
+
+#### Scenario: Suspension, restauration et retour incohérent
+
+- **WHEN** une suspension, une reprise ou une restauration est observée
+- **THEN** la continuité doit être requalifiée avant toute admission
+- **WHEN** le retour d’Internet apporte une correction incohérente avec l’intervalle maintenu
+- **THEN** le chemin doit être refusé sans réécriture de l’échéance
+
+#### Scenario: Plateformes conteneur et machines virtuelles
+
+- **WHEN** la cible est LXC avec horloge hôte, VM avec horloge propre ou Windows avec fournisseur à qualifier
+- **THEN** le profil exact doit être démontré et toute divergence hôte et invité doit bloquer l’admission concernée
+~~~~
+
+### Référence pzt--9adfd25a
+
+Source : `openspec/specs/pzt/spec.md`, ligne 13456. SHA-256 du bloc : `5390c48ad1d1969d434be45e5615b05bed681f5cf6b9f6bfd5a5cbbd228fdeba`.
+
+~~~~text
+### Requirement: Procédure exceptionnelle D18 avec UTC perdu
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — D18 exceptionnelle
+
+La procédure exceptionnelle MUST intervenir seulement lorsque le repère universel ne peut pas être démontré par la voie normale. Elle MUST NOT devenir une routine à chaque lancement. Aucun poste extérieur, aucun opérateur particulier et aucun système mondial de navigation par satellite ne sont imposés. Une heure qualifiée existante MAY être utilisée lorsqu’elle est disponible. Toute réparation ultérieure du temps MUST NOT rouvrir l’autorité initiale. Les règles actuelles relatives à la signature personnelle, au défi à usage unique et à l’enveloppe demeurent conservées lorsque la cérémonie est effectivement nécessaire. Aucun contournement des dates des certificats n’est admis.
+
+#### Scenario: UTC perdu sans routine
+
+- **WHEN** le repère universel ne peut pas être démontré alors qu’une opération datée est demandée
+- **THEN** la procédure exceptionnelle s’applique sous autorité explicite ou l’opération est refusée sans contournement des dates
+~~~~
+
+### Référence pixs-agent--7e9292da
+
+Source : `openspec/specs/pixs-agent/spec.md`, ligne 454. SHA-256 du bloc : `71315ab86f897cf7471f92804636a514213117b4730a4dd5264f8f4e7aca27f2`.
+
+~~~~text
+### Requirement: Gestion du service de temps par PA et pixs.agent
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — Service de temps PA
+
+Le service de temps système MUST être installé, réutilisé, configuré et supervisé par PA sous politique explicite, capacité catalogue fermé et mandat de cible exacte. PA MUST conserver un propriétaire unique par horloge système. pixs.agent MUST gérer les opérations PA hors responsabilité du réseau PZT, et tous les échanges PBO vers PA MUST passer par PZT ; le temps amont demeure un service système selon profil et MUST NOT devenir un canal de commande PBO vers PA. PA MUST NOT modifier l’horloge d’un hôte partagé depuis un conteneur LXC. Sur Linux, chrony demeure retenu avec ses dépendances déclarées. Les autres profils MUST qualifier leurs adaptateurs avant activation. Dans une image isolée, le paquet est fourni par l’image sans mutation de l’hôte. Un service NTP local MAY être utilisé seulement lorsque la topologie l’exige et sous profil déclaré. Aucun montage, aucun changement de privilège et aucune discipline supplémentaire ne sont induits. Les fonctions indépendantes du temps MUST pouvoir continuer pendant une dégradation.
+
+#### Scenario: Mandat de cible exacte pour le service de temps
+
+- **WHEN** PA reçoit un mandat de cible exacte avec un profil valide
+- **THEN** PA installe ou réutilise le service déclaré, vérifie l’état appliqué et refuse toute cible étrangère ou capacité hors catalogue
+~~~~
+
+### Référence runtime--c34a5350
+
+Source : `openspec/specs/runtime/spec.md`, ligne 227. SHA-256 du bloc : `3380037ce8cb95d55acadc0520581f849d91c576d942d9dafd503c25a06c4436`.
+
+~~~~text
+### Requirement: Contrat commun runtime et Kernel agnostique du FOURNISSEUR
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — Contrat runtime commun
+
+Le contrat d’exécution MUST exposer une interface commune en lecture à Kernel, Core, Auth, PA et PZT. Kernel MUST demeurer agnostique du FOURNISSEUR et MUST NOT porter de logique de fournisseur de temps. Les mécanismes génériques de temps demeurent admis lorsqu’ils restent indépendants de tout fournisseur concret. Les dépendances MUST être déclarées et le graphe de démarrage MUST demeurer acyclique. Les fonctions indépendantes du temps MUST pouvoir continuer pendant une dégradation. Seuls les effets dont la fenêtre ou l’exigence ne peut pas être prouvée MUST être refusés. Le présent texte MUST NOT prolonger un certificat ni un mandat par une dégradation du temps.
+
+Le contrat `pixs.time.evidence` version `2.0.0`, catégorie `API`, propriétaire `pixs.kernel` est une déclaration pure. Les quatre méthodes exigées sont `time_diagnostic(use_ref:TimePublicRef)->TimeDiagnostic`, `time_require_use(use_ref:TimePublicRef)->None`, `time_ceremony_diagnostic(ceremony_ref:TimePublicRef)->TimeDiagnostic`, `time_ceremony_require_use(ceremony_ref:TimePublicRef)->None`. `TimePublicRef` est un sélecteur non autoritaire lié à l’opération courante dont l’appelant ne choisit jamais le producteur, le producteur attendu est injecté par composition. `outcome` vaut exactement `OBSERVED`, `REFUSED` ou `IN_DOUBT`. `TimeDiagnostic` comporte exactement `outcome`, `producer_ref`, `clock_domain_ref`, `detail_ref`. Le producteur vérifie nativement au point d’usage, aucun objet Python, pointeur ou descripteur comme preuve transportée. `None`, DTO et ancienne observation ne sont en aucun cas une permission. Core, Auth, Agent et PZT décident sur l’intervalle entier y compris transitions `DENY` et `ALLOW`, avec décisions et gardes métier inchangées.
+
+#### Scenario: Garde d’usage avec intervalle prouvé
+
+- **WHEN** le producteur courant fournit un intervalle vérifié avec incertitude bornée
+- **THEN** le consommateur l’emploie pour sa seule décision courante sans le mémoriser comme preuve
+
+#### Scenario: Report distant non probant
+
+- **WHEN** seul un report distant ou monotone étranger est disponible sans corrélation locale qualifiée
+- **THEN** le consommateur rend un diagnostic seul sans bail ni observation positive
+
+#### Scenario: Fonction indépendante pendant dégradation
+
+- **WHEN** une fonction ne dépend pas du temps courant et que la preuve de temps est invalide
+- **THEN** elle peut continuer sous son propre contrat sans prolongation de droit
+
+#### Scenario: Projection forgée ne prouve pas
+
+- **WHEN** une projection diagnostique, un `None` ou un DTO est réinjecté comme permission
+- **THEN** le consommateur refuse sans bail ni observation positive
+~~~~
+
+### Référence installation-provisioning--b17eea0b
+
+Source : `openspec/specs/installation-provisioning/spec.md`, ligne 140. SHA-256 du bloc : `572932f05bac0217d3da3394db0c86a8ba94c7f98cd6c8a38a5515c690abc685`.
+
+~~~~text
+### Requirement: Amorçage technique borné du temps avant transport protégé
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — Amorçage temps borné
+
+L’amorçage du temps avant PZT et avant la base applicative MUST demeurer borné, acyclique et autorisé hors base applicative, sans droit métier et sans réseau direct PBO vers PA hors PZT. Le service préfourni, une horloge matérielle qualifiée ou une source indépendante qualifiée MAY être utilisé. Le service NTS MUST NOT prouver à lui seul le temps universel initial. Tout téléchargement des prérequis par un canal chiffré qui exigerait une heure non encore établie MUST NOT être entrepris. Les opérations entre PBO et PA MUST conserver exclusivement le transport protégé existant.
+
+#### Scenario: Amorçage sans heure connue
+
+- **WHEN** aucune heure universelle qualifiée n’est disponible avant le transport protégé
+- **THEN** la procédure bornée s’applique ou la branche est refusée sans auto-autorité par statut
+~~~~
+
+### Référence authorization--0f1256c7
+
+Source : `openspec/specs/authorization/spec.md`, ligne 211. SHA-256 du bloc : `08db346aa8b88e73d93afedf41ac8bb5391897c0520fd5d2a136ba0768003e98`.
+
+~~~~text
+### Requirement: Garde technique du temps indépendante de la base
+
+La branche technique du temps MUST NOT conférer de pouvoir R01/SuperAdmin/droit métier/renouvellement PKI. Elle MUST vérifier ses prérequis d’autorité sous politique protégée, opérateur explicite, catalogue, cible et exécutant vérifiés, sans supposer une validité universelle et sans créer d’auto-autorité, sinon elle MUST refuser. D6 MUST NOT rouvrir une autorité initiale de PKI.
+
+#### Scenario: Prérequis d’autorité non prouvés
+
+- **WHEN** les prérequis d’autorité ne sont pas vérifiés avant temps universel prouvable
+- **THEN** la branche est refusée sans auto-autorité
+~~~~
+
+## Statut des deltas antérieurs après contrôle E3
+
+Les anciens fichiers sous specs/ ont été déplacés, avec empreintes conservées, vers [l’historique interne](historique-deltas-avant-e3/README.md). Le [contrôle de couverture](COUVERTURE_DELTAS_E3.md) relie chaque ancienne exigence au contrat courant et aux tâches ouvertes. Le dossier reste actif ; skip_specs évite seulement la réapplication des anciennes prescriptions. Il ne termine ni la réalisation, ni les tests, ni les 49 tâches encore ouvertes dans les sept dossiers concernés.

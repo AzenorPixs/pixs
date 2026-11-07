@@ -1,0 +1,147 @@
+{
+  "schema": "pixs.frontend.selection/1.0.0",
+  "environment": "DEVELOPMENT",
+  "provenance": {
+    "kind": "LOCAL_OPERATOR_SELECTION",
+    "reference": "recette-C14-frontend-2026-10-23-sans-qualification-P0"
+  },
+  "components": [
+    {
+      "owner": "pixs.kernel",
+      "owner_version": "0.1.0",
+      "root": "src/pixs/kernel",
+      "trust": "TRUSTED",
+      "manifest": {
+        "path": "component.toml",
+        "sha256": "a9ca379da9f4d3bda2c4d49fb954691679d164e35e4777c9794401a29c538cd4"
+      },
+      "sources": []
+    },
+    {
+      "owner": "pixs.core",
+      "owner_version": "0.1.0",
+      "root": "src/pixs/core",
+      "trust": "TRUSTED",
+      "manifest": {
+        "path": "component.toml",
+        "sha256": "aaf54ef890b3c409d59f0656c48990cac9d15fec41a85e6e581ba4dfd9e4d963"
+      },
+      "sources": []
+    },
+    {
+      "owner": "pixs.pzt",
+      "owner_version": "0.1.0",
+      "root": "src/pixs/pzt",
+      "trust": "TRUSTED",
+      "manifest": {
+        "path": "component.toml",
+        "sha256": "3755e7909180f35e5fbd8290a43e4950d7b8d11bc928dd8648c99b32bb99b5da"
+      },
+      "sources": [
+        {
+          "path": "frontend.mjs",
+          "sha256": "2903237fc75377879561bcc207068a10d6eaf89f0db86c8829bc442001988938"
+        }
+      ]
+    },
+    {
+      "owner": "pixs.dns",
+      "owner_version": "0.1.0",
+      "root": "src/pixs/dns",
+      "trust": "TRUSTED",
+      "manifest": {
+        "path": "component.toml",
+        "sha256": "a1cb5ec91de90ae1015c1055558f8c8811efae456c1c4ec39a34ced29b2a761d"
+      },
+      "sources": [
+        {
+          "path": "frontend.mjs",
+          "sha256": "addcc91513845ac18e423e52c4a53f3e921caae69d367e03b4e60e406d38e446"
+        }
+      ]
+    }
+  ],
+  "composition": {
+    "official_ids": [
+      "pixs.kernel",
+      "pixs.core",
+      "pixs.pzt",
+      "pixs.dns"
+    ],
+    "required_ids": [
+      "pixs.kernel",
+      "pixs.core",
+      "pixs.pzt",
+      "pixs.dns"
+    ],
+    "configured_providers": null,
+    "attestations": [
+      {
+        "component_id": "pixs.kernel",
+        "component_version": "0.1.0",
+        "scope": "COMPONENT",
+        "target_id": "pixs.kernel",
+        "target_version": "0.1.0",
+        "suite_id": "pixs.c14.frontend-build.kernel-core-conformity",
+        "suite_version": "1.1.0",
+        "proof_ref": "c14-native:call_01a16919ba2c739d8401f0cb151498ff:3931a20289f5c844b59ac1f9aebbbd98ba159886ac36b054d98c1f1a91868493",
+        "verdict": "PASS"
+      },
+      {
+        "component_id": "pixs.core",
+        "component_version": "0.1.0",
+        "scope": "COMPONENT",
+        "target_id": "pixs.core",
+        "target_version": "0.1.0",
+        "suite_id": "pixs.c14.frontend-build.core-postgres-conformity",
+        "suite_version": "1.0.0",
+        "proof_ref": "c14-native:call_01a169163738714c9da553901b824a38:c0758b961093375da83feea94082e9d96e1a3bb9fa8f6ab28a8bbb4a5c19453b",
+        "verdict": "PASS"
+      },
+      {
+        "component_id": "pixs.pzt",
+        "component_version": "0.1.0",
+        "scope": "COMPONENT",
+        "target_id": "pixs.pzt",
+        "target_version": "0.1.0",
+        "suite_id": "pixs.pzt.management.conformity",
+        "suite_version": "1.1.1",
+        "proof_ref": "c14-native:call_01a1694299fb743288b2e266f41b0b78:a512e1d580d172a854b0fc24dca696b42a2a6456507585c79c89cb0115b894c1",
+        "verdict": "PASS"
+      },
+      {
+        "component_id": "pixs.dns",
+        "component_version": "0.1.0",
+        "scope": "COMPONENT",
+        "target_id": "pixs.dns",
+        "target_version": "0.1.0",
+        "suite_id": "pixs.dns.management.conformity",
+        "suite_version": "1.1.1",
+        "proof_ref": "c14-native:call_01a1694299fb743288b2e266f41b0b78:a512e1d580d172a854b0fc24dca696b42a2a6456507585c79c89cb0115b894c1",
+        "verdict": "PASS"
+      },
+      {
+        "component_id": "pixs.dns",
+        "component_version": "0.1.0",
+        "scope": "CONTRACT",
+        "target_id": "pixs.dns.views.query",
+        "target_version": "1.0.0",
+        "suite_id": "pixs.dns.management.conformity",
+        "suite_version": "1.1.1",
+        "proof_ref": "c14-native:call_01a1694299fb743288b2e266f41b0b78:a512e1d580d172a854b0fc24dca696b42a2a6456507585c79c89cb0115b894c1",
+        "verdict": "PASS"
+      },
+      {
+        "component_id": "pixs.dns",
+        "component_version": "0.1.0",
+        "scope": "CONTRACT",
+        "target_id": "pixs.dns.policy.query",
+        "target_version": "1.0.0",
+        "suite_id": "pixs.dns.management.conformity",
+        "suite_version": "1.1.1",
+        "proof_ref": "c14-native:call_01a1694299fb743288b2e266f41b0b78:a512e1d580d172a854b0fc24dca696b42a2a6456507585c79c89cb0115b894c1",
+        "verdict": "PASS"
+      }
+    ]
+  }
+}

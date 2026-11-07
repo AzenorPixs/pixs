@@ -74,18 +74,27 @@ modes MUST être explicites, autorisées et auditées.
 
 ### Requirement: Provisionnement interactif de la base
 
-Le mode INSTALLER MUST demander l'hôte ou IP PostgreSQL, le port avec `5432`
-par défaut, l'identifiant, le mot de passe et le nom de base. Il MUST vérifier
-la connectivité avant toute opération et MUST traiter la base demandée selon
-son état : création confirmée si elle est absente, conservation si elle est
-conforme, plan de migration confirmé si elle est migrable, ou suppression et
-recréation confirmées si elle est incompatible.
+Le parcours INSTALLER MUST faire préparer PostgreSQL par PA système via PZT, puis réserver à PBO ses migrations et initialisations applicatives. Il MUST vérifier cible, accès, état de base et confirmations ; sous Docker, le logiciel MUST être fourni et le stockage existant conservé. Les garanties du scénario ci-dessous MUST s’appliquer ; les secrets MUST NOT transiter dans les artefacts ou messages de management PBO–PA.
+
+#### Scenario: Garanties du provisionnement interactif PA PBO
+
+- **WHEN** un opérateur lance le parcours INSTALLER
+- **THEN** Le parcours INSTALLER MUST être lancé explicitement par l'opérateur et faire préparer PostgreSQL par le PA système de l'hôte selon installation-provisioning, pixs-agent et pzt. Sur hôte physique ou VM, PA MUST installer et configurer le service si nécessaire ; dans l'image Docker Pixs, le logiciel MUST être déjà fourni et PA MUST initialiser seulement le stockage et la configuration manquants, sans réinitialiser l'existant. Les paramètres de cible, port (5432 par défaut), base et références d'accès nécessaires MUST être explicitement recueillis et vérifiés dans ce parcours ; les secrets MUST NOT transiter par un artefact ou message de management PBO–PA. PA MUST initier la première connexion technique de préparation. PBO MUST vérifier le résultat et conserver l'inspection du schéma, les migrations et l'initialisation applicatives par leurs contrats propriétaires. Base absente : création explicitement confirmée ; base conforme : conservation ; base migrable : plan de migration confirmé ; base incompatible : suppression et recréation seulement après confirmations distinctes, fraîches et liées à la cible. Une préparation technique PA MUST NOT créer un Super Admin, une identité Core, un tenant ou une autorisation métier.
 
 #### Scenario: Base migrable
 
 - **WHEN** la base demandée nécessite une migration compatible
-- **THEN** Pixs affiche le plan et n'applique la migration qu'après
-  confirmation explicite
+- **THEN** PBO affiche le plan et ne fait appliquer la migration par son propriétaire qu’après confirmation explicite ; le reçu PA ne tient pas lieu de migration
+
+#### Scenario: Premier accès technique PostgreSQL
+
+- **WHEN** un opérateur lance INSTALLER sur un hôte physique ou une VM sans PostgreSQL préparé
+- **THEN** PA prépare le service et initie la première connexion technique sous son mandat borné ; PBO n’effectue ses opérations applicatives qu’après vérification des prérequis
+
+#### Scenario: Stockage Docker existant
+
+- **WHEN** un conteneur Pixs démarre avec un stockage PostgreSQL déjà initialisé
+- **THEN** PA le conserve et vérifie sa compatibilité sans réinitialisation ; une incompatibilité maintient l’installation non prête jusqu’au plan autorisé
 
 ### Requirement: Reprise et références de secrets après provisionnement
 
@@ -242,3 +251,12 @@ Cette phase MUST NOT provisionner de base, créer de DigitalIdentity, session ou
 
 - **WHEN** l’opérateur technique autorisé est root OS
 - **THEN** cette identité reste technique et ne crée ni session ni exception Super Admin
+
+### Requirement: Compte de secours et transition de Domaine
+
+La transition vers Domaine MUST traiter l'identité numérique du Super Admin avec les autres identités pré-domaine sans en conserver une identité d'Instance parallèle. Son unicité, caractère fonctionnel non nominatif, authentification propre et exception MUST rester ceux d'authorization et de cette capacité. Le changement de stockage MUST NOT déléguer son exception à un contrôleur ou un compte ordinaire.
+
+#### Scenario: Super Admin après transition
+
+- **WHEN** le premier Domaine est activé avec les identités transférées
+- **THEN** le compte de secours reste unique et son identité est portée par le Domaine sans copie authentifiable dans la Base Instance.

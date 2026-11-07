@@ -1,4 +1,6 @@
-# Proposal — add-initial-component-type-vocabulary-v1
+# C89 — Proposal — add-initial-component-type-vocabulary-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

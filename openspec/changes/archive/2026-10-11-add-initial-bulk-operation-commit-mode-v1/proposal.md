@@ -1,3 +1,7 @@
+# B25 — Mode de commit des opérations en masse v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le canon bulk-operations définit BulkOperationCommitMode v1, mais son profil préparatoire et sa validation pure ne sont pas implémentés. Ce change réalise uniquement ce contrat déjà validé.

@@ -1,4 +1,6 @@
-# Proposal — add-initial-inbox-receipt-state-v1
+# C92 — Proposal — add-initial-inbox-receipt-state-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

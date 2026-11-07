@@ -1,4 +1,6 @@
-# Proposal — add-initial-identity-assurance-vocabulary-v1
+# C78 — Proposal — add-initial-identity-assurance-vocabulary-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 Le module src/pixs/core/authz/policy.py expose déjà pixs.core.authz.policy.IdentityAssurance avec exactement CLAIMED, VERIFIED, PROOFED, et une façade authz EXISTE déjà et exporte IdentityAssurance. Le canon publié définit déjà exactement le profil. Le besoin est de qualifier la conformité de cette production existante par tests et traçabilité, sans comportement nouveau et en préservant les garanties existantes de séparation des dimensions et de non-surclassement.

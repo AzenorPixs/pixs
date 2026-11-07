@@ -1,0 +1,94 @@
+schema_version = "1"
+id = "pixs.pzt"
+type = "MODULE"
+version = "0.1.0"
+
+[dependencies]
+components = ["pixs.kernel ==0.1.0", "pixs.core ==0.1.0", "pixs.dns ==0.1.0"]
+contracts = ["pixs.dns.views.query ==1.0.0", "pixs.dns.policy.query ==1.0.0"]
+
+[provides]
+[[provides.capabilities]]
+id = "pzt.management"
+version = "1.0.0"
+contracts = ["pixs.pzt.control.command", "pixs.pzt.control.query", "pixs.pzt.state.query"]
+criticality = "REQUIRED"
+fallback = "none"
+
+[implements]
+[[implements.contracts]]
+id = "pixs.pzt.control.command"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.pzt.control.query"
+version = "1.0.0"
+[[implements.contracts]]
+id = "pixs.pzt.state.query"
+version = "1.0.0"
+
+[frontend]
+schema_version = "1"
+
+[[frontend.contributions]]
+type = "TRANSLATION"
+id = "pixs.pzt.management.translations"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = []
+scope = "AUTHENTICATED"
+
+[[frontend.contributions]]
+type = "PAGE"
+id = "pixs.pzt.management.page"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.pzt.management.translations ==1.0.0"]
+scope = "AUTHENTICATED"
+
+[[frontend.contributions]]
+type = "ROUTE"
+id = "pixs.pzt.management.route.platform"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.pzt.management.page ==1.0.0"]
+scope = "PLATFORM_SCOPED"
+
+[[frontend.contributions]]
+type = "NAVIGATION"
+id = "pixs.pzt.management.navigation.platform"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.pzt.management.route.platform ==1.0.0", "pixs.pzt.management.translations ==1.0.0"]
+scope = "PLATFORM_SCOPED"
+
+[[frontend.contributions]]
+type = "ROUTE"
+id = "pixs.pzt.management.route.tenant"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.pzt.management.page ==1.0.0"]
+scope = "TENANT_SCOPED"
+
+[[frontend.contributions]]
+type = "NAVIGATION"
+id = "pixs.pzt.management.navigation.tenant"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.pzt.management.route.tenant ==1.0.0", "pixs.pzt.management.translations ==1.0.0"]
+scope = "TENANT_SCOPED"
+
+[[frontend.contributions]]
+type = "ROUTE"
+id = "pixs.pzt.management.route.scope"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.pzt.management.page ==1.0.0"]
+scope = "TENANT_SCOPED"
+
+[[frontend.contributions]]
+type = "NAVIGATION"
+id = "pixs.pzt.management.navigation.scope"
+entry = "frontend.mjs"
+version = "1.0.0"
+requires = ["pixs.pzt.management.route.scope ==1.0.0", "pixs.pzt.management.translations ==1.0.0"]
+scope = "TENANT_SCOPED"

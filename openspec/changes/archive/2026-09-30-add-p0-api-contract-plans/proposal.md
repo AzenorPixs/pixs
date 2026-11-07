@@ -1,3 +1,7 @@
+# C28 — Plans des contrats API P0
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Les contrats API portent leur majeure dans le chemin public, toute rupture impose une nouvelle majeure avec son propre document OpenAPI et une coexistence déclarée. Le socle dispose de descripteurs de contrats et de gardes SemVer pures, sans plan API réutilisant ces garanties. Ce change prépare uniquement des métadonnées testables, sans publication ni transport HTTP.

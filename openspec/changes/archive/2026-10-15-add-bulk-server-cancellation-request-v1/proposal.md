@@ -1,4 +1,6 @@
-# Proposal — add-bulk-server-cancellation-request-v1
+# B53 — Proposal — add-bulk-server-cancellation-request-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

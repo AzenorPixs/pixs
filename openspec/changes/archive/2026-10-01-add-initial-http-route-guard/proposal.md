@@ -1,4 +1,6 @@
-# Garde de déclaration explicite des routes HTTP
+# C39 — Garde de déclaration explicite des routes HTTP
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

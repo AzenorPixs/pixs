@@ -1,4 +1,6 @@
-# Vue liveness initiale bornée
+# C40 — Vue liveness initiale bornée
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

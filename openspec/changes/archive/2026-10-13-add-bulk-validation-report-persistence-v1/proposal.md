@@ -1,4 +1,6 @@
-# Proposal: add-bulk-validation-report-persistence-v1
+# B49 — Proposal: add-bulk-validation-report-persistence-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

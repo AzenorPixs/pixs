@@ -1,4 +1,6 @@
-# Vocabulaire initial des états de décision d’architecture v1
+# C86 — Vocabulaire initial des états de décision d’architecture v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

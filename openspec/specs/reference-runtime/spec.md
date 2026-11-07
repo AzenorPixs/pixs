@@ -248,3 +248,108 @@ pixs.pzt et son exécution dans le binaire indépendant PZT.
 
 - **WHEN** l’opérateur désactive le réseau PZT
 - **THEN** le binaire réseau se ferme et pixs.pzt demeure dans PBO
+
+### Requirement: Dernière stable Nuitka au début de chaque campagne PBO
+
+Au début de chaque campagne de qualification PBO, la chaîne MUST sélectionner la dernière version stable de Nuitka publiée et non retirée sur la source officielle PyPI à la date de vérification. Les préversions et versions de développement MUST NOT être sélectionnées comme dernière stable. La sélection MUST être réévaluée à chaque nouvelle campagne.
+
+#### Scenario: Sélection de la dernière stable au début de la campagne
+
+- **WHEN** une nouvelle campagne PBO commence et PyPI publie une version stable plus récente que le verrou précédent, ainsi qu'une préversion encore plus récente
+- **THEN** la version stable publiée et non retirée la plus récente est sélectionnée, la préversion est exclue et la vérification datée, la source, la version et les éléments de provenance et d'intégrité sont enregistrés avec le verrou de la campagne
+
+### Requirement: Traçabilité de la chaîne Nuitka PBO
+
+La date de vérification, la source officielle, la version exacte sélectionnée, la provenance et les empreintes des distributions utilisées MUST être enregistrées avec la chaîne de la campagne. Les preuves historiques MUST rester rattachées à leurs versions et artefacts ; elles MUST NOT être attribuées automatiquement à une nouvelle chaîne.
+
+#### Scenario: Conservation des preuves après changement de version
+
+- **WHEN** une campagne utilise une version Nuitka différente d'une campagne antérieure
+- **THEN** chaque campagne conserve sa vérification datée, sa source, sa version, sa provenance et ses empreintes, et les anciennes preuves restent liées à leurs versions et artefacts d'origine
+
+### Requirement: Verrouillage exact de Nuitka pendant la campagne PBO
+
+La version exacte sélectionnée MUST être verrouillée dans `toolchain.nuitka` des métadonnées de campagne PBO pendant la campagne et pour la reproduction de ses artefacts. Les déclarations, métadonnées et contrôles de construction MUST vérifier cette version ; une contrainte ouverte MUST NOT remplacer le verrou. Une nouvelle publication MUST NOT modifier automatiquement la campagne ou ses preuves. La seule reproduction MUST NOT imposer une nouvelle sélection de la dernière stable.
+
+#### Scenario: Publication pendant une campagne et reproduction des artefacts
+
+- **WHEN** une nouvelle stable est publiée après le verrouillage d'une campagne ou qu'un artefact de cette campagne doit être reproduit
+- **THEN** la version verrouillée est conservée et une version effective différente est refusée par les contrôles de construction, sans actualisation automatique ni nouvelle sélection pour la seule reproduction
+
+#### Scenario: Version effective différente du verrou
+
+- **WHEN** la construction PBO utilise une version Nuitka différente de celle verrouillée pour la campagne
+- **THEN** le contrôle de construction refuse cet écart avant qualification, même si cette version est une stable plus récente
+
+### Requirement: Actualisation coordonnée de Nuitka pour PBO
+
+Tout changement de version Nuitka MUST entraîner la mise à jour coordonnée de `pyproject.toml`, des métadonnées de chaîne, des contrôles PBO, des tests concernés et de la documentation courante, puis la qualification de la nouvelle chaîne. La sélection ou l'inscription documentaire d'une version MUST NOT tenir lieu de qualification.
+
+#### Scenario: Actualisation lors de la campagne suivante
+
+- **WHEN** une campagne suivante sélectionne une nouvelle stable Nuitka
+- **THEN** les déclarations, métadonnées de chaîne, contrôles PBO, tests concernés et documentation courante sont alignés avant la qualification de la nouvelle chaîne, tandis que les preuves historiques restent liées à leurs anciens artefacts et versions
+
+### Requirement: Préservation des autres choix de chaîne PBO
+
+La sélection d'une version Nuitka MUST NOT modifier implicitement CPython, le mode GIL, le compilateur C, l'ABI, les cibles, les dépendances, les rôles ou les choix Cython adoptés. Le profil Nuitka standalone et les modes d'exploitation Standalone/ZT MUST être conservés. La politique de dernière stable MUST NOT valoir autorisation d'installation.
+
+#### Scenario: Nouvelle version Nuitka avec autres choix conservés
+
+- **WHEN** une nouvelle stable Nuitka est sélectionnée pour PBO
+- **THEN** CPython, le GIL, le compilateur C, l'ABI, les cibles, les dépendances, les rôles, les choix Cython, le profil standalone et les modes Standalone/ZT restent conservés, et aucune installation n'est autorisée par la seule sélection
+
+### Requirement: Blocage si la dernière stable Nuitka ne peut pas être qualifiée
+
+Si la dernière stable ne peut pas être vérifiée ou si sa compatibilité ne peut pas être qualifiée, la sélection ou la qualification concernée MUST rester bloquée. Une ancienne version MUST NOT être choisie implicitement pour contourner ce blocage.
+
+#### Scenario: Dernière stable non vérifiable ou incompatible
+
+- **WHEN** la source officielle ne permet pas de vérifier la dernière stable ou que cette version ne peut pas être qualifiée avec la chaîne et les cibles adoptées
+- **THEN** la sélection ou la qualification reste bloquée, sans repli implicite vers une ancienne version ni modification implicite des autres choix de chaîne adoptés
+
+### Requirement: Métadonnées fermées et identité de campagne PBO
+
+Le document TOML de campagne PBO MUST avoir les seules racines `schema_version`, `campaign`, `toolchain`, `selection`, `distributions`. Le schéma MUST être `1.0.0` ; campaign MUST contenir seulement un `id` unique non vide et `component=pbo`, toolchain seulement `nuitka`, version stable exacte normalisée. Les tables MUST être fermées ; champs inconnus, absents, dupliqués ou mal typés MUST être refusés. L'identité et les entrées figées MUST être conservées pour reproduire la campagne.
+
+#### Scenario: Métadonnées valides et reproduction
+
+- **WHEN** une campagne fournit les métadonnées fermées valides et qu'une reproduction est ensuite demandée
+- **THEN** le même identifiant, le verrou et les preuves figées sont conservés, sans nouvelle sélection de version ni réécriture des métadonnées historiques
+
+#### Scenario: Métadonnées invalides
+
+- **WHEN** un champ est absent, inconnu, dupliqué ou mal typé, ou que le verrou contient une contrainte ouverte, une préversion, une version de développement, locale ou non normalisée
+- **THEN** les métadonnées sont refusées avant compilation avec PBO_CAMPAIGN_METADATA_INVALID, sans valeur implicite ni correction automatique
+
+### Requirement: Preuve de sélection Nuitka dans la campagne PBO
+
+La table selection MUST contenir seulement `verified_at` UTC textuel, `source_url` PyPI officiel, `snapshot` relatif au document et `snapshot_sha256`. Le relevé JSON conservé MUST prouver la dernière stable non retirée à cette date ; son empreinte MUST être vérifiée sur ses octets. Un chemin sortant ou symbolique MUST être refusé. Une empreinte seule MUST NOT prouver l'origine officielle. Le constructeur MUST utiliser la sélection vérifiée, sans consulter PyPI ni choisir une version.
+
+#### Scenario: Relevé absent ou preuve non concluante
+
+- **WHEN** la date ou la source est invalide, le relevé est absent, sortant, symbolique ou altéré, ou qu'il ne démontre pas la sélection officielle de la dernière stable non retirée
+- **THEN** la sélection ou la construction reste bloquée avec PBO_CAMPAIGN_EVIDENCE_INVALID pour une preuve inexploitable, sans ancien compilateur choisi implicitement ; un schéma invalide conserve PBO_CAMPAIGN_METADATA_INVALID
+
+### Requirement: Distributions Nuitka tracées par campagne PBO
+
+distributions MUST être une liste non vide de tables contenant seulement `filename`, `url`, `sha256`. Les noms simples MUST être uniques, les URL HTTPS sans authentification et les SHA-256 en hexadécimal minuscule sur 64 caractères. Chaque fichier utilisé MUST correspondre au nom, à l'URL et au condensat d'une distribution non retirée de la version verrouillée dans le relevé officiel. Une distribution absente ou altérée MUST être refusée avant compilation.
+
+#### Scenario: Distribution non déclarée ou altérée
+
+- **WHEN** un fichier utilisé ne figure pas dans les métadonnées ou que son nom, son URL, son empreinte réelle ou son état dans le relevé officiel ne correspond pas à la distribution autorisée
+- **THEN** le contrôle refuse la construction avec PBO_CAMPAIGN_EVIDENCE_INVALID avant compilation, sans téléchargement ou installation implicite
+
+### Requirement: Rapport de construction lié au verrou Nuitka PBO
+
+Avant compilation, le constructeur MUST comparer strictement la déclaration Nuitka exacte de `pyproject.toml`, `toolchain.nuitka` et une sonde structurée du compilateur réellement appelé. `build-report.json` MUST lier `campaign_id`, `campaign_metadata_sha256`, `profile_sha256` et `nuitka_version` avec `locked` et `observed`, et tracer distributions vérifiées et issue du contrôle. Les empreintes MUST porter sur les entrées réelles indépendantes du rapport, sans auto-condensat.
+
+#### Scenario: Sonde conforme et rapport lié aux entrées
+
+- **WHEN** la déclaration, le verrou et la version observée concordent et que les entrées et distributions ont été vérifiées
+- **THEN** le rapport lie l'identifiant, les empreintes des métadonnées et du profil effectifs, les versions verrouillée et observée ainsi que les distributions vérifiées, sans que ce contrôle seul qualifie le binaire
+
+#### Scenario: Sonde inexploitable ou divergence de version
+
+- **WHEN** la sonde est absente, mal typée ou ambiguë, ou qu'une version déclarée ou observée diffère du verrou
+- **THEN** le constructeur refuse avant compilation avec PBO_BUILD_NUITKA_METADATA_INVALID pour la sonde ou PBO_BUILD_NUITKA_MISMATCH pour l'écart ; le rapport conserve les valeurs vérifiées et observed vaut null si aucune version exploitable n'est obtenue

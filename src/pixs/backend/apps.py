@@ -6,6 +6,7 @@ __all__ = [
     "PixsCoreConfig",
     "PixsExampleConfig",
     "PixsKernelConfig",
+    "PixsBackendConfig",
 ]
 
 
@@ -34,3 +35,12 @@ class PixsExampleConfig(AppConfig):
     label = "pixs_example"
     name = "pixs.example"
     verbose_name = "Pixs Example"
+
+
+class PixsBackendConfig(AppConfig):
+    """Enregistrement explicite des modèles backend, sans activation."""
+
+    default = False
+    label = "backend"
+    name = "pixs.backend"
+    verbose_name = "Persistance Pixs"

@@ -1,4 +1,6 @@
-# Littéraux de chemins de fichiers statiques dans la garde
+# C52 — Littéraux de chemins de fichiers statiques dans la garde
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

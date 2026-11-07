@@ -1,4 +1,6 @@
-# Vocabulaire de rétention et de stratégie de suppression
+# C72 — Vocabulaire de rétention et de stratégie de suppression
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

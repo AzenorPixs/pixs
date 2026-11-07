@@ -29,7 +29,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 ## Dépendances
 
 - [add-notification-preferences-and-selected-channels](../add-notification-preferences-and-selected-channels/proposal.md).
-- [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
+- [add-reference-worker-scheduler-and-event-delivery](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md).
 
 
 

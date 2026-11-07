@@ -1,4 +1,6 @@
-# Proposal — add-bulk-event-envelope-persistence-v1
+# B43 — Proposal — add-bulk-event-envelope-persistence-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 Fondation partielle de persistance pour le runtime Bulk v1, liée à B11 Outbox et publication. Les profils préparatoires livrés restent inchangés. Aucune publication, aucune séquence, aucun publisher.

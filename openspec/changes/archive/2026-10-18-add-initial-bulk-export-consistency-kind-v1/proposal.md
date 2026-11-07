@@ -1,4 +1,6 @@
-# Proposition — add-initial-bulk-export-consistency-kind-v1
+# B59 — Proposition — add-initial-bulk-export-consistency-kind-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

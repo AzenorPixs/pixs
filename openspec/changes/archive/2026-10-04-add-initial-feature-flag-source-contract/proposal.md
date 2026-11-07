@@ -1,4 +1,6 @@
-# Proposition — contrat de source de fanions
+# O52 — Proposition — contrat de source de fanions
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 R2 exige une configuration canonique de cohorte et R4 exige une source persistante versionnée. L'évaluation actuelle attend des affectations et une règle injectées séparément. Ce contrat ajoute une validation de snapshot fermé sans livrer la persistance.

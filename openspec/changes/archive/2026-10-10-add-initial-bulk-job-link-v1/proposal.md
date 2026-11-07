@@ -1,4 +1,6 @@
-# add-initial-bulk-job-link-v1
+# B17 — add-initial-bulk-job-link-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 

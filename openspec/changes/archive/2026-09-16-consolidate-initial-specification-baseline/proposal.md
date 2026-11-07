@@ -1,3 +1,7 @@
+# SP03 — Consolidation du référentiel initial de spécifications
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Les 76 capacités actives constituent déjà la baseline fonctionnelle de Pixs,

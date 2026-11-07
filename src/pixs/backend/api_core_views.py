@@ -28,7 +28,16 @@ from pixs.core.dto import CommandEnvelope, CoreMutationResult, CorePage, CoreQue
 from pixs.core.persistence.uuid7 import generate_uuid7
 from pixs.core.scope.context import ScopeContext, ScopeType
 
-__all__ = ["build_core_api_view", "build_core_api_urls"]
+from pixs.backend.api_module_views import (
+    ModuleHttpComposition, ModuleHttpBinding, ModuleHttpRequest, ModuleHttpResult,
+    build_module_api_view, build_module_openapi_view,
+)
+
+__all__ = [
+    "build_core_api_view", "build_core_api_urls",
+    "ModuleHttpComposition", "ModuleHttpBinding", "ModuleHttpRequest", "ModuleHttpResult",
+    "build_module_api_view", "build_module_openapi_view",
+]
 
 
 def _fail(code="INPUT_INVALID"):
@@ -279,6 +288,9 @@ def _actor(request, composition, context, web, kind=None):
     actor = composition.request_source.resolve_token(context=context, token=token, kind=kind)
     if actor.facade is not (Facade.WEB if web else Facade.API):
         _fail("AUTH_REQUIRED")
+    session_hint = request.headers.get("X-Shell-Session-ID") if web else None
+    if session_hint is not None and session_hint != str(actor.session_id):
+        _fail("CONTEXT_MISMATCH")
     return actor, token, kind
 
 

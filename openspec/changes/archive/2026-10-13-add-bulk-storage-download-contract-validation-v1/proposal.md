@@ -1,4 +1,6 @@
-# Proposition — validation structurelle du téléchargement Bulk v1
+# B48 — Proposition — validation structurelle du téléchargement Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 Le port DownloadPort et sa méthode authorize_then_issue_temporary_reference sont déclarés par le canon bulk-operations, mais leur validation structurelle manque dans bulk_trusted_ports.py. ObjectStoragePort dispose déjà de sa validation dans bulk_object_staging.py : aucun doublon n'est nécessaire.

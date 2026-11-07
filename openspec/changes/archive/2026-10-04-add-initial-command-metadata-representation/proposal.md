@@ -1,4 +1,6 @@
-# Proposal — add-initial-command-metadata-representation
+# C57 — Proposal — add-initial-command-metadata-representation
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -1,21 +1,16 @@
+# SP02 — Migration RFC 2119 — lot 01
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
-Les exigences OpenSpec actives emploient des mots-clés normatifs français qui
-ne sont pas reconnus par le validateur RFC 2119. Pixs doit utiliser une forme
-normative interopérable, vérifiable automatiquement et cohérente dans ses
-cadrages et spécifications.
+Le lot 01 répartit la migration RFC 2119 historique afin de respecter la limite de dix deltas par proposition. Il conserve intégralement le contenu normatif de ses capacités et ne constitue pas une nouvelle fonctionnalité.
 
 ## What Changes
 
-- Définir la convention RFC 2119 applicable aux exigences Pixs : prose en
-  français, mots-clés normatifs `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT` et
-  `MAY` en majuscules.
-- Employer les formes négatives canoniques `MUST NOT` et `SHOULD NOT`, sans
-  construction hybride telle que `NE MUST` ou `NE SHOULD`.
-- Appliquer cette convention aux exigences actives d'OpenSpec.
-- Documenter la même convention dans les cadrages global, technique et de
-  construction.
-- Préserver la signification, les scénarios et les garanties existants.
+- Reprendre sans modification les fichiers de spécification affectés à ce lot.
+- Limiter cette proposition à 10 deltas, regroupés dans 4 capacités et 10 scénarios.
+- Tracer la provenance, les vérifications et l'archivage technique sans synchroniser le canon.
 
 ## Capabilities
 
@@ -25,12 +20,11 @@ Aucune.
 
 ### Modified Capabilities
 
-Toutes les capacités existantes sous `openspec/specs/` : les exigences sont
-modifiées uniquement pour employer les mots-clés normatifs RFC 2119, sans
-changement de comportement ni de scénario.
+- `notifications` : reprise à octets identiques des exigences et scénarios archivés.
+- `observability` : reprise à octets identiques des exigences et scénarios archivés.
+- `internationalization` : reprise à octets identiques des exigences et scénarios archivés.
+- `themes` : reprise à octets identiques des exigences et scénarios archivés.
 
 ## Impact
 
-Ce changement ne modifie ni code, ni API, ni dépendance. Il supprime les
-avertissements de conformité RFC 2119 du validateur OpenSpec et fournit une
-convention normative unique pour les évolutions futures.
+Aucune modification de code, de dépendance, d'API ou de comportement. Le canon openspec/specs reste inchangé. L'archivage utilise --skip-specs. La conservation sémantique avant migration reste NON VÉRIFIABLE pour la tâche historique 2.1, faute de préimage immédiate complète.

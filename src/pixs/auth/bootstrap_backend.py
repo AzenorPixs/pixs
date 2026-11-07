@@ -104,6 +104,89 @@ class _Stage:
     configuration: tuple | None = None
 
 
+
+_REUSE_INVENTORY_DOMAIN = b"pixs.auth.reuse.inventory.v1\0"
+_REUSE_KIND = "bootstrap-authorization-consumption"
+_REUSE_GATE_FIELDS = ("identity_id", "version", "core_identity_version", "session_generation",
+                      "credential_generation", "persistence_state", "retention_state",
+                      "governance_ref", "confidentiality", "personal")
+_REUSE_BINDING_FIELDS = ("id", "identity_id", "provider_id", "issuer", "external_subject",
+                         "enabled", "version", "persistence_state", "retention_state",
+                         "governance_ref", "confidentiality", "personal")
+_REUSE_CREDENTIAL_FIELDS = ("id", "binding_id", "enabled", "version", "persistence_state",
+                            "retention_state", "governance_ref", "confidentiality", "personal")
+
+
+@dataclass(frozen=True, slots=True, repr=False)
+class _ReuseStage:
+    physical: object
+    native: tuple
+    savepoints: tuple
+    token: str
+    operation: str
+    authorization_id: object
+    authorization_version: int
+    signature_sha: str
+    inventory_sha: str
+    core_version: int
+    classification: BootstrapAuthClassification
+
+
+def _reuse_inventory_value(value):
+    from uuid import UUID
+
+    if value is None or type(value) in (str, int, bool):
+        return value
+    if type(value) is UUID:
+        return str(value)
+    raise AuthBootstrapBackendError()
+
+
+def _reuse_inventory_canonical(*, facts: BootstrapOperatorFacts, gate: dict,
+                               bindings: tuple, credentials: tuple) -> bytes:
+    if (type(facts) is not BootstrapOperatorFacts or facts.closed_effects != ("REUSE_EXISTING",)
+            or type(gate) is not dict or set(gate) != set(_REUSE_GATE_FIELDS)
+            or type(bindings) is not tuple or type(credentials) is not tuple
+            or not bindings or not credentials):
+        raise AuthBootstrapBackendError()
+    for key in ("version", "core_identity_version", "session_generation", "credential_generation"):
+        if type(gate[key]) is not int or gate[key] < 1:
+            raise AuthBootstrapBackendError()
+    for rows, fields in ((bindings, _REUSE_BINDING_FIELDS), (credentials, _REUSE_CREDENTIAL_FIELDS)):
+        for row in rows:
+            if (type(row) is not dict or set(row) != set(fields)
+                    or type(row["version"]) is not int or row["version"] < 1
+                    or type(row["enabled"]) is not bool):
+                raise AuthBootstrapBackendError()
+    if gate["identity_id"] != parse_identity_reference(facts.target_identity_ref):
+        raise AuthBootstrapBackendError()
+    binding_ids = {row["id"] for row in bindings}
+    if (len(binding_ids) != len(bindings)
+            or len({row["id"] for row in credentials}) != len(credentials)
+            or any(row["identity_id"] != gate["identity_id"] for row in bindings)
+            or any(row["binding_id"] not in binding_ids for row in credentials)):
+        raise AuthBootstrapBackendError()
+    def convert(row):
+        return {key: _reuse_inventory_value(value) for key, value in row.items()}
+    document = {
+        "schema": "pixs.auth.reuse.inventory.v1",
+        "target_identity_ref": facts.target_identity_ref,
+        "installation_ref": facts.installation_ref, "plan_sha256": facts.plan_sha256,
+        "key_id": facts.key_id, "trust_policy_version": facts.trust_policy_version,
+        "gate": convert(gate),
+        "bindings": [convert(row) for row in sorted(bindings, key=lambda row: str(row["id"]))],
+        "credentials": [convert(row) for row in sorted(credentials, key=lambda row: str(row["id"]))],
+    }
+    return json.dumps(document, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False, allow_nan=False).encode("utf-8")
+
+
+def _reuse_inventory_sha256(*, facts: BootstrapOperatorFacts, gate: dict,
+                            bindings: tuple, credentials: tuple) -> str:
+    return hashlib.sha256(_REUSE_INVENTORY_DOMAIN + _reuse_inventory_canonical(
+        facts=facts, gate=gate, bindings=bindings, credentials=credentials)).hexdigest()
+
+
 def _facts(row):
     return BootstrapOperatorFacts(row.operator_subject_ref,
         "pixs.core.bootstrap:"+quote(row.installation_ref, safe=""), BOOTSTRAP_ACTION,
@@ -112,6 +195,48 @@ def _facts(row):
         row.authorization_ref, row.operation_ref, row.target_identity_ref,
         row.target_tenant_ref, row.plan_sha256, row.valid_from, row.expires_at,
         row.key_id, row.trust_policy_version, row.consumed_operation_ref)
+
+
+def _read_bootstrap_target(facts, *, alias, facts_reader):
+    rows = facts_reader.read_facts("IDENTITY", (facts.target_identity_ref,), facts.context, alias, 1)
+    if type(rows) is not tuple or len(rows) != 1 or type(rows[0]) is not CorePageItem:
+        raise AuthBootstrapBackendError()
+    row = rows[0]
+    row.__post_init__()
+    if (row.kind, row.ref, row.context, row.persistence_state) != ("IDENTITY", facts.target_identity_ref, facts.context, "ACTIVE") or dict(row.data).get("state") != "ACTIVE":
+        raise AuthBootstrapBackendError()
+    if dict(row.data).get("identity_id") != str(parse_identity_reference(facts.target_identity_ref)):
+        raise AuthBootstrapBackendError()
+    return row
+
+
+def _read_reuse_target_inventory(facts, *, alias, facts_reader):
+    from pixs.auth import models as m
+
+    target = _read_bootstrap_target(facts, alias=alias, facts_reader=facts_reader)
+    identity = parse_identity_reference(facts.target_identity_ref)
+    try:
+        gate_row = m.AuthAccountGate.objects.using(alias).select_for_update().get(
+            identity_id=identity, persistence_state="ACTIVE")
+    except ObjectDoesNotExist:
+        raise AuthBootstrapBackendError() from None
+    gate_row.full_clean(validate_unique=False, validate_constraints=False)
+    if gate_row.core_identity_version != target.version:
+        raise AuthBootstrapBackendError()
+    gate = {name: getattr(gate_row, name) for name in _REUSE_GATE_FIELDS}
+    bindings = tuple(m.AuthBinding.objects.using(alias).select_for_update().filter(
+        identity_id=identity).order_by("pk").values(*_REUSE_BINDING_FIELDS))
+    ids = tuple(row["id"] for row in bindings)
+    credentials = tuple(m.AuthPasswordCredential.objects.using(alias).select_for_update().filter(
+        binding_id__in=ids).order_by("pk").values(*_REUSE_CREDENTIAL_FIELDS))
+    active = {row["id"] for row in bindings
+              if row["enabled"] is True and row["persistence_state"] == "ACTIVE"}
+    if not any(row["enabled"] is True and row["persistence_state"] == "ACTIVE"
+               and row["binding_id"] in active for row in credentials):
+        raise AuthBootstrapBackendError()
+    digest = _reuse_inventory_sha256(facts=facts, gate=gate,
+                                    bindings=bindings, credentials=credentials)
+    return digest, target.version
 
 
 class AuthBootstrapBackend:
@@ -125,13 +250,13 @@ class AuthBootstrapBackend:
             prepared_credential_digest(prepared)
         self._alias, self._proofs, self._trust, self._facts_reader = alias, proofs, trust, facts_reader
         self._classification, self._clock, self._prepared = classification_source, clock, prepared
-        self._verified_ref, self._stage = None, None
+        self._verified_ref, self._stage, self._reuse_stage = None, None, None
         self._mutex = threading.RLock()
         self._closed = False
 
     def close(self) -> None:
         with self._mutex:
-            self._closed, self._stage, self._verified_ref, self._prepared = True, None, None, None
+            self._closed, self._stage, self._reuse_stage, self._verified_ref, self._prepared = True, None, None, None, None
 
     def _row(self, proof_ref):
         from pixs.auth.models import AuthBootstrapAuthorization
@@ -159,16 +284,8 @@ class AuthBootstrapBackend:
         return facts, hashlib.sha256(proof.signature).hexdigest()
 
     def _target(self, facts):
-        rows = self._facts_reader.read_facts("IDENTITY", (facts.target_identity_ref,), facts.context, self._alias, 1)
-        if type(rows) is not tuple or len(rows) != 1 or type(rows[0]) is not CorePageItem:
-            raise AuthBootstrapBackendError()
-        row = rows[0]
-        row.__post_init__()
-        if (row.kind, row.ref, row.context, row.persistence_state) != ("IDENTITY", facts.target_identity_ref, facts.context, "ACTIVE") or dict(row.data).get("state") != "ACTIVE":
-            raise AuthBootstrapBackendError()
-        if dict(row.data).get("identity_id") != str(parse_identity_reference(facts.target_identity_ref)):
-            raise AuthBootstrapBackendError()
-        return row
+        return _read_bootstrap_target(
+            facts, alias=self._alias, facts_reader=self._facts_reader)
 
     def _check_stage(self, row, signature_sha, *, _expected_stack=None):
         from pixs.auth import models as m
@@ -226,6 +343,11 @@ class AuthBootstrapBackend:
                 if physical is self._stage.physical and native == self._stage.native:
                     self._check_stage(row, signature_sha)
                     return replace(facts, consumed_operation_id=None)
+            if self._reuse_stage is not None and connections[self._alias].in_atomic_block:
+                physical, native = _native(self._alias)
+                if physical is self._reuse_stage.physical and native == self._reuse_stage.native:
+                    self._check_reuse_stage(row, signature_sha)
+                    return replace(facts, consumed_operation_id=None)
             return facts
 
     def stamp(self, *, alias: str, operation_id: str, transaction_token: str, target_identity_ref: str, context: ScopeContext) -> StagedRef:
@@ -282,6 +404,119 @@ class AuthBootstrapBackend:
                     self._stage = None
                     raise
             return StagedRef(operation_id, alias, transaction_token, context, "credential")
+
+
+    def _reuse_target_inventory(self, facts):
+        return _read_reuse_target_inventory(
+            facts, alias=self._alias, facts_reader=self._facts_reader)
+
+    def _check_reuse_stage(self, row, signature_sha, *, _expected_stack=None):
+        stage = self._reuse_stage
+        if stage is None or self._closed or self._stage is not None or self._prepared is not None:
+            raise AuthBootstrapBackendError()
+        physical, native = _native(self._alias)
+        if (physical is not stage.physical or native != stage.native
+                or tuple(connections[self._alias].savepoint_ids) !=
+                   (stage.savepoints if _expected_stack is None else _expected_stack)
+                or row.pk != stage.authorization_id or row.version != stage.authorization_version
+                or row.operation_ref != stage.operation or row.consumed_operation_ref != stage.operation
+                or row.closed_effects != ["REUSE_EXISTING"]
+                or (row.consumed_backend_pid, row.consumed_xid,
+                    row.consumed_db_oid, row.consumed_schema_oid) != stage.native
+                or row.proof_signature_sha256 != stage.signature_sha
+                or signature_sha != stage.signature_sha
+                or not hmac.compare_digest(row.credential_prepared_digest, stage.inventory_sha)):
+            raise AuthBootstrapBackendError()
+        facts = _facts(row)
+        digest, version = self._reuse_target_inventory(facts)
+        classification = self._classification.resolve(
+            context=facts.context, alias=self._alias, operation_id=facts.operation_id)
+        if (type(classification) is not BootstrapAuthClassification
+                or classification != stage.classification or version != stage.core_version
+                or not hmac.compare_digest(digest, stage.inventory_sha)):
+            raise AuthBootstrapBackendError()
+        return None
+
+    def consume_reuse_authorization(self, *, alias: str, operation_id: str,
+                                    transaction_token: str, target_identity_ref: str,
+                                    context: ScopeContext) -> StagedRef:
+        with self._mutex:
+            for value in (alias, operation_id, transaction_token, target_identity_ref):
+                _text(value)
+            if (alias != self._alias or self._verified_ref is None or self._prepared is not None
+                    or self._stage is not None or self._closed):
+                raise AuthBootstrapBackendError()
+            physical, native = _native(alias)
+            savepoints = tuple(connections[alias].savepoint_ids)
+            row = self._row(self._verified_ref)
+            facts, signature_sha = self._current(row)
+            if (facts.operation_id, facts.target_identity_ref, facts.context) != (
+                    operation_id, target_identity_ref, context):
+                raise AuthBootstrapBackendError()
+            if facts.closed_effects != ("REUSE_EXISTING",):
+                raise AuthBootstrapBackendError()
+            if self._reuse_stage is not None:
+                self._check_reuse_stage(row, signature_sha)
+                if self._reuse_stage.token != transaction_token:
+                    raise AuthBootstrapBackendError()
+                return StagedRef(operation_id, alias, transaction_token, context, _REUSE_KIND)
+            if row.consumed_operation_ref is not None:
+                raise AuthBootstrapBackendError()
+            digest, version = self._reuse_target_inventory(facts)
+            if not hmac.compare_digest(digest, row.credential_prepared_digest):
+                raise AuthBootstrapBackendError()
+            classification = self._classification.resolve(
+                context=context, alias=alias, operation_id=operation_id)
+            if type(classification) is not BootstrapAuthClassification:
+                raise AuthBootstrapBackendError()
+            classification.values()
+            now = self._clock.now()
+            if (type(now) is not datetime.datetime or now.tzinfo is not datetime.timezone.utc
+                    or not facts.valid_from <= now < facts.expires_at):
+                raise AuthBootstrapBackendError()
+            with transaction.atomic(using=alias):
+                row.verified_at, row.proof_signature_sha256 = now, signature_sha
+                row.consumed_at, row.consumed_operation_ref = now, operation_id
+                row.consumed_backend_pid, row.consumed_xid, row.consumed_db_oid, row.consumed_schema_oid = native
+                row.version += 1
+                row.updated_at = now
+                row.full_clean(validate_unique=False, validate_constraints=False)
+                row.save(using=alias, update_fields=[
+                    "verified_at", "proof_signature_sha256", "consumed_at", "consumed_operation_ref",
+                    "consumed_backend_pid", "consumed_xid", "consumed_db_oid",
+                    "consumed_schema_oid", "version", "updated_at"])
+                self._reuse_stage = _ReuseStage(
+                    physical, native, savepoints, transaction_token, operation_id, row.pk,
+                    row.version, signature_sha, digest, version, classification)
+                try:
+                    self._check_reuse_stage(
+                        row, signature_sha, _expected_stack=tuple(connections[alias].savepoint_ids))
+                except BaseException:
+                    self._reuse_stage = None
+                    raise
+            return StagedRef(operation_id, alias, transaction_token, context, _REUSE_KIND)
+
+    def verify_reuse_staged(self, proof: TransactionProof) -> None:
+        with self._mutex:
+            if type(proof) is not TransactionProof or self._reuse_stage is None:
+                raise AuthBootstrapBackendError()
+            proof.__post_init__()
+            stage = self._reuse_stage
+            expected = StagedRef(stage.operation, self._alias, stage.token,
+                                 ScopeContext(ScopeType.PLATFORM), _REUSE_KIND)
+            if ((proof.operation_id, proof.alias, proof.transaction_token, proof.context) !=
+                    (expected.operation_id, expected.alias, expected.transaction_token, expected.context)
+                    or tuple(ref for ref in proof.staged if ref.staged_kind == _REUSE_KIND) != (expected,)):
+                raise AuthBootstrapBackendError()
+            row = self._row(self._verified_ref)
+            _facts_value, signature_sha = self._current(row)
+            now = self._clock.now()
+            if (type(now) is not datetime.datetime or now.tzinfo is not datetime.timezone.utc
+                    or not row.consumed_at <= proof.prepared_at <= now):
+                raise AuthBootstrapBackendError()
+            self._check_reuse_stage(row, signature_sha)
+            return None
+
 
     def verify_staged(self, proof: TransactionProof) -> None:
         with self._mutex:

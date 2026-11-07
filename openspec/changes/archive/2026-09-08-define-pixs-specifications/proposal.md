@@ -1,3 +1,7 @@
+# SP01 — Définition initiale des spécifications Pixs
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Pixs ne dispose d'aucune spécification OpenSpec exploitable (`openspec/specs/` vide). PROJECT.md §34, TECHNICAL.md et BUILD.md définissent le cap mais ne sont pas des comportements vérifiables. Il faut un socle de spécifications par capacité avant tout code, à achever ou suspendre proprement avant 06:00.

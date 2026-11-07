@@ -1,4 +1,6 @@
-# Proposition — Vocabulaire Enum des états de persistance des données
+# C71 — Proposition — Vocabulaire Enum des états de persistance des données
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

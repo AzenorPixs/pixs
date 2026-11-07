@@ -1,3 +1,7 @@
+# B51 — Transaction serveur d’admission Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Les primitives persistantes Bulk existent, mais leur assemblage d’admission serveur B01 n’est pas livré. Le retour de `operation_id` doit suivre l’engagement atomique de l’opération, de la demande, du premier Job et de leur liaison.

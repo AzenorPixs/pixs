@@ -304,13 +304,17 @@ def lock_scopes(alias: str, scopes: tuple[str, ...], *, shared: bool = False) ->
             raise CoreServiceError("VERROU_CONCURRENT") from None
 
 
-def published_profile(ports: object, request: Request, decision: Decision, *, alias: str, operation_id: str, token: str) -> tuple[GovernanceAttestation | None, bool, bool]:
+def _published_profile_for_owner(ports: object, request: Request, decision: Decision, *, alias: str, operation_id: str, token: str, expected_owner: str) -> tuple[GovernanceAttestation | None, bool, bool]:
     if type(ports) not in (CoreServicePorts, BootstrapServicePorts):
         raise CoreServiceError("PORTS_INVALIDES") from None
     if type(request) is not Request or type(decision) is not Decision:
         raise CoreServiceError("ENTREES_INVALIDES") from None
     if not _is_id(alias) or not _is_id(operation_id) or not _is_id(token):
         raise CoreServiceError("IDENTIFIANTS_INVALIDES") from None
+    if not _is_id(expected_owner):
+        raise CoreServiceError("ENTREES_INVALIDES") from None
+    if type(ports) is BootstrapServicePorts and expected_owner != _OWNER:
+        raise CoreServiceError("PORTS_INVALIDES") from None
     try:
         audit_waived = ports.decider.audit_waived(request, decision, alias=alias, operation_id=operation_id)
         governance_waived = ports.decider.governance_waived(request, decision, alias=alias, operation_id=operation_id)
@@ -335,7 +339,7 @@ def published_profile(ports: object, request: Request, decision: Decision, *, al
         attestation.__post_init__()
     except CoreInputInvalid as error:
         raise CoreServiceError("ATTESTATION_INVALIDE") from error
-    if object.__getattribute__(object.__getattribute__(attestation, "profile"), "owner_component") != _OWNER:
+    if object.__getattribute__(object.__getattribute__(attestation, "profile"), "owner_component") != expected_owner:
         raise CoreServiceError("ATTESTATION_INVALIDE") from None
     if object.__getattribute__(attestation, "context") != object.__getattribute__(request, "context"):
         raise CoreServiceError("ATTESTATION_DIVERGENTE") from None
@@ -345,6 +349,10 @@ def published_profile(ports: object, request: Request, decision: Decision, *, al
     if object.__getattribute__(attestation, "attested_at") > now:
         raise CoreServiceError("ATTESTATION_FUTURE") from None
     return (attestation, audit_waived, False)
+
+
+def published_profile(ports: object, request: Request, decision: Decision, *, alias: str, operation_id: str, token: str) -> tuple[GovernanceAttestation | None, bool, bool]:
+    return _published_profile_for_owner(ports, request, decision, alias=alias, operation_id=operation_id, token=token, expected_owner=_OWNER)
 
 
 def check_stage(ref: object, envelope: CommandEnvelope, *, alias: str, token: str) -> StagedRef:

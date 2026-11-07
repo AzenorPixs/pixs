@@ -1,3 +1,7 @@
+# C84 — Invocation de la projection d’audit v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 La RSMP validée et publiée en référence 27 définit invoke_audit_projection. Le contrôle structurel AuditDecisionProjectionV1 existe, mais aucune opération distincte ne valide la projection avant d'invoquer le port PDP fourni. Ce change implémente uniquement ce contrat borné, sans assimiler un retour True à une preuve d'audit persistant ou d'accès autorisé.

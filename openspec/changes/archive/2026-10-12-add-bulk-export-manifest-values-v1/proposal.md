@@ -1,3 +1,7 @@
+# B34 — Valeurs des manifestes d’export Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le runtime Bulk v1 doit garder en mémoire les valeurs logiques `ExportManifestV1` avant toute finalisation B12, sans port, ORM, stockage, export, URL, transaction, horloge, gouvernance, autorisation, consistance résolue, hash calculé ni preuve. Il manque la garde exacte des dix-sept clés avec capture owned immuable.

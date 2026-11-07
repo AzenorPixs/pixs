@@ -63,7 +63,7 @@ if _CHILD_GUARDS in sys.argv:
     from django.apps import apps as _apps
     from django.conf import settings as _settings
 
-    _REQUIRED = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt")
+    _REQUIRED = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt", "pixs.dns")
 
     class ProofPortDouble:
         def __init__(self, source):
@@ -323,7 +323,7 @@ if _CHILD_BOUNDARY in sys.argv:
             from pixs.kernel.config.resolution import SecretReference
             from tests.unit.test_backend_host_plan import texts, SyntheticProofPort
             source_texts = texts()
-            required = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt")
+            required = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt", "pixs.dns")
             plan = prepare_host_plan(manifest_texts=source_texts, official_ids=required,
                 required_ids=required, attestation_port=SyntheticProofPort(source_texts))
             template = build_settings_template(profile="web",

@@ -1,4 +1,6 @@
-# proposal — add-bulk-publisher-contract-validation-v1
+# B47 — proposal — add-bulk-publisher-contract-validation-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 Le tableau `Ports serveur déclarés` de `bulk-operations` déclare `PublisherPort/publish_declared_event`, mais `bulk_trusted_ports.py` ne fournit aucune validation structurelle correspondante, contrairement aux quatre ports optionnels existants.

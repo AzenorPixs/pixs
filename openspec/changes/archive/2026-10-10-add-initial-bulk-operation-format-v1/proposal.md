@@ -1,3 +1,7 @@
+# B18 — Format des opérations en masse v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 BulkOperationFormat v1 est désormais défini dans la spécification validée bulk-operations, mais sa représentation et sa validation pure ne sont pas implémentées. Ce change réalise seulement ce profil préparatoire.

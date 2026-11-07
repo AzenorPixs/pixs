@@ -1,4 +1,6 @@
-# Proposition — Représentation déclarative initiale de corrélation des travaux
+# C67 — Proposition — Représentation déclarative initiale de corrélation des travaux
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

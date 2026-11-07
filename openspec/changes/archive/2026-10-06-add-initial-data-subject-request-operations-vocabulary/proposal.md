@@ -1,4 +1,6 @@
-# Proposition — Vocabulaire Enum des opérations de demande relative aux données
+# C65 — Proposition — Vocabulaire Enum des opérations de demande relative aux données
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

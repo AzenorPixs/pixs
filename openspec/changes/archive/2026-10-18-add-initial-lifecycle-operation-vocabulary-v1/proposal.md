@@ -1,4 +1,6 @@
-# Proposal — add-initial-lifecycle-operation-vocabulary-v1
+# C94 — Proposal — add-initial-lifecycle-operation-vocabulary-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

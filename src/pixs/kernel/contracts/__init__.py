@@ -27,3 +27,33 @@ __all__ = [
     "check_retirement",
     "require_category",
 ]
+
+from .time import (
+    REFUSAL_REASONS,
+    TIME_CONTRACT_ID,
+    TIME_CONTRACT_VERSION,
+    TIME_DESCRIPTOR,
+    TimeDiagnostic,
+    TimeDoubtError,
+    TimeOutcome,
+    TimeProducer,
+    TimePublicRef,
+    TimeRefusedError,
+    UtcInstant,
+    validate_utc,
+)
+
+__all__ = __all__ + [
+    "REFUSAL_REASONS",
+    "TIME_CONTRACT_ID",
+    "TIME_CONTRACT_VERSION",
+    "TIME_DESCRIPTOR",
+    "TimeDiagnostic",
+    "TimeDoubtError",
+    "TimeOutcome",
+    "TimeProducer",
+    "TimePublicRef",
+    "TimeRefusedError",
+    "UtcInstant",
+    "validate_utc",
+]

@@ -1,4 +1,6 @@
-# Proposition — Vocabulaire des variantes d'opération en masse
+# B14 — Proposition — Vocabulaire des variantes d'opération en masse
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

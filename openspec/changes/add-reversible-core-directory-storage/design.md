@@ -1,5 +1,15 @@
 # Conception — stockage Core réversible
 
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Proposition remplacée — non sélectionnable
+
+Plan ACL-PIXS-2026-10-31-E3-R1 validé. L'objectif historique de rendre LDAP souverain pour les données Core est remplacé par le modèle PG souveraine. LDAP et Kerberos restent obligatoires par Domaine ; LDAP porte l'état Kerberos durable normal et la reconstruction complète suit une procédure d'urgence critique selon profil et sauvegardes.
+
+Ce dossier et son code sont conservés pour traçabilité. Son objectif historique ne doit pas être sélectionné pour réalisation ni ses deltas synchronisés comme cible courante. Les besoins de publication et services sont traités par O08/O09/O38/O39 et le référentiel validé. Aucun objectif nouveau n'est recyclé sous O41.
+
+Les tâches, cases et sous-lots ci-dessous restent les constats historiques et ne sont ni cochés ni effacés. Aucun retrait de fichier, archivage ou statut natif fictif n'est créé. Les anciennes propositions normatives restent conservées et explicitement hors cible courante.
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
+
 ## Statut et constat
 
 PROPOSITION_DOCUMENTAIRE du 19 octobre 2026. Le canon [Core](../../specs/core/spec.md) impose PostgreSQL comme source de vérité ; [directory-projections](../../specs/directory-projections/spec.md) interdit à son rôle de projection de stocker ACL ou de devenir autoritatif. Les changes O08 et de lecture fraîche préparent une projection, pas une migration de stockage. Le présent dossier ajoute ce choix explicitement, avec deltas proposés non synchronisés. Aucun code, donnée ou service n'est modifié.

@@ -1,4 +1,6 @@
-# Proposition — add-initial-frontend-manifest-facet-v1
+# C85 — Proposition — add-initial-frontend-manifest-facet-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Objectif
 Implémenter le profil FrontendManifestFacet v1 déjà validé dans le canon frontend (quatre exigences, sept scénarios, référence23), via le modèle commun ComponentManifest.

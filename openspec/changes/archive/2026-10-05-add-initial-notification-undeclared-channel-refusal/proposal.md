@@ -1,4 +1,6 @@
-# Proposition — Refus déclaratif explicite du canal de notification non déclaré
+# O57 — Proposition — Refus déclaratif explicite du canal de notification non déclaré
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

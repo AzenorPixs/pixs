@@ -1,5 +1,484 @@
 # Exigences de réalisation — C13
 
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Références courantes du périmètre validé
+
+Les copies plus anciennes conservées dans ce fichier sont historiques. Seuls les blocs ci-dessous correspondent au référentiel de la cible consolidée. Ils ne sont pas des deltas à synchroniser et ne prouvent aucune implémentation.
+
+| Capacité | Exigence | Scénarios | Référence |
+|---|---|---:|---|
+| pixs-instance | Identité logique et référentiel commun | 1 | pixs-instance-b9b134df059f |
+| pixs-instance | Modes Standalone ZT et Domaine | 2 | pixs-instance-18485b8d2051 |
+| pixs-instance | ZT entièrement initialisé avant Domaine | 2 | pixs-instance-81a8ae9c0556 |
+| pixs-instance | Minima et contrôleurs distincts | 1 | pixs-instance-b189f9cd6424 |
+| pixs-instance | Références PG avant et après Domaine | 1 | pixs-instance-9baefb0c5ae7 |
+| pixs-instance | Maintenance des écritures pour la transition | 1 | pixs-instance-ebdd233f14af |
+| pixs-instance | Administration globale par identités habilitées | 1 | pixs-instance-8c964dc84f92 |
+| pixs-instance | Absence de retour Domaine Standalone V1 | 1 | pixs-instance-c159a59d2125 |
+| pixs-instance | Habilitations Instance et domaines | 1 | pixs-instance-b7a2b5d23968 |
+| pixs-domains | Identité et FQDN explicites | 1 | pixs-domains-02f0f83aed5e |
+| pixs-domains | ZT obligatoire dédié ou partagé | 2 | pixs-domains-686f4e13ff70 |
+| pixs-domains | Isolation dans un ZT partagé | 1 | pixs-domains-bd2991264b73 |
+| pixs-domains | Services minimaux par Domaine | 1 | pixs-domains-c9ce061e2b23 |
+| pixs-domains | Tenants et propriété des ressources | 2 | pixs-domains-784b3416b755 |
+| pixs-domains | Individus et identités multiples | 1 | pixs-domains-8e5157150f7c |
+| pixs-domains | Transferts fonctionnels contrôlés V1 | 1 | pixs-domains-ba4dfa97bf7d |
+| pixs-domains | Structures organisationnelles non transférables V1 | 1 | pixs-domains-2d4b91559aa3 |
+| pixs-domains | Retrait du premier Domaine | 1 | pixs-domains-f9d0dad1d882 |
+| pixs-domains | Approbations internes et externes | 1 | pixs-domains-94814997f512 |
+| pixs-domains | Références PG et services de Domaine en mode normal ou critique | 1 | pixs-domains-d8fce09ab784 |
+| organization-charts | Trois référentiels propriétaires | 1 | organization-charts-c0cec12f0548 |
+| organization-charts | Hiérarchie structurelle et affiliations | 1 | organization-charts-43a3193484d2 |
+| organization-charts | Source explicite de chaque miroir | 1 | organization-charts-8369220fda62 |
+| organization-charts | Structure seule par défaut | 1 | organization-charts-3f5fd5146131 |
+| organization-charts | Admission et droits séparés du miroir | 1 | organization-charts-a06107e07b95 |
+
+### Référence courante pixs-instance-b9b134df059f
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 11. SHA-256 : `b9b134df059f8bf6661d4623bae95e040e6f1461c35dd19d5d91ec4cd68c99bc`.
+
+Scénarios : Ajout de PBO.
+
+~~~~text
+### Requirement: Identité logique et référentiel commun
+
+L'Instance Pixs MUST posséder une identité stable distincte de ses PBO, processus, hôtes et ZT. Tous ses PBO MUST utiliser le même référentiel d'individus Core ; un nouveau PBO MUST NOT créer une liste concurrente d'individus.
+
+#### Scenario: Ajout de PBO
+
+- **WHEN** un second PBO est admis dans la même Instance
+- **THEN** il référence les individus communs tout en conservant les données et responsabilités de ses modules.
+~~~~
+
+### Référence courante pixs-instance-18485b8d2051
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 20. SHA-256 : `18485b8d20510d544246b6d9c7efd51c9479aedb4fd4f839499c3e12bed5f82b`.
+
+Scénarios : Transport pré-domaine; Mode ZT.
+
+~~~~text
+### Requirement: Modes Standalone ZT et Domaine
+
+L'Instance MUST distinguer Standalone sans Domaine et avec une application PBO logique éventuellement redondée, ZT sans Domaine avec un ZT d'Instance, et Domaine avec un ou plusieurs Domaines utilisant ZT. Plusieurs PBO fonctionnellement distincts MAY exister en ZT et Domaine. Ces modes MUST rester distincts de Nuitka standalone et de l'activation du transport PZT.
+
+#### Scenario: Transport pré-domaine
+
+- **WHEN** Standalone utilise PZT pour joindre PA
+- **THEN** le mode reste Standalone et les contrôles réseau et applicatifs restent nécessaires.
+
+#### Scenario: Mode ZT
+
+- **WHEN** ZT est initialisé sans création de Domaine
+- **THEN** le référentiel des individus et les données pré-domaine restent au niveau Instance.
+~~~~
+
+### Référence courante pixs-instance-81a8ae9c0556
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 34. SHA-256 : `81a8ae9c0556560bcabef991ba7a8b2259c107021aadecec007049cbc2a8898f`.
+
+Scénarios : ZT incomplet; Préconditions vérifiées.
+
+~~~~text
+### Requirement: ZT entièrement initialisé avant Domaine
+
+La création du premier Domaine MUST exiger un mode ZT complètement initialisé, avec rôles essentiels opérationnels, identités, stockage et politiques vérifiés. Un état administratif créé ou un processus vivant MUST NOT suffire. La transition MUST être explicite et suivie durablement.
+
+#### Scenario: ZT incomplet
+
+- **WHEN** le rôle PKIZT essentiel manque lors de la demande du premier Domaine
+- **THEN** la transition reste bloquée avec les capacités manquantes identifiées.
+
+#### Scenario: Préconditions vérifiées
+
+- **WHEN** le ZT et les autres préconditions de transition sont vérifiés
+- **THEN** la procédure autorisée peut préparer puis activer le premier Domaine.
+~~~~
+
+### Référence courante pixs-instance-b189f9cd6424
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 48. SHA-256 : `b189f9cd6424f6b3127b840e6d069becb563c5a7942465fed2bd469482045888`.
+
+Scénarios : Contrôleurs regroupés.
+
+~~~~text
+### Requirement: Minima et contrôleurs distincts
+
+Chaque Instance MUST disposer d'au moins un PBO et un PA, déployés selon les environnements à administrer. Les contrôleurs d'Instance et de Domaine MUST être distingués du CZT. Leur regroupement ou séparation sur des PBO MUST être configurable sans fusion de bases ni habilitations.
+
+#### Scenario: Contrôleurs regroupés
+
+- **WHEN** un PBO assure les fonctions Instance et Domaine
+- **THEN** les propriétaires des bases, identités et autorisations restent distincts.
+~~~~
+
+### Référence courante pixs-instance-9baefb0c5ae7
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 57. SHA-256 : `9baefb0c5ae783cb168944c78c34b6f7bc7814b244f9c8888e21389eef0e6e37`.
+
+Scénarios : Activation du premier Domaine.
+
+~~~~text
+### Requirement: Références PG avant et après Domaine
+
+Avant le premier Domaine, PG Instance MUST porter individus, identités numériques, organigrammes Core, groupes, ACL et données métier pré-domaine. Après activation, PG Instance MUST conserver les individus et données communes sans identité numérique d'Instance ; les identités et données reprises MUST appartenir à PG du premier Domaine, avec identifiants et relations préservés.
+
+#### Scenario: Activation du premier Domaine
+
+- **WHEN** le transfert pré-domaine est confirmé
+- **THEN** l’identité de Domaine devient utilisable selon son profil et l’ancienne identité d’Instance ne reste pas une autre voie de connexion.
+~~~~
+
+### Référence courante pixs-instance-ebdd233f14af
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 66. SHA-256 : `ebdd233f14afcc75b3a6a94757dd20a6eb5ec1c9e93b692f109025695c0b8e33`.
+
+Scénarios : Interruption de transfert.
+
+~~~~text
+### Requirement: Maintenance des écritures pour la transition
+
+La transition pré-domaine vers Domaine MUST planifier une maintenance des écritures, vérifier données, relations et authentification cible et traiter toute issue inconnue avant reprise. Elle MUST NOT déclarer la bascule réussie sur un accusé de réception ou un seul effet technique PA.
+
+#### Scenario: Interruption de transfert
+
+- **WHEN** le résultat du transfert ou de son engagement est inconnu
+- **THEN** la procédure réconcilie les états propriétaires avant toute répétition ou reprise des écritures.
+~~~~
+
+### Référence courante pixs-instance-8c964dc84f92
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 75. SHA-256 : `8c964dc84f92c940b5c3ba094d124ffaeb003db84c0f5617cc9487e8d70c38e3`.
+
+Scénarios : Domaine d’authentification non habilité.
+
+~~~~text
+### Requirement: Administration globale par identités habilitées
+
+Après activation du premier Domaine, l'administration globale MUST utiliser des identités de Domaines explicitement habilitées. Plusieurs Domaines d'authentification MAY être autorisés. Une panne LDAP/Kerberos MAY être traitée par un profil PG Domaine explicitement autorisé et qualifié ; elle MUST NOT recréer d'identité numérique d'Instance ni réduire l'assurance exigée.
+
+#### Scenario: Domaine d’authentification non habilité
+
+- **WHEN** un utilisateur authentifié par un Domaine non habilité demande l’administration globale
+- **THEN** la demande est refusée malgré la validité de son authentification.
+~~~~
+
+### Référence courante pixs-instance-c159a59d2125
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 84. SHA-256 : `c159a59d212509364156279d995f289887b68dc5fde0e1bc12244c0f317d5cfa`.
+
+Scénarios : Ancienne sauvegarde.
+
+~~~~text
+### Requirement: Absence de retour Domaine Standalone V1
+
+Après activation du premier Domaine, l'Instance MUST rester en mode Domaine en V1. Panne, restauration, retrait de domaine ou révocation MUST NOT provoquer un retour Standalone ou réactiver les anciennes identités. Les autres transitions inverses non spécifiées MUST NOT être introduites implicitement.
+
+#### Scenario: Ancienne sauvegarde
+
+- **WHEN** une reprise utilise des données antérieures à la transition
+- **THEN** les contrôles empêchent de rétablir le mode et les identités Standalone devenus caducs.
+~~~~
+
+### Référence courante pixs-instance-b7a2b5d23968
+
+Source : [pixs-instance](../../specs/pixs-instance/spec.md), ligne 93. SHA-256 : `b7a2b5d2396839fee82af4ccc545e2c2c542dcbef6458888992a032fce8e929f`.
+
+Scénarios : PBO mutualisé.
+
+~~~~text
+### Requirement: Habilitations Instance et domaines
+
+Les habilitations globales Instance et celles de chaque Domaine MUST être séparées et vérifiées. Le partage d'un PBO, PA, stockage physique ou réseau MUST NOT les transmettre implicitement.
+
+#### Scenario: PBO mutualisé
+
+- **WHEN** un administrateur d’un Domaine utilise un PBO servant plusieurs Domaines
+- **THEN** son action reste limitée aux périmètres explicitement autorisés.
+~~~~
+
+### Référence courante pixs-domains-02f0f83aed5e
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 11. SHA-256 : `02f0f83aed5e7e038716c3f91cc0b8f31edb2c5ea812cd6dbe8b37b700589e39`.
+
+Scénarios : Racine déjà utilisée.
+
+~~~~text
+### Requirement: Identité et FQDN explicites
+
+Chaque Domaine MUST posséder une identité stable et un FQDN DNS explicitement choisi. Deux Domaines d'une même Instance MUST NOT déclarer le même FQDN exact. La position DNS MUST NOT créer d'approbation ni d'autorisation implicite.
+
+#### Scenario: Racine déjà utilisée
+
+- **WHEN** un Domaine demande le FQDN exact d’un autre Domaine de l’Instance
+- **THEN** la déclaration est refusée avant activation.
+~~~~
+
+### Référence courante pixs-domains-686f4e13ff70
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 20. SHA-256 : `686f4e13ff70e8af073de2ac6f80d25d553a84feb6cec9fec11dc0f13c5d93cc`.
+
+Scénarios : Deux sous-domaines; Faux suffixe.
+
+~~~~text
+### Requirement: ZT obligatoire dédié ou partagé
+
+Chaque Domaine MUST utiliser une instance ZT. Il MAY créer son ZT ou utiliser celui de l'Instance lorsque son FQDN est égal au FQDN ZT ou en est un sous-domaine par labels DNS. Plusieurs Domaines admissibles MAY utiliser ce même ZT ; le partage MUST rester explicitement déclaré.
+
+#### Scenario: Deux sous-domaines
+
+- **WHEN** association.pixs.fr et recherche.pixs.fr choisissent le ZT pixs.fr
+- **THEN** ils peuvent être rattachés avec des périmètres distincts.
+
+#### Scenario: Faux suffixe
+
+- **WHEN** association-autrepixs.fr demande le ZT pixs.fr en invoquant un suffixe de caractères
+- **THEN** la condition hiérarchique DNS est refusée.
+~~~~
+
+### Référence courante pixs-domains-bd2991264b73
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 34. SHA-256 : `bd2991264b73d60314f90b7bb3d936bee405c507992fe50e7ff2e06fb1da6fc6`.
+
+Scénarios : Même ZT sans politique.
+
+~~~~text
+### Requirement: Isolation dans un ZT partagé
+
+Les politiques MUST pouvoir être propres à un Domaine ou partagées explicitement. Les communications inter-domaines MUST être refusées par défaut et nécessiter une politique explicite. Le partage du ZT MUST NOT fusionner les identités, ACL applicatives, annuaires ou realms.
+
+#### Scenario: Même ZT sans politique
+
+- **WHEN** deux acteurs de Domaines différents partagent ZT sans autorisation de communication
+- **THEN** l’initiation inter-domaines est refusée.
+~~~~
+
+### Référence courante pixs-domains-c9ce061e2b23
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 43. SHA-256 : `c9ce061e2b23d3859a4cb92e01635334908d63f103ce5c9db7b2b2c1d5a053c5`.
+
+Scénarios : ZT partagé et KZT manquant.
+
+~~~~text
+### Requirement: Services minimaux par Domaine
+
+Chaque Domaine MUST disposer de sa PG indépendante, de ses organigrammes organisationnel/fonctionnel, d'au moins un LZT/OpenLDAP et d'un KZT/MIT Kerberos. Chaque Domaine MUST déclarer son realm, unique dans l'Instance. Les minima CZT/SZT/RZT/STZT/DZT/PKIZT MUST être évalués par ZT réel, pas dupliqués par déduction pour un ZT partagé.
+
+#### Scenario: ZT partagé et KZT manquant
+
+- **WHEN** un nouveau Domaine partage un ZT opérationnel mais ne possède aucun KZT
+- **THEN** ses services de Domaine restent non opérationnels tant que ce minimum manque.
+~~~~
+
+### Référence courante pixs-domains-784b3416b755
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 52. SHA-256 : `784b3416b7559266c7a1b38d15a475ebd8b05a90e2f00eb976a8bf198703e0f4`.
+
+Scénarios : Domaine sans tenant; Tenant rattaché deux fois.
+
+~~~~text
+### Requirement: Tenants et propriété des ressources
+
+Un Domaine MUST accepter zéro, un ou plusieurs tenants ; chaque tenant MUST appartenir à un seul Domaine après transition. Les scopes enfants MUST rester rattachés à leur tenant sans cycles. Les propriétés Instance, Domaine et Tenant MUST être distinctes et n'accorder aucun droit implicite.
+
+#### Scenario: Domaine sans tenant
+
+- **WHEN** un Domaine opérationnel ne contient aucun tenant
+- **THEN** ses services et son rattachement ZT restent valides.
+
+#### Scenario: Tenant rattaché deux fois
+
+- **WHEN** une mutation rattache simultanément un tenant à deux Domaines
+- **THEN** elle est refusée sans ambiguïté de propriétaire.
+~~~~
+
+### Référence courante pixs-domains-8e5157150f7c
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 66. SHA-256 : `8e5157150f7c0a1801085b1c19bdd9c69fe4c345dcba246bb25ed2aba4727793`.
+
+Scénarios : Affiliation sans admission.
+
+~~~~text
+### Requirement: Individus et identités multiples
+
+Un individu Core MUST pouvoir être affilié à plusieurs Domaines et tenants et posséder plusieurs identités par Domaine. Chaque participation MUST conserver ses admissions, profils et habilitations. Une affiliation Core MUST NOT valoir admission ZT, sauf politique automatique explicite.
+
+#### Scenario: Affiliation sans admission
+
+- **WHEN** un individu est affilié à Recherche sans politique d’admission automatique
+- **THEN** son appartenance ZT n’est pas créée par cette seule affiliation.
+~~~~
+
+### Référence courante pixs-domains-ba4dfa97bf7d
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 75. SHA-256 : `ba4dfa97bf7dfe8389d5a8f4597671aa9630b9e24d13f8a2ea071bc82dc36b12`.
+
+Scénarios : Tenant transféré.
+
+~~~~text
+### Requirement: Transferts fonctionnels contrôlés V1
+
+La V1 MUST prévoir les transferts autorisés d'identités numériques, données métier et tenants entre Domaines de la même Instance, avec vérification des dépendances, continuité des références et réévaluation des droits cibles. Le transfert MUST NOT copier implicitement des autorisations ni être présenté comme déplacement d'une brique exécutable.
+
+#### Scenario: Tenant transféré
+
+- **WHEN** un transfert de tenant est engagé entre deux Domaines
+- **THEN** son identité est conservée, son propriétaire est unique et les habilitations de destination sont réévaluées.
+~~~~
+
+### Référence courante pixs-domains-2d4b91559aa3
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 84. SHA-256 : `2d4b91559aa387da2cb8be333d66674748a755850567e45bba8b742811112985`.
+
+Scénarios : Transfert de département.
+
+~~~~text
+### Requirement: Structures organisationnelles non transférables V1
+
+La V1 MUST NOT proposer le transfert fonctionnel de structures organisationnelles entre Domaines. Miroitage autorisé et réorganisation interne MUST rester distincts d'un tel transfert.
+
+#### Scenario: Transfert de département
+
+- **WHEN** une demande V1 vise à transférer un département entre Domaines
+- **THEN** elle est refusée comme hors périmètre sans modifier les structures source ou cible.
+~~~~
+
+### Référence courante pixs-domains-f9d0dad1d882
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 93. SHA-256 : `f9d0dad1d882e815cf4d5b665b2037e6591dcb271ed3dd1e9f7605fcd4759334`.
+
+Scénarios : Dernier Domaine.
+
+~~~~text
+### Requirement: Retrait du premier Domaine
+
+Le premier Domaine MAY être retiré par procédure explicite si au moins un autre Domaine est opérationnel et si données, identités, authentification globale et dépendances sont traitées. Le retrait MUST NOT rétablir Standalone, laisser l'administration sans identité admissible ou retirer un ZT partagé encore requis.
+
+#### Scenario: Dernier Domaine
+
+- **WHEN** le retrait vise le seul Domaine opérationnel
+- **THEN** il est refusé sans retour implicite en Standalone.
+~~~~
+
+### Référence courante pixs-domains-94814997f512
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 102. SHA-256 : `94814997f512912fbd83b186f7db3bf2f0771d0e37c0e5ecfc7fe81a41c5562f`.
+
+Scénarios : Individu externe reconnu.
+
+~~~~text
+### Requirement: Approbations internes et externes
+
+Les Domaines MUST pouvoir établir des approbations dans une même Instance ou entre Instances selon zt-instances. Un individu externe MUST conserver son identité d'origine ; la cible MUST conserver une référence et décider séparément de ses admissions et droits. Les composantes DNS et Kerberos MUST être explicites.
+
+#### Scenario: Individu externe reconnu
+
+- **WHEN** une approbation permet de reconnaître l’identité externe
+- **THEN** la reconnaissance ne crée pas d’identité locale indépendante ou de droits automatiques.
+~~~~
+
+### Référence courante pixs-domains-d8fce09ab784
+
+Source : [pixs-domains](../../specs/pixs-domains/spec.md), ligne 111. SHA-256 : `d8fce09ab78488325720197abff25a3f229a41ca7f6e38dac7da16c02df7b924`.
+
+Scénarios : Reconstruction de Domaine.
+
+~~~~text
+### Requirement: Références PG et services de Domaine en mode normal ou critique
+
+LZT et KZT MUST être obligatoires par Domaine. PG MUST rester souveraine pour les données de référence Pixs ; LDAP MUST porter l'état opérationnel Kerberos durable en mode normal. Une reconstruction complète depuis PG MUST suivre le mode critique autorisé, avec restauration protégée ou recréation/reprovisionnement selon profil et sauvegardes disponibles. La réplication LDAP MUST NOT remplacer la référence Core PG.
+
+#### Scenario: Reconstruction de Domaine
+
+- **WHEN** tous les annuaires du Domaine sont perdus
+- **THEN** le Domaine applique sa procédure critique, distingue données de référence et clés récupérées/recréées, puis vérifie la remise en service.
+~~~~
+
+### Référence courante organization-charts-c0cec12f0548
+
+Source : [organization-charts](../../specs/organization-charts/spec.md), ligne 11. SHA-256 : `c0cec12f054833f37f9ef4e5d2ae8e89737e329ea5b1f9ce56459b44fffdf241`.
+
+Scénarios : ZT partagé.
+
+~~~~text
+### Requirement: Trois référentiels propriétaires
+
+Core MUST gérer l'organigramme organisationnel et le fonctionnel, par Domaine après transition. CZT MUST gérer l'organigramme structurel de son ZT. PBO MUST présenter trois volets distincts ; un ZT partagé MUST conserver les périmètres des Domaines sans dupliquer une racine ZT par Domaine.
+
+#### Scenario: ZT partagé
+
+- **WHEN** deux Domaines utilisent le même CZT
+- **THEN** leurs volets Core restent propres et les périmètres structurels sont présentés dans le ZT commun.
+~~~~
+
+### Référence courante organization-charts-43a3193484d2
+
+Source : [organization-charts](../../specs/organization-charts/spec.md), ligne 20. SHA-256 : `43a3193484d2bee52ef6f44cfe182b5c6b34e2cfb44d4f63bcd89d3ed21ebcd1`.
+
+Scénarios : Deux parents structurels.
+
+~~~~text
+### Requirement: Hiérarchie structurelle et affiliations
+
+L'organigramme ZT MUST posséder une racine unique, au plus un parent structurel par structure, aucun cycle et des affiliations multiples possibles. Chaque acteur technique MUST avoir une structure responsable de référence ; chaque individu MUST avoir un rattachement principal par ZT. Ces relations MUST rester distinctes des permissions et de la hiérarchie PKI.
+
+#### Scenario: Deux parents structurels
+
+- **WHEN** une structure ZT reçoit deux parents structurels
+- **THEN** la mutation est refusée sans empêcher les affiliations transversales autorisées.
+~~~~
+
+### Référence courante organization-charts-8369220fda62
+
+Source : [organization-charts](../../specs/organization-charts/spec.md), ligne 29. SHA-256 : `8369220fda6234df9ed1556288de294305748cfda265cac54698c3df3fa38184`.
+
+Scénarios : Écriture sur miroir.
+
+~~~~text
+### Requirement: Source explicite de chaque miroir
+
+Un périmètre de miroitage MUST choisir une source explicite parmi les trois organigrammes, ses données et transformations autorisées. Ses mutations MUST passer par la source et respecter les contraintes cibles. Une modification de la copie MUST NOT devenir silencieusement une deuxième autorité.
+
+#### Scenario: Écriture sur miroir
+
+- **WHEN** un opérateur tente de modifier directement la copie reflétée
+- **THEN** l’interface applique le contrat de la source ou refuse l’écriture concurrente.
+~~~~
+
+### Référence courante organization-charts-3f5fd5146131
+
+Source : [organization-charts](../../specs/organization-charts/spec.md), ligne 38. SHA-256 : `3f5fd5146131f61a9cf1d8e9811329be5f7f571d315ad76e8af0231f736a8105`.
+
+Scénarios : Miroir standard.
+
+~~~~text
+### Requirement: Structure seule par défaut
+
+Le miroir MUST porter sur la structure seule par défaut. La synchronisation des rattachements et affiliations MAY être activée explicitement par périmètre ; les individus MUST rester référencés depuis Core sans duplication d'identité ou de moyen d'authentification.
+
+#### Scenario: Miroir standard
+
+- **WHEN** un miroir est créé sans sélection des affiliations
+- **THEN** les seules structures et relations hiérarchiques autorisées sont reprises.
+~~~~
+
+### Référence courante organization-charts-a06107e07b95
+
+Source : [organization-charts](../../specs/organization-charts/spec.md), ligne 47. SHA-256 : `a06107e07b9597bbf983057cb15e8480fd7a774f5e4c3628bc1d29e71ecce71b`.
+
+Scénarios : Affiliation vers un ZT.
+
+~~~~text
+### Requirement: Admission et droits séparés du miroir
+
+Un miroir MUST NOT créer implicitement admission ZT, compte, permission ou copie d'ACL. Une affiliation vers ZT MUST exiger l'admission applicable et les politiques ZT MUST être réévaluées après modification autorisée.
+
+#### Scenario: Affiliation vers un ZT
+
+- **WHEN** le miroir reçoit l’affiliation d’un individu non admis
+- **THEN** aucune participation effective ni autorisation ZT n’est déduite.
+~~~~
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
+
 Cette table est une référence au canon, sans delta et sans altération de ses exigences. Les textes complets et tous leurs scénarios restent applicables selon leurs conditions. Le profil C00 adopté le 18 octobre 2026 et intégré au canon apporte les précisions de première livraison ; il ne supprime aucun MUST existant.
 
 Les lignes et empreintes désignent l’instant de préparation ; une dérive impose une nouvelle lecture avant réalisation. La sélection ci-dessous part de la matrice et doit être affinée par clause, sans annoncer que tous les scénarios ont déjà été vérifiés.

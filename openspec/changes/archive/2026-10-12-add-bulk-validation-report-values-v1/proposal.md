@@ -1,4 +1,6 @@
-# Proposal — add-bulk-validation-report-values-v1
+# B42 — Proposal — add-bulk-validation-report-values-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 Le canon `bulk-operations` B13 exige des diagnostics bornés sans écho de valeurs, une progression persistée et un rapport explicite de complétude. Aucune valeur mémoire `ValidationReportV1` n'existe encore pour porter `mode`, compteurs, codes et versions sans prouver exécution, arrêt, consommation ou transaction.

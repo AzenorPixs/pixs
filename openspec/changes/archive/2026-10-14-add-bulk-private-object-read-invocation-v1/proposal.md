@@ -1,3 +1,7 @@
+# B50 — Invocation de lecture des objets privés Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 B04 dispose d'un vérificateur mémoire sans invocation réelle du stockage. Des snapshots reçus en arguments ne prouvent pas des contrôles actuels. Il faut invoquer stat_private/iter_bytes via ports composés, avec check EXECUTE puis gouvernance RESOLVED sur le contrat ObjectMetadataV1 attendu, qualification résolue et async bornée, avant tout traitement propriétaire.

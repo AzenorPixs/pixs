@@ -1,5 +1,29 @@
 # C18 — Paquet Debian et services
 
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Cible consolidée du 31 octobre 2026 — ACL-PIXS-2026-10-31-E3-R1
+
+Distribution PBO/PFO distincte de PA/PZT et capacités requises selon le profil, sans service activé par présence logicielle.
+
+Les orientations du modèle validé remplacent précisément les formulations antérieures incompatibles avec ce périmètre. Les autres clauses restent applicables. Les sections antérieures et leurs références sont conservées pour traçabilité ; elles ne doivent pas être utilisées pour réintroduire une décision remplacée. Les preuves et cases cochées ne qualifient que leur version d'origine.
+
+### Sources et responsabilités courantes
+
+- [deb-package](../../specs/deb-package/spec.md).
+- [pixs-instance](../../specs/pixs-instance/spec.md).
+- [reference-composition](../../specs/reference-composition/spec.md).
+
+Le canon courant prévaut sur ses copies de préparation. Le périmètre présent est documentaire : aucun code, test produit, migration, service, secret, publication ou Git n'est exécuté. Les choix de fournisseurs manquants restent à qualifier avant réalisation.
+
+### Refus et critères de réalisation
+
+Les scénarios des sources et de requirements.md doivent être reliés à des résultats vérifiables par unité. Réception n'est pas application ; donnée ancienne n'est pas état courant. Une autorisation expirée/révoquée ou une dépendance requise non qualifiée bloque l'usage concerné. La validation documentaire ne fait pas réussir les recettes futures.
+
+### Préservation de l'historique et articulation des travaux
+
+Les titres, codes, identifiants de tâches et de sous-lots, libellés, cases, statistiques et preuves antérieurs sont conservés. Les compléments sont rattachés aux unités existantes sans renumérotation ni validation produit anticipée. Les ouvertures C95/C96/C97/N08/PA12/Z28/Z29/Z30/Z31/Z32 portent leurs seules parts résiduelles ; elles ne relancent pas les archives.
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
+
 ## Pourquoi
 
 Aucun répertoire de packaging Debian initial ni paquet PBO/PFO qualifié n’est identifié ; le README déclare les distributions non livrées.
@@ -47,6 +71,6 @@ Noms/versions du paquet et exécutables, architecture qualifiée, dépendances e
 
 ## Dépendances après audit transversal P0
 
-[C07](../activate-reference-runtime-composition/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C11](../compose-modular-frontend-with-core-api/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md).
+[C07](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md), [C11](../archive/2026-10-24-compose-modular-frontend-with-core-api/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

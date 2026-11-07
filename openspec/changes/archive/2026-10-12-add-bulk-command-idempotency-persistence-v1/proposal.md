@@ -1,3 +1,7 @@
+# B31 — Persistance de l’idempotence des commandes Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le canon `interactions` B10 exige la déduplication durable des Commands par clé canonique `(tenant_id, subject_id, command_type, idempotency_key)` avec octets canoniques du sérialiseur public versionné du propriétaire, immutabilité du contenu initial, même transaction PostgreSQL pour mutation propriétaire / résultat d'idempotence / progression / checkpoint, rétention couvrant fenêtre de rejeu et holds, et non-engagement de `IN_PROGRESS`. Le schéma logique `CommandIdempotencyV1` à 12 clés existe et le pur `bulk_command_idempotency_values.py` valide/capture sans persister. Aucune persistance interne ne conserve ces 12 valeurs, ni l'unicité atomique de la clé complète, ni le rejeu stable, ni le CAS par révision.

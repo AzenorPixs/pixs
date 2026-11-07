@@ -30,3 +30,113 @@ Revue des 72 exigences et 89 références avec 18 empreintes canoniques conserv�
 ## Preuve de la tâche 3.4 après archive
 
 Archive du 20 octobre : prt_1582b96b1001qI9Zv16yvADu5I, exit 0, aucun canon modifié. Rapport STATISTIQUES.md écrit par prt_15836a268001eLqy0z1eVfaVCa ; contrôle réel de l’orchestrateur sous accès CAB de lecture stable stats-read-52f8fb8c38f94d9182a7f3764e9dd88b, le 20 octobre à 07:30:53 UTC : existence, six sections ordonnées, UTF8/LF, empreinte exacte, 1051 appels = 1034 terminés + 17 erreurs, 88 tentatives fichier, 58 commandes. OpenSpec strict postarchive : prt_158319a7e0011Y5sBzj4Jt2iKN, 193 éléments, exit 0. Aucun Git, déploiement ou prochain change. Publication CAB et gate TERMINÉ sont suivis au checkpoint jusqu’à leur preuve ; ils ne sont pas anticipés ici.
+
+## Sous-lots normalisés
+
+Annotation rétrospective du 30 octobre 2026. Plan ACL-2026-10-30-R1. Une tâche existante correspond à un sous-lot ; les groupes, numéros, libellés, cases et preuves ci-dessus restent les sources conservées. Les numéros SL identifient les unités et ne fixent pas leur ordre de réalisation.
+
+Les états possibles sont À FAIRE, EN COURS, RÉALISÉ À VALIDER, VALIDÉ, BLOQUÉ, ABANDONNÉ et NON VÉRIFIABLE. La case source décrit seulement l’avancement documentaire. Sans preuve datée et rattachée au périmètre de l’unité, sa qualification actuelle reste NON VÉRIFIABLE ; les validations historiques restent attachées à leur date, leur version et leur portée. Le présent relevé ne rejoue aucun contrôle produit.
+
+Sources du périmètre, des dépendances et des critères : [proposal.md](proposal.md), [design.md](design.md), [requirements.md](requirements.md). Les dépendances non individualisées restent à vérifier dans ces sources ; aucune dépendance n’est déduite de la numérotation.
+
+Preuves et constats conservés dans le présent fichier : « 3. Preuves et clôture » ; « Preuves de réalisation du 20 octobre 2026 » ; « Preuve de la tâche 3.4 après archive ».
+
+### C02-SL01 — Reconfirmer les exigences/scénarios et empreintes de requirements.md, l’adoption C00 et les régressions à préserver ; vérifier l’allocation de chaque ligne aux tâches, à V01–V12 et aux lots propriétaires.
+
+- Ancien repère et tâche rattachée : tâche 1.1 ; section « 1. Revue de conception », ligne 7 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL02 — Décliner les options A adoptées de D01–D04 : schéma propriétaire, contrats/versionnement, concurrence et interfaces transactionnelles, accords tenant et politiques de données ; présenter les fichiers de réalisation, critères et tout delta nécessaire dans un mandat distinct. Documenter les conditions d’activation distinctes des dépendances de réalisation, sans rouvrir les orientations acquises ; toute déviation structurante reste à faire valider.
+
+- Ancien repère et tâche rattachée : tâche 1.2 ; section « 1. Revue de conception », ligne 8 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL03 — Réaliser les modèles/contrats arrêtés en D01/D02 : utilisateurs/identités distincts, liaisons, groupes et deux sortes d’appartenances, tenants/scopes, rôles/permissions/ACL et stockage des accords ; conserver les façades pures et la propriété des scopes métier. Relier les contraintes et déclarations de services à V01–V06/V11.
+
+- Ancien repère et tâche rattachée : tâche 2.1 ; section « 2. Réalisation », ligne 14 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL04 — Implémenter persistance et migrations Core selon le contrat propriétaire : clés/références, concurrence, dimensions de cycle de vie et protections de suppression ; déclarer origine/cible, avancement et compensation/retour compatibles, sans downgrade automatique. Fournir V01–V03/V08–V11.
+
+- Ancien repère et tâche rattachée : tâche 2.2 ; section « 2. Réalisation », ligne 15 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL05 — Implémenter les lectures et mutations propriétaires sous identité/contexte/corrélation de confiance ; fournir les raccordements C04/C05 et résultats transactionnels C06/C09 selon D03, ainsi que les gardes du contrat R01 C08/C02 sans exiger une session préalable du compte cible. Refuser preuve/plan/port manquant, autorité C01 métier, rejeu divergent ou issue inconnue ; ne pas écrire les tables privées voisines. Distinguer conformité locale V04/V05/V06/V07 et garanties runtime des consommateurs, sans dépendance inverse de livraison.
+
+- Ancien repère et tâche rattachée : tâche 2.3 ; section « 2. Réalisation », ligne 16 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL06 — Exécuter la part C02 de V01–V11 : régression des structures, PostgreSQL réel, collisions concurrentes, topologie/isolation, stockage des accords, transaction et refus des raccordements incomplets, migration interrompue/exclusion et compatibilité/contraction. Relier V05/V07 aux cas R01 B01–B10 de C08. Attribuer à C03/C04/C05/C06/C08/C09/C10/C16 les recettes intégrées dépendant de leurs réalisations ; conserver leurs conditions d’activation en attente, distinctes des non-applicabilités motivées.
+
+- Ancien repère et tâche rattachée : tâche 2.4 ; section « 2. Réalisation », ligne 17 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL07 — Exécuter syntaxe, contrôles configurés et suites applicables au périmètre réellement modifié, y compris les façades structurelles préservées ; conserver commandes, résultats natifs et preuves V01/V06/V12.
+
+- Ancien repère et tâche rattachée : tâche 3.1 ; section « 3. Preuves et clôture », ligne 21 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL08 — Relier chaque scénario de requirements.md aux preuves V01–V12, contrôler isolation/refus/concurrence/absence de secret et les conditions d’activation ; distinguer succès, échec, non exécuté et non applicable motivé. Ne pas clore une garantie intégrée obligatoire sur un double mémoire.
+
+- Ancien repère et tâche rattachée : tâche 3.2 ; section « 3. Preuves et clôture », ligne 22 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL09 — Examiner diff et périmètre, préserver changements préexistants et documenter impacts/limites sans annoncer un P0 complet avant C17/C19.
+
+- Ancien repère et tâche rattachée : tâche 3.3 ; section « 3. Preuves et clôture », ligne 23 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C02-SL10 — N’engager Git, synchronisation, archivage, déploiement ou publication que dans un périmètre ensuite autorisé ; produire STATISTIQUES.md si un archivage est demandé et réussi.
+
+- Ancien repère et tâche rattachée : tâche 3.4 ; section « 3. Preuves et clôture », ligne 24 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [VALIDATION.md](VALIDATION.md) ; sections de preuves et constats du présent fichier citées ci-dessus.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.

@@ -1,4 +1,6 @@
-# Proposition — déclarations de profils runtime
+# C36 — Proposition — déclarations de profils runtime
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

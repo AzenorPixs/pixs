@@ -15,13 +15,13 @@ _ERROR_UNCONFIGURED = "Réglages Django non configurés."
 
 
 def build_infrastructure_response(
-    correlation_id: object, *, internal_error: object
+    correlation_id: object, *, internal_error: object, language: str = "en"
 ) -> object:
     """Construit la réponse JSON d'infrastructure 500 non streaming."""
     from pixs.backend.api.errors import build_infrastructure_error
 
     envelope = build_infrastructure_error(
-        correlation_id, internal_error=internal_error
+        correlation_id, internal_error=internal_error, language=language
     )
     from django.conf import settings
 

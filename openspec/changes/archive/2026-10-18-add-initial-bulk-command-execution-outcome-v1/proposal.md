@@ -1,4 +1,6 @@
-# Proposal — add-initial-bulk-command-execution-outcome-v1
+# B58 — Proposal — add-initial-bulk-command-execution-outcome-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

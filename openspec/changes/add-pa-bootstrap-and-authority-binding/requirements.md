@@ -8,9 +8,9 @@ La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécuti
 
 | Source / ligne | Exigence | Statut de matrice | Disposition |
 |---|---|---|---|
-| pixs-agent / 38 | [Indépendance d'installation et autorité applicative](../../specs/pixs-agent/spec.md#L38) | ND | CANDIDAT_PROFIL_PA |
-| pixs-agent / 65 | [Provisionnement distinct du canal de contrôle](../../specs/pixs-agent/spec.md#L65) | ND | CANDIDAT_PROFIL_PA |
-| pixs-agent / 101 | [Plusieurs PBO et conflits explicites](../../specs/pixs-agent/spec.md#L101) | ND | CANDIDAT_PROFIL_PA |
+| pixs-agent / 99 | [Indépendance d'installation et autorité applicative](../../specs/pixs-agent/spec.md#L99) | ND | CANDIDAT_PROFIL_PA |
+| pixs-agent / 130 | [Provisionnement distinct du canal de contrôle](../../specs/pixs-agent/spec.md#L130) | ND | CANDIDAT_PROFIL_PA |
+| pixs-agent / 166 | [Plusieurs PBO et conflits explicites](../../specs/pixs-agent/spec.md#L166) | ND | CANDIDAT_PROFIL_PA |
 
 ## Blocs sources complets
 
@@ -18,7 +18,7 @@ Les délimitations textuelles empêchent de confondre ces copies avec des change
 
 ### Référence pixs-agent--5c3c0eb52d
 
-Source : `openspec/specs/pixs-agent/spec.md`, ligne 38. SHA-256 du bloc : `db38cd6d3d6d07cd9b02dc070c47ce83fa1ac4262c41dbefc28ef736d48ebac0`.
+Source : `openspec/specs/pixs-agent/spec.md`, ligne 99. SHA-256 du bloc : `db38cd6d3d6d07cd9b02dc070c47ce83fa1ac4262c41dbefc28ef736d48ebac0`.
 
 ~~~~text
 ### Requirement: Indépendance d'installation et autorité applicative
@@ -33,7 +33,7 @@ Les binaires PA MUST pouvoir être installés sans PBO, PFO ou navigateur locaux
 
 ### Référence pixs-agent--a5d47c79ad
 
-Source : `openspec/specs/pixs-agent/spec.md`, ligne 65. SHA-256 du bloc : `f6d65845a37f027ce02981a8cd2727d7b6aacd2d3591e0d1e5c321d56b497db0`.
+Source : `openspec/specs/pixs-agent/spec.md`, ligne 130. SHA-256 du bloc : `f6d65845a37f027ce02981a8cd2727d7b6aacd2d3591e0d1e5c321d56b497db0`.
 
 ~~~~text
 ### Requirement: Provisionnement distinct du canal de contrôle
@@ -48,7 +48,7 @@ Le provisionnement MUST établir configuration minimale, identité, ancrages et 
 
 ### Référence pixs-agent--81ad04f3f7
 
-Source : `openspec/specs/pixs-agent/spec.md`, ligne 101. SHA-256 du bloc : `ba18660550aea4c031e646bba39b2b2cfa1772e2ab93aa12780c3665c753f4c5`.
+Source : `openspec/specs/pixs-agent/spec.md`, ligne 166. SHA-256 du bloc : `ba18660550aea4c031e646bba39b2b2cfa1772e2ab93aa12780c3665c753f4c5`.
 
 ~~~~text
 ### Requirement: Plusieurs PBO et conflits explicites

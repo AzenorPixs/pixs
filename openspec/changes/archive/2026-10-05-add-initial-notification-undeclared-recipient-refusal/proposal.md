@@ -1,4 +1,6 @@
-# Proposition — Refus déclaratif explicite du destinataire élargi non déclaré
+# O58 — Proposition — Refus déclaratif explicite du destinataire élargi non déclaré
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

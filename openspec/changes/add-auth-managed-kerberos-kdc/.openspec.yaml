@@ -1,2 +1,4 @@
 schema: spec-driven
 created: 2026-10-19
+skip_specs: true
+# ACL-PIXS-2026-10-31-E3-R1 : anciens deltas déplacés après contrôle de couverture ; réalisation future du canon, historique et tâches conservés.

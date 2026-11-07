@@ -1,3 +1,7 @@
+# B28 — Valeurs des enregistrements d’opérations en masse v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 Les neuf valeurs stockées du socle BulkOperationRecord v1 sont validées dans le canon, sans validateur pur encore implémenté.
 

@@ -1,4 +1,6 @@
-# Proposition — Déclaration passive d’enregistrement d’événement v1
+# C79 — Proposition — Déclaration passive d’enregistrement d’événement v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

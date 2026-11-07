@@ -26,7 +26,7 @@ from tests.conformity_fixtures import synthetic_attestations
 from tests.unit.test_backend_host_plan import component
 from tests.unit.test_backend_host_plan import texts as base_texts
 
-_REQUIRED = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt")
+_REQUIRED = ("pixs.kernel", "pixs.core", "pixs.auth", "pixs.agent", "pixs.pzt", "pixs.dns")
 _READY = LifecycleState(installed=True, enabled=True, configured=True, healthy=True, ready=True)
 _UNREADY = LifecycleState(installed=True, enabled=True, configured=False, healthy=False, ready=False)
 

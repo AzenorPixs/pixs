@@ -6,6 +6,7 @@ import uuid
 
 from pixs.backend.api import (
     API_ERROR_CONTRACT_VERSION,
+    API_ERROR_MESSAGE_VERSION,
     DECLARATIVE_API_EVOLUTION_VALID,
     ApiContractPlan,
     api_major_prefix,
@@ -41,6 +42,8 @@ class ProjectionIntegration(unittest.TestCase):
 
     def test_version_contractuelle_semver_publique(self):
         self.assertEqual(parse_version(API_ERROR_CONTRACT_VERSION).major, 1)
+        self.assertEqual(parse_version(API_ERROR_MESSAGE_VERSION).major, 1)
+        self.assertEqual(API_ERROR_MESSAGE_VERSION, "1.0.0")
 
     def test_plans_existants_cohabitent(self):
         first = _plan("1.2.3", "pixs.api.billing.v1")
@@ -57,8 +60,15 @@ class ProjectionIntegration(unittest.TestCase):
 
     def test_opaque_none_bout_en_bout_facade(self):
         envelope = build_infrastructure_error(uuid.UUID(int=42), internal_error=None)
-        self.assertEqual(envelope["message"], "Erreur interne du service.")
+        self.assertEqual(envelope["message"], "Internal service error.")
+        self.assertEqual(envelope["error_code"], "INTERNAL_ERROR")
         json.dumps(envelope)
+        fr = build_infrastructure_error(
+            uuid.UUID(int=42), internal_error=None, language="fr"
+        )
+        self.assertEqual(fr["message"], "Erreur interne du service.")
+        self.assertEqual(fr["error_code"], "INTERNAL_ERROR")
+        self.assertEqual(set(fr), set(envelope))
 
 
 if __name__ == "__main__":

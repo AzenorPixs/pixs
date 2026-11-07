@@ -1,5 +1,7 @@
 # Références normatives — O05
 
+Réconciliation documentaire du 1er novembre 2026 — GSCM3 : les seules copies divergentes et leurs références sont actualisées depuis le canon courant. Aucun delta normatif, tâche, case ou preuve de réalisation n’est modifié.
+
 Ce fichier est une copie de référence pour préparer le lot, pas un delta OpenSpec ni une source de vérité indépendante. Les blocs complets ci-dessous conservent conditions, scénarios, valeurs validées et indications historiques. Le canon courant prévaut ; toute dérive impose une relecture avant réalisation.
 
 La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécution, ni fonction manquante. Les lignes NE et les structures déjà livrées restent à auditer/réutiliser. Les dérogations applicatives et contrats structurels gardent leurs frontières.
@@ -48,12 +50,12 @@ Chaque transition MUST vérifier gardes, autorisation, périmètre et assurance 
 
 ### Référence workflows--4ae70ad99e
 
-Source : `openspec/specs/workflows/spec.md`, ligne 26. SHA-256 du bloc : `e12b8745d5fcff24ad40b75381fece0976200e42c48e5125ff248053b61da78b`.
+Source : `openspec/specs/workflows/spec.md`, ligne 26. SHA-256 du bloc : `db04cd5deb5aef531c929118728ea57e9b9219c5cb9dc0c0c8cd3cd82a3c8887`.
 
 ~~~~text
 ### Requirement: Reprise persistante sans perte
 
-Délais, points de reprise et états survivent au redémarrage via persistance déclarée ; aucune donnée nécessaire à la reprise MUST NOT dépendre de la mémoire locale.
+Délais, points de reprise et états survivent au redémarrage via persistance déclarée ; une donnée nécessaire à la reprise MUST NOT dépendre de la mémoire locale.
 
 #### Scenario: Redémarrage avec reprise
 

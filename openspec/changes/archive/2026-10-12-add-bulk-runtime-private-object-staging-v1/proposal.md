@@ -1,3 +1,7 @@
+# B39 — Staging privé des objets du runtime Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Les fondations de contrats, ports, parsing et persistance Bulk sont livrées. B04 nécessite maintenant un contrat ObjectMetadataV1 contrôlé et des primitives d'intégrité d'objet bornées avant la future composition du worker, sans confondre références, intégrité et autorisation.

@@ -1,3 +1,7 @@
+# C30 — Réponse HTTP d’erreur API P0
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 La projection publique d'erreur d'infrastructure est disponible, mais aucune fabrique de réponse JSON Django ne la matérialise. TECHNICAL.md §25 impose la normalisation à la frontière API, le statut HTTP complémentaire et le format JSON UTF-8 ; le runtime Django est déjà retenu.

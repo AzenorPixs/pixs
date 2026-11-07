@@ -1,3 +1,7 @@
+# B37 — Empreinte d’admission du runtime Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le canon B10 exige un fingerprint SHA-256 du contenu initial d'admission (annexe FingerprintV1, 22 champs, JSON trié compact UTF-8 strict, date UTC six décimales Z, sans float). Aucun sérialiseur canonique ni fingerprint d'admission n'existe dans le backend (contrôle ciblé CGPT) ; la déduplication durable et l'immutabilité du snapshot ne peuvent pas s'y référer sans cette primitive pure.

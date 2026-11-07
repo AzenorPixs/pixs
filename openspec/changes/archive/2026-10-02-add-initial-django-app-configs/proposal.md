@@ -1,4 +1,6 @@
-# Adaptateur Django explicite Kernel/Core/Exemple
+# C46 — Adaptateur Django explicite Kernel/Core/Exemple
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

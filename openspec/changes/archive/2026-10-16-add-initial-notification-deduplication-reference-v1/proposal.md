@@ -1,4 +1,6 @@
-# Proposition — Références préparatoires de déduplication des notifications
+# O60 — Proposition — Références préparatoires de déduplication des notifications
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

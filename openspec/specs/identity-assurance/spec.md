@@ -27,12 +27,12 @@ Toute authentification réussie produit un contexte vérifié, limité dans le t
 
 ### Requirement: Seuil sensible et élévation explicite
 
-Toute opération sensible exige le niveau requis, au minimum l'authentification multifacteur le cas échéant ; à défaut, l'opération est refusée ou soumise à une élévation explicite que le frontal MUST NOT simuler.
+Le profil MUST définir l'assurance requise pour ses opérations, y compris administratives, avec MFA configurable sans obligation générale Pixs. L'opération MUST vérifier le seuil effectivement sélectionné et refuser ou demander un step-up si nécessaire. Le frontal MUST NOT simuler cette élévation et un profil MUST NOT annoncer une assurance que son chemin ne peut qualifier.
 
 #### Scenario: Élévation exigée
 
-- **WHEN** une action sensible est demandée avec une assurance insuffisante
-- **THEN** le système refuse ou déclenche une élévation explicite auditée
+- **WHEN** le profil exige une assurance supérieure à celle effectivement obtenue
+- **THEN** le système refuse ou engage une élévation explicite selon le contrat.
 
 ### Requirement: Fraîcheur, révocation et récupération sans élévation implicite
 

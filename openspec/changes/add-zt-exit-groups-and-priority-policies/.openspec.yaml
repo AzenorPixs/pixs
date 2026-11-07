@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-31
+# Réalisation future du référentiel validé ; aucune nouvelle modification normative.
+skip_specs: true

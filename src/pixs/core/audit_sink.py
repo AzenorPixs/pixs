@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime
 import hashlib
+import uuid
 from dataclasses import dataclass
 
 from pixs.core.audit_contracts import (
@@ -15,7 +16,35 @@ from pixs.core.authz.ports import AuditEvent as PdpAuditEvent
 from pixs.core.ports import CorePortError, StagedRef, TransactionProof
 from pixs.core.scope.context import ScopeContext, validate_structure
 
-__all__ = ["PostgresAuditParticipant", "PostgresAuditSink", "stage_reference", "source_reference"]
+__all__ = ["PostgresAuditParticipant", "PostgresAuditSink", "GenericAuditReceipt", "stage_reference", "source_reference"]
+
+
+@dataclass(frozen=True, slots=True)
+class GenericAuditReceipt:
+    record_id: uuid.UUID
+    event_id: str
+    event_sha256: str
+    operation_id: str
+    transaction_token: str
+    alias: str
+
+    def __post_init__(self):
+        from pixs.core.persistence.uuid7 import check_uuid7
+        check_uuid7(self.record_id)
+        if type(self.event_id) is not str or not self.event_id:
+            raise AuditError()
+        if type(self.event_sha256) is not str or len(self.event_sha256) != 64:
+            raise AuditError()
+        if self.event_sha256 != self.event_sha256.lower():
+            raise AuditError()
+        if any(c not in "0123456789abcdef" for c in self.event_sha256):
+            raise AuditError()
+        if type(self.operation_id) is not str or not self.operation_id:
+            raise AuditError()
+        if type(self.transaction_token) is not str or not self.transaction_token:
+            raise AuditError()
+        if type(self.alias) is not str or not self.alias:
+            raise AuditError()
 
 
 def _text(value):
@@ -308,6 +337,50 @@ class PostgresAuditParticipant:
         finally:
             if peer is not None and not peer.in_atomic_block:
                 peer.close()
+
+    def stage_generic_receipt(self, event, *, alias, operation_id, transaction_token, context):
+        from pixs.kernel.audit_event import AuditEvent as GenericAuditEvent
+        if type(event) is not GenericAuditEvent:
+            raise CorePortError()
+        row = self.stage_generic(event, alias=alias, operation_id=operation_id, transaction_token=transaction_token, context=context)
+        return GenericAuditReceipt(record_id=row.record_id, event_id=row.generic_event_id, event_sha256=row.generic_event_sha256, operation_id=row.operation_id, transaction_token=row.transaction_token, alias=row.alias)
+
+    def verify_generic_exact(self, proof, *, event, expected_receipt):
+        from pixs.core.persistence.models_audit import CoreAuditEvent
+        from pixs.kernel.audit_event import AuditEvent as GenericAuditEvent
+        if type(proof) is not TransactionProof:
+            raise CorePortError()
+        if type(expected_receipt) is not GenericAuditReceipt:
+            raise CorePortError()
+        if type(event) is not GenericAuditEvent:
+            raise CorePortError()
+        expected_receipt.__post_init__()
+        proof.__post_init__()
+        _context(proof.context)
+        connection = _connection(proof.alias, outer=True)
+        if not any(ref.staged_kind == "audit" for ref in proof.staged):
+            raise CorePortError()
+        if not (expected_receipt.operation_id == proof.operation_id and expected_receipt.transaction_token == proof.transaction_token and expected_receipt.alias == proof.alias):
+            raise CorePortError()
+        if not (expected_receipt.event_id == event.event_id):
+            raise CorePortError()
+        policy = self.policy(proof.context, proof.alias)
+        original = serialize_generic(event)
+        if original["tenant_reference"] != object.__getattribute__(proof.context, "tenant_id"):
+            raise CorePortError()
+        payload = apply_redactions_generic(original, policy.redactions)
+        canonical_generic_bytes(payload)
+        digest = hashlib.sha256(canonical_generic_bytes(payload)).hexdigest()
+        if not (digest == expected_receipt.event_sha256):
+            raise CorePortError()
+        current_xid = _xid(connection)
+        scope_filter = _scope_filter(proof.context)
+        rows = list(CoreAuditEvent.objects.using(proof.alias).filter(record_id=expected_receipt.record_id, alias=proof.alias, kind="GENERIC_AUDIT", operation_id=proof.operation_id, transaction_token=proof.transaction_token, staged_xid=current_xid, generic_event_id=event.event_id, generic_event_sha256=digest, generic_payload=payload, **scope_filter))
+        if not rows:
+            raise CorePortError()
+        for row in rows:
+            row.clean()
+        return None
 
     def verify_staged(self, proof):
         from pixs.core.persistence.models_audit import CoreAuditEvent

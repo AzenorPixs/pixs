@@ -1,4 +1,6 @@
-# Proposal: Exécution des unités frontend web dans les navigateurs déclarés headless
+# C55 — Proposal: Exécution des unités frontend web dans les navigateurs déclarés headless
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 AGENTS.md §13.4 impose désormais que les tests unitaires frontend web soient

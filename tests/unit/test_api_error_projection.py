@@ -5,6 +5,7 @@ import uuid
 
 from pixs.backend.api import (
     API_ERROR_CONTRACT_VERSION,
+    API_ERROR_MESSAGE_VERSION,
     ApiContractPlan,
     ApiErrorProjectionError,
     api_major_prefix,
@@ -80,11 +81,37 @@ class ValidEnvelope(unittest.TestCase):
             {"error_code", "message", "details", "field_errors", "correlation_id"},
         )
         self.assertEqual(envelope["error_code"], "INTERNAL_ERROR")
-        self.assertEqual(envelope["message"], "Erreur interne du service.")
+        self.assertEqual(envelope["message"], "Internal service error.")
         self.assertEqual(envelope["details"], {})
         self.assertEqual(envelope["field_errors"], [])
         self.assertEqual(envelope["correlation_id"], str(_VALID_UUID))
         self.assertEqual(API_ERROR_CONTRACT_VERSION, "1.0.0")
+        self.assertEqual(API_ERROR_MESSAGE_VERSION, "1.0.0")
+
+    def test_message_localise_seul_champ_variant(self):
+        base = build_infrastructure_error(_VALID_UUID, internal_error=None)
+        cases = [
+            ({"language": "en"}, "Internal service error."),
+            ({"language": "fr"}, "Erreur interne du service."),
+            ({}, "Internal service error."),
+            ({"language": "de"}, "Internal service error."),
+            ({"language": None}, "Internal service error."),
+            ({"language": 42}, "Internal service error."),
+        ]
+        for kwargs, expected in cases:
+            envelope = build_infrastructure_error(
+                _VALID_UUID, internal_error=None, **kwargs
+            )
+            self.assertEqual(envelope["message"], expected)
+            self.assertEqual(envelope["error_code"], "INTERNAL_ERROR")
+            self.assertEqual(envelope["correlation_id"], str(_VALID_UUID))
+            self.assertEqual(envelope["details"], {})
+            self.assertEqual(envelope["field_errors"], [])
+            self.assertEqual(
+                set(envelope),
+                {"error_code", "message", "details", "field_errors", "correlation_id"},
+            )
+            self.assertEqual(envelope, {**base, "message": expected})
 
     def test_toutes_versions_variants_nil_max_acceptees(self):
         for version in range(16):

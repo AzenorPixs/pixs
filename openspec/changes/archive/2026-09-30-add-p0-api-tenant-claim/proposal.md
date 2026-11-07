@@ -1,3 +1,7 @@
+# C32 — Déclaration de tenant dans les contrats API P0
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 La frontière API doit refuser un tenant client contradictoire avec le tenant canonique du chemin. Les plans API existants ne traitent pas le tenant et check_claim exige déjà des ScopeContext. Le format littéral de route et l’extraction HTTP restent hors périmètre.

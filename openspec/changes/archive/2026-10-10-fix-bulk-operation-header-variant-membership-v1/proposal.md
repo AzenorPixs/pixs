@@ -1,4 +1,6 @@
-# Correction — appartenance canonique des variantes Header
+# B22 — Correction — appartenance canonique des variantes Header
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Motivation
 

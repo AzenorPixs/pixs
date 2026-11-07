@@ -1,4 +1,6 @@
-# Proposal add-bulk-inbox-receipt-persistence-v1
+# B45 — Proposal add-bulk-inbox-receipt-persistence-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

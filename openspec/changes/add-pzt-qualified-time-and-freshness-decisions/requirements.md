@@ -1,5 +1,7 @@
 # Références normatives — Z17
 
+Réconciliation documentaire du 1er novembre 2026 — GSCM3 : les seules copies divergentes et leurs références sont actualisées depuis le canon courant. Aucun delta normatif, tâche, case ou preuve de réalisation n’est modifié.
+
 Ce fichier est une copie de référence pour préparer le lot, pas un delta OpenSpec ni une source de vérité indépendante. Les blocs complets ci-dessous conservent conditions, scénarios, valeurs validées et indications historiques. Le canon courant prévaut ; toute dérive impose une relecture avant réalisation.
 
 La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécution, ni fonction manquante. Les lignes NE et les structures déjà livrées restent à auditer/réutiliser. Les dérogations applicatives et contrats structurels gardent leurs frontières.
@@ -9,9 +11,9 @@ La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécuti
 | Source / ligne | Exigence | Statut de matrice | Disposition |
 |---|---|---|---|
 | pzt / 7961 | [Contrat A10i49 — Bornes d’incertitude qualifiées pour admission avant échéance — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L7961) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 8039 | [Contrat A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L8039) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 7769 | [Contrat A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L7769) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
 | pzt / 8109 | [Contrat A10i51 — Lecture cohérente de temps et qualité à chaque décision — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L8109) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
-| pzt / 8169 | [Contrat A10i52 — Budgets bornés d’acquisition et fraîcheur de preuve de temps — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L8169) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
+| pzt / 7897 | [Contrat A10i52 — Budgets bornés d’acquisition et fraîcheur de preuve de temps — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L7897) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
 | pzt / 8246 | [Contrat A10i53 — API native ou IPC documentée pour lecture structurée du temps — option A validée le 8 octobre 2026](../../specs/pzt/spec.md#L8246) | ND | APPLICABILITE_ET_DECOUPAGE_A_CONFIRMER |
 
 ## Blocs sources complets
@@ -104,7 +106,7 @@ A10i49 A validé le 8 octobre 2026.
 
 ### Référence pzt--7c35729f30
 
-Source : `openspec/specs/pzt/spec.md`, ligne 8039. SHA-256 du bloc : `2515f0ad709528aea175ae6e350cd3498a1aaab3cbf82e1c941fdd8582639414`.
+Source : `openspec/specs/pzt/spec.md`, ligne 7769. SHA-256 du bloc : `f2137f7482c9fb0db9838abf659aef87cf0ed80921daff43423f57041ac8783d`.
 
 ~~~~text
 ### Requirement: Contrat A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026
@@ -118,8 +120,7 @@ les contrats structurels et les exceptions applicatives restent applicables.
 ##### Contrat détaillé A10i50
 
 Bornes qualifiées A10i49 A, cycle A10i48 A et contrôles A05/A12 maintenus.
-Adaptateurs système retenus pour autorités de validation, sans serveur, logiciel,
-protocole de synchronisation ou nouvelle source de temps concrète adoptés.
+Adaptateurs système retenus pour autorités de validation, avec service système géré par PA selon profil et besoin, sans nouveau démon ni protocole Pixs ; sans autre serveur, logiciel, protocole de synchronisation ou nouvelle source de temps concrète adoptés.
 
 | Choix validé | Provider | Qualification requise |
 | --- | --- | --- |
@@ -145,8 +146,7 @@ Une copie de l'état du collecteur sans fraîcheur retrouvée ne suffit pas.
 Docker/LXC Proxmox et Windows/Linux physiques/VM qualifiés séparément ; accès
 au temps ou métadonnées sans privilège système, montage ou changement de
 synchronisation implicitement accordés. Profil incapable de démontrer U<=1 seconde
-dans le premier jet refusé pour ce rôle ; PA ordinaire sans rôle de validation
-ne reçoit pas un service temporel supplémentaire par cette politique.
+dans le premier jet refusé pour ce rôle ; la présente politique MUST NOT accorder un service par PA, seul un service par horloge géré par PA lorsque le profil l’exige MAY être qualifié, sans préjuger sa qualification.
 
 Contrat explicite de confiance et qualité, fraîcheur/dérive/perte de
 source, cohérence des membres, correction/saut d'horloge et restauration testés.
@@ -246,7 +246,7 @@ A10i51 A validé le 8 octobre 2026.
 
 ### Référence pzt--732f4ee09e
 
-Source : `openspec/specs/pzt/spec.md`, ligne 8169. SHA-256 du bloc : `ba5683405a453505f6eb0bf62293e832030468f3317d1aed2095c9221ee40aaf`.
+Source : `openspec/specs/pzt/spec.md`, ligne 7897. SHA-256 du bloc : `a68a337e3541a937352763ed4bcb0598e8410aa2393ea3b8108be6408c0217e9`.
 
 ~~~~text
 ### Requirement: Contrat A10i52 — Budgets bornés d’acquisition et fraîcheur de preuve de temps — option A validée le 8 octobre 2026
@@ -264,7 +264,7 @@ borne d'erreur au plus 1 seconde A10i49 A et échéance immuable conservés.
 Premier jet configurable validé, à qualifier sans performance mesurée ou API installée.
 Interface API/IPC structurée validée A10i53 A.
 
-| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation |
+| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation en SYNCHRONISE |
 | --- | --- | --- | --- | --- |
 | A | 250 millisecondes | 2 | 1 seconde | 600 secondes |
 
@@ -278,15 +278,7 @@ sans crédit remis à zéro. Plafonds simultanés et budgets de sécurité plus 
 prioritaires, aucune acquisition commencée sans budget restant suffisant.
 Reprise sans preuve de temps restant : refus, D jamais repoussée.
 
-Âge maximal concerne la dernière preuve de référence/synchronisation admissible,
-pas la date à laquelle l'adaptateur a simplement lu une métrique ou un fichier.
-Calcul/identité de preuve, source et progression d'âge qualifiés, référence
-modifiée ou horloge reculante sans âge artificiellement réinitialisé.
-Âge nul/inconnu sans fraîcheur vraie présumée ; âge non vérifiable ou supérieur
-au plafond refuse création/admission. Âge inférieur au plafond n'autorise pas
-seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance
-A10i49/A10i50 toujours démontrées. Âge maximal 600 secondes sans permission de réemploi
-d'un ancien échantillon entre décisions, A10i51 A inchangé.
+Âge maximal concerne la dernière preuve de référence/synchronisation admissible, toujours réelle et vérifiable, pas la date à laquelle l’adaptateur a simplement lu une métrique ou un fichier. Calcul/identité de preuve, source et progression d’âge qualifiés, référence modifiée ou horloge reculante sans âge artificiellement réinitialisé. Âge non vérifiable MUST conduire au refus en tous modes. Âge invérifiable ou supérieur au plafond en mode SYNCHRONISE MUST conduire au refus de création/admission. Âge inférieur au plafond n’autorise pas seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance A10i49/A10i50 toujours démontrées. En mode SYNCHRONISE, âge maximal 600 secondes sans permission de réemploi d’un ancien échantillon entre décisions, A10i51 A inchangé. En mode distinct HORS_LIGNE, un âge supérieur à 600 secondes MAY être admis seulement si le modèle, la provenance et la continuité sont qualifiés, si le profil demeure valide et si la borne totale U(t) au point d’usage demeure inférieure ou égale à une seconde, avec acquisition actuelle et sans réarmement de droits, de budget ou d’échéance ; une lecture récente MUST NOT rajeunir la preuve amont et une nouvelle acquisition MUST NOT remettre à zéro un droit ; aucune durée magique n’est admise.
 Borne d'erreur 1 seconde distincte du budget global de lecture 1 seconde et de l'âge
 de preuve ; aucune mesure temporelle plus ancienne réputée exacte par budget large.
 
@@ -325,6 +317,35 @@ A10i52 A validé le 8 octobre 2026.
 - **WHEN** un profil revendique le traitement A10i52 et ses garanties dans un rôle déclaré
 - **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
 - **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+
+#### Scenario: Perte d’Internet avec incertitude démontrée
+
+- **WHEN** Internet est perdu mais que le modèle, la provenance et la continuité demeurent qualifiés avec U au point d’usage démontrée
+- **THEN** les opérations dépendantes bornées peuvent continuer sans remise à zéro de droit
+
+#### Scenario: Valeur à la borne puis au-delà
+
+- **WHEN** la borne totale se situe juste à une seconde avec comparaison conservatrice établie
+- **THEN** l’admission bornée peut intervenir sans prolongation d’échéance
+- **WHEN** elle dépasse la borne d’une unité de précision qualifiée
+- **THEN** la création ou l’admission est refusée sans nouvelle admission
+
+#### Scenario: Mesure locale ancienne et modèle périmé
+
+- **WHEN** une mesure locale ancienne est lue récemment ou que le modèle est périmé
+- **THEN** elle ne doit pas être proposée comme preuve courante et une nouvelle acquisition bornée ou un refus doit intervenir
+
+#### Scenario: Suspension, restauration et retour incohérent
+
+- **WHEN** une suspension, une reprise ou une restauration est observée
+- **THEN** la continuité doit être requalifiée avant toute admission
+- **WHEN** le retour d’Internet apporte une correction incohérente avec l’intervalle maintenu
+- **THEN** le chemin doit être refusé sans réécriture de l’échéance
+
+#### Scenario: Plateformes conteneur et machines virtuelles
+
+- **WHEN** la cible est LXC avec horloge hôte, VM avec horloge propre ou Windows avec fournisseur à qualifier
+- **THEN** le profil exact doit être démontré et toute divergence hôte et invité doit bloquer l’admission concernée
 ~~~~
 
 ### Référence pzt--6618b62308

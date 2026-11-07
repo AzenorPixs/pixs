@@ -1,4 +1,6 @@
-# Proposal — add-initial-job-state-vocabulary
+# C60 — Proposal — add-initial-job-state-vocabulary
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -2,6 +2,17 @@
 
 Ce document précise les décisions techniques transverses du projet. Il complète `PROJECT.md` sans remplacer les spécifications OpenSpec, qui définissent les comportements implémentables.
 
+Le §46 porte la cible consolidée du 31 octobre 2026, en complément du modèle
+fonctionnel de PROJECT.md §45. Les profils, contrats et preuves déjà adoptés
+restent identifiés par leur version. Les mentions historiques contraires ne
+valent pas sélection pour la nouvelle cible. La préparation documentaire E3
+et la réconciliation des propositions concernées sont réalisées selon
+ACL-PIXS-2026-10-31-E3-R1 ; leurs limites sont tracées dans les dossiers
+propriétaires et [la cartographie](DEVELOPMENT_MAP.md). O41 est remplacé et
+non sélectionnable. Les deux exigences de preuve officielle Nuitka C20
+restent proposées et non synchronisées ; leur adoption et leur réalisation
+restent distinctes. Aucune qualification produit n'est déduite de ces écritures.
+
 Le socle fonctionnel obligatoire de PBO comprend `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt`, composés au-dessus du Kernel par les mécanismes communs. Core porte les primitives partagées ; Auth porte l'authentification locale autonome ; Agent gère PA hors PZT ; le module PZT gère l'exécutable réseau indépendant. Leurs dépendances publiques déterminent l'ordre de chargement, sans priorité implicite avant Core. La désactivation réseau ne retire pas ces modules ni le module DNS essentiel et ne dispense pas des autres capacités requises par le profil.
 
 ## Convention normative RFC 2119
@@ -17,14 +28,14 @@ Les contrôles applicatifs runtime décrits dans ce document s'appliquent sous r
 L'identité numérique est le référentiel technique de l'authentification Pixs. Elle est distincte de l'utilisateur, du groupe et du provider d'authentification.
 
 ```text
-Utilisateur 0..1 ─── 0..1 Identité numérique
+Individu Core 0..1 ─── 0..N Identités numériques par Domaine
 Compte de service 1 ─── 1 Identité numérique
 ```
 
 Contraintes obligatoires :
 
 * une identité numérique est liée à zéro ou un utilisateur ;
-* un utilisateur est lié à zéro ou une identité numérique ;
+* un individu peut être lié à plusieurs identités numériques par domaine ;
 * une identité numérique peut exister sans utilisateur ;
 * un utilisateur peut exister sans identité numérique ;
 * un compte de service est obligatoirement une identité numérique ;
@@ -32,7 +43,7 @@ Contraintes obligatoires :
 * une identité numérique porte les méthodes d'authentification et les informations de révocation ;
 * une identité numérique peut être utilisée comme `Subject` d'autorisation.
 
-Les identifiants internes stables de l'utilisateur (`User`) et de l'identité numérique (`DigitalIdentity`) sont des UUIDv7 dans le profil minimal v1 défini par `openspec/specs/core/spec.md`. La liaison explicite est unique dans chaque sens ; une référence absente ou une association violant cette cardinalité est refusée. Un compte de service est représenté par une identité de type `SERVICE`, y compris sans utilisateur lié.
+Les identifiants internes stables conservent les UUIDv7 prévus par les contrats. La cible du 31 octobre autorise plusieurs identités par individu et par domaine ; chaque identité est liée à au plus un individu. Le profil minimal v1 de `openspec/specs/core/spec.md` et ses preuves gardent leur ancienne cardinalité jusqu'à amendement versionné. SERVICE peut exister sans individu lié.
 
 Le lien entre un utilisateur et une identité numérique ne doit pas être déduit d'un identifiant fourni par un provider externe. Il doit être représenté explicitement dans la source de vérité Pixs.
 
@@ -107,9 +118,9 @@ Les quatre modules sont obligatoires dans PBO, même réseau désactivé ou sans
 
 Le cadrage cible Auth du 19 octobre 2026 précise cette répartition via un module essentiel indépendant ; les trois deltas d'architecture adoptés et les propositions restantes sont distingués au §4.4. Il n'impose aucun déplacement du code ni des contrats structurels existants.
 
-Le backend Django reste l'autorité pour les règles métier, les mutations et l'autorisation. PostgreSQL reste le stockage applicatif par défaut ; les garanties de transaction du provider Core OpenLDAP proposé au §34.2 nécessitent leur qualification propre.
+Le backend Django reste l'autorité des règles métier et de l'autorisation. PG conserve la source Core/applicative dans les bases Instance/Domaine ; LDAP sert les références Core publiées et l'état Kerberos durable normal. La reconstruction complète depuis PG relève d'une urgence critique. Le §46 précise leurs contrats et écarts avec les versions antérieures.
 
-Le complément proposé du 19 octobre 2026 distingue ce stockage par défaut d'une option de stockage Core OpenLDAP interne, décrite au §34.2. Après migration engagée, LDAP devient le stockage de référence du seul périmètre Core concerné ; les garanties de mutation restent à qualifier. Auth et les autres domaines conservent leurs stockages déclarés. Cette exception proposée ne modifie pas le canon courant.
+L'orientation de stockage Core autoritatif OpenLDAP proposée le 19 octobre est remplacée dans la cible du 31 octobre par la référence PG et les services LDAP/Kerberos de Domaine. Le dossier existant est conservé pour réconciliation OpenSpec, sans adoption ou clôture implicite (§34.2).
 
 Le premier socle du profil identité v1 se limite aux modèles et validateurs structurels sans authentification réelle, persistance ou provider concret. Leur validation ne crée aucune session et n'accorde aucun accès. Elle ne prouve ni une mutation persistante ni un audit durable et ne dispense pas les mutations réelles des exigences applicables de persistance, d'autorisation et d'audit.
 
@@ -259,17 +270,17 @@ C03 qualifie le profil local le 21 octobre 2026 : Python 3.14.8, Django 6.1.2, P
 
 Le [change d'architecture](openspec/changes/define-essential-autonomous-auth-module/proposal.md) prépare `pixs.auth` indépendant et essentiel dans les compositions applicatives, dont P0. Ses trois deltas sont adoptés et intégrés au canon le 20 octobre 2026 ; les autres dossiers Auth conservent leurs propositions distinctes. Cette adoption documentaire n'ajoutait aucun code, manifest produit, migration ou dépendance installée. C03 réalise ensuite le module local et sa migration propriétaire, qualifiés le 21 octobre 2026 ; les fixtures structurelles non applicatives restent distinctes des compositions concernées.
 
-La dépendance va de `pixs.auth` vers les contrats publics `pixs.core`. Core conserve l'autorité des identités numériques, utilisateurs, liens, tenants, groupes, appartenances, rôles, ACL et permissions. Auth possède justificatifs, références de moyens, mappings d'authentification, politiques, contextes, sessions et dossiers d'enrôlement ; ses tables et migrations sont distinctes, sans accès privé inter-modules. Plusieurs moyens ou sources peuvent viser une identité sans modifier les cardinalités User/DigitalIdentity.
+La dépendance va de `pixs.auth` vers les contrats publics `pixs.core`. Core conserve l'autorité des identités numériques, utilisateurs, liens, tenants, groupes, appartenances, rôles, ACL et permissions. Auth possède justificatifs, références de moyens, mappings d'authentification, politiques, contextes, sessions et dossiers d'enrôlement ; ses tables et migrations sont distinctes, sans accès privé inter-modules. Plusieurs moyens ou sources peuvent viser une identité ; le lien individu/identités suit la cible §1 et §46, avec plusieurs identités par domaine.
 
-**Par défaut, `pixs.auth` s'appuie sur PostgreSQL.** Son profil local n'exige ni LDAP, ni Kerberos, ni fournisseur externe, ni Internet. Les empreintes de mots de passe, références, états et métadonnées nécessaires sont persistés sous protection adaptée ; clés privées, graines MFA et secrets réversibles suivent les contrats de secrets sans valeurs en clair dans les tables métier. Le choix PostgreSQL ne transforme pas la base métier en coffre d'amorçage et ne remplace pas C01/SecretProvider.
+Auth s'appuie sur PG Instance avant le premier Domaine, puis sur les données propriétaires des domaines après transfert des identités. L'authentification PG Domaine est autorisée par profil explicite ; LZT et KZT sont obligatoires en mode Domaine. Empreintes, références et états restent protégés ; les moyens sensibles suivent les contrats de secrets. Le stockage PG métier ne remplace pas le fournisseur technique d'amorçage.
 
 Le catalogue proposé inclut le local (`password`, `webauthn`, `totp`, `recovery`), l'enrôlement, les émetteurs OIDC/SAML, la gestion d'OpenLDAP, la gestion du KDC et les sources externes séparées. Les méthodes locales et le parcours minimal d'enrôlement appartiennent à la composition standard cible ; leur usage est fixé par politique. Les adaptateurs matériels restent extensibles. Visage/empreinte digitale sont vérifiés de préférence localement via l'authentificateur WebAuthn, sans collecte des données biométriques par Pixs.
 
 Le rôle IdP/OP émet vers des clients approuvés et conserve sujet, audience, assurance, validité et attributs minimisés. Il ne requiert pas de source externe. Les connecteurs `pixs.auth.sources.ldap`, `.kerberos`, `.oidc`, `.saml` ou autres sont absents de l'installation standard et ajoutés explicitement, sans découverte valant confiance.
 
-Le sous-module optionnel `pixs.auth.directory.ad` gère un domaine Active Directory propre sous plan explicite, sans activation par défaut ni connecteur externe obligatoire. Les responsabilités annuaire/Kerberos/DNS, noms, endpoints et droits techniques sont coordonnés avec les autres services. SID et objectGUID sont mappés explicitement aux identités Core ; aucun rôle de domaine ne crée de privilège Pixs. PostgreSQL reste le stockage par défaut Auth, sans être imposé comme stockage natif du contrôleur. L'implémentation, la plateforme et le niveau de compatibilité sont à qualifier ; aucun domaine existant n'est adopté implicitement. Le [change AD](openspec/changes/add-auth-managed-active-directory/design.md) précise frontières et recette.
+La jonction Windows native et les politiques GPO dans le même Domaine Pixs sont un objectif V1. Le fournisseur compatible AD et son articulation avec OpenLDAP/MIT Kerberos restent à qualifier. Le [change AD existant](openspec/changes/add-auth-managed-active-directory/design.md) est à réconcilier sans sélectionner implicitement un produit, un backend PG natif ou une autorité parallèle. Auth administre les politiques ; PA exploite les services concernés.
 
-Les sous-modules de gestion d'OpenLDAP et du KDC peuvent provisionner, configurer, démarrer, arrêter et superviser les propres services de Pixs. Ils ne sont pas des connecteurs externes. Les services sont distincts de Django et non requis/non démarrés par défaut. Le KDC peut fonctionner seul ; une dépendance à OpenLDAP n'existe que si son backend sélectionné l'exige. Stockages techniques natifs, secrets, placement, transport, comptes OS, sauvegardes et réadmission sont déclarés et qualifiés avant activation. Aucun backend PostgreSQL natif pour slapd/KDC n'est supposé.
+Chaque Domaine exige LZT/OpenLDAP et KZT/MIT Kerberos avec backend OpenLDAP ; plusieurs LZT multi-maîtres et KZT actifs sont possibles. Auth/Core/PBO administrent les données et politiques ; PA assure installation, configuration et exploitation. Les services restent distincts de Django et ne démarrent qu'après leurs contrôles. Le profil pré-domaine n'impose pas ces services.
 
 La projection `directory-projections` reste limitée à la consultation. Toute authentification LDAP est une capacité séparée, même dans le même processus OpenLDAP. Un repli de lecture PostgreSQL ne constitue jamais un repli d'authentification. Aucun hash local n'est supposé convertible en clé Kerberos ni propagé arbitrairement ; l'enrôlement des moyens propres suit un contrat qualifié.
 
@@ -277,7 +288,7 @@ Les politiques Auth sont typées, versionnées, résolues par plateforme/tenant/
 
 Le [catalogue des changes](openspec/changes/define-essential-autonomous-auth-module/design.md) donne les dépendances et recettes futures. C03 conserve connexion et sessions ; C02 conserve les données Core ; C08 conserve le provisionnement et R01. Les contrats locaux spécialisés, paramètres, transports et bibliothèques de C03 sont réalisés/qualifiés ; les autres profils de services du catalogue restent à détailler dans leurs changes propres, sans rouvrir le choix PostgreSQL par défaut.
 
-Le catalogue est complété par le [choix de stockage Core réversible](openspec/changes/add-reversible-core-directory-storage/design.md), détaillé au §34.2. Les mentions PostgreSQL pour le référentiel Core décrivent son état initial ; le provider engagé après migration porte ensuite les utilisateurs, groupes et ACL du périmètre concerné. Les sessions et justificatifs Auth restent dans leur domaine de persistance propre.
+Le catalogue et les dossiers existants doivent être rapprochés du modèle PG Instance/Domaine et LDAP/Kerberos du §46. La proposition réversible du §34.2 conserve son histoire sans constituer une option de la nouvelle cible.
 
 ## 5. Modèle commun de composant
 
@@ -1270,6 +1281,18 @@ Une panne du coffre bloque les nouvelles résolutions obligatoires. Les credenti
 
 Le produit, sa version, son backend, la méthode d’authentification et de protection des clés, les durées et la topologie restent à décider avant réalisation. OpenBao est une référence d’étude, pas un choix imposé. Le change [add-distributed-runtime-secret-vault](openspec/changes/add-distributed-runtime-secret-vault/proposal.md) prépare les deltas de `secrets-providers` et `reference-composition`. Cette préparation n’active aucun profil distribué et n’ajoute pas de coffre obligatoire au P0 initial local. Les garanties restent à implémenter et qualifier ; les deltas ne sont pas synchronisés au canon à cette étape.
 
+### 21.3 Connexion technique avant PostgreSQL — C08 adopté le 22 octobre 2026
+
+Le parcours [C08 PA/PZT → PostgreSQL → PBO](openspec/changes/add-installation-and-first-configuration/design.md) est intégré aux huit capacités canoniques concernées. Une procédure opérateur locale explicite provisionne les identités propres PA/PZT, ancrages, références de secrets et politique technique protégée/versionnée indépendamment de la base Pixs. Le premier PBO découvert, UID 0 ou la seule possession d'une clé ne constituent pas une confiance suffisante. Le profil PZT local mTLS borne les actions techniques, cibles, validités, anti-rejeu, révocations et audit ; une preuve absente ou non fraîche ferme l'admission sans canal PBO–PA de substitution.
+
+Le PA système prépare PostgreSQL et initie sa première connexion technique. Sur physique/VM, sa capacité du catalogue fermé installe et configure le service si nécessaire ; sous Docker Pixs, elle utilise le logiciel fourni et initialise seulement les ressources absentes, sans effacer ni réinitialiser l'existant. Ses accès techniques au service, rôle et base ne permettent ni accès aux tables métier, ni migrations applicatives, ni création Core/Auth/Super Admin/tenant. PBO conserve ces responsabilités par ses contrats propriétaires et son acte R01.
+
+Avant chaque ouverture de la base, la remise des seuls secrets de connexion au workload PBO vérifié est évaluée sous la branche technique native de `authorization`. Identité, rôle, mode réel, finalité, cible, référence/version, politique courante, validité, révocation et audit durable indépendant sont vérifiés sans appel circulaire à Auth PostgreSQL. Les messages de management PBO–PA, tous transportés par PZT, portent seulement des références et métadonnées minimisées. La publication externe reste distincte du provider de lecture ; PA et C08 ne deviennent pas writers génériques de secrets. Le transport Debian local reste `LoadCredentialEncrypted` ; le mécanisme Docker doit être déclaré et qualifié séparément.
+
+Les résultats techniques et l'audit pré-base sont rapprochés avec leurs propriétaires persistants et C05 de manière idempotente avant disponibilité. Les mandats temporaires de préparation prennent fin après rapprochement ; les décisions métier et le management ordinaire attendent l'autorité PostgreSQL courante. Un reçu PA n'est ni un commit Core/Auth ni une autorisation d'étape suivante. Les effets externes sur service/rôle/base ne sont pas atomiques avec la transaction Core/Auth/C05/C08 ; après interruption, inspection et réconciliation précèdent tout rejeu. Une compensation destructive exige son autorisation distincte. R01 Ed25519/600 secondes, C01 INSTALLER, marqueur externe et première configuration gardent leurs frontières.
+
+Cette adoption est documentaire. Les paramètres de confiance/fraîcheur, protections, versions, budgets, supervision, stockage et recettes B/S/G/P restent à détailler et qualifier dans les tâches futures C08 et leurs dépendances ; aucun service ou résultat fonctionnel n'est produit.
+
 ## 22. Lifecycle des composants
 
 Les états de lifecycle sont des dimensions distinctes et ne doivent pas être réduits à un enum unique. Les phases de composition de référence sont :
@@ -2171,25 +2194,31 @@ identifiants canoniques Pixs restent stables ; le DN LDAP et les identifiants
 externes sont des mappings persistants du provider. Les données non classifiées
 ou hors périmètre ne sont pas exportées.
 
-La façade de consultation de `pixs.core` reste l'unique point d'accès des
-consommateurs. Elle vérifie l'autorisation et le `ScopeContext`, lit LDAP
+La façade Core reste le point d'accès des consommateurs Pixs ; les applications
+LDAP autorisées utilisent séparément leur profil de consultation du Domaine. Elle vérifie l'autorisation et le `ScopeContext`, lit LDAP
 seulement lorsque le provider déclaré est disponible et convergé dans la limite
 de fraîcheur, puis lit PostgreSQL en cas d'indisponibilité ou de retard. Après
 une mutation confirmée, elle privilégie PostgreSQL jusqu'à confirmation de la
 projection. Le repli produit un état `DEGRADED` corrélé ; il ne peut ni exposer
 une donnée hors périmètre ni élargir une autorisation.
 
-### 34.2 Stockage Core OpenLDAP interne et retour PostgreSQL
+<a id="342-stockage-core-openldap-interne-et-retour-postgresql"></a>
 
-Le [change de stockage Core réversible](openspec/changes/add-reversible-core-directory-storage/design.md) complète le cadrage : PostgreSQL reste le stockage initial des utilisateurs, groupes et ACL ; OpenLDAP interne peut devenir leur stockage de référence après une opération postinstallation autorisée. Le retour vers PostgreSQL est obligatoire et migre l'état LDAP courant, avec toutes les mutations, suppressions et révocations intervenues depuis l'aller.
+### 34.2 PG autoritative et état LDAP/Kerberos distinct
 
-Core garde la propriété logique, les UUID, schémas, liens et contrats ; Auth gère le service OpenLDAP. Le provider de stockage est lié par contrat public sans dépendance privée ni cycle Core/Auth. Les ACL applicatives sont stockées sous schéma versionné et évaluées par Pixs ; les ACL techniques LDAP ne les remplacent pas. Aucun accès direct au backend ne devient une API métier.
+La cible du 31 octobre conserve PG comme source des individus, identités,
+groupes et ACL applicatifs ; elle remplace l'ancienne option de stockage Core
+autoritatif OpenLDAP. Le [dossier antérieur](openspec/changes/add-reversible-core-directory-storage/design.md)
+reste inchangé à cette étape et devra être réconcilié avec les autres changes.
 
-Le plan couvre un ensemble cohérent de données et relations, sa représentation complète, les contrôles d'unicité/intégrité, l'audit, la concurrence, la sauvegarde et le retour. La bascule ferme les écritures concurrentes lors de la réconciliation finale, valide les données et engage durablement une génération unique. Les anciens écrivains sont refusés ; caches, contextes et traitements différés sont réévalués. Une issue inconnue est réconciliée avant reprise ; aucun compteur ou ancien état ne vaut preuve de bascule.
-
-La projection du §34.1 garde PostgreSQL autoritatif et son repli de consultation. En mode stockage LDAP autoritatif, ce flux/repli ne s'applique plus au même périmètre et doit être désactivé ou reconfiguré sans boucle. Une indisponibilité LDAP ne rend pas l'ancienne copie PostgreSQL utilisable comme référence. L'ancienne copie est conservée protégée et non autoritative ; sa purge est un acte distinct.
-
-Les garanties multi-objets LDAP, l'idempotence, l'audit/outbox, le filtrage et les mutations croisant données Core LDAP et données métier PostgreSQL doivent être qualifiés avant code ; aucune équivalence SQL ni transaction atomique inter-stores n'est présumée. C02 D03-A reste acquis pour le provider PostgreSQL initial. Sessions Auth, credentials, secrets, audit et coordination ne sont pas déplacés par cette option ; AD et sources externes restent hors sélection comme stockage Core.
+La publication de consultation §34.1 conserve ses contrôles propres ; les
+applications LDAP autorisées et la vérification déléguée à Auth ont un contrat
+séparé. PA configure et exploite LZT/KZT, sous administration PBO/Core/Auth.
+La publication Core préserve l'état Kerberos durable normal dans LDAP.
+La reconstruction complète depuis PG est réservée à une urgence critique,
+avec restauration protégée ou recréation/reprovisionnement selon profil et
+sauvegardes, sans garantie fictive de récupération des mêmes clés.
+La réplication multi-maître LDAP ne change pas les garanties PG (§46.2).
 
 ## 35. Conformité des providers et capacités du point 12
 
@@ -2483,7 +2512,7 @@ L'orientation du 21 octobre 2026 retient un binaire PBO commun contenant le Kern
 
 Le même binaire supporte plusieurs processus selon les rôles `web`, `worker`, `scheduler` et les rôles supplémentaires explicitement spécifiés. Chaque processus active le rôle déclaré et les fonctions nécessaires sans retirer le socle obligatoire de sa composition ni démarrer les exécutants PA/PZT. Les communications et coordinations interprocessus conservent leurs contrats sécurisés et leur persistance de référence ; la mémoire partagée d'un processus n'est pas une autorité durable.
 
-Le mode de compilation Nuitka `standalone` est distinct des modes d'exploitation PBO **Standalone** et **ZT**. Standalone désigne une instance autonome sans autorité Pixs extérieure ; ZT désigne sa participation autorisée au réseau gouverné via PZT. Le même exécutable, ses bibliothèques, son runtime et ses ressources servent les deux modes ; onefile n'est pas le profil retenu. L'activation de PZT est distincte du choix de mode : Standalone peut utiliser ce transport pour les échanges PBO–PA autorisés. Un profil sans réseau activé n'invente pas de résultat PA ; aucun transport absent ou invalide n'ouvre de canal alternatif. pixs.pzt reste essentiel dans les deux modes, sans retour autonome automatique après panne ou révocation.
+Le mode de compilation Nuitka `standalone` est distinct des modes d'exploitation de l'Instance Pixs Standalone / ZT / Domaine (PROJECT.md §45). Le même binaire PBO, ses ressources et bibliothèques servent ces compositions ; onefile n'est pas le profil retenu. Standalone peut utiliser PZT pour joindre PA. Sans transport PZT admissible aucun échange PBO–PA ne le contourne. Les trois binaires PA et le binaire PZT restent indépendants et compilés avec Cython.
 
 Cython dans PBO reste limité à des optimisations ciblées fondées sur un profilage et une comparaison mesurée, avec critères de gain et de non-régression définis avant recette. Les mesures comparent code fonctionnel, données, environnement, configuration et charge ; elles couvrent mémoire, CPU, latence ou débit pertinents, contrats, sécurité et maintenabilité. Les imports dynamiques Django, commandes, migrations, catalogues et ressources doivent aussi être qualifiés dans la distribution Nuitka. Cette restriction propre à PBO ne concerne pas les trois binaires PA ni le binaire indépendant PZT, tous compilés avec Cython.
 
@@ -2498,7 +2527,7 @@ La qualification vérifie ressources, saturation, reprise et garanties temporell
 ```mermaid
 flowchart TB
     H["Ressources réellement accordées à chaque environnement"] --> Q["Configuration versionnée — rôles, processus, concurrence et budgets"]
-    Q --> E["Exploitation PBO — Standalone ou ZT"]
+    Q --> E["Instance Pixs — Standalone / ZT / Domaine"]
     E --> B["Binaire PBO Nuitka standalone — Kernel, Core, Auth, Agent et module PZT"]
     B --> W["web — nombre de processus configuré"]
     B --> J["worker — nombre de processus configuré"]
@@ -2551,7 +2580,7 @@ PA, sans modifier le contenu des distributions ni les garanties de sécurité.
 
 ```mermaid
 flowchart LR
-    subgraph B["Binaire PBO Nuitka standalone — exploitation Standalone ou ZT"]
+    subgraph B["Binaire PBO Nuitka standalone — modes d’Instance Standalone / ZT / Domaine"]
         K["Kernel — mécanismes génériques"]
         C["pixs.core — primitives communes"]
         U["pixs.auth — authentification"]
@@ -3457,9 +3486,9 @@ NetBird ni prise en charge de tous ses clients et plateformes.
 Le socle de rédaction couvre les pairs, politiques, connectivité, DNS,
 posture, réconciliation et révocation. Les passerelles et ressources sans PA
 constituent un profil de réseau étendu dont l'inclusion dans la première
-réalisation reste à arbitrer. Les sorties Internet globales, accès SSH,
-reverse proxies publics et intégrations EDR/MDM restent des extensions
-à cadrer séparément ; cette intégration ne les active pas.
+réalisation reste à arbitrer. Les rôles GZT, EZT et RPZT sont cadrés au §46 comme capacités optionnelles,
+désactivées par défaut. Les accès SSH et intégrations EDR/MDM non couverts
+restent à cadrer séparément ; aucune activation n'est déduite de leur mention.
 
 ### 43.2 Articulation avec le cadrage du PA
 
@@ -3617,10 +3646,11 @@ exactly-once de bout en bout.
 
 ### 43.6 Autorités multimaîtres et synchronisation
 
-L'autorité racine et les sous-autorités peuvent fonctionner en multimaître.
-Plusieurs membres actifs représentent une même autorité logique et
-synchronisent leur état. Le parent unique désigne cette autorité logique,
-sans imposer une machine unique.
+Le mode d'autorité et de synchronisation est défini par famille de briques,
+avec exceptions explicites et dérogations justifiées/tracées (§46). Plusieurs
+membres de service peuvent être actifs sans transformer la PG en multi-maître ;
+une autorité PKIZT conserve un émetteur actif unique. La gouvernance logique
+ne se confond ni avec la racine PKI hors ligne ni avec le primaire de données.
 
 L'état partagé comprend les rattachements, identités publiques, délégations,
 politiques, autorisations, révocations et décisions nécessaires à leur
@@ -4368,6 +4398,12 @@ Une panne de collecte technique est diagnostiquée et ne supprime pas une
 obligation d'audit requise pour autoriser une opération.
 
 ## 44. Registre intégré des décisions PA et PZT
+
+Ce registre conserve les décisions datées. Le §46.10 indique les orientations
+remplacées pour la cible du 31 octobre : modes, cardinalité des identités,
+stockage Core, pilotage DNS, secours PKIZT et choix MFA. Les détails conservés
+ne prouvent ni livraison ni compatibilité avec cette nouvelle cible. Les
+contrats et preuves historiques restent attachés à leurs versions.
 
 Ce registre conserve une seule entrée par référence A01–A12 détaillée.
 Il reprend les 174 fiches communes ; les 100 fiches identiques des deux
@@ -11136,8 +11172,7 @@ A10i49 A validé le 8 octobre 2026.
 ### A10i50 — Adaptateurs système de temps et de qualité par plateforme — option A validée le 8 octobre 2026
 
 Bornes qualifiées A10i49 A, cycle A10i48 A et contrôles A05/A12 maintenus.
-Adaptateurs système retenus pour autorités de validation, sans serveur, logiciel,
-protocole de synchronisation ou nouvelle source de temps concrète adoptés.
+Adaptateurs système retenus pour autorités de validation, avec service système géré par PA selon profil et besoin, sans nouveau démon ni protocole Pixs ; sans autre serveur, logiciel, protocole de synchronisation ou nouvelle source de temps concrète adoptés.
 
 | Choix validé | Provider | Qualification requise |
 | --- | --- | --- |
@@ -11163,8 +11198,7 @@ Une copie de l'état du collecteur sans fraîcheur retrouvée ne suffit pas.
 Docker/LXC Proxmox et Windows/Linux physiques/VM qualifiés séparément ; accès
 au temps ou métadonnées sans privilège système, montage ou changement de
 synchronisation implicitement accordés. Profil incapable de démontrer U<=1 seconde
-dans le premier jet refusé pour ce rôle ; PA ordinaire sans rôle de validation
-ne reçoit pas un service temporel supplémentaire par cette politique.
+dans le premier jet refusé pour ce rôle ; la présente politique MUST NOT accorder un service par PA, seul un service par horloge géré par PA lorsque le profil l’exige MAY être qualifié, sans préjuger sa qualification.
 
 Contrat explicite de confiance et qualité, fraîcheur/dérive/perte de
 source, cohérence des membres, correction/saut d'horloge et restauration testés.
@@ -11176,8 +11210,7 @@ PBO/Django gouverne configuration et diagnostics sans secret, A10i22 B maintenu,
 PA sans accès SQL direct. Usage de temps pour autres contrats A05/CA/purge
 reste à qualifier séparément ; aucune amélioration système implicite.
 
-A validée pour réutiliser l'infrastructure sous preuve de qualité commune ;
-service temporel Pixs dédié alternatif non retenu. Coûts CPU/RAM/I/O/réseau
+A validée pour réutiliser l’infrastructure sous preuve de qualité commune ; pas de nouveau démon ni de protocole Pixs et composant système conforme réutilisé ou géré par PA sous profil autorisé. Le contrat privé C.Z12_TIME_OBS/v2 est défini au §15.3.1 du change Z12 et C.Z12_CHRONY_OBS/v1 demeure inchangé ; la présente section ne qualifie aucune disponibilité par sa seule rédaction et le nom de temps v2 reste privé. Coûts CPU/RAM/I/O/réseau
 à mesurer, aucune précision,
 disponibilité ou ressource universellement meilleure. Aucune implémentation,
 synchronisation d'hôte, configuration, certificat ou OpenSpec modifiés ici.
@@ -11242,7 +11275,7 @@ borne d'erreur au plus 1 seconde A10i49 A et échéance immuable conservés.
 Premier jet configurable validé, à qualifier sans performance mesurée ou API installée.
 Interface API/IPC structurée validée A10i53 A.
 
-| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation |
+| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation en SYNCHRONISE |
 | --- | --- | --- | --- | --- |
 | A | 250 millisecondes | 2 | 1 seconde | 600 secondes |
 
@@ -11256,15 +11289,7 @@ sans crédit remis à zéro. Plafonds simultanés et budgets de sécurité plus 
 prioritaires, aucune acquisition commencée sans budget restant suffisant.
 Reprise sans preuve de temps restant : refus, D jamais repoussée.
 
-Âge maximal concerne la dernière preuve de référence/synchronisation admissible,
-pas la date à laquelle l'adaptateur a simplement lu une métrique ou un fichier.
-Calcul/identité de preuve, source et progression d'âge qualifiés, référence
-modifiée ou horloge reculante sans âge artificiellement réinitialisé.
-Âge nul/inconnu sans fraîcheur vraie présumée ; âge non vérifiable ou supérieur
-au plafond refuse création/admission. Âge inférieur au plafond n'autorise pas
-seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance
-A10i49/A10i50 toujours démontrées. Âge maximal 600 secondes sans permission de réemploi
-d'un ancien échantillon entre décisions, A10i51 A inchangé.
+Âge maximal concerne la dernière preuve de référence/synchronisation admissible, toujours réelle et vérifiable, pas la date à laquelle l’adaptateur a simplement lu une métrique ou un fichier. Calcul/identité de preuve, source et progression d’âge qualifiés, référence modifiée ou horloge reculante sans âge artificiellement réinitialisé. Âge non vérifiable MUST conduire au refus en tous modes. Âge invérifiable ou supérieur au plafond en mode SYNCHRONISE MUST conduire au refus de création/admission. Âge inférieur au plafond n’autorise pas seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance A10i49/A10i50 toujours démontrées. En mode SYNCHRONISE, âge maximal 600 secondes sans permission de réemploi d’un ancien échantillon entre décisions, A10i51 A inchangé. En mode distinct HORS_LIGNE, un âge supérieur à 600 secondes MAY être admis seulement si le modèle, la provenance et la continuité sont qualifiés, si le profil demeure valide et si la borne totale U(t) au point d’usage demeure inférieure ou égale à une seconde, avec acquisition actuelle et sans réarmement de droits, de budget ou d’échéance ; une lecture récente MUST NOT rajeunir la preuve amont et une nouvelle acquisition MUST NOT remettre à zéro un droit ; aucune durée magique n’est admise.
 Borne d'erreur 1 seconde distincte du budget global de lecture 1 seconde et de l'âge
 de preuve ; aucune mesure temporelle plus ancienne réputée exacte par budget large.
 
@@ -15056,6 +15081,10 @@ paramètres et qualification restent à préciser.
 
 ## 45. Traçabilité, paramètres ouverts et préparation OpenSpec
 
+Cette préparation conserve son relevé historique. La cible consolidée du
+31 octobre et les orientations remplacées sont définies au §46 ; les points
+ouverts et références ci-dessous ne valent pas adoption de contrats nouveaux.
+
 La formalisation documentaire est portée par le change
 formalize-pa-pzt-and-distribution, puis par
 separate-pa-pzt-and-pbo-management-modules pour la décision du 17 octobre 2026.
@@ -15436,3 +15465,293 @@ pas les choix validés et ne remplacent pas la séparation PA/PZT du 17 octobre 
 | 0.0.4 | 4 octobre 2026 | Intégration des principes de provisionnement, reprise PZT, pilotage modulaire, composition, mandats, séparation des privilèges, persistance, plans, preuves d'exécution, profils et qualification ; cohérence avec le cadrage PZT v0.2.0. |
 | 0.0.5 | 4 octobre 2026 | Ajout du septième mode `pzt-daemon`, lancé sans délai au démarrage du système ou du conteneur pour assurer la convergence et la réconciliation de PZT si celui-ci est activé et configuré sur ce PA, sinon fermeture ; mise en cohérence des modes, privilèges et critères de recette. |
 | 0.0.6 | 10 octobre 2026 | Consolidation validée le 10 octobre 2026 : synthèse commune des décisions, contrôle croisé de 174 références détaillées, renvois obsolètes corrigés, regroupement des modalités en trois dossiers et arbitrages à impact réel par lots de trois ; paramètres d'essai explicitement à mesurer/qualifier. Intégration demandée de WireGuard et des capacités inspirées de NetBird à redévelopper dans PZT/PA : adapters, cartes réseau, politiques, DNS, posture, admission, connectivité, révocation et passerelles selon profil ; critères R47–R68 et arbitrages A01–A12. Périmètre précisé : Linux/Windows physiques et VM, Docker/LXC sous Proxmox ; A01 validé : priorité aux backends natifs par OS, espace utilisateur selon les besoins du profil. A02 option A validée : TLS d'amorçage intégré à PZT, limité à l'admission et aux preuves requises, avec ancrage de confiance préalable. A03 option A validée : TLS mutuel PZT sur le même hôte d'exécution, frontières des VM et conteneurs préservées. A04a option A validée : pzt-daemon gère les ressources réseau PZT de son périmètre, les autres modes soumettent leurs demandes autorisées. A04b option A validée : adapters PA nftables Linux et Windows Filtering Platform Windows, contrat commun et coexistence avec les règles de l'opérateur à qualifier. A05a option A validée : autorisations bornées, révocation connue sans attente d'expiration et protection indépendante de PA ; A05b premier jet validé : Courant 5 minutes/renouvellement 60 secondes, Protégé 60 secondes/renouvellement 20 secondes, Critique en ligne, révocation PA joignable en 5 secondes et protection après panne en 10 secondes ; objectifs à qualifier. A06a option A validée : IPv4/IPv6 dès le socle, familles activées par profil et désactivation IPv6 PZT par réglage unique, couvrant overlay et endpoints WireGuard/TLS sans modification implicite de l'IPv6 hôte ; A06b option A validée : plan privé configurable, allocations par autorité compétente, pools IPv4 RFC 1918 validés, IPv6 ULA /48 par domaine et contrôles de collisions ; A06c option B validée : DNS Pixs géré par un module essentiel PBO et utilisable par PZT et tous les PA, droits de publication/consultation et contrats publics distincts ; placement, interfaces et TTL à préciser. A07a option A validée : contrôle PBO–PA et PA–PA HTTP/JSON avec contrats OpenAPI versionnés ; A07b option A validée : snapshot initial et deltas ordonnés, déduplication et reprise complète en cas de désynchronisation, sans prolongation ni résurrection des droits ; A07c option B validée : notifications et retours de suivi WebSocket/JSON, commandes et lectures HTTP conservées ; consommation comparative PA/PBO et délais à qualifier. Extension A07c approuvée en principe : SSE et WebSocket avec adaptation déterministe ; A07c2 option A validée le 5 octobre 2026 : table de règles prioritaires, critères déterministes et seuils explicites ; valeurs, fenêtres, bascule et consommation à qualifier. A07d option A validée le 5 octobre 2026 : opérations métier JSON typées, identité stable, préconditions, versions, déduplication et preuves maintenues ; catalogue et schémas à préciser. A08a option A validée le 5 octobre 2026 : socle initial entre PA admis avec contrôle PBO, puis profil passerelle ultérieur, contrats et garanties conservés. A08b option A validée le 5 octobre 2026 : sources conservées sans NAT, routes retour vérifiées et blocage sans traduction automatique en cas d'échec. A08c option A validée le 5 octobre 2026 : principale avec secours, une seule active par périmètre de routage cohérent, sélection déterministe, basculement autorisé et retours convergents ; coordination A12, seuils et délais à qualifier. A09a option A validée le 5 octobre 2026 : ICE/STUN, signalisation propre PZT chiffrée, sondes techniques encadrées et intégration au socket WireGuard à qualifier. A09b option A validée le 5 octobre 2026 : UDP prioritaire avec secours WSS/TCP, permissions bornées, sélection déterministe et chiffrement WireGuard maintenus ; cadrage et qualification à préciser. A09c option A validée le 5 octobre 2026 : QUIC avec DATAGRAM pour les liaisons PA–relais UDP, sans retransmission automatique des datagrammes ni substitution en stream fiable ; support, cadrage, MTU, reprise et bibliothèques à qualifier. A10a option A validée le 5 octobre 2026 : transport WireGuard partagé par environnement et périmètre compatible, identités et contrôles propres aux services ; frontières, mappings, attestation et révocation préservés, qualification requise. A10b option A validée le 5 octobre 2026 : identité X.509 et liaison publique WireGuard séparée, JSON typé/versionné signé asymétriquement en JWS ; rotations et révocations distinctes, profil à qualifier. A10c option A validée le 5 octobre 2026 : attestation fraîche à chaque connexion/reconnexion PA puis sur événements et expiration, résultat réutilisé par les services dans sa portée avec leurs contrôles, sans prolongation des droits. A10d option A validée le 5 octobre 2026 : profils TPM physique, passthrough/vTPM et attestation hôte liée au PA distincts, provenance et couverture à qualifier, admission bloquée sans preuve et absence de repli automatique. A10e option A validée le 5 octobre 2026 : socle ciblé démarrage/chaîne de confiance, PA chargé, runtime, dépendances, collecteur et paramètres de sécurité ; mécanismes et couverture à qualifier par plateforme. A10f option A validée le 5 octobre 2026 : manifestes signés/versionnés et transition progressive bornée entre ensembles cohérents, retrait à échéance, révocation et anti-rejeu sans prolongation des droits ; paramètres et coordination à qualifier. A11a option A validée le 5 octobre 2026 : admission automatisée sous mandat préalable, contrôles courants d'identité/preuves/contexte et engagement idempotent ; hors mandat, arbitrage opérateur sans dispense de preuve. A11b option A validée le 5 octobre 2026 : jeton individuel à usage unique, émission par instance automatisable sous mandat, consommation à engagement atomique/idempotent, reprise sans double identité ni consommation ; durées, schémas et qualification à préciser. A11c option A validée le 5 octobre 2026 : échéance de vie finie par génération, renouvellement autorisé automatisable avec contrôles courants, retrait et nettoyage contrôlés sans résurrection ni destruction de VM/conteneur/volume ; durées, limites et qualification à préciser. A12a option A validée le 5 octobre 2026 : contrôle PZT coordonné dans PostgreSQL par autorité, membres de service actifs, primaire admissible unique, concurrence/idempotence et outbox transactionnelles ; PA sans accès direct aux tables Pixs. A12b option A validée le 5 octobre 2026 : durabilité synchrone des décisions critiques en profil redondant, perte des copies sans substitution locale, engagements incertains réconciliés et promotion contrôlée après exclusion/couverture des décisions ; topologie, copies, contrôleur et budgets à qualifier. A12c option A validée le 5 octobre 2026 : clé/certificat individuels, une signature de membre habilité, reçu lié à engagement/mandat/époque, racine protégée et limites de confiance explicites ; formats/algorithmes/protection des clés à qualifier. A12d option A validée le 6 octobre 2026 : reçus et permissions JSON typés/versionnés signés asymétriquement en JWS compact, usages distincts, octets protégés et contrôles courants maintenus ; schémas, durées et tailles à qualifier. A12e option B validée le 6 octobre 2026 : signatures opérationnelles des reçus/permissions Ed25519, identifiant JOSE explicite Ed25519, sans repli ES256/EdDSA ni réutilisation de clé ; providers, certificats et coûts à qualifier. A12f option A validée le 6 octobre 2026 : profils logiciels protégés autorisés ou matériels non exportables exigés par politique approuvée, clés individuelles et absence de repli automatique ; aucun rôle de signataire imposé au PA vérificateur. A12g option A validée le 6 octobre 2026 : nouvelle clé individuelle et reprovisionnement autorisé après perte définitive/corruption ou remplacement déclaré, sans restauration de sauvegarde de l'ancienne clé privée opérationnelle ; redémarrage normal et persistance protégée distincts, aucune ancienne habilitation réactivée. A06d option A validée le 6 octobre 2026 : IPv6 PZT initialement désactivé pour les nouveaux périmètres sans choix explicite, activation autorisée simple, support/test IPv6 maintenus et configurations existantes/hôte préservés. A06e option A validée le 6 octobre 2026 : service DNS distinct du processus PBO et lifecycle propre, piloté par PA désignés, administration/propriété module essentiel PBO maintenues, PA ordinaires clients ; placement même hôte possible, continuité bornée et qualification requise. A06f A validée le 6 octobre 2026 : requêtes DNS sur TLS/TCP (DoT) strict, contrôles PZT/mTLS et administration HTTP/JSON maintenus, sans bascule implicite. A06g A validée le 6 octobre 2026 : cache privé borné, plafonds initiaux 30 s positif/5 s négatif, durées limitées aux validités courantes et invalidation immédiate des retraits connus ; qualification requise. A06h A validée le 6 octobre 2026 : serveur DNS préféré et secours ordonnés, une destination à la fois par requête, bascule technique bornée et retour après stabilité, sécurité/fraîcheur avant disponibilité ; seuils et qualification ouverts. A06i A validée le 6 octobre 2026 : nom technique stable généré depuis identité d'instance/périmètre, alias lisibles facultatifs, unicité/publication/retrait contrôlés et aucune identité accordée par résolution ; format/suffixes à préciser. A06j A validée le 6 octobre 2026 : suffixe explicite au provisionnement, automatisation sous mandat possible, aucun domaine public obligatoire ou suffixe concret adopté, configurations existantes préservées et collisions bloquantes. A06k A validée le 6 octobre 2026 : alias CNAME directs vers nom technique, sans alias vers alias ou copies A/AAAA indépendantes, vues/permissions/validités et identité TLS maintenues. A10g A validée le 6 octobre 2026 : TLS 1.3 exclusivement sur les canaux PZT concernés, sans TLS 1.2 ou repli, WireGuard/QUIC et contrôles courants conservés, 0-RTT désactivé ; qualification requise. A10h choix explicite du développeur validé le 6 octobre 2026 : sélection depuis PBO entre AES-256-GCM et ChaCha20-Poly1305 pour TLS/TCP, sans AES-128 ni mode automatique, compatibilité/suite négociée et état appliqué vérifiés, changement par reconnexion contrôlée ; WireGuard/QUIC et garanties conservés. A10h2 A validée le 6 octobre 2026 : valeur globale PBO avec dérogations autorisées par profil/périmètre, héritage déterministe, origine/valeur effective visibles, impacts et reconnexion contrôlés. A10h3 A validée le 6 octobre 2026 : ChaCha20-Poly1305 proposé au provisionnement des nouveaux périmètres TLS/TCP, sélection AES-256-GCM maintenue depuis PBO, existant/dérogations/amorcage préservés. A10h4 A validée le 6 octobre 2026 : préparation, engagement versionné, reconnexion contrôlée et preuve d’application, permissions/attestation courantes, résultats incertains réconciliés et retour arrière seulement autorisé. A10h5 A validée le 6 octobre 2026 : unités de migration indivisibles calculées par PBO depuis dépendances explicites/vérifiées, plan et impacts visibles, inconnues/incohérences bloquantes et revalidation après changement. A10h6 A validée le 6 octobre 2026 : migration séquentielle, une unité à la fois, preuve d’application et contrôles courants avant la suivante, suspension sur échec/incertitude et reprise autorisée sans retour automatique. A10h7 A validée le 6 octobre 2026 : budgets finis par phase/unité et échéance globale, configuration préalable, validités de sécurité prioritaires, dépassement diagnostiqué et aucune remise à zéro ou prolongation implicite ; valeurs numériques à qualifier. A10h8 A validée le 6 octobre 2026 : tentatives de reconnexion automatiques bornées pour erreurs techniques transitoires qualifiées, mandat préalable, contrôles courants et budgets conservés, sécurité/engagement incertains bloquants sans repli. A10h9 A validée le 6 octobre 2026 : temporisation exponentielle plafonnée avec dispersion déterministe bornée, paramètres PBO explicites, compteurs/temps conservés et échéances/révocations prioritaires ; formule/valeurs à qualifier. A10i A validée le 6 octobre 2026 : renouvellement anticipé des certificats TLS automatisable sous politique/mandat préalable, contrôle courant à chaque émission, application vérifiée et retrait à expiration/révocation sans grâce. A10i2 A validée le 6 octobre 2026 : nouvelle paire d’authentification TLS indépendante à chaque renouvellement normal, génération/protection qualifiées dans le périmètre PA/service, clé privée non transmise au PBO, identité stable/droits séparés. A10i3 A validée le 6 octobre 2026 : chevauchement des credentials autorisé/versionné/borné, nouvelle association avec contrôles courants prouvée, ancien retiré à échéance même sans convergence, expiration/révocation/compromission sans grâce. A10i4 A validée le 6 octobre 2026 : premier jet nominal 24 heures, renouvellement à 16 heures (deux tiers de validité effective), chevauchement maximal 5 minutes, paramètres PBO configurables à qualifier sans prolongation de validités. A10i5 A validée le 6 octobre 2026 : clé d’authentification TLS ECDSA P-256, signature ecdsa_secp256r1_sha256, CA/échange/chiffrement/signatures opérationnelles distincts et providers à qualifier. A10i6 A validée le 6 octobre 2026 : PKI privée dédiée PZT, racine protégée hors ligne et intermédiaires d’émission en ligne, décisions Django et contrôles PZT conservés, autorités CA distinctes des autorités métier. A10i7 A validée le 6 octobre 2026 : émetteur CA dédié par autorité logique habilitée, clé propre et politique des émetteurs/périmètres admis, sans CA par membre et avec ressources à qualifier. A10i8 A validée le 6 octobre 2026 : profil de protection CA explicite, logiciel protégé autorisé ou matériel non exportable exigé, sans repli ni transposition des clés opérationnelles. A10i9 A validée le 6 octobre 2026 : nouvelle clé CA et recertification/reprovisionnement après perte, sans restauration de l’ancienne clé privée, retrait/migration autorisés et état réconcilié. A10i10 A validée le 6 octobre 2026 : secours CA à clé indépendante pré-certifié/inactif, une génération d’émission admissible et activation sous mandat/exclusion, migration et qualification conservées. A10i11 A validée le 6 octobre 2026 : bascule automatisable sous mandat préalable, critères techniques et contrôles courants, décision Django/engagement A12, refus automatique en cas de suspicion ou preuve insuffisante. A10i12 A validée le 6 octobre 2026 : exclusion active extérieure au processus CA, inhibition persistante ou arrêt sans redémarrage, preuve actuelle vérifiée par Django et cible/impacts autorisés. A10i13 A validée le 7 octobre 2026 : méthode d’exclusion définie par profil, inhibition matérielle qualifiée ou arrêt contrôlé du signataire, preuve commune, reprise interdite et aucune escalade implicite. A10i14 A validée le 7 octobre 2026 : clés CA ECDSA P-256 et signatures X.509 SHA-256 pour racine/intermédiaires, usages distincts, providers et chaînes qualifiés sans repli. A10i15 A validée le 7 octobre 2026 : nouvelle paire CA intermédiaire indépendante à chaque renouvellement normal, procédure racine autorisée, migration/exclusion et mandat de rotation propres. A10i16 A validée le 7 octobre 2026 : premier jet intermédiaires 365 jours/préparation 240 jours/marge 125 jours, PBO configurable, dates/résiduel et qualification. A10i17 choix du développeur validé le 7 octobre 2026 : racine 20 années nominales de 365 jours (7300 jours), préparation à 16 années nominales (5840 jours), marge 1460 jours, borne d’ancrage et succession autorisée. A10i18 A validée le 7 octobre 2026 : nouvelle paire racine indépendante à chaque succession normale, procédure hors ligne, références/provisionnement prouvés et migration autorisée. A10i19 A validée le 7 octobre 2026 : coexistence autorisée/versionnée/bornée des deux ancrages, migration progressive et preuves, engagement d’émission distinct, retrait à échéance sans grâce. A10i20 A validée le 7 octobre 2026 : plafond nominal 30 jours, échéance commune sans remise à zéro/retrait anticipé prouvé, certificats 24 heures/credentials 5 minutes conservés. A10i21 A validée le 7 octobre 2026 : sauvegarde privée racine protégée/chiffrée/hors ligne, récupération autorisée bornée après perte sans compromission suspectée, dates/droits courants et intermédiaires sans restauration conservés. A10i22 B validée le 7 octobre 2026 : une personne explicitement habilitée suffit à chaque opération de sauvegarde/récupération racine, mandats bornés/contrôles/audit conservés. A10i23 A validée le 7 octobre 2026 : deux copies privées racine chiffrées/hors ligne sur supports/lieux distincts, moyens séparés et contrôle individuel conservés. A10i24 A validée le 7 octobre 2026 : origine aléatoire indépendante de clé de protection, garde séparée et récupération/profil qualifiés, sans phrase secrète dérivant cette clé. A10i25 A validée le 7 octobre 2026 : clé commune dédiée à génération/périmètre racine pour deux copies, récupération redondante et contrôle individuel conservés. A10i26 A validée le 7 octobre 2026 : deux moyens complets protégés/hors ligne sur supports/lieux distincts, récupération sans l’autre et contrôle individuel conservés. A10i27 A validée le 7 octobre 2026 : sauvegardes racine AES-256-GCM/tag entier 128 bits/nonce 96 bits unique/AAD liées, qualification requise. A10i28 A validée le 7 octobre 2026 : nonces déterministes préfixe 32 bits/compteur 64 bits, réservation durable et preuve contre retour arrière requises. A10i29 A validée le 7 octobre 2026 : témoin hors ligne indépendant de progression, références publiques et réservation durable prouvée. A10i30 A validée le 7 octobre 2026 : journal du témoin lié à ancrage matériel monotone qualifié, reprise et liaison à préciser. A10i31 A validée le 7 octobre 2026 : nouvelle protection et témoin/ancrage après perte définitive/reset/remplacement, ancienne clé interdite aux nouveaux chiffrements et âge/droits inchangés. A10i32 A validée le 7 octobre 2026 : transition par étapes reprenables et revalidées, preuves des deux copies/moyens avant engagement puis retrait. A10i33 A validée le 7 octobre 2026 : assainissement contrôlé sans conservation volontaire après engagement vérifié, preuves d'efficacité et protection du nouveau profil. A10i34 A validée le 7 octobre 2026 : méthode par profil qualifié, CE admissible sinon purge/destruction adaptées, vérification et validation requises. A10i35 A validée le 7 octobre 2026 : dossier versionné lié par empreinte à reçu signé A12, contrôle et preuve technique conservés. A10i36 B validée le 7 octobre 2026 : empreinte SHA-384 entière/48 octets, octets exacts et signature Ed25519 conservés. A10i37 A validée le 7 octobre 2026 : Base64url sans remplissage pour SHA-384, 64 caractères et décodage strict 48 octets. A10i38 A validée le 7 octobre 2026 : dossier JSON avec manifeste de pièces séparées et empreintes SHA-384/Base64url, reçu extérieur, intégrité/export complets. A10i39 A validée le 8 octobre 2026 : plafonds 1 Mio/64 pièces/16 Mio/128 Mio total/profondeur 16, configurables et qualification requise. A10i40 A validée le 8 octobre 2026 : budgets séquentiels 1 dossier/256 Kio/30 s par pièce/180 s total, qualification et configuration requises. A10i41 A validée le 8 octobre 2026 : non-admission explicite sans file interne, idempotence et états incertains réconciliés. A10i42 A validée le 8 octobre 2026 : relances automatiques bornées sous mandat après non-admission de capacité, 3 soumissions/5 puis 10 s/30 s. A10i43 A validée le 8 octobre 2026 : consultation autoritative automatique 3 requêtes/2 puis 5 s/15 s, contrôle courant et suspension sur incertitude. A10i44 A validée le 8 octobre 2026 : fermeture durable transactionnelle par tentative, commande distincte de consultation et ordre avec admission contrôlé. A10i45 A validée le 8 octobre 2026 : conservation individuelle sans compaction automatique, retrait sans rejeu ou audit perdus. A10i46 A validée le 8 octobre 2026 : retrait individuel après minimum 24 h et preuve d’irrecevabilité/audit, pas d’âge suffisant seul. A10i47 A validée le 8 octobre 2026 : identité opération/cycle/tentative 1–3, cycle autorisé et non-réutilisation des tentatives fermées. A10i48 A validée le 8 octobre 2026 : cycle actif créé avec échéance fixe au plus T0+30 s, fenêtre utile sans extension après accusé. A10i49 A validée le 8 octobre 2026 : bornes qualifiées jusqu’à 1 s, création depuis borne basse et admission avant borne haute, aucun délai prolongé. A10i50 A validée le 8 octobre 2026 : adaptateurs de temps/qualité système par plateforme, infrastructure et bornes à qualifier sans nouveau service temporel Pixs. A10i51 A validée le 8 octobre 2026 : acquisition cohérente à chaque décision, sans réemploi de cache comme preuve courante. A10i52 A validée le 8 octobre 2026 : budgets de premier jet 250 ms/2 acquisitions/1 s global/600 s preuve, borne et plateforme à qualifier. A10i53 A validée le 8 octobre 2026 : lecture structurée API/IPC documentée, interfaces/plateformes à qualifier sans CLI implicite. A10i54 A validée le 8 octobre 2026 : auxiliaire isolé borné et fin effective vérifiée avant remplacement. Lot A10i55–A10i57 A validé le 8 octobre 2026 : auxiliaire réutilisé/repos 300 s, JSON 16 Kio et compte système dédié minimal. Lot A10i58–A10i60 A validé le 8 octobre 2026 : transport IPC natif local avec contrôle d’accès/identités, plafonds 64 Mio/50 % d’un cœur, journalisation agrégée/transitions-erreurs et audit obligatoire conservé. Lot A10i61–A10i63 A validé le 8 octobre 2026 : longueur IPC non signée sur 4 octets en ordre réseau/JSON 16 Kio, schéma fermé et recréation technique à demande 3 tentatives/600 s, arrêt prouvé/budgets/blocage conservés. Lot A10i64–A10i66 A validé le 8 octobre 2026 : chaînes décimales canoniques int64/uint64, complexité JSON IPC 8/32/32 et état technique local durable/protégé, reprise qualifiée sans compteur remis à zéro. Lot A10i67–A10i69 A validé le 8 octobre 2026 : état courant JSON UTF-8 typé/versionné, plafond total 256 Kio et dimensions métriques stables finies, sans audit métier remplacé. Lot A10i70–A10i72 A validé le 9 octobre 2026 : publication JSON par candidat synchronisé/remplacement atomique avec durabilité, exclusion OS sur objet stable distinct et 64 séries ordinaires plus 1 débordement par instrument/instance/cycle, sans preuve anti-restauration déduite. Lot A10i73–A10i75 A validé le 9 octobre 2026 : reprise du parent au même démarrage OS sous continuité complète prouvée, tampon de charges utiles métriques 256 Kio et export nominal 30 s, sans réarmement implicite ni audit différé. Lot A10i76–A10i78 A validé le 9 octobre 2026 : délai global de cycle 5 s, pipeline actif unique et cycles sans file sautés si occupé, sans reprises métier ou preuve temporelle prolongée. Lot A10i79–A10i81 A validé le 9 octobre 2026 : temporalité cumulative compatible, regroupement des répétitions techniques sur 30 s et alerte après 3 occasions périodiques sans export complet, diagnostic/sécurité/audit individuels conservés. Lot A10i82–A10i84 A validé le 9 octobre 2026 : logs 7 jours, points métriques 30 jours, traces 24 h comme défauts nominaux configurables des nouveaux profils concernés, rétentions existantes/audit/dossiers préservées et purge autorisée sous contrôles. Lot A10i85–A10i87 A validé le 9 octobre 2026 : travaux backend de purge télémétrie à cadence nominale 24 h, lots 1 000 et budget global actif 60 s, sous Jobs/autorisation/rétention/audit, sans exécution réelle. Lot A10i88–A10i90 A validé le 9 octobre 2026 : checkpoint après lot confirmé, 2 tentatives initiale comprise avec attente nominale 1 s sous budget global 60 s, concurrence globale 1 par autorité logique. Lot A10i91–A10i93 validé le 9 octobre 2026 : A10i91 B bail nominal 60 s/renouvellement 20 s plafonné par travail/mandat courants, A10i92 A rotation déterministe des classes, A10i93 A alerte après 2 observations qualifiées de reliquat. Lot A10i94–A10i96 A validé le 9 octobre 2026 : audit de lot lié à manifeste durable, attente 3/un par classe et rétention nominale de métadonnées terminales 14 jours, audit individuel/holds/anti-rejeu préservés. Lot A10i97–A10i99 A validé le 9 octobre 2026 : manifeste JSON UTF-8 fermé/versionné, empreinte SHA-384 entière/48 octets et limite 128 Kio/version-phase, sans nouvelle signature ni audit tronqué. Lot A10i100–A10i102 A validé le 9 octobre 2026 : SHA-384 Base64url sans remplissage/64 ASCII, JSON 8/32/1 000 et lot comme préfixe déterministe admissible sous capacité d'audit de toutes phases, dans budgets/mandats courants. Lot A10i103–A10i105 A validé le 9 octobre 2026 : sérialisation JCS qualifiée, sources ordonnées par première persistance/identité-génération et vérification du manifeste à chaque usage sans cache de résultat. Lot A10i106–A10i108 A validé le 9 octobre 2026 : sélection sous borne stable versionnée, conservation de manifeste héritant audit/holds avec références préservées, blocage ciblé sous confinement prouvé sinon global. Lot A10i109–A10i111 A validé le 9 octobre 2026 : réarmement opérateur PBO, original conservé/protégé avec incident hors document sans copie automatique, alerte persistante et transitions sans rappel périodique. Lot A10i112–A10i114 validé le 9 octobre 2026 : A10i112 A dossier de contrôle structuré/versionné, A10i113 B délai global de traitement 60 s après admission serveur, A10i114 A refus d'incident à version obsolète avec nouvelle soumission explicite. Lot A10i115–A10i117 A validé le 9 octobre 2026 : une commande de réarmement active sans file par autorité, dossier JSON/JCS fermé/versionné et 64 Kio, sans preuve tronquée ni délai A10i113 B réinitialisé. Lot A10i118–A10i120 A validé le 9 octobre 2026 : dossier SHA-384/Base64url externe, complexité 8/32/64 et conservation liée à audit/holds, contrats de contenu distincts des dérogations Super Admin courantes d'OpenSpec sans preuve d'audit inventée. Lot A10i121–A10i123 A validé le 9 octobre 2026 : engagement autoritatif atomique de l'état et des références applicables, vérification du dossier à chaque usage sans cache de résultat, suivi événementiel versionné avec réconciliation autoritative ; dérogations Super Admin selon OpenSpec, aucun audit ou contrôle absent présenté comme réalisé. Lot A10i124–A10i126 A validé le 10 octobre 2026 : canal de notification autorisé mutualisé, fenêtre nominale de rejeu de 1 heure distincte des rétentions d'audit et reprise par état autoritatif courant puis flux cohérent, sans nouvelle commande. Revue de clôture ajoutée : aucun choix A/B soumis en attente, modalités restantes inventoriées et regroupement proposé en trois dossiers, sans validation d'implémentation. Alignement sur ZTP v0.3.0 ; autres recommandations ouvertes, sans implémentation ni écriture OpenSpec. Précision validée le 10 octobre 2026 : fonctionnement PZT toujours exécuté par le binaire PA dédié ; configuration, visualisation, supervision et monitoring toujours portés par PBO local ou distant, collecte et remontée par PA, continuité bornée en cas d'indisponibilité. |
+
+## 46. Contrats techniques cibles Instance, Domaine, ZT et PA — 31 octobre 2026
+
+### 46.1 Propriété, versionnement et préparation OpenSpec
+
+PROJECT.md §45 définit le modèle fonctionnel consolidé ; ce chapitre en
+précise les contrats. L'étape 1 est validée et l'étape 2 les a traduits dans
+le référentiel OpenSpec. L'étape 3 a préparé les changes résiduels et
+réconcilié les propositions concernées selon ACL-PIXS-2026-10-31-E3-R1.
+Leur réalisation reste distincte ; aucune tâche ou preuve produit n'est acquise.
+Les interfaces et réalisations existantes gardent leurs versions et limites.
+La nouvelle cardinalité individu/identités, les contextes Domaine et les bases
+séparées ne sont pas réputés disponibles dans les modèles v1 existants.
+
+Les propriétaires restent distincts : Core définit individus, identités et
+autorisations applicatives ; Auth possède les moyens, politiques et sessions ;
+Agent administre les fonctions PA ; PZT administre le réseau. Django conserve
+l'autorité applicative et les modules utilisent leurs contrats publics.
+La séparation des bases ne permet aucune lecture directe inter-modules.
+
+Le contexte de propriété distingue Instance, Domaine, Tenant et scope enfant.
+Un tenant appartient exactement à un domaine après transition. Les contextes
+pré-domaine et la reprise des tenants préexistants restent explicites.
+Commands, Queries, Events, Jobs, caches, projections, audit et interfaces
+propagent les références nécessaires sans accès implicite entre périmètres.
+Les schémas physiques et versions de contrats sont à spécifier, sans inventer
+une extension compatible des objets ScopeContext existants.
+
+### 46.2 Stockages et réplication
+
+PG Instance porte le référentiel unique des individus et les données communes.
+Avant le premier domaine, elle porte aussi identités numériques, organigrammes,
+groupes, ACL et données métier pré-domaine. PG Domaine porte les identités et
+les données Core/applicatives de son périmètre après bascule. CZT, DZT et
+PKIZT disposent chacun de bases logiques indépendantes de ces bases et entre elles.
+Chaque réplique d'une base sert le même référentiel logique, sans fusion
+avec les données d'une autre Instance, Domaine ou ZT.
+
+L'état de contrôle CZT, puis DZT/PKIZT et bases Instance/Domaine, suit une
+réplication PG synchrone avec primaire d'écriture unique, minimum de répliques
+configurable sans diminution automatique, écriture confirmée après persistance
+requise et promotion encadrée après exclusion de l'ancien primaire. Le CZT est
+chiffré localement ; PKIZT conserve ses données sensibles chiffrées et ses
+protections individualisées. Les mécanismes de chiffrement, clés de stockage,
+placement et orchestration ne sont pas sélectionnés par ce cadrage.
+
+La réplication multi-maître OpenLDAP conserve ses contrats de convergence,
+conflit, partition et fraîcheur. PG garde la référence Core/applicative ;
+l'état Kerberos durable normal est stocké et modifié par les mécanismes KDC
+autorisés dans LDAP. Une confirmation PG ne prouve pas la publication LDAP,
+et une mutation native Kerberos n'exige pas d'être recopiée dans PG avant
+chaque confirmation. Le verrouillage commun et ses partitions restent à qualifier.
+
+La reconstruction complète constitue une urgence en état critique, distincte
+des modes Standalone/ZT/Domaine. Le profil permet soit de restaurer une
+sauvegarde LDAP/Kerberos protégée avec ses moyens d'ouverture puis réconcilier
+les références PG et retraits courants, soit de recréer les références depuis
+PG, générer les clés/états nécessaires et reprovisionner les accès concernés.
+Sans clés récupérables, les mêmes clés, tickets ou justificatifs ne sont pas
+réputés conservés. Les garanties de restauration et de reconstruction sont
+vérifiées avant réadmission ; aucun backend MIT PG natif n'est supposé.
+
+### 46.3 Admission, contrôle et socle PZT
+
+Le CZT conserve admission, acteurs, organisation structurelle, politiques,
+carte réseau, adressage des pairs et configurations de référence. L'amorçage
+technique est limité et borné, distinct des mandats de gestion ordinaire.
+Jetons d'enrôlement individuels, temporaires et à usage unique, identités
+stables et références de mandat restent vérifiables à chaque opération.
+
+Le socle PZT possède le gestionnaire réseau commun : interfaces, IP, routage
+et pare-feu, avec propriétaire unique par périmètre. Il agrège les besoins
+des rôles plutôt que de leur laisser des écritures concurrentes. Gestion du
+périmètre PZT par défaut, gestion globale de l'hôte sur choix explicite ;
+les règles extérieures au mandat sont préservées. La configuration souhaitée
+est déclarative/versionnée/reconstruisible et l'état appliqué est contrôlé.
+Détection des dérives et protection indépendante des échéances sont obligatoires ;
+la correction automatique est configurable et désactivée par défaut.
+
+Le profil Linux doit qualifier nftables et la compatibilité demandée
+iptables/ip6tables/ipset sans les déclarer interchangeables. Le profil Windows
+qualifie le pare-feu intégré et WFP. IPv4 et IPv6 sont couverts, sans confondre
+capacité disponible et activation par périmètre. Les mécanismes de transport
+WireGuard et mTLS local déjà retenus restent séparés des permissions métier.
+
+Sans CZT primaire, seules les autorisations encore valides permettent une
+continuité bornée. Les révocations connues s'appliquent et aucune opération
+nécessitant le Controller n'est confirmée par déduction. Les mesures anciennes,
+la vie d'un processus et l'existence administrative d'un rôle ne prouvent pas
+sa disponibilité ; seule la capacité concernée est dégradée si l'isolation
+nécessaire est démontrée.
+
+### 46.4 Signalisation, relais et découverte
+
+SZT assure la présence et la mise en relation ; plusieurs SZT actifs coopèrent
+pour les pairs raccordés à des instances différentes du rôle. RZT transporte
+le trafic chiffré entre pairs sans en devenir l'autorité applicative ; plusieurs
+RZT sont actifs et les pairs sélectionnent un relais commun. STZT fournit
+la découverte des adresses et ports observés, avec plusieurs actifs indépendants.
+
+Ces rôles n'ont pas de PG propre : état opérationnel temporaire RAM reconstruit
+au démarrage et aux reconnexions. Identité, références de démarrage et clés
+restent dans le stockage protégé du PZT ; l'audit durable suit son propriétaire.
+La panne d'un relais peut interrompre les communications qui le traversent ;
+la redondance ne promet pas une reprise transparente des sessions existantes.
+
+### 46.5 DZT, DNS multi-vues et DHCP
+
+DZT pilote BIND 9 et les processus ISC DHCPv4 et DHCPv6. Sa PG commune porte
+les références de configuration DNS/DHCP, indépendamment de CZT et PBO.
+PA prépare, installe, maintient le système et met à jour les paquets/binaires.
+PZT/DZT configure et maintient le fonctionnement logiciel des services ;
+il valide, applique, réconcilie et contrôle leur état, notamment après une
+mise à jour PA. PBO administre séparément chaque périmètre et délégation.
+
+La configuration peut être entièrement générée et rejouée depuis une révision
+cohérente. Les modifications manuelles des fichiers générés ne changent pas
+la référence. Baux, zones dynamiques, journaux nécessaires et clés DNSSEC
+exigent des contrats de conservation/reprise ; une génération de fichiers ne
+prouve ni la sauvegarde de cet état ni la synchronisation des baux.
+
+Au moins une vue est dédiée au ZT ; d'autres vues ZT ou hors ZT restent
+indépendantes. Plusieurs DZT peuvent servir la même vue. Chaque vue possède
+sa politique de continuité/fraîcheur ; l'expiration de ses données autorisées
+arrête le service concerné, sans prolongation déduite de la panne ni arrêt
+injustifié des autres vues. Les zones des domaines partageant le ZT sont
+administrables centralement ou par délégation explicite.
+
+CZT attribue l'adressage des pairs ; DZT gère les réseaux DHCP, sous coordination
+des préfixes/pools. Un seul DZT attribue ou renouvelle les baux d'un pool à
+un instant donné ; la répartition des pools et les secours sont possibles.
+La reprise vérifie les baux et exclut l'ancien propriétaire. DHCPv4 et DHCPv6
+sont désactivés par défaut, activables indépendamment par réseau. Le lien
+DHCP–DNS est automatique et configurable par périmètre, avec suivi séparé
+du bail et de sa publication.
+
+Chaque ZT dispose d'au moins un domaine DNS technique choisi à l'initialisation,
+de noms techniques stables et d'alias lisibles. Une permission d'approbation
+DNS précise bénéficiaires, zones/noms et sens. Les projections reçues sont
+séparées, d'origine vérifiable, versionnées et à échéance bornée. Notifications,
+deltas, réconciliation et contrôle périodique synchronisent ces copies ; une
+notification ne renouvelle pas leur validité. Les TTL ne dépassent pas les
+échéances et les révocations connues sont appliquées. La retransmission n'est
+admise qu'avec autorisations de toute la chaîne, sans élargir le périmètre,
+profondeur ou validité ni masquer l'origine.
+
+### 46.6 PKIZT, protection et ACME
+
+Chaque ZT possède sa PKI : racine hors ligne et au moins une autorité
+opérationnelle, avec plusieurs autorités possibles par périmètre. La PG
+PKIZT contient les clés opérationnelles chiffrées, l'état d'émission et de
+révocation et les politiques. Les clés sont synchronisées pour permettre
+la reprise de la même autorité avec la même clé par un PKIZT habilité.
+
+Un émetteur actif unique est admissible par autorité. Administration,
+déchiffrement et émission sont habilités séparément par autorité. Chaque
+PKIZT possède son moyen protégé de déverrouillage ; les enveloppes chiffrées
+sont répliquées. La bascule automatique est encadrée par politique/mandat et
+exclusion vérifiée de l'ancien émetteur. Ce modèle remplace le secours
+opérationnel systématiquement à clé indépendante ; les procédures de racine
+et de rotation normale conservent leurs protections non remplacées.
+
+PKIZT peut utiliser une autorité ACME publique. Il génère et protège la clé
+privée ; l'autorité signe la clé publique. DNS-01, HTTP-01 et TLS-ALPN-01 sont
+choisis par profil avec orchestration DZT/RPZT quand nécessaire. Un coordonnateur
+actif unique par certificat et un état durable permettent la reprise. Le
+renouvellement anticipé est automatisable par profil, avec ARI lorsqu'il est
+disponible et vérification du certificat effectivement servi.
+
+### 46.7 GZT, EZT et RPZT
+
+Les trois rôles sont optionnels, désactivés par défaut, sans PG propre :
+configuration de référence CZT et état opérationnel RAM. GZT achemine les
+communications autorisées vers les ressources sans PZT ; un actif par périmètre,
+répartition des périmètres et secours avec bascule automatique encadrée.
+La source est conservée par défaut ; la traduction source est explicite
+par périmètre. Le segment hors tunnel garde ses propres exigences de sécurité.
+
+EZT fournit les sorties autorisées. Les groupes définissent niveaux de
+priorité, poids égaux par défaut entre admissibles du meilleur niveau,
+affectation des nouvelles connexions et maintien des connexions existantes
+lorsque possible. Retour au préféré configurable, santé par chemin et famille
+IP et temporisations d'exclusion/réadmission sont déclarés. Les EZT externes
+sont inclus uniquement sur autorisation, sans changer leur appartenance ZT.
+Sans sortie admissible le trafic reste bloqué, sans sortie directe implicite.
+
+RPZT publie HTTP/HTTPS/WebSocket ; plusieurs actifs peuvent servir une publication.
+L'orientation des clients reste à qualifier. Le service cible porte
+l'authentification et les permissions applicatives ; une publication publique
+est explicitement autorisée. TLS termine au RPZT ou est transmis chiffré
+jusqu'au service selon publication. PKIZT distribue les éléments TLS aux seuls
+RPZT habilités, avec protection individuelle. Couple certificat/clé distinct
+par RPZT par défaut, partage disponible sur choix explicite.
+
+### 46.8 Authentification de Domaine et postes
+
+LZT et KZT sont des rôles PA : OpenLDAP et MIT Kerberos à backend LDAP,
+au moins un de chaque par Domaine, même si son ZT est partagé. Le realm est
+propre au Domaine ; ses KZT peuvent être actifs simultanément et ses LZT
+multi-maîtres. Le verrouillage global par realm privilégie la cohérence en
+partition. Les approbations Kerberos sont explicitement activées.
+
+Auth vérifie les moyens et pilote le provisionnement. PG Domaine peut fournir
+l'authentification sous profil explicite. Les applications LDAP autorisées
+utilisent une délégation de vérification vers Auth à qualifier ; le verrouillage
+est commun par identité sur les méthodes concernées. La cohérence des mots
+de passe communs entre PG/LDAP/Kerberos exige une opération coordonnée, sans
+conversion supposée des hachages PG en clés Kerberos.
+
+Provisionnement Kerberos progressif, par administration ou libre-service sous
+profil explicite ; administration prête avant bascule et session d'enrôlement
+limitée lorsque nécessaire. Expiration stricte des tickets retenue, avec
+contrôles de tous les chemins à qualifier et qualité du temps vérifiée.
+La politique de MFA est sélectionnable par profil et n'est applicable que
+sur les chemins qualifiés. La confirmation des changements et la réadmission
+des contrôleurs suivent le profil sans abaisser le minimum synchrone PG.
+Un contrôleur injoignable n'est pas réputé effectivement exclu.
+
+Postes Windows natifs/GPO et postes/serveurs Linux restent un objectif V1.
+L'assemblage compatible AD avec PG autoritative, OpenLDAP et MIT KZT reste
+à démontrer ; aucune substitution de fournisseur ou autorité parallèle
+incohérente n'est déduite. PA/PZT locaux, politiques communes/spécifiques,
+priorités, jonction depuis PBO et GPO administrées depuis PBO sont retenus.
+Rotation des secrets machine, authentification technique propre ou représentée,
+session hors ligne et redémarrage sont choisis par profil ; redémarrage
+manuel par défaut et contrôle après reprise. Les serveurs Windows ne sont
+pas membres natifs V1, sans exclure par cette seule règle un profil PA/PZT.
+
+### 46.9 Exécution PA et reprise des briques
+
+Le périmètre complet PA du §42 est conservé : trois binaires, six modes,
+contexte système/session, collecte et cinq familles fonctionnement,
+paramétrage, contrôle, surveillance et dérives. Catalogue fermé au build,
+plans sensibles, privilèges séparés, résultats observés, idempotence,
+persistance technique bornée, maintenance/quarantaine et audit restent
+applicables. Une correction est distincte du constat. PA prépare PostgreSQL
+selon le profil technique adopté sans accéder aux tables métier ni effectuer
+les migrations et initialisations applicatives PBO.
+
+Le service de temps PA déjà adopté conserve chrony pour Linux, propriétaire
+unique par horloge, réutilisation conforme et mandat de cible exacte. Un
+conteneur ne discipline pas implicitement l'horloge hôte. Aucun service
+supplémentaire par Domaine n'est sélectionné ici. Les sources/profils restent
+ceux déjà adoptés, leurs compléments éventuels à qualifier.
+
+Le remplacement d'une brique suit initialiser → synchroniser → vérifier →
+activer/reprendre → observer selon profil → démanteler. Les nouvelles briques
+ont leurs identités ; le rôle/autorité reprend selon ses contrats. Les familles
+fixent modes et compatibilités de versions par défaut ; les exceptions sont
+configurées, et une dérogation au mode est justifiée et tracée. État partiel
+admissible, statut de l'ancienne brique, observation et retrait sont déclarés
+par brique. Pour un maître unique, pas de double autorité. L'automatisation
+exige une politique ; sinon un administrateur confirme. Aucune règle générale
+ne réduit les garanties PG ou de certification retenues.
+
+Sauvegardes manuelles/automatiques chiffrées et restaurations manuelles
+ciblées sous vérification des dépendances sont retenues. Récupération PKIZT
+par autorité et clé maîtresse Kerberos par domaine suivent leurs profils.
+Aucune reprise ne restaure une autorisation périmée/révoquée ni le mode
+Standalone après activation de Domaine.
+
+La confiance native pré-PostgreSQL C08/Z12 et la PKI ZT normale sont deux
+confiances distinctes. Le profil technique initial conserve ses protections
+matérielles sans imposer une exportation de clés vers PKIZT. La PKI normale
+est établie avec son état et ses clés opérationnelles chiffrées en PG. Un
+plan borné vérifie les nouveaux certificats, ancrages et usages avant le
+retrait irréversible de la confiance/autorité/mandats d'amorçage ; les identités
+et retraits restent traçables sans promotion implicite des justificatifs initiaux.
+
+### 46.10 Écarts et historique conservé
+
+Les sections de registre A01–A12 du §44 conservent les décisions datées et
+leurs preuves, sans statut de réalisation nouveau. Pour la cible consolidée,
+les points suivants sont remplacés :
+
+| Ancienne orientation | Cible consolidée |
+| --- | --- |
+| Modes d'exploitation PBO Standalone/ZT | Modes d'Instance Standalone/ZT/Domaine. |
+| User lié au plus à une DigitalIdentity | Individu commun lié à plusieurs identités par Domaine. |
+| OpenLDAP optionnel ou stockage Core de référence réversible | PG souveraine Core ; LZT/KZT obligatoires, état Kerberos durable normal LDAP et reconstruction d'urgence critique par profil. |
+| DNS configuré et exploité entièrement par PA, notamment A06e | PA prépare/maintient le système/met à jour ; DZT configure et maintient le fonctionnement logiciel. |
+| Secours d'autorité opérationnelle à clé indépendante, notamment A10i9–A10i10 | Reprise de la même clé opérationnelle chiffrée et synchronisée par PKIZT habilité. |
+| MFA imposée par catégorie d'action sans choix de profil | MFA choisie par profil, y compris administratif, sur chemins qualifiés. |
+| GZT/EZT/RPZT non cadrés | Rôles facultatifs définis ci-dessus, sans activation automatique. |
+
+Les garanties cryptographiques, de transport, d'attestation, de temps,
+de preuve, d'audit et les décisions de sécurité non remplacées sont conservées
+sous leurs contrats applicables. Le statut historique d'un change ne lui
+confère pas la conformité à la nouvelle cible. Les impacts sur les contrats
+et réalisations existants sont à inventorier avant les étapes OpenSpec.

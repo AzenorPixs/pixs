@@ -1,4 +1,6 @@
-# Proposition — add-initial-feature-flag-evaluation
+# O45 — Proposition — add-initial-feature-flag-evaluation
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

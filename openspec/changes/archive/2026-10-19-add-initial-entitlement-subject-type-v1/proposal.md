@@ -1,4 +1,6 @@
-# Vocabulaire initial du type de sujet d'entitlement
+# O61 — Vocabulaire initial du type de sujet d'entitlement
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 

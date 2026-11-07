@@ -1,4 +1,6 @@
-# Proposal — add-p0-tenant-membership
+# C37 — Proposal — add-p0-tenant-membership
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Périmètre
 

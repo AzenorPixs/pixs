@@ -1,3 +1,7 @@
+# B33 — Validation des enveloppes d’événements Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le runtime Bulk v1 doit valider l'enveloppe logique `EventEnvelopeV1` avant toute outbox/publication B11, sans créer de port, d'ORM, de publication, d'horloge ni de preuve propriétaire. `JSONValueV1` dispose déjà de `validate_json_value` borné ; il manque la garde exacte des 13 clés d'enveloppe avec paramètres serveur obligatoires.

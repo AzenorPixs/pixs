@@ -1,4 +1,6 @@
-# Proposal — add-initial-frontend-contribution-id-validation-v1
+# C81 — Proposal — add-initial-frontend-contribution-id-validation-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 ## Why
 Le canon `openspec/specs/frontend/spec.md` contient déjà les deux exigences `Syntaxe lexicale préparatoire FrontendContributionId v1` + `Limites du contrôle lexical FrontendContributionId v1`. Aucune représentation Python pure n'existe. Ce change fige ce seul validateur sans ajouter de norme.
 ## What Changes

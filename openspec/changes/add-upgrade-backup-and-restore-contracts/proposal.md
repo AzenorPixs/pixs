@@ -1,5 +1,30 @@
 # C16 — Migrations, mise à niveau et restauration
 
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Cible consolidée du 31 octobre 2026 — ACL-PIXS-2026-10-31-E3-R1
+
+Bases et dépendances séparées ; restauration ciblée ; fonctionnement normal LDAP/Kerberos et reconstruction d’urgence critique distincts, sans retour Standalone.
+
+Les orientations du modèle validé remplacent précisément les formulations antérieures incompatibles avec ce périmètre. Les autres clauses restent applicables. Les sections antérieures et leurs références sont conservées pour traçabilité ; elles ne doivent pas être utilisées pour réintroduire une décision remplacée. Les preuves et cases cochées ne qualifient que leur version d'origine.
+
+### Sources et responsabilités courantes
+
+- [backup-disaster-recovery](../../specs/backup-disaster-recovery/spec.md).
+- [brick-redundancy](../../specs/brick-redundancy/spec.md).
+- [pixs-instance](../../specs/pixs-instance/spec.md).
+- [auth-managed-kerberos](../../specs/auth-managed-kerberos/spec.md).
+
+Le canon courant prévaut sur ses copies de préparation. Le périmètre présent est documentaire : aucun code, test produit, migration, service, secret, publication ou Git n'est exécuté. Les choix de fournisseurs manquants restent à qualifier avant réalisation.
+
+### Refus et critères de réalisation
+
+Les scénarios des sources et de requirements.md doivent être reliés à des résultats vérifiables par unité. Réception n'est pas application ; donnée ancienne n'est pas état courant. Une autorisation expirée/révoquée ou une dépendance requise non qualifiée bloque l'usage concerné. La validation documentaire ne fait pas réussir les recettes futures.
+
+### Préservation de l'historique et articulation des travaux
+
+Les titres, codes, identifiants de tâches et de sous-lots, libellés, cases, statistiques et preuves antérieurs sont conservés. Les compléments sont rattachés aux unités existantes sans renumérotation ni validation produit anticipée. Les ouvertures C95/C96/C97/N08/PA12/Z28/Z29/Z30/Z31/Z32 portent leurs seules parts résiduelles ; elles ne relancent pas les archives.
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
+
 ## Pourquoi
 
 Des migrations bornées existent, mais aucune recette de restauration produit cohérente avec gouvernance, travaux et composition n’est démontrée.

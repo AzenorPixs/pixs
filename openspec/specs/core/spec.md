@@ -16,26 +16,21 @@ Toute composition Pixs MUST inclure pixs.core comme module requis ; une composit
 
 ### Requirement: Primitives minimales communes
 
-pixs.core MUST exposer utilisateurs, identités numériques, groupes,
-appartenances, tenants, rôles, ACL et permissions comme capacités communes de
-bas niveau, consommées via contrats et services. La consultation des identités
-numériques, groupes et appartenances MAY utiliser une projection d'annuaire
-optionnelle sous contrat ; PostgreSQL MUST rester leur source de vérité et le
-service MUST fournir un repli PostgreSQL contrôlé.
+pixs.core MUST exposer individus, identités numériques, groupes, appartenances, tenants, rôles, ACL et permissions via contrats publics. Le référentiel d'individus MUST être commun à l'Instance. PG Instance/Domaine MUST conserver leur vérité selon pixs-instance ; la publication LDAP MUST suivre directory-projections et auth-managed-directory sans remplacer PG.
 
 #### Scenario: Primitive consommée par contrat
 
-- **WHEN** un module a besoin d'une identité ou d'une appartenance
-- **THEN** il passe par le contrat ou le service exposé, sans accès direct aux tables internes
+- **WHEN** un module demande une identité ou une appartenance
+- **THEN** il utilise le contrat propriétaire sans accès direct aux tables privées.
 
 ### Requirement: Aucun fournisseur concret imposé
 
-Le noyau et pixs.core MUST NOT imposer un annuaire, une authentification, un stockage ou une intégration concrets ; ces apports relèvent des modules, fournisseurs ou extensions.
+Le noyau et les contrats génériques Core MUST rester agnostiques des implémentations. Les profils MUST déclarer leurs fournisseurs requis, dont PG source Core et OpenLDAP/MIT Kerberos en mode Domaine, sans intégrer leur code au noyau ni activer implicitement un service.
 
-#### Scenario: Substitution de fournisseur
+#### Scenario: Fournisseur compatible
 
-- **WHEN** un fournisseur compatible remplace un autre sous contrat stable
-- **THEN** les consommateurs fonctionnent sans modification de leur code
+- **WHEN** un fournisseur compatible est sélectionné dans les limites du profil
+- **THEN** les consommateurs gardent leurs contrats sans dépendre de son implémentation privée.
 
 ### Requirement: Profil minimal des utilisateurs et identités numériques v1
 
@@ -58,23 +53,17 @@ ils MUST NOT déduire un état, un type ou une assurance d'un provider.
 
 ### Requirement: Liaison utilisateur identité explicite et unique
 
-Un `User` MUST pouvoir exister sans `DigitalIdentity` et une
-`DigitalIdentity` MUST pouvoir exister sans `User`. Leur liaison MUST être
-explicite et optionnelle, avec au plus une identité par utilisateur et au plus
-un utilisateur par identité. La validation d'un ensemble de liaisons MUST
-rejeter les références absentes et les associations qui violent cette unicité.
-La liaison MUST NOT être déduite d'une adresse e-mail, d'un nom affiché ou
-d'un identifiant fourni par un provider externe.
+Un individu User MUST pouvoir exister sans DigitalIdentity et une identité technique MUST pouvoir exister sans individu. Chaque identité MUST être liée à au plus un individu ; un individu MUST pouvoir posséder plusieurs identités par Domaine selon pixs-domains. Les références MUST être existantes, explicites et cohérentes avec leur périmètre ; elles MUST NOT être déduites d'un nom, email ou identifiant externe.
 
-#### Scenario: Entités indépendantes et liaison explicite
+#### Scenario: Plusieurs identités du même individu
 
-- **WHEN** un utilisateur et une identité existants non liés sont fournis séparément puis associés explicitement
-- **THEN** l'absence initiale de liaison et la liaison unique sont valides
+- **WHEN** un individu possède une identité courante et une identité administrative dans le même Domaine
+- **THEN** les deux liaisons sont admises avec profils et droits distincts.
 
-#### Scenario: Cardinalité violée ou référence absente
+#### Scenario: Identité liée à deux individus
 
-- **WHEN** une liaison référence une entité absente ou associe un utilisateur à deux identités ou une identité à deux utilisateurs
-- **THEN** l'ensemble de liaisons est refusé
+- **WHEN** la même identité est liée à deux individus ou à une référence absente
+- **THEN** la liaison est refusée.
 
 ### Requirement: Représentation minimale des comptes de service
 
@@ -123,8 +112,19 @@ pixs.core MUST rester propriétaire de User, DigitalIdentity, liens, groupes, ap
 
 ### Requirement: Moyens multiples sans multiplication implicite des identités
 
-Une DigitalIdentity MUST pouvoir être liée explicitement à plusieurs moyens et sources d'authentification sous propriété Auth sans modifier la cardinalité User 0..1 et DigitalIdentity 0..1. Une méthode, un identifiant d'annuaire ou un principal Kerberos MUST NOT devenir un nouvel identifiant canonique Core ni créer de droit implicite.
+Une DigitalIdentity MUST pouvoir avoir plusieurs moyens et sources sous propriété Auth. Ajouter une méthode MUST NOT créer une identité, une appartenance ou un droit implicite. La cardinalité des identités par individu MUST suivre la liaison explicite ci-dessus, sans fusion d'identités distinctes par partage d'un moyen ou nom.
 
 #### Scenario: Passkey et principal pour une identité
-- **WHEN** une passkey et un principal Kerberos sont liés explicitement à la même identité
-- **THEN** son UUID Core et sa liaison User sont conservés sans compte ni permission supplémentaire
+
+- **WHEN** une passkey et un principal Kerberos sont liés à une identité
+- **THEN** son UUID et ses habilitations restent inchangés sans compte supplémentaire.
+
+
+### Requirement: Évolution versionnée du lien individu identités
+
+Les contrats et modèles v1 MUST conserver leurs références de preuve et être distingués du modèle à plusieurs identités par individu et Domaine. Le nouveau modèle MUST suivre une évolution versionnée et des migrations préservant identités et relations ; une ancienne recette v1 MUST NOT qualifier automatiquement le nouveau lien.
+
+#### Scenario: Contrat v1 existant
+
+- **WHEN** un modèle validé pour la liaison unique v1 est examiné
+- **THEN** sa preuve reste bornée à cette version et ne démontre pas la nouvelle cardinalité Domaine

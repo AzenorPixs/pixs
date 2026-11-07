@@ -1,4 +1,6 @@
-# Journal local corrélé initial
+# C45 — Journal local corrélé initial
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 observability Signaux structurés exige émission corrélée sans secret. correlation_id UUID exact existe avec nil/max, aucune extraction traceparent ni émission locale observée. Il s agit d une absence implémentable, non d une incohérence.

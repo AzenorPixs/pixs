@@ -1,4 +1,6 @@
-# Proposition — Vocabulaire commun des états de rétention
+# C73 — Proposition — Vocabulaire commun des états de rétention
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

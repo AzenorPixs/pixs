@@ -18,12 +18,14 @@ __all__ = [
 
 from .errors import (
     API_ERROR_CONTRACT_VERSION,
+    API_ERROR_MESSAGE_VERSION,
     ApiErrorProjectionError,
     build_infrastructure_error,
 )
 
 __all__ += [
     "API_ERROR_CONTRACT_VERSION",
+    "API_ERROR_MESSAGE_VERSION",
     "ApiErrorProjectionError",
     "build_infrastructure_error",
 ]

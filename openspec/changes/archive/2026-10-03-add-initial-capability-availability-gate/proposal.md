@@ -1,4 +1,6 @@
-# Proposal: add-initial-capability-availability-gate
+# C53 — Proposal: add-initial-capability-availability-gate
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

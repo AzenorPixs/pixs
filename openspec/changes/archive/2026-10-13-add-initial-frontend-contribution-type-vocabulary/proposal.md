@@ -1,4 +1,6 @@
-# Proposal — add-initial-frontend-contribution-type-vocabulary
+# C76 — Proposal — add-initial-frontend-contribution-type-vocabulary
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 Le canon `openspec/specs/frontend/spec.md` contient déjà le seul profil valide `FrontendContributionType v1`. Aucune représentation Python pure n'existe. Ce change fige cette représentation sans ajouter de norme.

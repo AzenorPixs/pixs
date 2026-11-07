@@ -56,7 +56,7 @@ L’exception Super Admin MUST prévaloir sur les contrôles applicatifs dans so
 
 ### Requirement: Modèle Subject Resource Action Context
 
-Hors de l’exception technique C01 et de la seule branche d’opérateur pré-session R01 définies dans cette capacité, chaque décision MUST évaluer sujet (identité numérique, utilisateur, groupe), ressource et action déclarées par le module, plus contexte incluant le ScopeContext valide ; la propriété, l'appartenance ou un rôle administrateur MUST NOT valoir autorisation implicite.
+Hors de l’exception technique C01, de la branche d’opérateur pré-session R01 et de la branche technique PA/PZT et lancement PBO définies dans cette capacité, chaque décision MUST évaluer sujet (identité numérique, utilisateur, groupe), ressource et action déclarées par le module, plus contexte incluant le ScopeContext valide ; la propriété, l'appartenance ou un rôle administrateur MUST NOT valoir autorisation implicite.
 
 #### Scenario: Propriété sans politique refusée
 
@@ -102,7 +102,7 @@ Avant existence de la base et des identités applicatives, les seules actions te
 
 ### Requirement: Limites de l’autorité technique d’amorçage
 
-La seule forme du contexte, la propriété ou root OS MUST NOT valoir permission. Cette autorité MUST NOT ouvrir un tenant, créer de droit métier ni transférer ou présumer l’exception Super Admin. Après amorçage, les exigences applicatives ordinaires MUST reprendre.
+La seule forme du contexte, la propriété ou root OS MUST NOT valoir permission. Cette autorité MUST NOT ouvrir un tenant, créer de droit métier ni transférer ou présumer l’exception Super Admin. Après amorçage, les exigences applicatives ordinaires MUST reprendre pour les décisions métier et le management ordinaire ; seule la remise technique de références de connexion au workload PBO explicitement autorisée par la branche PA/PZT et lancement PBO MAY précéder PostgreSQL à chaque démarrage.
 
 #### Scenario: Action métier hors bootstrap
 
@@ -152,3 +152,67 @@ Preuve expirée, révoquée ou substituée, plan modifié ou autre cible MUST ex
 #### Scenario: Commit puis réponse perdue
 - **WHEN** le commit a consommé l’autorisation mais la réponse ou le marqueur est perdu
 - **THEN** la reprise inspecte le résultat et ne crée ni second compte ni identité ou autorisation dupliquée
+
+### Requirement: Autorité technique PA PZT et lancement PBO sans base applicative
+
+La préparation PA/PZT et la remise au workload PBO de ses seuls secrets de connexion avant ouverture de PostgreSQL MAY utiliser des identités techniques natives vérifiées sous politique protégée indépendante de cette base. Cette branche MUST rester bornée, auditée et sans droit métier selon les garanties ci-dessous ; C01 et R01 MUST conserver leurs limites.
+
+#### Scenario: Garanties de l’autorité technique PA PZT
+
+- **WHEN** le profil sélectionne cette capacité pour le parcours de préparation PostgreSQL
+- **THEN** La préparation PostgreSQL par PA, les échanges PZT locaux nécessaires et la remise au workload PBO de ses seuls secrets de connexion avant ouverture de la base MAY évaluer des identités techniques effectivement vérifiées sous une politique native protégée et versionnée indépendante de cette base, au lieu de fabriquer un Subject applicatif. La confiance initiale MUST provenir du provisionnement opérateur explicite ; UID 0, proximité, possession d'une clé ou reçu C01 MUST NOT suffire. Cette branche MUST vérifier exécutant, rôle, cible, mode, action fermée, référence et version, politique courante, validité, révocation, corrélation et audit durable indépendant. Son contexte MUST rester PLATFORM sans tenant_id ni scope_id. Elle MUST NOT exiger C03/C04 ou des tables Auth pour obtenir précisément la connexion PostgreSQL dont ces contrôles dépendent. Elle MUST NOT autoriser migration applicative, création Core/Auth, compte, tenant, permission métier, gestion ordinaire ou exception Super Admin. Ces actes MUST rester sous leurs contrats applicatifs et, pour l'acte initial, R01. Les mandats temporaires de préparation MUST prendre fin après leur résultat rapproché ; à chaque démarrage ultérieur, seule la remise technique minimale au workload et son audit MAY précéder l'autorité PostgreSQL. Cette branche MUST NOT élargir C01 INSTALLER, prolonger R01 ou réétiqueter NORMAL en INSTALLER.
+
+#### Scenario: Démarrage NORMAL sans connexion initiale
+
+- **WHEN** un workload PBO vérifié démarre en NORMAL avant ouverture de PostgreSQL avec une politique native courante autorisant sa seule référence de connexion
+- **THEN** la remise technique est évaluée sans dépendance circulaire à Auth PostgreSQL, puis les décisions applicatives attendent leur autorité courante
+
+#### Scenario: Identité technique utilisée pour un tenant
+
+- **WHEN** un exécutant admis au parcours PA/PZT demande une création de tenant ou une décision de management ordinaire
+- **THEN** la branche technique refuse et aucun Subject métier ou privilège n’est fabriqué
+
+#### Scenario: Politique native non vérifiable
+
+- **WHEN** une identité est correcte mais la politique est expirée, révoquée ou impossible à vérifier fraîchement
+- **THEN** aucun secret ni nouvel effet technique n’est admis et le service reste non prêt
+
+### Requirement: Autorité technique PKI Z12 bornée à la première installation
+
+La cérémonie Z12 de première installation MAY évaluer une identité native et une autorité technique protégée, indépendantes de la base cible, pour ses seules opérations PKI initiales. Cette exception MUST respecter les garanties ci-dessous, sans Subject métier, pouvoir R01 ou admission ordinaire ; sa clôture MUST précéder le contrôle courant.
+
+#### Scenario: Sujet natif et mandat initial positivement vérifiés
+
+- **WHEN** Z12 reçoit une opération PKI initiale nécessaire au parcours de préparation PostgreSQL avant existence de son autorité applicative
+- **THEN** une composition de confiance MUST vérifier identité native, provenance du lanceur opérateur, politique protégée/versionnée, mandat courant distinct de R01 et ses liens installation/cible/exécutants/rôles/plan/opération, plus validité, révocation, fraîcheur, audit et ancrage anti-restauration qualifié
+- **AND** le contexte MUST rester PLATFORM sans tenant_id ni scope_id ; UID 0, premier PBO, proximité, booléen client, clé, certificat ou fichier simplement présent MUST NOT constituer seuls cette autorité
+- **AND** cette branche MUST autoriser uniquement les opérations PKI initiales fermées du propriétaire Z12 ; renouvellement, bascule et management ordinaires, effets Core/Auth, droits métier, pouvoirs R01 ou exception Super Admin MUST NOT en être déduits ; C01 et R01 MUST conserver leurs limites
+
+#### Scenario: État ancien ou autorité retirée sans droit restauré
+
+- **WHEN** identité, mandat, politique, cible, version, époque, validité, révocation, audit ou ancrage sont invérifiables, qu’une concurrence est contradictoire, qu’une réponse/issue est perdue, qu’un état est restauré, ou que l’autorité initiale est retirée
+- **THEN** le système MUST refuser le nouvel effet et conserver une situation bloquée ou incertaine inspectable ; il MUST réconcilier preuves, effets réels et conditions courantes avant toute reprise, sans rejouer un mandat consommé, produire une seconde PKI ou réactiver un droit
+- **AND** absence de PostgreSQL, de journal ou de fichier MUST NOT prouver une première installation ; une restauration, un clone ou une perte de l’ancrage MUST NOT rouvrir automatiquement la cérémonie ou convertir le contrôle ordinaire en autorité technique initiale
+
+### Requirement: Confirmation C08 seize champs et permission distincte
+
+La confirmation C08 MUST lier installation, cible, opération, opérateur et politique à la projection, à l'observation, au plan, aux préconditions et aux effets vérifiés, selon le schéma fermé ci-dessous. Elle MUST rester distincte de la confirmation administrative de retrait PA, sans porter ni tableaux A07 futurs, ni signature, ni digest de futur mandat.
+
+#### Scenario: Confirmation liée sans tableaux futurs
+
+- **WHEN** C08 confirme le plan, les préconditions et les effets
+- **THEN** la confirmation lie les cinq bindings projection, observation, plan, préconditions et effets avec la politique sans porter de tableaux A07 futurs, de signature ni de digest de futur mandat
+
+#### Scenario: Seize champs exacts et acyclicité
+
+- **WHEN** la confirmation est présentée
+- **THEN** elle porte exactement schema pixs.c08.postgresql-confirmation.v1, schema_version 1.0.0, confirmation_ref, installation_ref, target_ref, operation_id, operator_ref, projection_binding, observation_binding, plan_binding, preconditions_binding, effects_binding, policy_ref, policy_version, confirmed_at et correlation_id, avec ContentBinding exact ref et version chaînes bornées et sha256 minuscule 64, confirmed_at UTC YYYY-MM-DDTHH:MM:SS.ffffffZ, sans coercition ni type nullable implicite
+- **AND** l'acyclicité exclut l'acte, la signature et le digest de futur mandat ainsi que les tableaux A07 futurs, sans exclure les bindings de plans déjà publiés, et cible, installation, opération, politique et références sont rapprochées avant consentement
+### Requirement: Garde technique du temps indépendante de la base
+
+La branche technique du temps MUST NOT conférer de pouvoir R01/SuperAdmin/droit métier/renouvellement PKI. Elle MUST vérifier ses prérequis d’autorité sous politique protégée, opérateur explicite, catalogue, cible et exécutant vérifiés, sans supposer une validité universelle et sans créer d’auto-autorité, sinon elle MUST refuser. D6 MUST NOT rouvrir une autorité initiale de PKI.
+
+#### Scenario: Prérequis d’autorité non prouvés
+
+- **WHEN** les prérequis d’autorité ne sont pas vérifiés avant temps universel prouvable
+- **THEN** la branche est refusée sans auto-autorité

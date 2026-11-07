@@ -1,3 +1,7 @@
+# C75 — Masquage des champs d’audit v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le requirement validé « Profil structurel préparatoire d'occultation de champ d'audit v1 » ne dispose pas encore de représentation mémoire ni de validation structurelle.

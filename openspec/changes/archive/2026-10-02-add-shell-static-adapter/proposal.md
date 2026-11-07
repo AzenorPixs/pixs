@@ -1,4 +1,6 @@
-# Adaptateur statique borné du shell construit
+# C51 — Adaptateur statique borné du shell construit
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -1,3 +1,7 @@
+# B35 — Valeurs des reçus inbox Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le runtime Bulk v1 doit garder en mémoire les valeurs logiques `InboxReceiptV1` avant toute persistance ou consommation B11, sans port, ORM, catalogue, autorisation, horloge, déduplication, transaction, calcul, comparaison ni preuve. Il manque la garde exacte des huit clés avec capture owned immuable.

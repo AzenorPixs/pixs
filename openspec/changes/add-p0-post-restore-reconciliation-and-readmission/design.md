@@ -6,7 +6,7 @@ Préparation dédiée et rédaction du delta proposées validées explicitement 
 
 C16 restaure données et traitements avec réapplication des effacements/holds ; C10 possède les gouvernances ; C03/C01 possèdent sessions/secrets ; N01 possède les décisions d’incident. Leurs conceptions ne définissent pas ensemble la remise en service d’un état antérieur : un snapshot peut précéder une révocation, un incident ou un effet déjà envoyé. Restaurer des données cohérentes ne démontre pas que les droits, matériaux de confiance ou effets différés sont encore admissibles.
 
-Références : [backup-disaster-recovery #3/#4](../../../openspec/specs/backup-disaster-recovery/spec.md), [authentication #3](../../../openspec/specs/authentication/spec.md), [identity-assurance #4](../../../openspec/specs/identity-assurance/spec.md), [C16](../../../openspec/changes/add-upgrade-backup-and-restore-contracts/design.md), [C09](../../../openspec/changes/add-reference-worker-scheduler-and-event-delivery/design.md), [N01](../../../openspec/changes/add-pbo-security-quarantine-and-revocation/design.md).
+Références : [backup-disaster-recovery #3/#4](../../../openspec/specs/backup-disaster-recovery/spec.md), [authentication #3](../../../openspec/specs/authentication/spec.md), [identity-assurance #4](../../../openspec/specs/identity-assurance/spec.md), [C16](../../../openspec/changes/add-upgrade-backup-and-restore-contracts/design.md), [C09](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/design.md), [N01](../../../openspec/changes/add-pbo-security-quarantine-and-revocation/design.md).
 
 ## Préparation recommandée
 
@@ -36,6 +36,6 @@ Aucun code produit, secret, compte, service, dépendance, migration, données r�
 
 ## Dépendances après audit transversal P0
 
-[C01](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md), [C03](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md), [C04](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md), [C05](../archive/2026-10-21-add-durable-minimized-audit/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md).
+[C01](../archive/2026-10-19-add-pbo-runtime-secret-provider/proposal.md), [C03](../archive/2026-10-21-add-initial-authentication-and-sessions/proposal.md), [C04](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md), [C05](../archive/2026-10-21-add-durable-minimized-audit/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

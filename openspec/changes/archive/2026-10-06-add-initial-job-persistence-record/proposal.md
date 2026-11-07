@@ -1,4 +1,6 @@
-# Proposition — Unité de persistance JobRecord pour les travaux
+# C68 — Proposition — Unité de persistance JobRecord pour les travaux
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

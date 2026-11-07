@@ -1,4 +1,6 @@
-# Proposition — Vocabulaire des stratégies de conflit en masse v1
+# B16 — Proposition — Vocabulaire des stratégies de conflit en masse v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

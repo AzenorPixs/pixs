@@ -17,44 +17,40 @@ L'exception Super Admin MUST suivre `authorization` sans modifier la structure d
 
 ### Requirement: Tenant racine et parenté unique
 
-Le système MUST respecter les garanties suivantes.
-
-Chaque tenant constitue la racine technique ; tout scope enfant possède un parent unique dans le même tenant, sans cycle ni graphe arbitraire.
+Chaque tenant MUST rester la racine de ses scopes enfants ; chaque scope enfant MUST avoir un parent unique dans ce tenant sans cycle. En mode Domaine, chaque tenant MUST appartenir à un seul Domaine selon pixs-domains. Les périmètres Instance et Domaine MUST rester distincts de la hiérarchie interne des scopes tenant.
 
 #### Scenario: Cycle de scopes refusé
 
-- **WHEN** une parenté introduit un cycle ou un rattachement inter-tenant
-- **THEN** la déclaration est refusée avant activation
+- **WHEN** une parenté crée un cycle ou rattache un scope à un autre tenant
+- **THEN** la déclaration est refusée avant activation.
 
 ### Requirement: Propriété canonique unique
 
-Le système MUST respecter les garanties suivantes.
-
-Chaque ressource possède une propriété canonique unique : tenant racine si tenant-scoped, scope enfant cohérent le cas échéant, ou platform-scoped explicitement hors tenant ; le partage passe par ACL, rôles ou relations sans modifier la propriété.
+Chaque ressource MUST avoir une propriété canonique unique : Instance, Domaine, Tenant ou scope enfant cohérent. En mode Domaine, un tenant propriétaire MUST référencer son Domaine. Partage, délégation et ACL MUST NOT changer cette propriété ou permettre un accès implicite. Les références historiques PLATFORM MUST être distinguées du nouveau contexte versionné.
 
 #### Scenario: Scope sans tenant cohérent refusé
 
-- **WHEN** une ressource déclare un scope_id sans tenant_id cohérent
-- **THEN** sa création est refusée avec une erreur explicite
+- **WHEN** un scope propriétaire ne correspond pas au tenant déclaré
+- **THEN** la mutation est refusée sans accès à un autre périmètre.
 
 ### Requirement: Contexte immuable propagé avant autorisation
 
-Le système MUST respecter les garanties suivantes. Le ScopeContext MUST déclarer explicitement son type de périmètre : TENANT ou PLATFORM. Pour TENANT, tenant_id est requis et scope_id, lorsqu'il est renseigné, MUST identifier un scope enfant cohérent du même tenant selon le contrat de la ressource. Pour PLATFORM, tenant_id et scope_id MUST être absents. Un scope_id sans tenant_id cohérent MUST être refusé.
+Le contexte MUST être versionné et résolu avant autorisation, avec propriétaire Instance/Domaine/Tenant et scope cohérent lorsque requis. Les contrats v1 MUST conserver leur vocabulaire TENANT/PLATFORM et leurs validations ; les parcours Domaine MUST employer un contrat explicitement adapté/versionné et MUST NOT prétendre qu'un contexte v1 sans référence Domaine suffit à les qualifier. Pour v1 TENANT, tenant_id MUST être présent et scope_id cohérent ; pour v1 PLATFORM les deux MUST être absents.
 
 #### Scenario: Contexte TENANT sans tenant refusé
 
-- **WHEN** un ScopeContext déclare TENANT sans tenant_id
-- **THEN** sa création est refusée avec une erreur explicite
+- **WHEN** un contexte v1 TENANT omet tenant_id
+- **THEN** sa structure est refusée.
 
 #### Scenario: Contexte PLATFORM avec identifiants refusé
 
-- **WHEN** un ScopeContext déclare PLATFORM avec un tenant_id ou un scope_id
-- **THEN** sa création est refusée avec une erreur explicite
+- **WHEN** un contexte v1 PLATFORM contient tenant_id ou scope_id
+- **THEN** sa structure est refusée.
 
-#### Scenario: Scope orphelin refusé
+#### Scenario: Nouveau parcours Domaine sur contexte incomplet
 
-- **WHEN** un ScopeContext déclare un scope_id sans tenant_id cohérent
-- **THEN** sa création est refusée avec une erreur explicite
+- **WHEN** un parcours exige une référence Domaine non résolue par son contrat
+- **THEN** l’accès est bloqué sans l’inférer d’un champ client ou d’une plateforme implicite.
 
 ### Requirement: Propagation et frontière d'autorisation du ScopeContext
 

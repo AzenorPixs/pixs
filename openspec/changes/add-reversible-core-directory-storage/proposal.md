@@ -1,4 +1,14 @@
-# Stockage Core réversible PostgreSQL et OpenLDAP interne
+# O41 — Stockage Core réversible PostgreSQL et OpenLDAP interne
+
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Proposition remplacée — non sélectionnable
+
+Plan ACL-PIXS-2026-10-31-E3-R1 validé. L'objectif historique de rendre LDAP souverain pour les données Core est remplacé par le modèle PG souveraine. LDAP et Kerberos restent obligatoires par Domaine ; LDAP porte l'état Kerberos durable normal et la reconstruction complète suit une procédure d'urgence critique selon profil et sauvegardes.
+
+Ce dossier et son code sont conservés pour traçabilité. Son objectif historique ne doit pas être sélectionné pour réalisation ni ses deltas synchronisés comme cible courante. Les besoins de publication et services sont traités par O08/O09/O38/O39 et le référentiel validé. Aucun objectif nouveau n'est recyclé sous O41.
+
+Les tâches, cases et sous-lots ci-dessous restent les constats historiques et ne sont ni cochés ni effacés. Aucun retrait de fichier, archivage ou statut natif fictif n'est créé. Les anciennes propositions normatives restent conservées et explicitement hors cible courante.
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
 
 ## Why
 

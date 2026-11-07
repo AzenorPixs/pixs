@@ -1,3 +1,7 @@
+# B36 — Valeurs des publications outbox Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le runtime Bulk v1 doit garder en memoire les valeurs logiques `OutboxPublicationV1` avant toute persistance ou publication B11, sans port, ORM, catalogue, autorisation, horloge, allocation ni CAS. Il manque la garde exacte des 12 cles avec capture owned immuable.

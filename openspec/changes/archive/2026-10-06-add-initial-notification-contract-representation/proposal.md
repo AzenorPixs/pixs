@@ -1,4 +1,6 @@
-# Proposition — Représentation déclarative interne partielle du contrat de notification
+# O55 — Proposition — Représentation déclarative interne partielle du contrat de notification
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -1,4 +1,4 @@
-# Protection et reprise des secrets d’amorçage PBO
+# N07 — Protection et reprise des secrets d’amorçage PBO
 
 ## Why
 

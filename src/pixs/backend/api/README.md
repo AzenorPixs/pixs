@@ -74,14 +74,16 @@ Contrôles dédiés exacts :
 
 # Projection d'erreur d'infrastructure — fondation déclarative pure
 
-`build_infrastructure_error(correlation_id, *, internal_error)`
+`build_infrastructure_error(correlation_id, *, internal_error, language="en")`
 normalise une erreur d'infrastructure vers l'enveloppe publique à
 5 champs (`error_code`, `message`, `details`, `field_errors`,
 `correlation_id`). `internal_error` opaque requis mais jamais
 inspecté ; `correlation_id` UUID exact revalidé puis sérialisé
 canoniquement (toutes versions admises, aucune norme UUIDv7).
-`API_ERROR_CONTRACT_VERSION` vaut `"1.0.0"` (constante publique
-séparée, jamais champ d'enveloppe). Chaque appel retourne un dict
+`language="fr"` seul donne le français, toute autre valeur donne l’anglais canonique.
+`API_ERROR_CONTRACT_VERSION` vaut `"1.0.0"`, `API_ERROR_MESSAGE_VERSION` vaut
+`"1.0.0"` (catalogue API propriétaire, sans import Core ; constantes publiques
+séparées, jamais champs d'enveloppe). Chaque appel retourne un dict
 frais ; muter un résultat ne contamine aucun appel suivant.
 
 Exemple synthétique via la façade (valeurs exactes) :
@@ -90,30 +92,32 @@ Exemple synthétique via la façade (valeurs exactes) :
 import uuid
 from pixs.backend.api import (
     API_ERROR_CONTRACT_VERSION,
+    API_ERROR_MESSAGE_VERSION,
     build_infrastructure_error,
 )
 
 cid = uuid.UUID(int=1)
 envelope = build_infrastructure_error(cid, internal_error=RuntimeError("synthetic-boom"))
 assert API_ERROR_CONTRACT_VERSION == "1.0.0"
+assert API_ERROR_MESSAGE_VERSION == "1.0.0"
 assert envelope == {
     "error_code": "INTERNAL_ERROR",
-    "message": "Erreur interne du service.",
+    "message": "Internal service error.",
     "details": {},
     "field_errors": [],
     "correlation_id": str(cid),
 }
+assert build_infrastructure_error(cid, internal_error=None, language="fr")["message"] == "Erreur interne du service."
 ```
 
 Limites : ni HTTP, ni rejeu d'idempotence, ni pagination, ni tenant,
 ni authentification, ni génération/validation OpenAPI, ni mapping de
 statut. La requirement2 globale reste non achevée.
 
-Le champ public `message` reste fixe en français (`Erreur interne du service.`).
-Son externalisation dans un catalogue du composant avec canon anglais et sa
-localisation restent à implémenter pour satisfaire les exigences
-d'internationalisation ; cette limite concerne aussi la réponse JSON qui
-réutilise cette projection.
+Le champ public `message` suit le catalogue API propriétaire, canon anglais,
+français seul si `language="fr"`. Les diagnostics techniques (`corrélation`,
+`ImproperlyConfigured`) restent internes et inchangés ; la réponse JSON
+réutilise cette projection avec propagation `language`.
 
 Contrôles dédiés exacts :
 
@@ -126,11 +130,12 @@ Contrôles dédiés exacts :
 
 # Réponse JSON d'infrastructure — fabrique backend isolée
 
-`build_infrastructure_response(correlation_id, *, internal_error)` appelle
-d'abord la projection publique existante, exige des réglages Django déjà
-configurés, puis retourne un `JsonResponse` non streaming : statut fixe
-500, Content-Type exact `application/json; charset=utf-8`, corps décodé
-égal à `build_infrastructure_error`, sans conversion de l'erreur interne.
+`build_infrastructure_response(correlation_id, *, internal_error, language="en")`
+propage `language` à la projection existante sans lire d'en-tête, exige des
+réglages Django déjà configurés, puis retourne un `JsonResponse` non streaming :
+statut fixe 500, Content-Type exact `application/json; charset=utf-8`, corps décodé
+égal à `build_infrastructure_error(..., language=language)`, sans conversion de
+l'erreur interne.
 Le statut 500 décrit l'erreur serveur inattendue ; aucune classification
 métier n'est ajoutée. La version de l'enveloppe n'est pas modifiée.
 
@@ -160,6 +165,7 @@ assert response["Content-Type"] == "application/json; charset=utf-8"
 assert json.loads(response.content.decode("utf-8")) == build_infrastructure_error(
     cid, internal_error=None
 )
+assert json.loads(build_infrastructure_response(cid, internal_error=None, language="fr").content.decode("utf-8"))["message"] == "Erreur interne du service."
 assert apps.ready is False
 ```
 
@@ -400,3 +406,17 @@ leurs doubles C09/C10 et leur setup C08 de binding/grant ; elles ne qualifient
 ni le provisionnement R01, ni une activation P0 complète. Les requêtes Django
 et ASGI s'exécutent en processus : aucun serveur ou TLS réseau n'est déployé
 ou qualifié par ces tests. Le frontend n'est pas modifié.
+
+# Raccord C11 — contexte WEB, liaisons propriétaires et continuité
+
+La surface de contexte Auth C11 est distincte de l'API Core : GET sous les racines WEB plateforme, tenant et tenant/scope, suffixe /shell/context. Le serveur détermine la session depuis le cookie et le contexte canonique depuis le chemin ; il refuse Authorization. Le service propriétaire PostgresShellContextService revalide C03 et consomme les contrôles C04/C05 ainsi que les ports complémentaires requis dans leur transaction. La projection ne contient ni jeton, cookie, justificatif, issuer, provider ni politique interne. Ce GET ne prolonge pas l'activité interactive.
+
+Les fabriques build_shell_context_view, build_shell_context_openapi_document et build_shell_context_urls reçoivent explicitement le service/composition applicables et les module_bindings. meta.transport_resolver publie le contrat de transport version 1.0.0 : les 22 commandes/15 queries Core et les seules liaisons propriétaires injectées. Les collisions ou liaisons incompatibles sont refusées, sans découverte depuis un nom ou un chemin arbitraire. Cette métadonnée reste séparée des faits Auth et des hints UI ; elle ne crée aucun droit ni garantie de disponibilité.
+
+api_core_views réexporte la frontière additive ModuleHttpComposition/ModuleHttpBinding/ModuleHttpRequest/ModuleHttpResult et build_module_api_view/build_module_openapi_view. Les routes propriétaires réutilisent les gardes communes HTTP/WEB puis les invariants, transactions, audit et idempotence de leur propriétaire. Les documents propriétaires suivent leur profil explicite dans api_module_openapi.py et le plafond de 64 Kio du transport commun ; le validateur Core n'est pas affaibli pour les accepter.
+
+Les opérations WEB authentifiées acceptent l'en-tête optionnel X-Shell-Session-ID, documenté comme identifiant UUIDv7 de la session affichée. Si l'indication diffère de la session réellement résolue du cookie, le serveur retourne400 CONTEXT_MISMATCH avant dispatch propriétaire. L'absence d'indication conserve le contrat legacy ; Bearer reste distinct. Le shell C11 l'envoie sur Query/Command/logout, sans réutiliser l'ancien identifiant pour le bootstrap contexte, le login ou CSRF. Cette comparaison n'accorde aucune autorisation et ne remplace pas les revalidations C03/C04.
+
+Les hints UI indisponibles sont explicitement UNAVAILABLE avec items vide. Les droits de chaque appel restent contrôlés côté serveur ; ni affichage, résolveur ou contexte client ne promeut une permission. Panne de contrôle ou issue inconnue ne restitue pas un contexte partiel.
+
+Ces sources sont réalisées dans C11, avec qualification spécifique encore en cours. Les contrôles historiques C06, les recettes C14 et leurs doubles ne valent pas à eux seuls validation du renderer, du bundle, d'un serveur TLS déployé ou du profil P0. La validation du change doit identifier commandes, sources, versions, transport, doubles et limites réels.

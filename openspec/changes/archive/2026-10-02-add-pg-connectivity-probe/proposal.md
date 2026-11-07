@@ -1,4 +1,6 @@
-# Sonde PG connectivite initiale ASYNC
+# C50 — Sonde PG connectivite initiale ASYNC
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 initial-application-bootstrap exige PostgreSQL comme persistance de reference avec secrets runtime uniquement. Aucune sonde PG reelle dans src, aucune preuve de connexion sans ecriture metier. Absence implementable, non incoherence.

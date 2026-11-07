@@ -156,6 +156,9 @@ def _parameter(name, location, schema, required):
 def _operation(composition, *, mode, web, response, body=None, login=False, renew=False, query=False, csrf=False):
     text={"type":"string","minLength":1,"maxLength":composition.input_limits.max_reference_chars}
     parameters=[_parameter("X-Correlation-ID","header",{"type":"string","minLength":1,"maxLength":128},False)]
+    if web and not login and not csrf:
+        parameters.append(_parameter("X-Shell-Session-ID","header",
+            {"type":"string","pattern":"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"},False))
     if mode in ("T","S"):
         parameters.append(_parameter("tenant_id","path",text,True))
     if mode=="S":

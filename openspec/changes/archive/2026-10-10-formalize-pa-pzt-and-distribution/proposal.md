@@ -1,4 +1,6 @@
-# formalize-pa-pzt-and-distribution
+# PA11 — formalize-pa-pzt-and-distribution
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 

@@ -1,4 +1,6 @@
-# Proposition — Représentation déclarative interne du DataSubjectRequest
+# C66 — Proposition — Représentation déclarative interne du DataSubjectRequest
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

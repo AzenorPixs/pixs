@@ -30,7 +30,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 - [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
 - [add-durable-minimized-audit](../archive/2026-10-21-add-durable-minimized-audit/proposal.md).
-- [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
+- [add-protected-core-http-commands-and-queries](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md).
 - [add-initial-administration-panel](../add-initial-administration-panel/proposal.md).
 
 

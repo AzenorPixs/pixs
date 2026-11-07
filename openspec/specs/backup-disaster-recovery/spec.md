@@ -49,3 +49,26 @@ Une restauration destructive ou un retour à un point antérieur MUST être une 
 
 - **WHEN** une procédure propose de réinitialiser des données pour faciliter la restauration
 - **THEN** elle est refusée hors opération autorisée distincte avec audit propre
+
+### Requirement: Déclenchement et périmètres de restauration
+
+Les sauvegardes MUST pouvoir être manuelles ou automatiques selon les profils et toutes MUST être chiffrées. Les restaurations MUST être déclenchées manuellement par un acteur habilité et MAY cibler Instance, Domaine ou composant après vérification des dépendances. Leur lieu ou nombre de copies MUST suivre les protections déjà applicables, sans nouvelle règle déduite de cette consolidation.
+
+#### Scenario: Restauration de Domaine
+
+- **WHEN** une restauration ciblée est demandée
+- **THEN** les références Instance, le ZT utilisé et les dépendances des composants sont contrôlés avant réadmission.
+
+### Requirement: État PG LDAP Kerberos et clés de reprise
+
+Les sauvegardes MUST couvrir PG souveraine pour les références Pixs et l'état Kerberos durable normal dans LDAP, avec ses moyens protégés de reprise. Le mode critique MUST prévoir restauration LDAP/Kerberos puis réconciliation, ou reconstruction depuis PG avec clés/reprovisionnement selon profil et copies disponibles. La reprise MUST NOT réintroduire un droit retiré ni rétablir Standalone après Domaine.
+
+#### Scenario: Sauvegarde complète exploitable
+
+- **WHEN** le profil critique dispose des sauvegardes protégées et moyens requis
+- **THEN** il restaure les états puis vérifie leur cohérence avec les références et retraits courants.
+
+#### Scenario: PG seule disponible
+
+- **WHEN** l’état Kerberos normal est perdu sans sauvegarde exploitable
+- **THEN** le profil critique peut reconstruire les références depuis PG mais recrée les clés et reprovisionne les accès nécessaires sans continuité fictive des anciens moyens.

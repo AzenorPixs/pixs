@@ -51,15 +51,22 @@ Toute composition applicative Pixs MUST inclure `pixs.auth`, module essentiel in
 
 ### Requirement: Autonomie locale et PostgreSQL par défaut
 
-Le profil standard MUST fournir l'authentification locale avec PostgreSQL comme stockage persistant par défaut des données Auth. Il MUST fonctionner sans fournisseur d'identité externe, annuaire, KDC, cloud ou accès Internet obligatoire. Le provisionnement initial MUST sélectionner explicitement ce profil sans créer de justificatif universel par défaut.
+Avant le premier Domaine, Auth MUST pouvoir authentifier sur PG Instance sans fournisseur externe, LDAP/KDC ni Internet. Après activation, les identités MUST appartenir aux Domaines et PG Instance MUST NOT conserver d'identité numérique d'Instance. Auth MAY authentifier directement sur PG Domaine sous profil explicite et qualifié ; LZT/KZT MUST rester obligatoires par Domaine sans imposer leur disponibilité à ce chemin PG autorisé.
 
 #### Scenario: Installation autonome
-- **WHEN** une installation provisionnée utilise seulement le profil local PostgreSQL sans source externe, annuaire ni KDC
-- **THEN** connexion, déconnexion et gestion locale des sessions restent possibles selon sa politique
 
-#### Scenario: PostgreSQL indisponible
-- **WHEN** une opération exige un état Auth persistant courant et PostgreSQL est indisponible
-- **THEN** elle échoue fermée sans basculer vers un annuaire, un fichier ou une session supposée valide
+- **WHEN** le profil pré-domaine local est sélectionné
+- **THEN** l’authentification PG Instance reste possible selon ses moyens et politiques.
+
+#### Scenario: Authentification PG Domaine
+
+- **WHEN** un profil permet explicitement PG Domaine avec ses garanties
+- **THEN** Auth utilise l’identité de Domaine sans réactiver son ancienne identité d’Instance.
+
+#### Scenario: État PG courant absent
+
+- **WHEN** l’opération exige une PG actuelle indisponible
+- **THEN** elle échoue fermée sans fichier ou session supposée valide.
 
 ### Requirement: Propriété des données Auth et protection des justificatifs
 
@@ -83,11 +90,12 @@ Les méthodes locales, l'enrôlement, l'émission d'identité, les services gér
 
 ### Requirement: Politiques Auth déclaratives et contextualisées
 
-Les politiques Auth MUST être typées, versionnées et résolues de façon déterministe selon plateforme, tenant et scope applicable. Méthodes, MFA, fraîcheur, sessions, récupération, sources et confiance MUST exposer leur valeur effective et leur origine aux administrateurs autorisés sans secret. Une règle contradictoire ou non résolue MUST empêcher l'opération concernée.
+Les politiques Auth MUST être typées, versionnées et résolues déterministiquement selon Instance, Domaine, profil et contexte tenant/scope applicable. Méthodes, MFA, fraîcheur, sessions, récupération et confiance MUST exposer origine et valeur effective sans secret. Une règle contradictoire MUST bloquer l'opération sans sélection opportuniste de la moins exigeante.
 
 #### Scenario: Politique contradictoire
-- **WHEN** deux règles ne permettent pas de déterminer les méthodes et le niveau requis pour un même contexte
-- **THEN** Auth refuse l'opération avec un diagnostic sans sélectionner la règle la moins exigeante
+
+- **WHEN** les règles ne permettent pas de déterminer l’assurance applicable
+- **THEN** Auth refuse avec diagnostic sans réduire implicitement les exigences.
 
 ### Requirement: Absence de repli implicite entre méthodes et sources
 
@@ -215,23 +223,31 @@ Les onglets partageant le même cookie et le renouvellement de jetons MUST NOT c
 
 ### Requirement: Changement de mot de passe sans reconnexion automatique
 
-Un changement volontaire de mot de passe réussi MUST révoquer toutes les sessions du compte, y compris la session courante, et MUST demander une nouvelle connexion avec le nouveau mot de passe sans reconnexion automatique.
+Le changement de mot de passe MUST être piloté par Auth depuis un PBO habilité. Le profil MUST distinguer les contextes : changement authentifié révoquant par défaut les autres sessions avec conservation possible de la session courante après vérification ; récupération/réinitialisation révoquant toutes les sessions de l'identité par défaut. La politique MAY être ajustée explicitement ; une reconnexion ou assurance supérieure MUST NOT être déduite du changement.
 
-#### Scenario: Mot de passe changé
-- **WHEN** le changement volontaire est confirmé
-- **THEN** toutes les anciennes sessions sont invalidées et une nouvelle authentification est demandée
+#### Scenario: Changement authentifié par défaut
+
+- **WHEN** une identité change son mot de passe depuis sa session vérifiée
+- **THEN** les autres sessions sont révoquées et seule la session courante peut être conservée après vérification.
+
+#### Scenario: Autre identité du même individu
+
+- **WHEN** le mot de passe d’une identité courante change
+- **THEN** les sessions de son identité administrative suivent leur politique propre.
 
 ### Requirement: Récupération et compromission du mot de passe
 
-Une récupération ou une suspicion de compromission du mot de passe MUST entraîner une révocation globale des sessions du compte sans reconnexion automatique ni assurance restaurée sans preuve. L’exception de retrait d’accès en panne d’audit MUST suivre audit et MUST NOT confirmer un changement de justificatif non committé.
+Récupération et réinitialisation MUST suivre leur profil et révoquer toutes les sessions de l'identité par défaut ; une compromission suspectée MUST déclencher le retrait prévu sans assurance restaurée implicitement. Un retrait d'accès malgré panne d'audit MUST suivre audit et MUST NOT confirmer un justificatif non committé. Les tickets Kerberos déjà délivrés MUST être traités séparément des sessions Pixs.
 
 #### Scenario: Récupération sans MFA
-- **WHEN** un compte est récupéré sans nouvelle preuve MFA
-- **THEN** ses sessions sont révoquées sans réattribuer MULTI_FACTOR
+
+- **WHEN** une récupération autorisée ne fournit pas de nouvelle preuve MFA
+- **THEN** les sessions sont révoquées selon le profil sans assurance multifacteur inventée.
 
 #### Scenario: Changement non confirmé
-- **WHEN** un retrait seul est confirmé après échec d’une mutation de justificatif
-- **THEN** aucun changement de mot de passe non committé n’est annoncé
+
+- **WHEN** seul le retrait est confirmé après échec de mutation
+- **THEN** aucun nouveau mot de passe n’est annoncé committé.
 
 ### Requirement: Argon2id via les outils Django
 
@@ -268,3 +284,57 @@ La CLI interactive MUST conserver le jeton entre lancements uniquement dans un t
 #### Scenario: Trousseau indisponible
 - **WHEN** aucun trousseau qualifié n’est utilisable
 - **THEN** le jeton reste en mémoire du processus et le lancement suivant demande une nouvelle connexion sans fichier de repli clair
+
+### Requirement: Mot de passe commun par identité numérique
+
+Une identité numérique MUST utiliser un mot de passe commun pour ses méthodes PG/LDAP/Kerberos qui en emploient un. Auth MUST coordonner les représentations de vérification et clés propres à ces méthodes, sans supposer une conversion depuis un hash PG. Les identités distinctes d'un individu MUST garder leurs propres moyens et profils.
+
+#### Scenario: Deux identités
+
+- **WHEN** un individu possède des comptes courant et administratif
+- **THEN** le mot de passe commun concerne les méthodes de chaque identité sans imposer un secret unique à l’individu.
+
+### Requirement: Changement uniquement depuis PBO
+
+Les mots de passe des individus MUST être changés depuis PBO sous pilotage Auth. Le PBO logique Standalone MUST pouvoir porter cette fonction ; en Domaine elle MAY être sur le contrôleur ou un autre PBO habilité. Les rotations de secrets machine et services MUST rester distinctes de cette règle.
+
+#### Scenario: Changement natif non prévu
+
+- **WHEN** une application tente d’utiliser une voie native non autorisée pour changer le mot de passe individuel
+- **THEN** la voie est refusée ou non proposée sans contourner PBO.
+
+### Requirement: Récupération configurable et désactivée par défaut
+
+Auth MUST proposer changement individuel, réinitialisation par administrateur habilité et récupération autonome configurable/débrayable. La récupération autonome MUST être désactivée par défaut et ses moyens activés explicitement par profil. Les politiques de mot de passe MUST pouvoir se décliner Instance/Domaine/profil, les domaines et profils ajoutant leurs contraintes au socle.
+
+#### Scenario: Récupération non activée
+
+- **WHEN** un individu demande le parcours autonome avec le profil par défaut
+- **THEN** ce parcours reste désactivé sans créer de moyen de récupération implicite.
+
+### Requirement: MFA choisie par profil et chemins qualifiés
+
+La MFA MUST être configurable par profil, y compris administratif, sans obligation générale Pixs. TOTP et clés/passkeys MUST être sélectionnables sur les chemins qualifiés ; un profil exigeant MFA MUST refuser un chemin incapable de fournir l'assurance. Gestion des facteurs MUST pouvoir être individuelle ou administrative sous habilitations et profil.
+
+#### Scenario: Chemin non qualifié
+
+- **WHEN** un profil exige MFA sur un chemin non qualifié
+- **THEN** l’authentification est refusée sans annoncer la MFA depuis un seul facteur.
+
+### Requirement: Changements effectifs et contrôleurs à jour
+
+Chaque profil MUST choisir entre confirmation de tous les contrôleurs déclarés ou de ceux maintenus en service après exclusion effective vérifiée des autres. Un défaut général MUST NOT être déduit. Le simple défaut de joignabilité MUST NOT prouver l'exclusion ni diminuer le minimum synchrone PG. La réadmission MUST être manuelle ou automatique selon profil après vérification identité, habilitations et révisions.
+
+#### Scenario: Contrôleur isolé encore actif
+
+- **WHEN** un contrôleur non à jour reste susceptible d’authentifier sur un réseau isolé
+- **THEN** le changement n’est pas déclaré effectif tant que sa mise à jour ou son exclusion exigée n’est pas prouvée.
+
+### Requirement: Verrouillage commun et états dépendants
+
+Les méthodes PG/LDAP/Kerberos concernées MUST coordonner un verrouillage par identité numérique. Les autres identités de l'individu MUST garder leurs états, sauf suspension globale Core. Les accès et mandats dépendants MUST suivre les révocations et continuités de zt-instances sans repli permissif.
+
+#### Scenario: Échecs sur LDAP
+
+- **WHEN** les échecs atteignent la limite applicable à l’identité via LDAP
+- **THEN** le même état de verrouillage s’applique aux autres méthodes concernées sans verrouiller une autre identité par déduction.

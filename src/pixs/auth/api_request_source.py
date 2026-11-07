@@ -216,3 +216,38 @@ class ApiRequestSource:
         except AuthVerificationError:
             _fail()
         return AuthInvocationSource(verifier)
+
+    def token_verifier(self, *, request, alias, operation_id, token, kind):
+        """Vérificateur C03 neuf lié à la TX appelante, sans préadmission Auth.
+
+        Le caller réévalue l'identité et la révocation sous ses verrous. Aucun
+        objet Request, alias ou contexte fourni ici ne constitue une autorité.
+        """
+        from django.db import connections
+        from django.utils.connection import ConnectionDoesNotExist
+        if (type(request) is not Request or type(alias) is not str or alias != self._alias
+                or type(token) is not OpaqueToken or type(kind) is not TokenKind
+                or kind not in (TokenKind.ACCESS, TokenKind.WEB_SESSION)):
+            _fail()
+        _text(operation_id, self._maximum)
+        try:
+            connection = connections[alias]
+        except ConnectionDoesNotExist:
+            _fail()
+        if (connection.vendor != "postgresql" or not connection.in_atomic_block
+                or connection.get_autocommit()):
+            _fail()
+        try:
+            request.__post_init__()
+            actor = self.resolve_token(context=request.context, token=token, kind=kind)
+            if actor.identity_ref != request.subject_id:
+                _fail()
+            profile = self._profile(request.context)
+            verifier = prepare_token_verifier(
+                request=request, alias=alias, operation_id=operation_id,
+                profile=profile, trust_source=self._trust, assurance_source=self._assurance,
+                facts_reader=self._facts, clock=self._clock, token=token, kind=kind)
+            verifier.bind_transaction(request, alias=alias, operation_id=operation_id)
+        except (AuthVerificationError, AuthTokenError, PortError):
+            _fail()
+        return verifier

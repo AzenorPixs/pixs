@@ -1,5 +1,7 @@
 # Références normatives — O23
 
+Réconciliation documentaire du 1er novembre 2026 — GSCM3 : les seules copies divergentes et leurs références sont actualisées depuis le canon courant. Aucun delta normatif, tâche, case ou preuve de réalisation n’est modifié.
+
 Ce fichier est une copie de référence pour préparer le lot, pas un delta OpenSpec ni une source de vérité indépendante. Les blocs complets ci-dessous conservent conditions, scénarios, valeurs validées et indications historiques. Le canon courant prévaut ; toute dérive impose une relecture avant réalisation.
 
 La présence d’un bloc ne prouve ni applicabilité à tout profil, ni exécution, ni fonction manquante. Les lignes NE et les structures déjà livrées restent à auditer/réutiliser. Les dérogations applicatives et contrats structurels gardent leurs frontières.
@@ -36,19 +38,22 @@ shell web ou d'une implémentation interne de module.
 
 ### Référence native-clients--c9ba0ab360
 
-Source : `openspec/specs/native-clients/spec.md`, ligne 21. SHA-256 du bloc : `37ad42567f5efcd704ad174e9192b331861617506a251773fa822e2946ae7ce2`.
+Source : `openspec/specs/native-clients/spec.md`, ligne 21. SHA-256 du bloc : `46957b68dc5eb8ca3a197b721b65dcc0413310af87be9295408b3cdef340d036`.
 
 ~~~~text
 ### Requirement: Session et stockage local sécurisés
 
-Les credentials et secrets d'un client natif MUST utiliser le mécanisme de
-stockage sécurisé déclaré par la plateforme. Ils MUST NOT être placés dans un
-fichier, journal, sauvegarde ou stockage local non protégé.
+Les credentials et secrets d’un client natif MUST utiliser le mécanisme de stockage sécurisé déclaré par la plateforme, séparé des projections, caches et files hors ligne. Ils MUST NOT être placés dans un fichier, journal, sauvegarde ou stockage local non protégé. Un mécanisme indisponible MUST NOT provoquer un repli vers un stockage ordinaire.
 
 #### Scenario: Sauvegarde d'application
 
 - **WHEN** le système effectue une sauvegarde locale ordinaire
 - **THEN** elle n'inclut pas de credential Pixs non protégé
+
+#### Scenario: Mécanisme sécurisé indisponible
+
+- **WHEN** le mécanisme déclaré ne permet pas de conserver ou d’utiliser le credential de façon vérifiable
+- **THEN** l’opération concernée est refusée sans copier le credential dans un fichier, une base hors ligne ou un stockage non protégé
 ~~~~
 
 ### Référence native-clients--5187bfc498

@@ -1,4 +1,6 @@
-# Proposition — règles de cohorte
+# O47 — Proposition — règles de cohorte
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

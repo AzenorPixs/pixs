@@ -42,13 +42,13 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
 - [integrate-runtime-authorization-and-super-admin](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md).
-- [add-protected-core-http-commands-and-queries](../add-protected-core-http-commands-and-queries/proposal.md).
+- [add-protected-core-http-commands-and-queries](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md).
 - [add-installation-and-first-configuration](../add-installation-and-first-configuration/proposal.md).
-- [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
+- [add-reference-worker-scheduler-and-event-delivery](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
 - [complete-shared-ui-i18n-and-accessibility](../complete-shared-ui-i18n-and-accessibility/proposal.md).
 - [add-initial-administration-panel](../add-initial-administration-panel/proposal.md).
-- [add-essential-pbo-pzt-and-dns-modules](../add-essential-pbo-pzt-and-dns-modules/proposal.md).
+- [add-essential-pbo-pzt-and-dns-modules](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md).
 - [add-runtime-observability-and-operations](../add-runtime-observability-and-operations/proposal.md).
 - [add-upgrade-backup-and-restore-contracts](../add-upgrade-backup-and-restore-contracts/proposal.md).
 - [build-first-pbo-pfo-debian-package](../build-first-pbo-pfo-debian-package/proposal.md).
@@ -67,7 +67,14 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 
 ## Hors profil
 
-PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+Le profil `pbo-p0-debian-local-v1` sélectionne PA système et PZT local pour
+préparer PostgreSQL, conformément au [canon de composition](../../specs/reference-composition/spec.md).
+Ce parcours local et ses exécutants doivent être qualifiés ; leur disponibilité
+ne se déduit pas de la seule présence des modules PBO. Le réseau PZT distant,
+les autres rôles PA, le service DNS exécuté par PA, l’image Docker et les
+capacités optionnelles restent hors sélection, sauf obligation du profil
+explicitement sélectionné. Cette délimitation ne vaut ni réalisation ni
+qualification du parcours local.
 
 ## Approfondissement issu de l’audit du 17 octobre 2026
 
@@ -77,7 +84,7 @@ Conception proposée sans implémentation. Ces contrats de travail ne modifient 
 
 La campagne P0 comporte isolation de panne optionnelle, refus en dégradé, incident N01 avec propagation/reprise et réactivation, installation/restauration, droits ordinaires et exception canonique Super Admin. Les objectifs déclarés du profil sont mesurés ; O31 approfondit ensuite les charges sélectionnées sans faire dépendre C17 d’O31.
 
-Séparer PASS/FAIL/non exécuté et applicabilité motivée, avec écart, effet observé et preuve. Les capacités optionnelles non sélectionnées restent hors campagne P0 ; Q01 les qualifie par profil. N01 devient un prérequis explicite, sans exiger catalogue O29 ni PA actif.
+Séparer PASS/FAIL/non exécuté et applicabilité motivée, avec écart, effet observé et preuve. Les capacités optionnelles non sélectionnées restent hors campagne P0 ; Q01 les qualifie par profil. N01 devient un prérequis explicite, sans exiger le catalogue O29. PA système et PZT local restent requis pour le parcours de préparation PostgreSQL du profil initial ; cette obligation ne sélectionne pas les autres rôles PA ni le réseau PZT distant.
 
 ### Exigences auditées et preuves de sortie futures
 
@@ -99,7 +106,7 @@ Voir [audit individuel et limites des preuves](../archive/2026-10-18-define-firs
 
 ## Dépendances après audit transversal P0
 
-[C04](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md), [C06](../add-protected-core-http-commands-and-queries/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C12](../complete-shared-ui-i18n-and-accessibility/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md), [N06](../add-minimal-p0-contract-conformance-kit/proposal.md).
+[C04](../archive/2026-10-21-integrate-runtime-authorization-and-super-admin/proposal.md), [C06](../archive/2026-10-22-add-protected-core-http-commands-and-queries/proposal.md), [C08](../add-installation-and-first-configuration/proposal.md), [C09](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md), [C10](../enforce-core-data-governance-and-lifecycle/proposal.md), [C12](../complete-shared-ui-i18n-and-accessibility/proposal.md), [C13](../add-initial-administration-panel/proposal.md), [C14](../archive/2026-10-23-add-essential-pbo-pzt-and-dns-modules/proposal.md), [C15](../add-runtime-observability-and-operations/proposal.md), [C16](../add-upgrade-backup-and-restore-contracts/proposal.md), [C18](../build-first-pbo-pfo-debian-package/proposal.md), [N01](../add-pbo-security-quarantine-and-revocation/proposal.md), [N03](../archive/2026-10-20-add-p0-artifact-trust-and-preinstallation-verification/proposal.md), [N04](../define-p0-web-serving-and-security-boundary/proposal.md), [N05](../add-p0-post-restore-reconciliation-and-readmission/proposal.md), [N06](../add-minimal-p0-contract-conformance-kit/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.
 

@@ -22,7 +22,13 @@ Aucune modification de texte canonique. `requirements.md` référence et reprodu
 
 ## Sélection et périmètre autorisé
 
-Hors premier P0 proposé ; obligation du profil/capacité sélectionné, applicabilité à confirmer. La préparation demandée ne sélectionne, n’active et ne qualifie pas cette capacité dans le premier profil P0.
+Le profil `pbo-p0-debian-local-v1` sélectionne le sous-ensemble nécessaire à
+la préparation PostgreSQL par PA système via PZT local, selon le
+[canon de composition](../../specs/reference-composition/spec.md) et le parcours
+[C08](../add-installation-and-first-configuration/proposal.md). Les obligations
+de ce dossier applicables à ce parcours doivent être réalisées et qualifiées.
+Les autres rôles PA et le réseau PZT distant restent conditionnés au profil
+sélectionné ; cette préparation documentaire ne les active ni ne les qualifie.
 
 La demande actuelle porte exclusivement sur les documents de préparation. Aucun code, test produit, serveur, accès fournisseur, secret, migration, dépendance, configuration système, publication, Git ou archivage n’est exécuté par ce dossier.
 

@@ -1,3 +1,7 @@
+# B27 — Persistance des enregistrements d’opérations en masse v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 Le canon BulkOperationRecord v1 et son validateur pur définissent neuf valeurs explicites ; leur socle Django et PostgreSQL reste à livrer.
 

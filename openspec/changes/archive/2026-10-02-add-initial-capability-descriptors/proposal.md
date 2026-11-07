@@ -1,4 +1,6 @@
-# Proposal: add-initial-capability-descriptors
+# C43 — Proposal: add-initial-capability-descriptors
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

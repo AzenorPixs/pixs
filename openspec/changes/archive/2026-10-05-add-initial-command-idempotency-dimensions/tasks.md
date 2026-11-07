@@ -71,3 +71,441 @@ longueur cible de tests.
 - [x] 6.9 Vérifier qu'aucune tâche n'est cochée avant preuve observable de son exécution réussie.
 
 Note de séquence : après tous les cochages, exécuter en mandat distinct la validation stricte du change post-cochage ; obtenir ensuite une autorisation d'archivage unitaire distincte, exécuter l'archive, puis produire et vérifier séparément `STATISTIQUES.md` avec ses six sections, UTF-8/LF, totaux croisés et mesures `N/A` motivées. L'archivage et le rapport statistique ne constituent pas des tâches pré-cochage du souscycle.
+
+## Sous-lots normalisés
+
+Annotation rétrospective du 30 octobre 2026. Plan ACL-2026-10-30-R1. Une tâche existante correspond à un sous-lot ; les groupes, numéros, libellés, cases et preuves ci-dessus restent les sources conservées. Les numéros SL identifient les unités et ne fixent pas leur ordre de réalisation.
+
+Les états possibles sont À FAIRE, EN COURS, RÉALISÉ À VALIDER, VALIDÉ, BLOQUÉ, ABANDONNÉ et NON VÉRIFIABLE. La case source décrit seulement l’avancement documentaire. Sans preuve datée et rattachée au périmètre de l’unité, sa qualification actuelle reste NON VÉRIFIABLE ; les validations historiques restent attachées à leur date, leur version et leur portée. Le présent relevé ne rejoue aucun contrôle produit.
+
+Sources du périmètre, des dépendances et des critères : [proposal.md](proposal.md), [design.md](design.md). Les dépendances non individualisées restent à vérifier dans ces sources ; aucune dépendance n’est déduite de la numérotation.
+
+### C59-SL01 — Publier exactement `src/pixs/core/idempotency_dimensions.py` comme module direct de `pixs.core`, sans aucun autre fichier source ajouté ou modifié, sans nouveau sous-paquet et sans aucune modification de `src/pixs/core/__init__.py` ni d'aucune façade existante ; atteinte par chemin direct du module.
+
+- Ancien repère et tâche rattachée : tâche 1.1 ; section « 1. Publication du module direct Core », ligne 14 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL02 — Écrire une docstring de module indiquant que la collecte est structurelle des dimensions déjà portées, que les valeurs sont trusted ou synthétiques, que pour les valeurs collectées `tenant_id=None` est uniquement la valeur légale existante d'un contexte PLATFORM valide, qu'aucune clé durable, aucun format wire, aucune politique ou mécanisme de déduplication ou de lookup ne sont établis, et que le second segment de la requirement et son Scenario de rejou effectif restent NON PROUVÉS.
+
+- Ancien repère et tâche rattachée : tâche 1.2 ; section « 1. Publication du module direct Core », ligne 15 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL03 — Ne déclarer que deux exports publics : `CommandIdempotencyDimensions` et `collect_command_idempotency_dimensions`.
+
+- Ancien repère et tâche rattachée : tâche 1.3 ; section « 1. Publication du module direct Core », ligne 16 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL04 — Définir `CommandIdempotencyDimensions` en dataclass `frozen=True, slots=True`, structurelle, sans défaut, sans `__post_init__`, sans méthode applicative, sans conversion implicite, avec quatre champs obligatoires dans l'ordre de §18 : `tenant_id: str | None`, `subject_id: str`, `command_type: str`, `idempotency_key: str`.
+
+- Ancien repère et tâche rattachée : tâche 1.4 ; section « 1. Publication du module direct Core », ligne 17 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL05 — N'importer que `dataclasses.dataclass`, `validate_command_metadata` de `pixs.core.command_metadata`, `Diagnostic` de `pixs.kernel.diagnostics` et `__future__.annotations` ; ne pas importer `CommandMetadata` ni `ScopeContext` s'ils ne sont pas utilisés ; aucune aide privée d'un autre module.
+
+- Ancien repère et tâche rattachée : tâche 1.5 ; section « 1. Publication du module direct Core », ligne 18 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL06 — Vérifier que le constructeur accepte structurellement toute valeur, y compris `None` partout et des objets hostiles, et que le collecteur reste le seul point fermé.
+
+- Ancien repère et tâche rattachée : tâche 1.6 ; section « 1. Publication du module direct Core », ligne 19 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL07 — Vérifier que `collect_command_idempotency_dimensions`, de signature `(command: object) -> tuple[CommandIdempotencyDimensions | None, list[Diagnostic]]`, appelle le `validate_command_metadata` public existant exactement une fois avant toute lecture locale d'attribut, sans recontrôler le type ni dupliquer aucune règle de `command_metadata` ou de `pixs.core.scope`.
+
+- Ancien repère et tâche rattachée : tâche 2.1 ; section « 2. Sémantique du collecteur », ligne 23 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL08 — Sur liste non vide, vérifier le renvoi de `(None, cette même liste publique)` sans copie, tri, renommage, conversion ni aucune lecture d'attribut de la commande.
+
+- Ancien repère et tâche rattachée : tâche 2.2 ; section « 2. Sémantique du collecteur », ligne 24 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL09 — Sur liste vide, vérifier la construction d'une nouvelle instance portant les quatre valeurs lues telles quelles — `tenant_id` du `scope_context`, `subject_id`, `command_type`, `idempotency_key` — et le renvoi de cette instance avec cette même liste vide exacte produite par l'appel public.
+
+- Ancien repère et tâche rattachée : tâche 2.3 ; section « 2. Sémantique du collecteur », ligne 25 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL10 — Vérifier que `tenant_id=None` est conservé comme seule valeur légale existante d'un contexte PLATFORM valide, sans sentinelle, substitution, namespace, ni admission d'une clé d'exécution sans tenant, et que le `scope_context` n'est jamais restitué dans les dimensions.
+
+- Ancien repère et tâche rattachée : tâche 2.4 ; section « 2. Sémantique du collecteur », ligne 26 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL11 — Vérifier qu'aucun message, élément ou diagnostic propre au module n'est fabriqué et qu'aucun état n'est partagé entre appels.
+
+- Ancien repère et tâche rattachée : tâche 2.5 ; section « 2. Sémantique du collecteur », ligne 27 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL12 — Vérifier la propagation à l'identique de toute exception inattendue levée par le validateur public — `ValueError` hors conversion déjà publique, `RuntimeError`, `KeyboardInterrupt`, `SystemExit` et tout `BaseException` — sans capture, transformation ni tuple formé.
+
+- Ancien repère et tâche rattachée : tâche 2.6 ; section « 2. Sémantique du collecteur », ligne 28 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL13 — Publier exactement `tests/unit/test_command_idempotency_dimensions.py` comme première source de tests du module.
+
+- Ancien repère et tâche rattachée : tâche 3.1 ; section « 3. Tests unitaires sûrs », ligne 32 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL14 — Couvrir les deux exports exacts, les quatre champs dans l'ordre de §18, `frozen=True`, `slots`, l'absence de défauts, de `__post_init__` et de méthodes, et la constructibilité avec valeurs invalides.
+
+- Ancien repère et tâche rattachée : tâche 3.2 ; section « 3. Tests unitaires sûrs », ligne 33 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL15 — Couvrir par espion de l'alias public du module : un appel unique sur chaque chemin, identité d'objet de la liste publique sur refus comme sur succès, et fraîcheur et indépendance des listes et tuples entre appels successifs.
+
+- Ancien repère et tâche rattachée : tâche 3.3 ; section « 3. Tests unitaires sûrs », ligne 34 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL16 — Couvrir le refus d'un objet quelconque et d'une sous-classe de `CommandMetadata` par un objet dont toute lecture d'attribut lève, après sonde positive réelle remise à zéro, prouvant zéro lecture locale des champs et reprise de l'unique diagnostic public `command_metadata.command`.
+
+- Ancien repère et tâche rattachée : tâche 3.4 ; section « 3. Tests unitaires sûrs », ligne 35 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL17 — Couvrir les succès TENANT avec opacités distinctes y compris chaînes d'espaces et PLATFORM avec `tenant_id is None` conservé : quatre valeurs identiques, aucune mutation de la commande d'origine, tuples d'origine intacts.
+
+- Ancien repère et tâche rattachée : tâche 3.5 ; section « 3. Tests unitaires sûrs », ligne 36 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL18 — Couvrir la commande multi-refus : liste publique intégrale traversée inchangée en contenu, ordre, identité et longueur, dimensions `None`.
+
+- Ancien repère et tâche rattachée : tâche 3.6 ; section « 3. Tests unitaires sûrs », ligne 37 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL19 — Couvrir la propagation à l'identique, sur même objet, des erreurs inattendues injectées par espion, y compris `BaseException` personnalisé.
+
+- Ancien repère et tâche rattachée : tâche 3.7 ; section « 3. Tests unitaires sûrs », ligne 38 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL20 — Publier exactement `tests/integration/test_command_idempotency_dimensions_integration.py`, sans créer aucun autre fichier d'intégration.
+
+- Ancien repère et tâche rattachée : tâche 4.1 ; section « 4. Intégration sûre en processus frais », ligne 42 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL21 — Lancer un interpréteur neuf `-B` avec environnement réduit déclaré (`PATH`, `LANG`, `PYTHONPATH=src`, `PYTHONDONTWRITEBYTECODE`), sans PG réel, sans URL, sans Git, sans secret ; charger avant les gardes seulement les modules de bibliothèque standard nécessaires aux sondes et imports, dont `uuid` si requis, aucun import de `pixs.core` ne précédant les gardes fonctions/environnement/horloge/imports base.
+
+- Ancien repère et tâche rattachée : tâche 4.2 ; section « 4. Intégration sûre en processus frais », ligne 43 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL22 — Armer les gardes de fonctions, d'environnement, d'horloge et d'imports base avant l'import applicatif sous gardes ; armer les gardes fichiers seulement après les imports bootstrap et applicatifs nécessaires et avant construction/collecte, sans exiger une absence absolue de toute activité physique d'import.
+
+- Ancien repère et tâche rattachée : tâche 4.3 ; section « 4. Intégration sûre en processus frais », ligne 44 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL23 — Limiter les routes déclarées et propres à l'ensemble fini du design, les listes font foi, exactement : fichiers `builtins.open`, `io.open`, `os.open`, `os.read`, `os.write`, `os.listdir`, `os.remove`, `os.fdopen`, `os.stat`, `os.scandir`, `os.unlink`, `os.rename` ; environnement routes déclarées de `os.environ` (`__getitem__`, `get`, `__iter__`, `__len__`, `__contains__`, `__setitem__`, `__delitem__`, `keys`, `values`, `items`, `copy`, `setdefault`, `pop`, `update`) et `os.getenv` ; horloge `datetime.datetime.now/today/utcnow` (3), `datetime.date.today` (1), `time.time/monotonic/perf_counter/localtime/gmtime/sleep` (6) ; sockets `socket.socket.connect`, `socket.create_connection` ; processus `subprocess.Popen`, `subprocess.run`, `os.system`, `os.popen`, `os.execv`, `os.spawnl` ; imports `django`, `psycopg`, `psycopg2`, `psycopg_pool`, `psycopg_binary` et sous-modules. `os.openat` n'est pas une route déclarée.
+
+- Ancien repère et tâche rattachée : tâche 4.4 ; section « 4. Intégration sûre en processus frais », ligne 45 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL24 — Éprouver chaque route déclarée (compteur un) puis la remettre à zéro avant la phase couverte ; contrôler les compteurs nuls après chaque phase sans masquer un accès applicatif par une remise à zéro.
+
+- Ancien repère et tâche rattachée : tâche 4.5 ; section « 4. Intégration sûre en processus frais », ligne 46 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL25 — N'utiliser les mocks que pour les sondes des gardes ; exercer le `validate_command_metadata` public réel dans l'enfant et éprouver les scènes : collecte réussie TENANT avec les quatre dimensions exactes, collecte réussie PLATFORM avec `None` conservé, refus d'un type étranger avec liste publique reprise, aucune mutation ; aucun nouveau test calendaire.
+
+- Ancien repère et tâche rattachée : tâche 4.6 ; section « 4. Intégration sûre en processus frais », ligne 47 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL26 — Limiter la sortie du sous-processus au marqueur fixe `COMMAND_IDEMPOTENCY_DIMENSIONS_SAFE_INTEGRATION_OK`, sans reproduction de valeur, diagnostic brut, environnement ou secret.
+
+- Ancien repère et tâche rattachée : tâche 4.7 ; section « 4. Intégration sûre en processus frais », ligne 48 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL27 — Propager ou diagnostiquer explicitement toute erreur inattendue du sous-processus, sans capture générale ni masque de l'échec initial.
+
+- Ancien repère et tâche rattachée : tâche 4.8 ; section « 4. Intégration sûre en processus frais », ligne 49 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL28 — Compiler nativement `src/pixs/core/idempotency_dimensions.py` sous mandat distinct et vérifier son exit réel.
+
+- Ancien repère et tâche rattachée : tâche 5.1 ; section « 5. Compilations natives et exécution des tests », ligne 53 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL29 — Compiler nativement `tests/unit/test_command_idempotency_dimensions.py` sous mandat distinct et vérifier son exit réel.
+
+- Ancien repère et tâche rattachée : tâche 5.2 ; section « 5. Compilations natives et exécution des tests », ligne 54 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL30 — Compiler nativement `tests/integration/test_command_idempotency_dimensions_integration.py` sous mandat distinct et vérifier son exit réel.
+
+- Ancien repère et tâche rattachée : tâche 5.3 ; section « 5. Compilations natives et exécution des tests », ligne 55 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL31 — Exécuter les tests unitaires ciblés et vérifier leur exit réel et leur output complet.
+
+- Ancien repère et tâche rattachée : tâche 5.4 ; section « 5. Compilations natives et exécution des tests », ligne 56 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL32 — Exécuter le test d'intégration ciblé et vérifier son exit réel et son output complet.
+
+- Ancien repère et tâche rattachée : tâche 5.5 ; section « 5. Compilations natives et exécution des tests », ligne 57 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL33 — Exécuter en mandat distinct la suite de régressions du design : lot identifié de trois cent vingt-cinq tests antérieurs (suite de trois cent un du design `CommandMetadata` et vingt-quatre tests `CommandMetadata`), sans PG réel supplémentaire ; le nombre réel de tests est relevé après exécution du nouveau lot, sans cible imposée.
+
+- Ancien repère et tâche rattachée : tâche 5.6 ; section « 5. Compilations natives et exécution des tests », ligne 58 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL34 — Vérifier que les ajouts de tests sont déterminés par les comportements réellement prouvés, sans nombre ni longueur imposé arbitrairement.
+
+- Ancien repère et tâche rattachée : tâche 5.7 ; section « 5. Compilations natives et exécution des tests », ligne 59 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL35 — Vérifier que le périmètre exact comprend les trois nouveaux chemins et aucun autre fichier source, test ou configuration modifié, aucun sous-paquet ni aucune façade ajoutés ou modifiés.
+
+- Ancien repère et tâche rattachée : tâche 6.1 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 63 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL36 — Vérifier que les soixante-dix-neuf fichiers de baseline exacts restent inchangés byte à byte, y compris le Kernel, `pixs.core` et ses paquets `scope`/`identity`, les cycles antérieurs audit, fanions, backend, event-contract archivé et les trois sources du cycle `CommandMetadata`.
+
+- Ancien repère et tâche rattachée : tâche 6.2 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 64 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL37 — Vérifier l'encodage UTF-8 et les fins de ligne LF des trois nouveaux fichiers, sans CRLF ni secret, avec une AST compatible des versions Python 3.12 supportées.
+
+- Ancien repère et tâche rattachée : tâche 6.3 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 65 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL38 — Vérifier que le delta normatif est la copie byte exact de la seule requirement canonique `interactions` « Idempotence et traçabilité des commandes », y compris son Scenario « Rejou divergent », sans norme nouvelle, modifiée ou supprimée.
+
+- Ancien repère et tâche rattachée : tâche 6.4 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 66 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL39 — Vérifier l'absence de nouvelle dépendance, de package exporté, de README modifié, d'opération Git, de wire format, de persistance, de route, d'API d’exécution métier, de panneau admin, de PG réel supplémentaire et de politique d'audit.
+
+- Ancien repère et tâche rattachée : tâche 6.5 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 67 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL40 — Vérifier le rejet de toute attribution de rejou effectif, de déduplication ou d'exécution dans les docstrings, diagnostics et documentation du change.
+
+- Ancien repère et tâche rattachée : tâche 6.6 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 68 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL41 — Exécuter la validation OpenSpec stricte du change et la validation stricte canonique `--specs` avant la publication du code.
+
+- Ancien repère et tâche rattachée : tâche 6.7 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 69 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL42 — Exécuter la validation OpenSpec stricte du change et la validation stricte `--all` du référentiel après les tests.
+
+- Ancien repère et tâche rattachée : tâche 6.8 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 70 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.
+
+### C59-SL43 — Vérifier qu'aucune tâche n'est cochée avant preuve observable de son exécution réussie.
+
+- Ancien repère et tâche rattachée : tâche 6.9 ; section « 6. Périmètre, encodage et conformité OpenSpec », ligne 71 du texte conservé.
+- Objectif et périmètre : libellé de la tâche ci-dessus, borné au change décrit dans [proposal.md](proposal.md) et à ses contrats de conception.
+- Case source observée le 30 octobre 2026 : cochée.
+- Dépendances et prérequis : rattachement individuel NON VÉRIFIABLE dans les tableaux de tâches ; consulter les sources du change ci-dessus avant engagement.
+- Critères et contrôles : exécution de la tâche telle que libellée, avec ses précisions et exigences de conception conservées ; aucune recette supplémentaire n’est créée par cette annotation.
+- Preuves disponibles à recouper : [design.md](design.md) et commentaires de preuve attachés à la tâche dans le texte conservé.
+- État de qualification actuelle : NON VÉRIFIABLE sur ce seul relevé ; case et états historiques conservés, sans nouvelle validation ni livraison.

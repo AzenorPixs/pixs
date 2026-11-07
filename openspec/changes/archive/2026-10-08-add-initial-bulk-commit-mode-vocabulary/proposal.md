@@ -1,4 +1,6 @@
-# Proposition — Vocabulaire des modes d’import en masse
+# B12 — Proposition — Vocabulaire des modes d’import en masse
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 

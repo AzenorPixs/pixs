@@ -1,3 +1,7 @@
+# SP04 — Consolidation des spécifications
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le référentiel actif compte 74 capacités validées, mais 18 d'entre elles ne

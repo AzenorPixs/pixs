@@ -4,6 +4,25 @@ Toutes les évolutions significatives de Pixs et de son outillage de contributio
 
 ## Unreleased
 
+- Réalisation C11 du shell frontend composé : sélection opérateur épinglée,
+  imports et graphe contrôlés, rendu des contributions déclarées, contexte WEB
+  Auth, états Query/Command et cinq champs typés. Le mode autonome est conservé.
+  Les garanties sont documentées ; recettes, qualification du bundle/transport
+  et validation globale restent à exécuter avant livraison de ce change.
+
+- Ajout de la gestion PBO Agent : contrats publics 1.0.0, persistance PostgreSQL
+  séparant souhaité, observé et confirmé, autorisation et audit Core, adaptateur
+  de composition et supervision avec péremption et réconciliation sans réémission.
+  L’absence de transport PZT est refusée explicitement ; les preuves exécutant
+  et les qualifications locales/distantes restent aux lots propriétaires.
+
+- Ajout de la gestion propriétaire PZT/DNS : contrats versionnés, persistance
+  et idempotence PostgreSQL auditées, configuration souhaitée, routes HTTP et
+  contributions de gestion frontend. Les issues inconnues restent explicites ;
+  aucun état réseau appliqué ou mesuré n’est fabriqué. Les exécutants et le
+  service DNS actif restent à qualifier séparément.
+
+
 - Déclaration documentaire OpenSpec de pixs-agent et pzt, avec les 174 contrats
   validés et les 68 critères de recette PA ; alignement de deb-package,
   docker-image, runtime et reference-runtime. Compilation prévue : Nuitka pour

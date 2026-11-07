@@ -1,0 +1,190 @@
+{
+  "schema": "pixs.frontend.build-policy/1.0.0",
+  "policy": {
+    "schema": "pixs.frontend.policy/1.0.0",
+    "imports": {
+      "shellFacades": {
+        "pixs-shell/v1": {
+          "exports": [],
+          "allowDefault": false,
+          "allowNamespace": false
+        }
+      },
+      "foreignFacades": {}
+    },
+    "modularPoints": [],
+    "mergeModes": {
+      "pixs.shell.routes": "APPEND",
+      "pixs.shell.pages": "APPEND",
+      "pixs.shell.navigation-items": "APPEND",
+      "pixs.shell.components": "APPEND",
+      "pixs.shell.forms": "APPEND",
+      "pixs.shell.translations": "APPEND",
+      "pixs.shell.ui-permissions": "APPEND",
+      "pixs.shell.header": "APPEND",
+      "pixs.shell.navigation": "APPEND",
+      "pixs.shell.main": "APPEND",
+      "pixs.shell.footer": "APPEND"
+    },
+    "admission": [
+      {
+        "owner": "pixs.pzt",
+        "id": "pixs.pzt.management.translations",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.pzt",
+        "id": "pixs.pzt.management.page",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.pzt",
+        "id": "pixs.pzt.management.route.platform",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.pzt",
+        "id": "pixs.pzt.management.navigation.platform",
+        "mandatory": false
+      },
+      {
+        "owner": "pixs.pzt",
+        "id": "pixs.pzt.management.route.tenant",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.pzt",
+        "id": "pixs.pzt.management.navigation.tenant",
+        "mandatory": false
+      },
+      {
+        "owner": "pixs.pzt",
+        "id": "pixs.pzt.management.route.scope",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.pzt",
+        "id": "pixs.pzt.management.navigation.scope",
+        "mandatory": false
+      },
+      {
+        "owner": "pixs.dns",
+        "id": "pixs.dns.management.translations",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.dns",
+        "id": "pixs.dns.management.page",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.dns",
+        "id": "pixs.dns.management.route.platform",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.dns",
+        "id": "pixs.dns.management.navigation.platform",
+        "mandatory": false
+      },
+      {
+        "owner": "pixs.dns",
+        "id": "pixs.dns.management.route.tenant",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.dns",
+        "id": "pixs.dns.management.navigation.tenant",
+        "mandatory": false
+      },
+      {
+        "owner": "pixs.dns",
+        "id": "pixs.dns.management.route.scope",
+        "mandatory": true
+      },
+      {
+        "owner": "pixs.dns",
+        "id": "pixs.dns.management.navigation.scope",
+        "mandatory": false
+      }
+    ],
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "renderer": {
+      "contract": "pixs.presentation/1.0.0",
+      "adapter": "pixs.dom/v1"
+    }
+  },
+  "limits": {
+    "selection": {
+      "max_selection_bytes": 65536,
+      "max_owners": 4,
+      "max_files_per_owner": 2,
+      "max_total_files": 6,
+      "max_bytes_per_file": 65536,
+      "max_total_bytes": 131072
+    },
+    "imports": {
+      "maxSourceBytes": 65536,
+      "maxTotalSourceBytes": 131072,
+      "maxModules": 4,
+      "maxImports": 8,
+      "maxBindings": 1024,
+      "maxResolutions": 8,
+      "maxInputNodes": 100000,
+      "syntaxLimits": {
+        "maxSourceBytes": 65536,
+        "maxAstNodes": 16384,
+        "maxDescriptorCount": 8,
+        "maxTextLength": 4096,
+        "maxLiteralItems": 4096,
+        "maxLiteralDepth": 32
+      }
+    },
+    "graph": {
+      "maxContributions": 16,
+      "maxFacts": 32,
+      "maxEdges": 64,
+      "maxInputNodes": 100000,
+      "descriptorLimits": {
+        "maxTextLength": 4096,
+        "maxRequires": 4,
+        "maxPermissions": 4,
+        "maxPoints": 16,
+        "maxLocales": 2,
+        "maxCatalogKeys": 132
+      }
+    },
+    "requirements": {
+      "max_contributions": 16,
+      "max_requirements_per_contribution": 4,
+      "max_total_requirements": 32
+    },
+    "sourceProfile": {
+      "maxSourceBytes": 65536,
+      "maxAstNodes": 16384,
+      "maxBindings": 1024,
+      "maxTextLength": 4096,
+      "maxScopeDepth": 64
+    },
+    "presentation": {
+      "maxNodes": 256,
+      "maxDepth": 32,
+      "maxChildren": 128,
+      "maxTextLength": 4096,
+      "maxParams": 32,
+      "maxFields": 128,
+      "maxBindings": 128,
+      "maxDataNodes": 65536,
+      "maxBodyDepth": 32,
+      "maxBodyNodes": 4096
+    },
+    "wire": {
+      "maxPolicyBytes": 65536,
+      "maxWireBytes": 1048576,
+      "maxPolicyNodes": 65536
+    }
+  }
+}

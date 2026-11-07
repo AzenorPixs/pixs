@@ -1,4 +1,6 @@
-# Proposition — intégration de la cohorte à l'évaluation
+# O46 — Proposition — intégration de la cohorte à l'évaluation
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

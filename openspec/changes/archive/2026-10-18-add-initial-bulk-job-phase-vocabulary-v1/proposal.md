@@ -1,4 +1,6 @@
-# Proposal — add-initial-bulk-job-phase-vocabulary-v1
+# B61 — Proposal — add-initial-bulk-job-phase-vocabulary-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -6,16 +6,34 @@ import unittest
 
 import pixs.kernel.contracts as facade
 from pixs.kernel.contracts import models as facade_models
+from pixs.kernel.contracts import time as facade_time
 from pixs.kernel.manifest.models import ComponentManifest, ImplementedContract
 from pixs.kernel.manifest.semver import compare, parse_version
 
 
 class FacadeTest(unittest.TestCase):
     def test_exports_aligned(self) -> None:
-        self.assertEqual(set(facade.__all__), set(facade_models.__all__))
+        self.assertEqual(
+            set(facade.__all__),
+            set(facade_models.__all__) | set(facade_time.__all__),
+        )
+        self.assertEqual(len(facade.__all__), len(set(facade.__all__)))
+        self.assertFalse(set(facade_models.__all__) & set(facade_time.__all__))
         self.assertIs(facade.ContractCategory, facade_models.ContractCategory)
         self.assertIs(facade.ContractDescriptor, facade_models.ContractDescriptor)
         self.assertIs(facade.DeprecationNotice, facade_models.DeprecationNotice)
+        self.assertIs(facade.TIME_CONTRACT_ID, facade_time.TIME_CONTRACT_ID)
+        self.assertIs(facade.TIME_CONTRACT_VERSION, facade_time.TIME_CONTRACT_VERSION)
+        self.assertIs(facade.TIME_DESCRIPTOR, facade_time.TIME_DESCRIPTOR)
+        self.assertIs(facade.TimePublicRef, facade_time.TimePublicRef)
+        self.assertIs(facade.TimeDiagnostic, facade_time.TimeDiagnostic)
+        self.assertIs(facade.TimeOutcome, facade_time.TimeOutcome)
+        self.assertIs(facade.TimeProducer, facade_time.TimeProducer)
+        self.assertIs(facade.TimeRefusedError, facade_time.TimeRefusedError)
+        self.assertIs(facade.TimeDoubtError, facade_time.TimeDoubtError)
+        self.assertIs(facade.UtcInstant, facade_time.UtcInstant)
+        self.assertIs(facade.validate_utc, facade_time.validate_utc)
+        self.assertIs(facade.REFUSAL_REASONS, facade_time.REFUSAL_REASONS)
 
     def test_category_mismatch_public_api(self) -> None:
         descriptor = facade.ContractDescriptor(

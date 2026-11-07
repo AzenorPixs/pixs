@@ -4,6 +4,10 @@
 
 Ce document définit le cadre de construction et de packaging de Pixs.
 
+Le §49 décline la cible du 31 octobre 2026 définie par PROJECT.md §45 et
+TECHNICAL.md §46. Les contrats et preuves des versions antérieures restent
+identifiés ; les nouvelles recettes attendent les étapes OpenSpec autorisées.
+
 Il complète `PROJECT.md` en précisant les principes techniques applicables à la production des artefacts distribuables de Pixs sans redéfinir son architecture fonctionnelle.
 
 Les deux formes initiales de distribution sont :
@@ -132,13 +136,13 @@ Les providers d'authentification doivent déclarer leurs capacités, protocoles,
 
 Le [cadrage Auth essentiel](openspec/changes/define-essential-autonomous-auth-module/proposal.md) est adopté le 20 octobre 2026 pour ses trois deltas authentication, core et reference-composition. La recette future devra vérifier pixs.auth essentiel indépendant, son profil local autonome PostgreSQL, le refus d'une composition sans cette capacité et l'absence des connecteurs externes installés ou de services LDAP/KDC/AD et d'émission IdP activés implicitement. Les méthodes locales détaillées et l'enrôlement restent proposés dans leurs dossiers distincts. Aucune preuve historique du paquet ne qualifie ce nouveau périmètre ; aucun code ni service n'est produit par l'adoption.
 
-Le profil standard exclura les sous-modules de sources externes LDAP, Kerberos, OIDC, SAML et autres ; leur installation nécessitera une sélection et un artefact déclaré. Les rôles émetteurs IdP, OpenLDAP propre et KDC propre auront une activation explicite, sans service ni écoute réseau lancé par leur seule disponibilité. Leurs sous-modules de gestion appartiendront à Auth, avec exécutants séparés de Django et dépendances produit installées uniquement selon le plan sélectionné. Aucune dépendance OS n'est ajoutée par ce cadrage documentaire.
+Le profil standard n'installe pas implicitement de sources externes LDAP/Kerberos/OIDC/SAML. Les émetteurs IdP restent activés explicitement. En mode Domaine, LZT/OpenLDAP et KZT/MIT Kerberos sont requis par Domaine et exploités par PA, sous administration Core/Auth/PBO ; leur composition et leur activation vérifiée suivent les §49 et PROJECT.md §45. Le profil pré-domaine conserve son authentification PG sans exiger ces services.
 
 Le build et la recette distingueront tables/migrations Core et Auth dans PostgreSQL, secrets protégés et stockages techniques natifs des services gérés. Ils vérifieront l'absence de connecteurs externes dans le profil standard, l'autonomie locale, l'absence de confiance/repli implicite, la compatibilité des sous-modules et les limites de révocation. Le stockage PostgreSQL par défaut d'Auth n'impose aucun backend PostgreSQL à slapd ou au KDC. Versions, packaging, privilèges, domaines/realms, ports, transport et reprise devront être qualifiés avant distribution de ces services optionnels.
 
 Le sous-module optionnel `pixs.auth.directory.ad` et son [change de domaine AD propre](openspec/changes/add-auth-managed-active-directory/proposal.md) suivent la même séparation : PostgreSQL pour Auth par défaut, stockage technique du contrôleur déclaré, aucune activation ou adoption de domaine implicite. La recette vérifiera plateforme et compatibilité qualifiées, privilèges, cohérence annuaire/Kerberos/DNS et absence de collision avec les services autonomes. Aucun produit AD, système Windows, package ou dépendance supplémentaire n'est sélectionné ou installé par cette préparation.
 
-Le [stockage Core réversible PostgreSQL/OpenLDAP interne](openspec/changes/add-reversible-core-directory-storage/proposal.md) est une option postinstallation distincte de la projection LDAP. Après adoption des deltas, la recette de cette option devra prouver aller, modifications effectuées via Pixs sur LDAP et retour vers PostgreSQL courant, avec mêmes UUID, relations et décisions ACL. Elle vérifiera représentation complète, garanties de mutation, clôture des anciens écrivains, génération unique, copie/reprise et absence de repli périmé. PostgreSQL demeure requis pour les autres données déclarées ; le stockage Auth n'est pas déplacé par effet de cette sélection. Aucun déplacement de données ou changement d'infrastructure n'est exécuté par le présent cadrage.
+La cible du 31 octobre conserve la source Core PG Instance/Domaine. La [proposition antérieure de stockage réversible](openspec/changes/add-reversible-core-directory-storage/proposal.md) reste un dossier à réconcilier lors de l'étape OpenSpec, sans activation dans le nouveau modèle. LDAP publie Core et conserve l’état Kerberos normal ; la reconstruction depuis PG est critique ; aucune migration ou modification de ce dossier n'est effectuée ici.
 
 Le build doit valider les déclarations du moteur d'autorisation : identifiants et versions de politiques, composants propriétaires, selectors de sujets, ressources, actions et scopes, effets `DENY` ou `ALLOW`, conditions typées, obligations et périodes de validité. Il doit refuser toute politique ambiguë, non namespacée, cyclique, non bornée ou contenant du code exécutable. Les dépendances vers des implémentations privées et les PDP externes non déclarés doivent bloquer la composition.
 
@@ -321,7 +325,7 @@ La génération des SDK, du Developer Kit, de la CLI, des types et des exemples 
 
 La configuration effective des entitlements, politiques de quota, compteurs et réservations est fournie au runtime. Le build ne choisit pas de plan commercial, n'active pas d'entitlement de production et ne préinitialise aucune consommation. Les rôles `web`, `worker` et `scheduler` doivent utiliser les mêmes contrats et la même source persistante ou des providers explicitement compatibles ; un provider indisponible ne peut pas produire une décision positive implicite pour une opération protégée.
 
-La configuration effective offline-first est fournie au runtime et au client par une source validée. Le build ne précharge pas de réplique, de file de Commands, de bail d'accès offline ou de décision d'autorisation. La persistance locale du client peut survivre à un redémarrage lorsqu'elle est déclarée, mais elle reste distincte de la persistance de référence déclarée (PostgreSQL par défaut, OpenLDAP interne pour le périmètre Core explicitement migré) ; aucun état nécessaire à l'autorité métier, à l'idempotence serveur ou à la reprise des Jobs ne doit dépendre du filesystem local d'un processus Pixs.
+La configuration effective offline-first est fournie au runtime et au client par une source validée. Le build ne précharge pas de réplique, de file de Commands, de bail d'accès offline ou de décision d'autorisation. La persistance locale du client peut survivre à un redémarrage lorsqu'elle est déclarée, mais elle reste distincte de la persistance de référence déclarée (PG souveraine Core Instance/Domaine ; état Kerberos normal LDAP, reprise critique distincte) ; aucun état nécessaire à l'autorité métier, à l'idempotence serveur ou à la reprise des Jobs ne doit dépendre du filesystem local d'un processus Pixs.
 
 À la reconnexion, le runtime doit soumettre les Commands locales au backend et réévaluer l'identité, le `ScopeContext`, l'autorisation, l'entitlement, les quotas, la concurrence et la gouvernance. Le client peut signaler `OFFLINE` ou `STALE`, mais ne peut pas transformer une intention locale en succès métier. Les rôles `web`, `worker` et `scheduler` utilisent les mêmes contrats de synchronisation ; une perte de provider, une révocation ou un conflit doit produire un état contrôlé plutôt qu'une activation permissive.
 
@@ -477,7 +481,7 @@ Les secrets Debian doivent être fournis par un mécanisme runtime approprié et
 
 Le paquet Debian ne doit contenir aucune base PostgreSQL préinitialisée représentant des données métier de production.
 
-PostgreSQL reste le stockage applicatif par défaut indépendamment du mode de distribution. L'option postinstallation `core-storage` peut déplacer le périmètre Core vers l'OpenLDAP interne après migration réversible vérifiée ; elle ne retire pas PostgreSQL aux autres domaines. Le paquet ne peut pas activer cette option par une simple mise à niveau ou installation de dépendance.
+PostgreSQL conserve la source Core/applicative dans tous les modes de distribution, répartie entre Instance et Domaines selon la cible. LDAP conserve l'état Kerberos durable normal et les références Core publiées. Une reconstruction depuis PG suit une procédure d'urgence critique, distincte d'une mise à niveau (§49).
 
 Le paquet peut fournir les mécanismes nécessaires à l'utilisation des migrations Pixs, mais les migrations restent gouvernées par l'architecture applicative et les spécifications correspondantes.
 
@@ -552,6 +556,12 @@ Le packaging Debian doit pouvoir déclarer séparément les unités de service c
 
 L'image Docker fournit une exécution conteneurisée reproductible de Pixs.
 
+Le parcours C08 adopté le 22 octobre 2026 exige que l'image Docker Pixs fournisse aussi le logiciel PostgreSQL, sans cluster préinitialisé, identité, configuration effective, secret ni données dans ses couches. Le profil d'exécution sélectionne explicitement PA système, PZT local et PostgreSQL cohébergé ; PA prépare uniquement les ressources manquantes et conserve le stockage existant. PBO garde ses migrations et initialisations applicatives. Cette composition est à construire et qualifier ; sa définition ne prouve aucun artefact livré.
+
+Le [design C08, profils 1.5](openspec/changes/add-installation-and-first-configuration/design.md) porte les choix D1–D3 adoptés le 23 octobre 2026 : Debian 13 x86_64 physique/VM et Docker Linux amd64 ; base candidate Docker Official Image postgres:16.15-trixie à verrouiller par digest avant construction, métadonnées ENTRYPOINT/CMD/STOPSIGNAL/VOLUME héritées explicitement traitées et initialisation PostgreSQL réservée à PA ; init Docker et Supervisor 4.2.5-3 au premier plan, nouvelle dépendance de l’image seulement ; fournisseur Docker distinct de C01 Debian, par fichiers versionnés montés en lecture seule avec identité native, politique courante, révocation, arrêt attesté des consommateurs et audit à réaliser et qualifier. Les budgets partagés, comptes, dépendances, stockage persistant et lifecycle doivent être déclarés et prouvés avant qualification ; aucun secret ne transite par PZT. Cette adoption documentaire n’installe rien, ne construit ni ne télécharge une image, ne modifie aucun service, volume, droit ou infrastructure et ne qualifie aucun artefact.
+
+Le choix E3 C08 est adopté par décision explicite du développeur : le PZT local HTTP/JSON sur TCP IPv4 loopback utilise TLS 1.3 avec authentification mutuelle et un adaptateur Cython vers libssl/libcrypto OpenSSL 3. Cette dépendance runtime PZT ne sélectionne pas une bibliothèque TLS Python supplémentaire ; versions exactes, provenance, ABI, providers et empreintes sont à verrouiller avant construction et recette. La suite A10h est explicitement fournie, sans valeur initiale inventée, et 0-RTT reste interdit. Aucun endpoint, port, groupe, matériel/provider de clé ou budget n'est déduit de la CLI OpenSSL inventoriée. Les échanges PBO–PA restent exclusivement sous PZT, sans credential. Le [design C08, préparation 1.6](openspec/changes/add-installation-and-first-configuration/design.md) conserve les responsabilités Z12/PA01 et les limites des contrats encore documentaires. Cet accord n'autorise aucune installation sur l'hôte actuel et ne prouve aucun artefact ou transport qualifié.
+
 Elle doit encapsuler les composants nécessaires à l'exécution de l'application tout en maintenant la configuration, les secrets et les données persistantes hors de l'image lorsque leur nature l'exige.
 
 Principe :
@@ -562,6 +572,7 @@ Image Pixs
    ├── runtime système
    ├── runtime Python
    ├── application Pixs
+   ├── logiciel PostgreSQL sans cluster ni données
    ├── dépendances applicatives
    ├── frontend construit
    └── entrypoint
@@ -571,7 +582,8 @@ Image Pixs
            │
            ├── configuration externe
            ├── secrets externes
-           ├── PostgreSQL externe
+           ├── service PostgreSQL sélectionné et supervisé
+           ├── données PostgreSQL sur stockage persistant hors image
            └── stockage persistant si nécessaire
 ```
 
@@ -754,7 +766,7 @@ Le système de fichiers writable du conteneur doit être considéré comme éph�
 
 Les données métier ne doivent pas dépendre de la durée de vie du conteneur.
 
-PostgreSQL reste le stockage applicatif par défaut. Un périmètre Core engagé vers l'OpenLDAP interne utilise son stockage persistant déclaré selon `core-storage` ; la recréation du conteneur ne modifie ni cette sélection ni sa génération et ne réactive pas une ancienne copie PostgreSQL.
+PG Instance, PG Domaine et bases CZT/DZT/PKIZT conservent leurs persistances déclarées et distinctes. LDAP conserve les références Core publiées et l'état Kerberos durable normal ; sa reconstruction complète suit la procédure critique. La recréation d'un conteneur ne change ni ces propriétaires ni les identités, générations et autorisations (§49).
 
 Les données persistantes relatives aux utilisateurs, identités numériques, comptes de service, méthodes d'authentification et révocations doivent rester dans les mécanismes de persistance prévus par Pixs. Elles ne doivent pas être stockées uniquement dans le système de fichiers éphémère du conteneur.
 
@@ -792,7 +804,9 @@ Le port applicatif interne définitif sera fixé dans la spécification Docker/r
 
 La publication d'un port sur l'hôte relève du déploiement du conteneur et ne doit pas être confondue avec l'exposition interne de l'image.
 
-Les dépendances externes, notamment PostgreSQL, doivent être accessibles au travers d'une configuration réseau explicite et non au moyen d'adresses codées en dur dans l'image.
+Le PostgreSQL cohébergé du profil C08 et les éventuelles dépendances externes doivent être accessibles au travers d'une configuration explicite et non au moyen d'adresses codées en dur dans l'image. PostgreSQL reste privé ; sa présence n'autorise aucune publication de port implicite. Les échanges PBO–PA, même dans le conteneur, passent exclusivement par PZT local mTLS ; les messages de management ne transportent aucun credential.
+
+Le profil déclare supervision, ordre de démarrage, signaux, arrêt contrôlé, budgets partagés, cible de stockage persistant et propriétaire admissible unique de préparation. Les données restent hors image et hors couche éphémère. Un redémarrage ou une réplication conserve le cluster existant sans cloner d'identité PA/PZT ni créer un propriétaire concurrent. Les permissions du conteneur ne sont pas étendues implicitement à l'hôte. Le mécanisme de secrets Docker et les garanties du démarrage pré-base doivent être sélectionnés et qualifiés selon `secrets-providers`, `authorization` et `installation-provisioning` ; les preuves systemd Debian ne qualifient pas ce transport Docker.
 
 Les tests de packaging doivent confirmer que seul le profil `web` est exposable publiquement par défaut, que les ports ou endpoints des workers, schedulers et stores de coordination restent privés et que l'interface de management dispose d'une frontière d'accès distincte. Une modification de l'exposition réseau ne doit pas accorder de permission métier ni contourner l'authentification ou l'autorisation.
 
@@ -1361,7 +1375,7 @@ décision d'autorisation, une révocation ou une authentification. Les fixtures,
 rapports et artefacts ne doivent contenir ni credential LDAP, ni DN de
 production, ni donnée personnelle réelle.
 
-La recette du rôle distinct de stockage Core OpenLDAP doit couvrir la conservation des utilisateurs, groupes et ACL avec leurs relations, l'aller PostgreSQL vers OpenLDAP, les mutations pendant cette période puis le retour vers PostgreSQL courant. Elle vérifie l'unicité de référence, les générations, les anciens écrivains, les retraits et l'absence de repli vers une copie périmée. Cette recette ne délègue ni l'évaluation ACL à slapd ni les secrets et sessions Auth au provider Core.
+Les nouvelles recettes vérifient PG autoritative, préservation de l'état Kerberos durable normal dans LDAP et reconstruction critique depuis PG, avec cohérences PG/LDAP suivies séparément. L'ancien scénario de stockage Core autoritatif LDAP est à réconcilier dans son dossier existant ; il ne constitue plus une option cible (§49).
 
 Les tests du `RegionalPlacementProvider` doivent couvrir la résolution des régions logiques, le placement primaire, les réplicas, les régions de traitement, les sauvegardes, les clés, les transferts, les tombstones, la suppression, la restauration, la révocation et les limites de provider. Ils doivent vérifier la compatibilité de la `TenantPlacementPolicy`, l'absence de fuite entre tenants ou régions, la primaire unique, le fencing, l'epoch régional, la détection du split-brain et le refus d'une région non autorisée.
 
@@ -1659,7 +1673,7 @@ le profil ; le paquet PA/PZT autonome n'embarque pas les modules PBO.
 
 ### 46.1 Compilation et objectifs de performance
 
-Le binaire PBO commun est construit et qualifié séparément des exécutants PA/PZT. Le choix adopté le 21 octobre 2026 est Nuitka en mode `standalone` : un exécutable PBO avec son runtime, ses bibliothèques et ressources déclarées. Le mode `onefile` autoextractible ne remplace pas ce profil. Les modes d'exploitation PBO Standalone (instance autonome) et ZT (réseau gouverné via PZT) utilisent le même binaire ; ils ne sont pas des options de compilation. L'activation du transport PZT reste distincte et peut être requise en Standalone pour joindre des PA autorisés, sans canal de substitution ni bascule automatique vers Standalone après panne ou révocation. Les trois binaires PA et l'exécutant PZT sont compilés avec Cython. La réplication de ses processus ne multiplie pas les fichiers exécutables livrés. Le paquet Debian PBO/PFO et l'image livrent chacun ce binaire et les ressources PFO ; les comptes de trois binaires PA plus PZT sous Debian, ou deux plus PZT dans Docker, concernent uniquement les exécutants indépendants.
+Le binaire PBO commun est construit et qualifié séparément des exécutants PA/PZT. Le choix adopté le 21 octobre 2026 est Nuitka en mode `standalone` : un exécutable PBO avec son runtime, ses bibliothèques et ressources déclarées. Le mode `onefile` autoextractible ne remplace pas ce profil. Les modes d'exploitation de l'Instance Pixs Standalone / ZT / Domaine utilisent le même binaire PBO ; ils ne sont pas des options de compilation (§49). L'activation du transport PZT reste distincte et peut être requise en Standalone pour joindre des PA autorisés, sans canal de substitution ni bascule automatique vers Standalone après panne ou révocation. Les trois binaires PA et l'exécutant PZT sont compilés avec Cython. La réplication de ses processus ne multiplie pas les fichiers exécutables livrés. Le paquet Debian PBO/PFO et l'image livrent chacun ce binaire et les ressources PFO ; les comptes de trois binaires PA plus PZT sous Debian, ou deux plus PZT dans Docker, concernent uniquement les exécutants indépendants.
 
 Les optimisations Cython du PBO sont ciblées et admises seulement après profilage et mesures comparables démontrant un gain selon des critères définis avant recette. La qualification vérifie non-régression fonctionnelle, contrats, sécurité, maintenabilité et ressources, sans remplacer la chaîne Nuitka. Les versions/options et profils de compilation sont figés par cible pour la recette ; aucun gain de performance ni baisse de mémoire n'est déduit du compilateur seul. Le paquet doit inclure les imports dynamiques Django, commandes, migrations, catalogues, manifests et ressources requis et qualifier chaque rôle exécuté. Voir les [modes de distribution Nuitka](https://nuitka.net/user-documentation/use-cases.html).
 
@@ -1801,6 +1815,10 @@ supportés et la préservation des états techniques lors d'une mise à niveau.
 Les fixtures sont synthétiques et n'exigent aucun secret de production.
 
 ## 47. Qualification, reprise et recette PA/PZT
+
+La matrice historique et ses références restent conservées. Le §49 complète
+la cible ; les règles DNS/DHCP et de reprise PKIZT qui y sont remplacées ne
+sont pas réputées qualifiées par les anciens critères.
 
 Ces scénarios définissent une recette future ; aucune réussite logicielle
 n'est déduite de la migration documentaire. Les seuils déjà validés restent
@@ -2064,3 +2082,97 @@ contrats et seuils nécessaires seront fixés avant la recette correspondante.
 | R66 | PA Linux et Windows sur machines physiques et virtuelles | Chaque cible demandée dispose d'un backend, d'adapters système/session, de réseau, DNS et filtrage qualifiés ; aucune exclusion n'est déduite de l'environnement Debian du projet. |
 | R67 | PA Docker et LXC sous Proxmox | Le profil vérifie le noyau effectif, le placement, les droits minimaux et l'isolation ; aucun repli en espace utilisateur ne suppose des privilèges absents. |
 | R68 | Snapshot, clone, restauration ou migration d'une VM ou d'un conteneur | Les identités, liaisons de clés et preuves TPM/vTPM sont réévaluées ; aucun accès ni identité clonée n'est accepté implicitement. |
+## 48. Logiciel et service de temps préfournis
+
+Le logiciel de temps est disponible avant les étapes qui en ont besoin, fourni par l’image Docker, selon un graphe d’amorçage acyclique. Pour Debian et VM, le plan PA suit un paquet et un service conformes. Les versions et provenances restent à qualifier avant usage. Aucun prérequis téléchargé par TLS n’est admis avant une heure et un TLS admissibles. Le client NTS amont authentifié demeure distingué du serveur local, dont l’activation reste conditionnelle au profil déclaré. Depuis un conteneur LXC, l’horloge de l’hôte n’est jamais modifiée par le conteneur. Ce cadrage n’ajoute implicitement ni droit, ni montage, ni volume, et ne qualifie aucun artefact par sa seule rédaction.
+
+## 49. Qualification cible Instance, Domaine, ZT et PA — 31 octobre 2026
+
+### 49.1 Statut et périmètre
+
+PROJECT.md §45 et TECHNICAL.md §46 définissent la nouvelle cible. L'étape 1
+intègre les cadrages ; elle ne construit ni paquet ni image et n'exécute aucune
+migration, installation, mise à jour ou opération système. Les preuves des
+profils existants gardent leurs versions. L'étape 2 a rédigé les spécifications ;
+l'étape 3 a préparé les changes résiduels et réconcilié les propositions
+concernées selon ACL-PIXS-2026-10-31-E3-R1. O41 est remplacé et non
+sélectionnable. Les deux exigences de preuve officielle Nuitka C20 restent
+proposées et non synchronisées ; leur adoption ne découle pas de cette
+synthèse. Les recettes produit restent à réaliser. Aucun résultat historique
+ni case de tâche n'est modifié par anticipation.
+
+Les modes d'exploitation de l'Instance sont Standalone, ZT et Domaine,
+indépendamment de Nuitka standalone. Le premier Domaine exige ZT complètement
+initialisé. Le même binaire PBO reste utilisé ; sa composition sélectionne les
+capacités nécessaires au mode. Le module présent, l'exécutant disponible,
+le rôle admis, le service actif et sa qualification sont des états distincts.
+
+### 49.2 Compositions et stockage
+
+Le paquet Debian PBO/PFO reste distinct du paquet commun de trois binaires PA
+et du binaire PZT. Docker Pixs conserve PBO/PFO, les deux binaires PA système/
+événements et PZT, sans binaire utilisateur ni sessions graphiques PA. Les
+rôles et processus effectivement lancés sont déclarés ; leur présence dans
+l'image ne les active pas. Linux/Windows physiques/VM et Docker/LXC sous
+Proxmox restent des profils à qualifier progressivement.
+
+Le premier PZT complet V1 cible Debian/Linux avec CZT/SZT/RZT/STZT/DZT/PKIZT.
+La distribution des rôles supplémentaires dépend de leur qualification.
+Chaque Domaine exige LZT/OpenLDAP et KZT/MIT Kerberos sous exploitation PA,
+y compris lorsque le ZT est partagé. Les logiciels requis et leurs versions,
+provenances et dépendances doivent être déclarés avant build ; cette étape
+n'installe aucune nouvelle dépendance et ne choisit aucun fournisseur AD.
+
+Bases Instance et Domaine, puis CZT/DZT/PKIZT indépendantes, état normal LDAP/Kerberos,
+secrets protégés et états techniques PA/PZT nécessaires doivent être couverts
+par le plan de persistance. Leur indépendance logique ne sélectionne ni
+montage ni serveur ni mécanisme de chiffrement implicite. Les données existantes
+sont préservées. Les sauvegardes sont chiffrées, manuelles/automatiques selon
+profil ; les restaurations sont manuelles et ciblées sous contrôle des dépendances.
+
+### 49.3 Matrice des recettes à spécifier
+
+| Périmètre | Vérifications attendues pour la nouvelle cible |
+| --- | --- |
+| Modes et première transition | Standalone → ZT initialisé → Domaine, maintenance des écritures, préconditions et résultat observés ; aucune jonction d'authentification déduite du seul mode PA. |
+| Individus et identités | Référentiel commun unique, identités multiples par individu/domaine, transfert pré-domaine préservant identifiants/relations et fin des identités numériques d'Instance. |
+| Domaines et ZT partagé | FQDN exact ou sous-domaine par labels, racines exactes uniques, plusieurs domaines partageant ZT sans communications implicites ; minima par ZT réel et LZT/KZT par Domaine. |
+| Contexte et tenants | Propriété Instance/Domaine/Tenant/scope, zéro ou plusieurs tenants, appartenances multiples et isolation ; reprise et transferts fonctionnels contrôlés. |
+| Organigrammes | Trois volets, source par miroir, structure seule par défaut, affiliations sélectionnées, contraintes structurelles et aucune permission/admission copiée implicitement. |
+| Approbations | Direction, portée, délégation, transitivité autorisée/profondeur finie, provenance et restrictions de chaque maillon, DNS et Kerberos explicitement autorisés. |
+| PG et CZT | Primaire unique, persistance synchrone minimale configurable sans diminution automatique, exclusion avant promotion, continuité bornée sans nouvelle autorisation et révocations connues. |
+| SZT/RZT/STZT | Multiples actifs, coopération SZT, choix du relais et reprise des connexions, RAM reconstruite sans PG propre et identités protégées conservées. |
+| DZT | BIND 9 multi-vues DNS v4/v6, PG propre commune au DHCPv4/v6, régénération complète, continuité par vue, délégation des zones et préservation des vues hors ZT. |
+| DNS inter-ZT | Projections autorisées/versionnées/bornées, notifications/réconciliation/contrôle périodique, TTL plafonné, révocation et retransmission conservant origine/restrictions. |
+| DHCP | Désactivation par défaut, activation indépendante par réseau, propriétaire actif unique par pool, reprise cohérente des baux, coordination CZT et lien DNS configurable. |
+| Maintenance DNS/DHCP | PA prépare/installe/maintient le système et met à jour les paquets ; DZT configure/maintient le fonctionnement logiciel, revalide après mise à jour et rapporte l'état appliqué. |
+| PKIZT | PG indépendante chiffrée, clés opérationnelles répliquées avec protections individuelles, émetteur unique par autorité, habilitations séparées et reprise de la même clé. |
+| Confiance d’amorçage | PKI technique pré-PG distincte et bornée, PKI normale établie et usages vérifiés avant retrait irréversible de la confiance initiale ; aucun transfert implicite des clés matérielles initiales vers PG. |
+| ACME et TLS | Challenges choisis par profil, coordonnateur unique, renouvellement anticipé/ARI et certificat effectivement servi ; distribution RPZT ciblée et protégée. |
+| GZT/EZT | Activation explicite, secours encadrés, NAT source désactivé par défaut ; groupes EZT, priorités/poids/santé IP, connexions et absence de sortie directe implicite. |
+| RPZT | HTTP/HTTPS/WebSocket, plusieurs actifs, terminaison/passage TLS, certificat/clé distinct par défaut et partage explicite ; authentification au service cible. |
+| LZT/KZT | PG souveraine Core, publication préservant l'état Kerberos durable normal LDAP, multi-maître LDAP et KZT actifs, verrouillage cohérent ; reconstruction complète réservée à l'urgence critique. |
+| Auth | PG Domaine sous profil, LDAP délégué à qualifier, mot de passe commun par identité, changement depuis PBO, récupération débrayable/désactivée par défaut, MFA par profil. |
+| Contrôleurs | Confirmation des changements par règle de profil, exclusion réellement prouvée des contrôleurs non à jour, réadmission contrôlée et bases non fusionnées. |
+| Postes et serveurs | PA/PZT locaux, Windows 10/11 admissibles et Debian stable, politiques poste/utilisateur/priorités, jonction et GPO via PBO ; Windows Server non membre natif V1. |
+| Intégration de domaine | Hôte géré dans ZT sans jonction d'authentification possible ; jonction exigeant ZT préalable, profil hors ligne borné et redémarrage manuel par défaut configurable. |
+| PA système et session | Trois binaires/six modes, événements bornés et délais indépendants, sessions réelles isolées, catalogue fermé, séparation des privilèges, plans et résultats réellement observés. |
+| Reprise et démantèlement | Nouvelle brique identifiée/synchronisée/vérifiée avant reprise, mode par famille et dérogation tracée, compatibilité déclarée, absence de double maître et retrait selon critères. |
+| Sauvegarde et récupération | PG et état normal LDAP/Kerberos protégés ; en état critique, restauration puis réconciliation ou reconstruction PG avec clés/reprovisionnement selon profil et sauvegardes ; aucune continuité de clés fictive. |
+
+La matrice R01–R68 antérieure garde ses références et preuves. Les lignes DNS
+et PKI doivent être réconciliées avec cette cible lors de la préparation des
+spécifications ; aucune recette ancienne n'est automatiquement élargie.
+L'exception Super Admin conserve son contrat existant dans son seul périmètre ;
+aucune mesure ou preuve absente n'est déclarée obtenue.
+
+### 49.4 Conditions avant qualification produit
+
+L'assemblage Windows natif/GPO avec PG autoritative, OpenLDAP et MIT Kerberos,
+la délégation LDAP vers Auth, le verrouillage commun, les conflits multi-maîtres,
+la synchronisation des baux, l'état DNS dynamique/DNSSEC et l'expiration stricte
+Kerberos doivent être démontrés par leurs profils. Le service de temps déjà
+adopté reste géré par PA selon le §48, sans serveur additionnel imposé par
+Domaine. Les versions, paquets, plateformes et ressources non qualifiés restent
+explicitement ouverts. Aucun succès de compilation ni contrat documentaire
+ne suffit à déclarer l'ensemble installé ou opérationnel.

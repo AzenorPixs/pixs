@@ -1,3 +1,7 @@
+# B32 — Valeurs d’idempotence des commandes Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le canon B10 exige la déduplication des Commands par clé canonique `tenant_id, subject_id, command_type, idempotency_key` avec octets canoniques propriétaire versionnés (`content_sha256`, `serializer_version`), états `IN_PROGRESS | SUCCEEDED | REJECTED`, références stables et horodatages UTC (schéma logique `CommandIdempotencyV1`, 12 clés). Aucun validateur pur de ces 12 valeurs n'existe dans le backend ; la persistance/transaction future ne peut pas s'y référer sans cette primitive mémoire.

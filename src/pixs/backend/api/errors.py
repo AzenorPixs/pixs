@@ -10,17 +10,23 @@ vérification HTTP, runtime ou trace backend.
 from __future__ import annotations
 
 import uuid
+from types import MappingProxyType
 
 __all__ = [
     "API_ERROR_CONTRACT_VERSION",
+    "API_ERROR_MESSAGE_VERSION",
     "ApiErrorProjectionError",
     "build_infrastructure_error",
 ]
 
 API_ERROR_CONTRACT_VERSION = "1.0.0"
+API_ERROR_MESSAGE_VERSION = "1.0.0"
+
+_API_MESSAGES = MappingProxyType({
+    "INTERNAL_ERROR": ("Internal service error.", "Erreur interne du service."),
+})
 
 _ERROR_CODE = "INTERNAL_ERROR"
-_ERROR_MESSAGE = "Erreur interne du service."
 _ERROR_CORRELATION = "Identifiant de corrélation invalide."
 
 _MAX_INT = 2**128
@@ -47,13 +53,15 @@ def _canonical_correlation_id(correlation_id):
 
 
 def build_infrastructure_error(
-    correlation_id: object, *, internal_error: object
+    correlation_id: object, *, internal_error: object, language: str = "en"
 ) -> dict:
     """Projette une erreur d'infrastructure vers l'enveloppe publique constante."""
     text = _canonical_correlation_id(correlation_id)
+    language_index = 1 if type(language) is str and language == "fr" else 0
+    message = _API_MESSAGES[_ERROR_CODE][language_index]
     return {
         "error_code": _ERROR_CODE,
-        "message": _ERROR_MESSAGE,
+        "message": message,
         "details": {},
         "field_errors": [],
         "correlation_id": text,

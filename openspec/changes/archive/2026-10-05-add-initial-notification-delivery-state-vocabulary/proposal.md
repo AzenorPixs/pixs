@@ -1,4 +1,6 @@
-# Proposition — Représentation Enum du vocabulaire des états de livraison Notification
+# O56 — Proposition — Représentation Enum du vocabulaire des états de livraison Notification
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

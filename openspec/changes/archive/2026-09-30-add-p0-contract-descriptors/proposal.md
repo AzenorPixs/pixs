@@ -1,3 +1,7 @@
+# C34 — Descripteurs des contrats P0
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Les contrats publics exigent des catégories non interchangeables, une version SemVer indépendante et une dépréciation/retrait encadrés, tandis que le socle actuel ne contient pas encore de descripteur pur de contrat. Les manifests valident l’identifiant et la version exacte et la composition résout les contrats, sans objet testable pour les catégories ni le cycle de dépréciation/retrait. Cette évolution prépare des descripteurs immuables en pure mémoire, sans prétendre réaliser un registre, une activation ou une garantie comportementale.

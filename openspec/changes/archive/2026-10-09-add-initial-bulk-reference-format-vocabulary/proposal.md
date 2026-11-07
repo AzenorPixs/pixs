@@ -1,4 +1,6 @@
-# Proposition — Vocabulaire des formats de référence en masse
+# B15 — Proposition — Vocabulaire des formats de référence en masse
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

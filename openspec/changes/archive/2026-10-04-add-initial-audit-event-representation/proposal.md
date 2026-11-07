@@ -1,4 +1,6 @@
-# Représentation minimale d’un événement d’audit
+# C56 — Représentation minimale d’un événement d’audit
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

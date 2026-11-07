@@ -1,4 +1,6 @@
-# Proposition — Vocabulaire des états d'opération en masse v1
+# B13 — Proposition — Vocabulaire des états d'opération en masse v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

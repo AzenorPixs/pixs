@@ -51,7 +51,14 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 
 ## Hors profil
 
-PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+Le profil `pbo-p0-debian-local-v1` sélectionne PA système et PZT local pour
+préparer PostgreSQL, conformément au [canon de composition](../../specs/reference-composition/spec.md).
+Ce parcours local et ses exécutants doivent être qualifiés ; leur disponibilité
+ne se déduit pas de la seule présence des modules PBO. Le réseau PZT distant,
+les autres rôles PA, le service DNS exécuté par PA, l’image Docker et les
+capacités optionnelles restent hors sélection, sauf obligation du profil
+explicitement sélectionné. Cette délimitation ne vaut ni réalisation ni
+qualification du parcours local.
 
 ## Dépendances après audit transversal P0
 

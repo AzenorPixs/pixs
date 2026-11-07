@@ -1,3 +1,7 @@
+# C31 — Réponse HTTP de succès API P0
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 La fabrique JSON d'erreur existe ; l'enveloppe de succès data/meta/links et sa représentation JSON Django restent sans preuve. L'exigence API 2 et TECHNICAL.md §25 décrivent cette forme publique et le transport JSON UTF-8.

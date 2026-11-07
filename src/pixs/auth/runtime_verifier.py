@@ -157,8 +157,16 @@ class AuthAuthenticationVerifier:
             except ObjectDoesNotExist:
                 raise AuthVerificationError() from None
 
-    def _revalidate_locked(self, request, *, alias, operation_id):
-        from pixs.auth import models as m
+    def bind_transaction(self, request: Request, *, alias: str, operation_id: str) -> None:
+        """Lie cette invocation à la TX courante, sans authentifier ni autoriser.
+
+        La revalidation demeure obligatoire sous les verrous du consommateur.
+        La liaison n'acquiert aucun verrou de politique ou de ligne Auth.
+        """
+        with self._mutex:
+            self._bind_transaction_locked(request, alias=alias, operation_id=operation_id)
+
+    def _bind_transaction_locked(self, request, *, alias, operation_id):
         if type(request) is not Request or request != self._request or alias != self._alias or operation_id != self._operation:
             raise AuthVerificationError()
         physical, native = _native(alias)
@@ -166,6 +174,10 @@ class AuthAuthenticationVerifier:
             self._transaction = (physical, native)
         elif self._transaction[0] is not physical or self._transaction[1] != native:
             raise AuthVerificationError()
+
+    def _revalidate_locked(self, request, *, alias, operation_id):
+        from pixs.auth import models as m
+        self._bind_transaction_locked(request, alias=alias, operation_id=operation_id)
         current_profile = self._trust.resolve(self._profile.profile_id, request, alias=alias, operation_id=operation_id)
         if type(current_profile) is not LocalTrustProfile or current_profile != self._profile:
             raise AuthVerificationError()

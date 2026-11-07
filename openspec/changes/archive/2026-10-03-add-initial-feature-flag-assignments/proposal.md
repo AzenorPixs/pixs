@@ -1,4 +1,6 @@
-# Proposition — add-initial-feature-flag-assignments
+# O43 — Proposition — add-initial-feature-flag-assignments
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 

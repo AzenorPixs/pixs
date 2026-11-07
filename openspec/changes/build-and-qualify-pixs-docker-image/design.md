@@ -1,5 +1,29 @@
 # Conception — X01
 
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Cible consolidée du 31 octobre 2026 — ACL-PIXS-2026-10-31-E3-R1
+
+Profils de services, persistances et dépendances de Domaine ; deux binaires PA système/événements et PZT, sans session utilisateur ni droit hôte implicite.
+
+Les orientations du modèle validé remplacent précisément les formulations antérieures incompatibles avec ce périmètre. Les autres clauses restent applicables. Les sections antérieures et leurs références sont conservées pour traçabilité ; elles ne doivent pas être utilisées pour réintroduire une décision remplacée. Les preuves et cases cochées ne qualifient que leur version d'origine.
+
+### Sources et responsabilités courantes
+
+- [docker-image](../../specs/docker-image/spec.md).
+- [reference-composition](../../specs/reference-composition/spec.md).
+- [pixs-domains](../../specs/pixs-domains/spec.md).
+
+Le canon courant prévaut sur ses copies de préparation. Le périmètre présent est documentaire : aucun code, test produit, migration, service, secret, publication ou Git n'est exécuté. Les choix de fournisseurs manquants restent à qualifier avant réalisation.
+
+### Refus et critères de réalisation
+
+Les scénarios des sources et de requirements.md doivent être reliés à des résultats vérifiables par unité. Réception n'est pas application ; donnée ancienne n'est pas état courant. Une autorisation expirée/révoquée ou une dépendance requise non qualifiée bloque l'usage concerné. La validation documentaire ne fait pas réussir les recettes futures.
+
+### Préservation de l'historique et articulation des travaux
+
+Les titres, codes, identifiants de tâches et de sous-lots, libellés, cases, statistiques et preuves antérieurs sont conservés. Les compléments sont rattachés aux unités existantes sans renumérotation ni validation produit anticipée. Les ouvertures C95/C96/C97/N08/PA12/Z28/Z29/Z30/Z31/Z32 portent leurs seules parts résiduelles ; elles ne relancent pas les archives.
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
+
 ## Statut
 
 PRÉPARATION_DOCUMENTAIRE_CONDITIONNELLE. Le dossier est demandé ; ses choix encore ouverts et son implémentation ne sont pas approuvés implicitement. La présence des fichiers ne signifie pas prêt à coder.
@@ -67,3 +91,25 @@ trois exécutables hors PBO/PFO dans Docker : deux PA et PZT indépendant. Le
 binaire utilisateur PA reste exclu. Les snapshots requirements.md doivent
 être réconciliés avec le canon actuel avant réalisation ; aucune image n'est
 construite ni qualifiée pendant cet alignement documentaire.
+
+
+## Choix BIND 9 adopté le 24 octobre 2026
+
+Le [choix BIND 9 adopté](../adopt-bind9-managed-dns-and-packaging/proposal.md) est synchronisé le 24 octobre 2026 dans
+[docker-image](../../specs/docker-image/spec.md#L131) et [pzt](../../specs/pzt/spec.md#requirement-fournisseur-bind-9-du-dns-géré-sur-debian-et-docker-pixs).
+Le lot image devra fournir BIND 9 issu de Debian et ses dépendances
+identifiées, sans lancement DNS implicite. Configuration d'instance, données
+persistantes, journaux mutables, clés privées et secrets restent hors des
+couches de l'image. La recette inspectera toutes les couches et les effets
+des scripts de paquet ; effacer une donnée dans une couche ultérieure ne
+prouve pas son absence de l'image.
+
+L'activation ultérieure requiert un rôle serveur admis et l'application
+puis la supervision du processus BIND 9 distinct par le PA désigné, avec
+[Z05](../add-pzt-managed-dns-service-and-pa-adapters/design.md). Ce choix
+n'ajoute aucun port, montage, utilisateur ni privilège implicite et conserve
+l'exclusion des fonctions PA utilisateur. Le profil Docker C08 et les
+budgets réellement autorisés restent à respecter. Aucune image n'est
+construite, lancée ou qualifiée par cette adoption normative.
+
+Ce renvoi ne coche aucune tâche de réalisation du lot.

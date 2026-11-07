@@ -1,4 +1,6 @@
-# Proposition — Représentation Enum du vocabulaire de canaux Notification
+# O54 — Proposition — Représentation Enum du vocabulaire de canaux Notification
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Pourquoi
 

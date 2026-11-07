@@ -1,4 +1,6 @@
-# Proposal — add-initial-frontend-entry-path-validation-v1
+# C77 — Proposal — add-initial-frontend-entry-path-validation-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 Le canon `openspec/specs/frontend/spec.md` contient déjà les deux exigences du profil valide `Syntaxe lexicale préparatoire FrontendEntryPath v1` et `Limites du contrôle lexical FrontendEntryPath v1`. Aucune représentation Python pure n'existe. Ce change fige ce seul validateur lexical pur sans ajouter de norme.

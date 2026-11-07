@@ -10,7 +10,7 @@ sans activer le réseau ni qualifier les plateformes.
 
 ```mermaid
 flowchart LR
-    subgraph B["Binaire PBO Nuitka standalone — exploitation Standalone ou ZT"]
+    subgraph B["Binaire PBO Nuitka standalone — modes d’Instance Standalone / ZT / Domaine"]
         K["Kernel — mécanismes génériques"]
         C["pixs.core — primitives communes"]
         U["pixs.auth — authentification"]
@@ -107,7 +107,12 @@ PZT MUST distinguer identité, permission réseau et permission métier ; une po
 
 ### Requirement: Autorité métier et état de contrôle cohérents
 
-Django MUST porter autorisations et mutations applicatives ; PostgreSQL MUST faire autorité par périmètre pour les états de contrôle. PBO et autorités MUST NOT décider indépendamment de la validité d'un même mandat. Un seul primaire admissible MUST écrire ; redondance critique MUST utiliser durabilité synchrone et promotion après exclusion vérifiée. PA MUST NOT accéder directement aux tables ni déduire un commit PostgreSQL d'une signature reçue.
+Django MUST porter les autorisations et mutations applicatives ; PostgreSQL MUST rester l’autorité du contrôle et du management ordinaires. Avant sa disponibilité, seule la branche locale PA/PZT MAY utiliser sa source technique protégée indépendante. Cette exception MUST NOT créer de droit métier. Les garanties de coordination, de primaire unique, de durabilité et d’accès PA du scénario ci-dessous MUST s’appliquer.
+
+#### Scenario: Garanties de séparation du contrôle technique et applicatif
+
+- **WHEN** l’état de contrôle PZT est évalué avant ou après disponibilité de PostgreSQL
+- **THEN** Django MUST porter autorisations et mutations applicatives ; PostgreSQL MUST faire autorité par périmètre pour les états de contrôle applicatifs et le management ordinaire. Avant sa disponibilité, seule la branche locale de préparation technique PA/PZT définie dans cette capacité MAY utiliser sa source protégée indépendante ; elle MUST NOT décider un droit métier ou une mutation applicative. PBO et autorités MUST NOT décider indépendamment de la validité d'un même mandat. Un seul primaire admissible MUST écrire ; redondance critique MUST utiliser durabilité synchrone et promotion après exclusion vérifiée. PA MUST NOT accéder directement aux tables ni déduire un commit PostgreSQL d'une signature reçue.
 
 #### Scenario: Autorité métier et état de contrôle cohérents
 
@@ -143,12 +148,12 @@ PZT MUST prendre en charge IPv4/IPv6 et un réglage unique de désactivation IPv
 
 ### Requirement: DNS essentiel partagé administré par PBO
 
-Le DNS Pixs MUST être administré par un module essentiel PBO et utilisable par PZT et les PA selon leurs droits. Le service DNS MUST être distinct, exécuté sous pilotage de PA désignés ; les PA ordinaires MUST rester clients. Les vues, retraits, caches, règles DoT et identités de destination MUST suivre A06b–A06k ; résolution ou repli public MUST NOT accorder un accès ni masquer une panne.
+Le DNS MUST être administré dans PBO par contrats publics, configuré et maintenu en fonctionnement par DZT/PZT selon zt-dns-dhcp. PA MUST préparer et maintenir le système et mettre à jour ses logiciels. Les données de référence DNS/DHCP MUST appartenir à la PG indépendante DZT ; les données de gestion PBO MUST rester distinctes. Les vues, DoT, retraits, caches et identités attendues MUST conserver A06b–A06k dans cette répartition.
 
 #### Scenario: DNS essentiel partagé administré par PBO
 
 - **WHEN** le DNS privé requis est indisponible
-- **THEN** aucun repli public non autorisé n'expose les noms ou ne contourne la politique
+- **THEN** aucun repli public non autorisé n’expose les noms ou ne contourne la politique.
 
 ### Requirement: Contrats, snapshots, deltas et adaptation de transport
 
@@ -426,118 +431,21 @@ restent à qualifier ; le réglage IPv6 A06a demeure applicable.
 
 ### Requirement: Contrat A06c — DNS Pixs géré par un module essentiel PBO, option B validée
 
-Le rôle chargé du traitement A06c MUST satisfaire les clauses opératoires,
-bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
-une alternative rejetée, élargir son périmètre ou présenter comme effectué
-un contrôle/effet absent. Les règles de lecture normative précédentes,
-les contrats structurels et les exceptions applicatives restent applicables.
+Le rôle concerné MUST appliquer les clauses détaillées ci-dessous avec ses habilitations, bornes et preuves courantes. Il MUST NOT présenter comme effectué un contrôle ou effet absent.
 
-##### Contrat détaillé A06c
+##### Contrat détaillé consolidé — Contrat A06c
 
-L'option B est validée par le développeur le 5 octobre 2026 avec la précision
-suivante : un DNS géré sera développé pour Pixs sous forme de module essentiel
-du PBO, utilisable par PZT et par tous les PA. Le module administre les zones,
-les enregistrements, les vues, les règles de résolution et leur cycle de vie.
-Il possède ses données et expose des contrats publics versionnés au module
-PZT ; aucun accès aux tables privées d'un autre module n'est admis. Sa capacité
-DNS et ses dépendances obligatoires sont déclarées dans la composition des
-profils qui l'utilisent ; une dépendance essentielle manquante bloque leur
-activation ou leur readiness selon le contrat. Le Kernel conserve ses
-responsabilités génériques. L'identifiant du module, les rôles d'exécution et leur qualification
-restent à qualifier ; A06e A validé le 6 octobre 2026 retient un service DNS
-distinct du processus PBO, piloté par PA désignés, même hôte possible.
-Topologie/redondance et interfaces à préciser ; DoT A06f et cache/TTL A06g
-validés, sélection ordonnée/secours A06h et nommage A06i A validés ;
-suffixe explicite A06j et alias CNAME A06k A validés.
-
-Tous les PA admis peuvent utiliser ce service dans leur périmètre autorisé
-via PZT. La consultation, la publication, la modification et le retrait sont
-des permissions distinctes ; être client DNS ne rend pas un PA administrateur
-ou serveur DNS. Le module PZT publie et retire ses noms par les contrats
-publics du module DNS, avec origine, contexte, version et audit. Les changements
-administrés par PBO sont exécutés par les PA aux rôles déclarés et contrôlés
-par les preuves d'état appliqué. Un échec ou une application partielle reste
-visible et ne vaut pas succès. Les vues limitent la découverte aux noms
-permis ; une résolution n'accorde aucun accès réseau ou métier et ne remplace
-pas la vérification de l'identité et de la clé de destination.
-
-Les adapters PA dirigent les requêtes des zones PZT vers le service DNS Pixs.
-Les autres noms utilisent le DNS habituel du profil, sauf configuration
-administrée explicitement. Développer un résolveur autonome dans chaque PA
-n'est pas le mécanisme de référence retenu. Les interfaces Linux, Windows,
-Docker et LXC, permissions et frontières d'écoute sont qualifiées séparément.
-Les domaines de routage de [systemd-resolved](https://systemd.io/RESOLVED-VPNS/)
-et les [règles NRPT Windows](https://learn.microsoft.com/en-us/powershell/module/dnsclient/add-dnsclientnrptrule)
-restent des candidats. [Docker distingue le DNS hérité et son DNS embarqué](https://docs.docker.com/engine/network/#dns-services)
-selon le profil réseau. Aucune interface, bibliothèque ou modification des
-paramètres de l'hôte ou du conteneur n'est choisie implicitement.
-
-Une panne DNS ne dirige pas les noms privés vers un résolveur public. Les
-caches gérés ne servent aucun état au-delà de sa validité déclarée ; retraits,
-révocations et désactivation IPv6 invalident les enregistrements et caches
-PZT concernés, dont les AAAA propres à PZT. Les caches des applications sont
-qualifiés séparément ; leur présence ne prolonge jamais une autorisation
-réseau. L'indisponibilité du PBO n'autorise aucune nouvelle publication ni
-prolongation : le service ne peut continuer sur son dernier état vérifié que
-dans les limites déclarées, à qualifier. L'amorçage A02 doit disposer de
-références d'endpoints et d'ancrages provisionnés sans dépendance circulaire
-au DNS privé encore indisponible. Suffixes, paramètres de cache A06g,
-protocoles DNS amont, persistance,
-réplication et comportement des applications avec résolveur propre restent
-à définir ; l'absence de fuite doit être démontrée.
-
-##### Application au PA — A06c
-
-L'option B est validée par le développeur le 5 octobre 2026 : un DNS géré
-sera développé pour Pixs dans un module essentiel du PBO et utilisé par
-PZT et tous les PA. PBO administre ses zones, vues, enregistrements et règles
-par les contrats publics du module DNS. Le module PZT utilise ces contrats
-pour publier ou retirer ses noms ; il n'accède pas aux données privées du
-module DNS. Les dépendances essentielles et leur effet sur l'activation et
-la readiness sont déclarés pour les profils consommateurs. L'identifiant
-du module, les rôles d'exécution et leur qualification restent ouverts ;
-A06e A validé le 6 octobre 2026 retient un service DNS distinct du processus
-PBO, piloté par PA désignés, même hôte possible ; topologie/redondance et
-interfaces à préciser, DoT A06f, cache/TTL A06g et sélection ordonnée/secours
-A06h, nommage A06i, suffixe explicite A06j et alias CNAME A06k A validés.
-Le Kernel reste générique.
-
-Chaque PA admis peut consommer le DNS dans son contexte autorisé via PZT.
-Les droits de consultation sont distincts des droits de publication et
-d'administration. Le rôle client ne confère ni un rôle serveur ni une
-visibilité sur tous les autres pairs. PA applique les configurations et
-retraits autorisés de son périmètre et rapporte l'état réellement appliqué,
-les erreurs et les applications partielles. Une résolution ne vaut jamais
-autorisation de communication ; l'identité et la clé de destination restent
-vérifiées indépendamment.
-
-Des adapters dirigent les requêtes des zones PZT vers le service DNS Pixs ;
-les autres noms conservent le DNS habituel sauf configuration explicite.
-Un résolveur autonome développé dans chaque PA n'est pas retenu comme
-mécanisme de référence. Les mécanismes Linux, Windows, Docker et LXC,
-permissions et frontières d'écoute sont qualifiés séparément : domaines
-de routage systemd-resolved et règles NRPT restent des candidats, et les
-profils Docker distinguent DNS hérité et DNS embarqué. Aucun service système,
-montage ou droit du conteneur n'est modifié implicitement.
-
-Une panne DNS ou une preuve requise non vérifiable n'entraîne aucun repli
-des noms privés vers un DNS public. Les caches gérés respectent leur validité ;
-retraits, révocations et désactivation IPv6 invalident les enregistrements et
-caches PZT concernés, dont les AAAA propres à PZT. Les caches des applications
-ne prolongent aucun accès réseau. Une panne du PBO ne permet aucune nouvelle
-publication ou prolongation ; une continuité sur le dernier état vérifié du
-service reste limitée par le contrat et à qualifier. L'amorçage utilise les
-références d'endpoints et ancrages provisionnés sans attendre un DNS privé
-encore inaccessible. Suffixes, paramètres de cache A06g, protocoles DNS amont,
-bibliothèques, persistance,
-réplication et comportement des applications avec résolveur propre restent
-à préciser ; l'absence de fuite doit être démontrée.
+Le module DNS essentiel PBO MUST administrer zones, enregistrements, vues et règles par contrats publics versionnés sans accès inter-tables privées. DZT MUST conserver la référence DNS/DHCP et appliquer la configuration selon zt-dns-dhcp. Les consommateurs PZT/PA MUST respecter permissions, vue, validité et identité de destination ; client DNS MUST NOT valoir serveur, publication ou vue globale. Les dépendances manquantes MUST empêcher la capacité concernée. Les noms privés MUST NOT être divulgués par un repli public en panne. A06f–A06k MUST conserver transport, cache, sélection et noms sous ces propriétaires.
 
 #### Scenario: Conformité du traitement A06c
 
-- **WHEN** un profil revendique le traitement A06c et ses garanties dans un rôle déclaré
-- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
-- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+- **WHEN** un profil utilise le DNS géré Pixs
+- **THEN** les propriétaires PBO/DZT/PA sont vérifiés avec droits et visibilité par périmètre.
+
+#### Scenario: Absence de dépendance DNS
+
+- **WHEN** une fonction exige DNS mais aucun DZT admissible ne sert sa vue
+- **THEN** elle reste indisponible sans résultat de résolution inventé.
 
 ### Requirement: Contrat A06d — Valeur initiale du réglage IPv6 PZT — option A validée le 6 octobre 2026
 
@@ -626,95 +534,23 @@ paramètres et qualification restent à préciser.
 - **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
 - **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
 
-### Requirement: Contrat A06e — Exécution du service DNS Pixs — option A validée le 6 octobre 2026
+### Requirement: Contrat A06e — Exécution DZT et maintenance système PA du DNS
 
-Le rôle chargé du traitement A06e MUST satisfaire les clauses opératoires,
-bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
-une alternative rejetée, élargir son périmètre ou présenter comme effectué
-un contrôle/effet absent. Les règles de lecture normative précédentes,
-les contrats structurels et les exceptions applicatives restent applicables.
+Le rôle concerné MUST appliquer les clauses détaillées ci-dessous avec ses habilitations, bornes et preuves courantes. Il MUST NOT présenter comme effectué un contrôle ou effet absent.
 
-##### Contrat détaillé A06e
+##### Contrat détaillé consolidé — Contrat A06e
 
-L'option A validée retient un service DNS distinct du processus PBO, avec
-lifecycle propre, exécuté et surveillé sous pilotage de PA désignés par
-un rôle/mandat explicite. Le module essentiel PBO A06c B reste propriétaire
-des données DNS, des zones/vues, de l'administration et des contrats publics
-utilisés par PZT et tous les PA. L'implémentation du service appartient au
-module DNS Pixs ; PA pilote déploiement/lifecycle autorisés, sans logique DNS
-dans le Kernel ou le PA générique. Aucun serveur ou résolveur autonome
-imposé à chaque PA client.
-
-Placement sur le même hôte que PBO ou sur un autre périmètre qualifié
-possible, sans machine supplémentaire obligatoire. Budgets et redémarrage
-DNS propres ; unité de service distincte à exploiter. Administration et
-publication restent dans le module PBO ; le service consomme uniquement
-ses contrats publics autorisés, sans SQL direct PA vers tables métier Pixs.
-Consommer le DNS ne confère ni rôle serveur, ni publication, ni vue globale.
-Les états servis suivent les contrats du module DNS et leur validité.
-
-Contrôle/publication et accès DNS via PZT dans le contexte autorisé,
-y compris même hôte A03 ; aucun port/socket de gestion PBO–PA non protégé.
-Transport DoT validé A06f, ports/adapters à qualifier ; placement
-sans permission d'écoute, privilège ou montage implicite. PBO indisponible :
-aucune nouvelle publication/prolongation ; le service peut servir le dernier
-état autorisé uniquement dans les bornes A06c et sous permissions/preuves
-courantes, sans autorité autonome ni continuité illimitée. Noms privés
-non résolubles sans repli public, caches bornés et retraits/AAAA A06d respectés.
-
-Redondance et répartition des vues ouvertes ; sélection ordonnée/secours
-A06h A validée,
-même hôte/stockage sans domaine de panne indépendant présumé. Amorçage A02
-sans dépendance circulaire à un DNS privé encore inaccessible. Identifiants,
-contrats, topologie/copies, persistance technique, budgets de cache A06g et budgets
-CPU/RAM/latence à préciser, sans gain ou disponibilité chiffrés garantis.
-Recette par rôle Linux/Windows physiques/VM, Docker/LXC Proxmox : serveur/
-client distincts, droits/vues, démarrage/arrêt PBO et DNS, état expiré,
-retrait/restauration, absence de fuite/SQL/privilège implicites.
-
-[NetBird documente la gestion DNS et les nameservers distribués aux pairs](https://docs.netbird.io/manage/dns).
-Référence fonctionnelle sans choix d'architecture Pixs ni intégration de
-brique NetBird. A06e, option A, est validé le 6 octobre 2026 ; paramètres
-et qualification restent à préciser.
-
-##### Application au PA — A06e
-
-L'option A validée retient un service DNS distinct du processus PBO,
-lifecycle propre, exécuté/surveillé sous pilotage de PA désignés par rôle/
-mandat. Module essentiel PBO propriétaire des données, zones/vues,
-administration et contrats publics A06c B conservé ; code du service dans
-le module DNS Pixs, PA pilote déploiement/lifecycle autorisés, sans logique
-DNS dans Kernel/PA générique ni serveur/résolveur imposé à chaque PA client.
-
-Même hôte PBO ou autre périmètre qualifié possible, sans machine
-supplémentaire obligatoire ; budgets/redémarrage propres et unité de
-service distincte à exploiter. Administration/publication PBO et contrats
-publics autorisés, sans SQL direct PA vers tables Pixs. PA ordinaires
-clients/adapters sans rôle serveur, publication ou vue globale implicites.
-États servis selon contrats DNS et validité courante.
-
-Contrôle/publication et accès DNS par PZT, y compris même hôte A03, sans
-contournement local de gestion PBO–PA. Transport DoT validé A06f,
-ports/adapters à qualifier ; aucune écoute, droit ou montage implicite.
-PBO absent sans nouvelle publication/prolongation ; dernier état autorisé
-servable dans les bornes A06c sous contrôles courants, sans autorité locale
-autonome ni continuité illimitée. Noms privés sans repli public, caches
-bornés, retraits/AAAA A06d, amorçage A02 sans dépendance circulaire.
-
-Sélection ordonnée/secours A06h A validée ; redondance/vues, contrats, copies,
-état technique et budgets de cache A06g à préciser ; même hôte/stockage sans indépendance
-de panne présumée. Qualification par rôle/cible Linux/Windows physique/VM,
-Docker/LXC Proxmox : client/serveur, droits/vues, pannes PBO/DNS, état expiré,
-retrait/restauration et absence de fuite/SQL/privilège implicites, sans gain
-CPU/RAM ou disponibilité garantis. Référence NetBird dans le cadrage PZT,
-sans intégration de ses briques. A06e, option A, est validé le 6 octobre 2026 ;
-paramètres et qualification restent à préciser.
+Le service DNS MUST rester distinct du processus PBO, avec lifecycle propre. PZT/DZT MUST configurer, maintenir le fonctionnement logiciel, valider, appliquer et surveiller le service ; PA MUST porter préparation, installation, maintenance système et mises à jour. Cette répartition consolidée MUST suivre zt-dns-dhcp. Les PA clients MUST NOT devenir serveurs par présence logicielle. Plusieurs DZT actifs et vues partagées MUST conserver un primaire PG de référence unique. Continuité et fraîcheur MUST être configurées par vue, sans validité illimitée ni arrêt injustifié d'une autre vue. Contrôles PZT locaux/distants, DoT, caches bornés, noms privés et protections hôte/conteneur MUST rester applicables sans écoute, SQL métier ou privilège implicite.
 
 #### Scenario: Conformité du traitement A06e
 
-- **WHEN** un profil revendique le traitement A06e et ses garanties dans un rôle déclaré
-- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
-- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+- **WHEN** une intervention PA met à jour BIND 9
+- **THEN** DZT vérifie la compatibilité et l’application du service sans confondre ces preuves avec le succès technique PA.
+
+#### Scenario: Vue hors ZT encore admissible
+
+- **WHEN** une vue ZT expire tandis qu’une vue hors ZT reste admissible
+- **THEN** seule la vue devenue inadmissible cesse d’être servie.
 
 ### Requirement: Contrat A06f — Transport des requêtes DNS PZT — option A validée le 6 octobre 2026
 
@@ -4611,280 +4447,57 @@ multiples, rattachement/révocation/restauration.
 
 ### Requirement: Contrat A10i8 — Profils explicites de protection des clés CA intermédiaires — option A validée le 6 octobre 2026
 
-Le rôle chargé du traitement A10i8 MUST satisfaire les clauses opératoires,
-bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
-une alternative rejetée, élargir son périmètre ou présenter comme effectué
-un contrôle/effet absent. Les règles de lecture normative précédentes,
-les contrats structurels et les exceptions applicatives restent applicables.
+Le rôle concerné MUST appliquer les clauses détaillées ci-dessous avec ses habilitations, bornes et preuves courantes. Il MUST NOT présenter comme effectué un contrôle ou effet absent.
 
-##### Contrat détaillé A10i8
+##### Contrat détaillé consolidé — Contrat A10i8
 
-Option A validée pour les clés privées des émetteurs en ligne A10i6/A10i7 :
-profil explicite approuvé par émetteur/périmètre, logiciel protégé lorsqu'autorisé
-ou matériel non exportable lorsque la politique l'exige. Aucun profil déduit
-de l'OS, de l'attestation TPM ou du seul placement en VM/conteneur. Protection
-de la racine hors ligne, clés TLS terminales, WireGuard, TPM et signatures
-opérationnelles A12f/A12g distinctes ; leurs politiques ne sont pas transposées
-automatiquement aux CA. Aucun algorithme CA, provider, placement ou réplication
-de clé fixé ; reprise après perte validée en A10i9, sans restauration de l’ancienne clé privée.
-
-Profil logiciel : clé chiffrée au repos avec intégrité contrôlée, déverrouillage
-protégé à qualifier, identité de service isolée et accès minimal. Secrets hors
-sources, images, configuration métier et journaux ; références contrôlées
-uniquement. Clé accessible au processus d'émission et exposée à sa compromission
-ou à celle de son hôte ; aucune non-exportabilité matérielle revendiquée.
-
-Profil matériel : provider qualifié et clé non exportable, dispositif local
-ou service matériel par contrat autorisé à qualifier. Algorithme CA, génération,
-accès, signature et protection effective vérifiés, sans équivalence présumée
-entre HSM, TPM physique et vTPM. Politique matérielle non satisfaite : émission
-bloquée sans repli logiciel, même si ce profil existe pour un autre périmètre.
-Aucun matériel imposé aux PA ordinaires, qui ne détiennent pas de clé CA.
-
-Clés CA propres aux émetteurs A10i7, clé privée non exposée à l'administration
-PBO/PA ordinaire, opérations limitées à l'émission autorisée par Django et
-A07/A12. Matériel non exportable sans garantie qu'un processus compromis habilité
-ne puisse demander une émission abusive ; contrôles et révocation nécessaires.
-Provider indisponible ou protection invérifiable : pas de nouvelle émission,
-sans autre clé/provider implicite ou certificat prolongé. Compromission connue :
-retrait A05 ; redémarrage, clone ou restauration sans droit réactivé. Docker/LXC
-sans périphérique, montage, privilège ou permission Proxmox implicites ; service
-externe par contrat PZT autorisé.
-
-A10i8 A est validé le 6 octobre 2026 pour des profils qualifiés Linux/Windows
-physiques/VM et Docker/LXC Proxmox. Le profil logiciel ne prétend pas offrir
-une protection matérielle équivalente contre l'extraction. CPU/RAM, latence,
-coûts et disponibilité à qualifier par provider, sans supériorité globale.
-Le [NIST SP 800-57 partie 1, section 6.2.2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf)
-traite la protection des clés stockées ; profils retenus par Pixs, sans
-certification FIPS ou conformité NIST déclarée. Recette : profil approuvé,
-logiciel protégé, matériel exigé absent, accès non autorisé, signature réelle,
-diagnostics sans secret, panne/clone/restauration et refus de repli.
-
-##### Application au PA — A10i8
-
-Option A validée : clés privées CA en ligne A10i6/A10i7 avec profil explicite
-approuvé par émetteur/périmètre, logiciel protégé si autorisé ou matériel non
-exportable exigé par politique ; jamais déduit OS/attestation TPM/VM/conteneur.
-Racine hors ligne, TLS terminal, WireGuard/TPM et signatures A12f/A12g distincts,
-sans transposition automatique. Algorithme CA/provider/placement/réplication
-non fixés ; reprise après perte validée en A10i9, sans restauration de clé privée perdue.
-Logiciel : chiffrement au repos, intégrité, déverrouillage protégé à qualifier,
-service isolé et accès minimal, secrets hors sources/images/configuration métier/
-journaux, références contrôlées. Clé accessible au processus d'émission, exposée
-à sa compromission ou celle de l'hôte, sans non-exportabilité matérielle.
-Matériel : provider qualifié, clé non exportable, dispositif local ou service
-par contrat autorisé ; algorithme CA/génération/accès/signature/protection vérifiés,
-sans équivalence HSM/TPM physique/vTPM. Matériel exigé absent : émission bloquée
-sans repli logiciel, même si autorisé ailleurs. Aucun matériel CA imposé aux PA
-ordinaires qui n'ont pas de clé CA.
-
-Clé propre à l'émetteur A10i7 sans exposition à administration PBO/PA ordinaire ;
-émission limitée aux décisions Django et A07/A12. Non-exportabilité sans garantie
-contre toute émission abusive d'un processus compromis habilité ; contrôles/
-révocation maintenus. Provider indisponible/protection invérifiable : pas d'émission,
-autre clé/provider implicite ou validité prolongée. Compromission connue : retrait
-A05 ; redémarrage/clone/restauration sans droit réactivé. Docker/LXC sans périphérique/
-montage/privilège/droit Proxmox implicites, service externe par contrat PZT autorisé.
-A10i8 A validé le 6 octobre 2026 ; profils Linux/Windows physiques/VM et Docker/LXC
-Proxmox à qualifier. Logiciel sans protection matérielle équivalente contre extraction,
-CPU/RAM/latence/coûts/disponibilité à qualifier. NIST SP 800-57 section 6.2.2 référencé
-cadrage PZT, sans certification FIPS/conformité déclarée. Recette : profil approuvé,
-protection logicielle, matériel exigé absent, accès refusé, signature réelle,
-diagnostics sans secret, panne/clone/restauration et refus de repli.
+Chaque autorité opérationnelle MUST déclarer son profil de protection compatible avec zt-pki : clé chiffrée en PG et synchronisée, enveloppes par PKIZT et déverrouillage individuel protégé. Un fournisseur logiciel ou matériel MUST être explicitement sélectionné et qualifié sans profil déduit d'un OS, TPM, VM ou conteneur. Un profil matériel incompatible avec ce stockage/reprise MUST NOT être annoncé conforme ni provoquer un repli logiciel implicite. Racine hors ligne, clés TLS terminales, WireGuard/TPM et signataires A12 MUST rester distincts. Les accès émission/déchiffrement/administration MUST rester séparés ; la clé MUST NOT être exposée à PBO/PA ordinaires, aux artefacts, diagnostics ou journaux. Un provider ou une protection indisponible MUST empêcher l'émission protégée, sans droit, périphérique ou montage implicite.
 
 #### Scenario: Conformité du traitement A10i8
 
-- **WHEN** un profil revendique le traitement A10i8 et ses garanties dans un rôle déclaré
-- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
-- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+- **WHEN** un PKIZT demande le déverrouillage d’une autorité
+- **THEN** ses habilitations et sa protection individuelle sont vérifiées avant tout usage.
 
-### Requirement: Contrat A10i9 — Nouvelle clé CA et recertification après perte — option A validée le 6 octobre 2026
+#### Scenario: Matériel incompatible
 
-Le rôle chargé du traitement A10i9 MUST satisfaire les clauses opératoires,
-bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
-une alternative rejetée, élargir son périmètre ou présenter comme effectué
-un contrôle/effet absent. Les règles de lecture normative précédentes,
-les contrats structurels et les exceptions applicatives restent applicables.
+- **WHEN** le profil exige un matériel dont la reprise de même clé selon zt-pki n’est pas démontrée
+- **THEN** le profil reste non qualifié sans promettre une réplication ou protection équivalente.
 
-##### Contrat détaillé A10i9
+### Requirement: Contrat A10i9 — Reprise de clé opérationnelle et traitement de la compromission
 
-Option A validée : après perte définitive/corruption ou remplacement déclaré
-de l'émetteur A10i7/A10i8, nouvelle paire CA indépendante, recertification par
-l'autorité CA compétente selon la procédure de racine hors ligne A10i6, puis
-reprovisionnement autorisé des émetteurs admis. Aucune sauvegarde de l'ancienne
-clé privée CA utilisée pour reprendre la signature ; persistance protégée
-normale conservée. Anticipation par secours indépendant pré-certifié validée en A10i10.
+Le rôle concerné MUST appliquer les clauses détaillées ci-dessous avec ses habilitations, bornes et preuves courantes. Il MUST NOT présenter comme effectué un contrôle ou effet absent.
 
-Racine hors ligne, clés terminales, WireGuard/TPM et signataires opérationnels
-A12g exclus ; sauvegarde de PostgreSQL et des données publiques distincte.
-Redémarrage normal avec clé intacte, protection et contexte courants vérifiables
-sans rotation systématique. Panne temporaire sans remplacement aveugle ;
-identité logique conservée sans habilitation héritée. Retrait de l'ancien
-émetteur et traitement des certificats dépendants planifiés sous mandat,
-réémission terminale sous contrôles courants A10i–A10i5. Transition CA distincte
-du chevauchement terminal A10i3 ; aucune fenêtre CA ou révocation collective
-implicite, aucune continuité garantie.
+##### Contrat détaillé consolidé — Contrat A10i9
 
-Compromission connue ou suspectée : réutilisation exclue, retrait des accès
-concernés A05 et remplacement autorisé ; nouvelle clé sans réhabilitation
-présumée de l'hôte compromis. Perte de clé privée sans compromission ne rend
-pas à elle seule invalide la vérification des signatures publiques déjà émises ;
-acceptation bornée par chaîne, politique des émetteurs, révocation et contrôles
-courants. Conservation publique pour audit sans droit réactivé.
-
-Nouvelle émission après preuve de possession, protection A10i8, identité/
-périmètre, décision Django et engagement admissible A07/A12 seulement. Ancien
-détenteur exclu des nouvelles émissions selon politique engagée et contrôle
-vérifiable ; état d'émission/révocation, versions et identifiants réconciliés,
-sans numéro de certificat réutilisé ou base/configuration ancienne réactivant
-une autorité. État incertain : pas de signature avant réconciliation autorisée.
-Autorité/provider indisponible : attente sans grâce, autre racine apprise en
-réseau ou profil abaissé ; reprise des PA expirés par A02/A10i. Aucun montage/
-droit hôte implicitement modifié, copie privée perdue restaurée ou ancienne
-habilitation réintroduite par clone/restauration.
-
-A10i9 A est validé le 6 octobre 2026. La procédure implique accès à la CA
-compétente et migration des certificats dépendants, avec délais, coûts, volumes,
-retrait et disponibilité à qualifier sur les cibles prévues, sans RTO promis.
-Le [NIST SP 800-57 partie 1, section B.3.1.1](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf)
-traite sauvegarde et alternatives des clés de signature, y compris les CA ;
-le choix Pixs de ne pas reprendre l'ancienne clé privée n'est pas une interdiction
-universelle attribuée au NIST, ni une conformité déclarée. Recette : perte/
-corruption, redémarrage normal, ancien détenteur actif, état incertain,
-compromission/suspicion, provider/CA absents, recertification/reprovisionnement,
-migration et absence de reprise de clé perdue ou d'ancien droit.
-
-##### Application au PA — A10i9
-
-Option A validée : perte définitive/corruption ou remplacement émetteur A10i7/
-A10i8 avec nouvelle paire CA indépendante, recertification selon procédure CA
-compétente/racine hors ligne A10i6 et reprovisionnement autorisé des émetteurs
-admis. Aucune reprise par sauvegarde de l'ancienne clé privée ; persistance
-protégée normale conservée. Anticipation par secours indépendant pré-certifié
-validée en A10i10. Racine hors ligne, TLS terminal/WireGuard/TPM/signataires
-A12g exclus, sauvegarde PostgreSQL/données publiques distincte.
-Redémarrage normal avec clé/protection/contexte vérifiables sans rotation ;
-panne temporaire sans remplacement aveugle. Retrait ancien émetteur et migration/
-réémission dépendante sous mandat/contrôles A10i–A10i5 ; transition CA distincte
-A10i3, aucune fenêtre/révocation collective implicite ni continuité garantie.
-
-Compromission connue/suspectée exclut réutilisation, retrait A05 et remplacement
-autorisé sans hôte réhabilité par seule rotation. Perte privée seule sans
-compromission sans invalidation automatique des signatures publiques existantes,
-acceptation bornée par chaîne/politique/révocation/contrôles courants. Audit public
-conservé sans droit réactivé ; émission seulement après possession/protection
-A10i8/identité/périmètre, décision Django et engagement admissible A07/A12.
-Ancien détenteur exclu de l'émission par politique engagée/contrôle vérifiable,
-état/versions/identifiants réconciliés sans numéro de certificat réutilisé ;
-ancienne base/configuration sans autorité réactivée, état incertain bloquant.
-Autorité/provider indisponible : attente sans grâce/racine apprise en réseau/
-profil abaissé, PA expiré par reprise A02/A10i ; aucun montage/droit hôte implicite,
-clé perdue restaurée ou habilitation reprise par clone/restauration.
-A10i9 A validé le 6 octobre 2026 ; procédure CA et migration dépendante requises,
-délais/coûts/volumes/retrait/disponibilité à qualifier sans RTO promis. NIST
-SP 800-57 B.3.1.1 référencé cadrage PZT sans lui attribuer une interdiction universelle
-de sauvegarde CA ou conformité Pixs. Recette : perte, redémarrage normal,
-ancien détenteur actif, état incertain, compromission/suspicion/provider/CA absents,
-recertification/migration sans clé perdue ou ancien droit repris.
+Après perte ou remplacement d'un émetteur, un PKIZT habilité MUST pouvoir reprendre la même autorité et clé opérationnelle chiffrée synchronisée selon zt-pki et brick-redundancy. Avant émission, la reprise MUST vérifier habilitations, possession/déverrouillage, état courant d'émission/révocation, validités et exclusion de l'ancien émetteur sans numéro de certificat réutilisé. Une issue incertaine MUST bloquer l'émission jusqu'à réconciliation. Une compromission connue/suspectée MUST interdire la réutilisation non vérifiée et suivre un remplacement/retrait autorisé, sans réhabilitation de l'hôte par une seule rotation. La récupération choisie par autorité MUST traiter l'indisponibilité de tous les moyens de déverrouillage ; elle MUST NOT restaurer d'anciens droits. Racine hors ligne, signataires A12 et rotation normale MUST conserver leurs contrats propres.
 
 #### Scenario: Conformité du traitement A10i9
 
-- **WHEN** un profil revendique le traitement A10i9 et ses garanties dans un rôle déclaré
-- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
-- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+- **WHEN** l’émetteur principal est perdu sans compromission suspectée
+- **THEN** un PKIZT habilité peut reprendre la même clé protégée après les contrôles et l’exclusion requis.
 
-### Requirement: Contrat A10i10 — Secours CA indépendant pré-certifié — option A validée le 6 octobre 2026
+#### Scenario: Clé suspectée compromise
 
-Le rôle chargé du traitement A10i10 MUST satisfaire les clauses opératoires,
-bornes et conditions du contrat détaillé ci-dessous. Il MUST NOT appliquer
-une alternative rejetée, élargir son périmètre ou présenter comme effectué
-un contrôle/effet absent. Les règles de lecture normative précédentes,
-les contrats structurels et les exceptions applicatives restent applicables.
+- **WHEN** la clé synchronisée est suspectée compromise
+- **THEN** elle n’est pas utilisée pour maintenir l’autorité par le seul fait d’être répliquée.
 
-##### Contrat détaillé A10i10
+### Requirement: Contrat A10i10 — Secours PKIZT avec reprise de la même clé
 
-Option A validée : secours de chaque émetteur dédié A10i7 préparé avant incident,
-avec paire CA indépendante, certificat CA propre préalablement délivré par la
-procédure A10i6, référence/génération et protection A10i8 distinctes. Pas de
-copie, dérivation ou sauvegarde de la clé principale ; remplacement indépendant
-A10i9 conservé. Aucun partage de clé entre autorités logiques, aucune clé privée
-ajoutée aux PA ordinaires ; racine hors ligne et signataires opérationnels exclus.
+Le rôle concerné MUST appliquer les clauses détaillées ci-dessous avec ses habilitations, bornes et preuves courantes. Il MUST NOT présenter comme effectué un contrôle ou effet absent.
 
-Le secours est réservé, sans mandat actif d'émission. Ses certificats publics
-et état de préparation peuvent être distribués sous mandat sans l'autoriser à
-émettre ou à être accepté comme émetteur actif. Certification CA, mandat,
-politique d'émetteurs admis et droits métier sont des actes distincts. Préparation
-sous décision explicite ; validité de chaîne/certificat, possession, protection,
-fraîcheur requise et capacité de reprise qualifiées, secours périmé sans état prêt.
+##### Contrat détaillé consolidé — Contrat A10i10
 
-Une seule génération admissible pour de nouvelles émissions par émetteur logique
-à un instant donné ; ancien signataire exclu (fencing), choix/génération engagés
-A07/A12, état d'émission/révocation et identifiants réconciliés. Activation depuis
-PBO par décision Django et mandat courant, jamais par simple détection de panne
-ou possession de clé/certificat. Mode d'autorisation de bascule validé en A10i11.
-État/exclusion incertains : blocage sans double émission, retour à ancienne clé
-ou émission racine courante. A05, identité et contrôles applicables prioritaires.
-Retrait de génération principale pour émission distinct du traitement des
-certificats terminaux antérieurs : migration autorisée, compromission/révocation
-traitées A05, remplacement et permissions sans grâce.
-
-Activation du secours sans dispense de migration des certificats/liaisons et
-émetteurs admis A10i9. Secours potentiellement affecté par l'incident, non qualifié
-ou invalide : activation refusée, remplacement frais A10i9 sous décision autorisée.
-Après usage, génération suivante préparée sous mandat, jamais clé retirée réactivée.
-Clés indépendantes sans indépendance de panne supposée : stockage commun, même
-hôte/provider ou domaine de compromission exposés dans le plan ; placement et
-couverture de pannes à qualifier sans nombre de machines ou accès Proxmox imposés.
-
-A10i10 A est validé le 6 octobre 2026 pour anticiper la certification hors ligne
-sans restaurer la clé perdue, avec protection, suivi de validité et inventaire
-d'un secours supplémentaires. Le [NIST SP 800-57 partie 1, section B.3.1.1](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf)
-évoque une seconde paire préparée comme alternative à la sauvegarde ; activation/
-coordination retenues ici par Pixs. Charge, stockage, latence et délais à qualifier
-sur Linux/Windows physiques/VM et Docker/LXC Proxmox, sans continuité ou RTO garantis.
-Recette : réserve inactive, activation autorisée/refusée, principal encore actif,
-état incertain, secours périmé/compromis, panne commune, migration et
-réapprovisionnement sans ancienne génération réactivée.
-
-##### Application au PA — A10i10
-
-Option A validée : secours préparé par émetteur dédié A10i7, paire CA indépendante
-sans copie/dérivation/sauvegarde de la principale, certificat CA préalablement
-délivré A10i6, référence/génération/protection A10i8 propres ; A10i9 conservé.
-Sans clé partagée entre autorités logiques ni clé CA privée aux PA ordinaires,
-racine/signataires opérationnels exclus. Réserve sans mandat d'émission actif ;
-préparation/distribution publique autorisées sans acceptation d'émetteur actif.
-Certificat CA, mandat, politique d'émetteurs admis et droits métier distincts.
-Chaîne/dates/possession/protection/fraîcheur requise/capacité de reprise qualifiées,
-secours périmé sans état prêt.
-
-Une génération admissible pour nouvelles émissions par émetteur logique, ancien
-signataire exclu (fencing), choix/génération engagés A07/A12 et état/révocation/
-identifiants réconciliés. Activation PBO sous décision Django/mandat courant,
-jamais par panne ou possession seule ; mode d'autorisation validé en A10i11.
-État/exclusion incertains bloquants sans double émission, ancienne clé de retour
-ou racine émettant au quotidien. A05/identité/contrôles courants prioritaires ;
-retrait de génération pour émission distinct du traitement des certificats
-terminaux antérieurs, migration autorisée et compromission/révocation A05 sans grâce.
-Secours sans dispense de migration A10i9 ; secours affecté par incident, non
-qualifié/invalide bloqué, remplacement frais sous décision autorisée. Après usage,
-réserve suivante préparée sous mandat sans clé retirée réactivée. Clés indépendantes
-sans pannes indépendantes présumées : stockage/hôte/provider/domaine de compromission
-communs visibles, placement/couverture à qualifier sans machines/droits Proxmox imposés.
-A10i10 A validé le 6 octobre 2026 : anticipation de certification hors ligne sans
-restaurer clé perdue, avec protection/suivi/inventaire supplémentaires. NIST SP
-800-57 B.3.1.1 (source cadrage PZT) évoque seconde paire préparée, coordination Pixs.
-Charge/stockage/latence/délais à qualifier sur Linux/Windows physiques/VM et Docker/
-LXC Proxmox sans continuité/RTO garantis. Recette : réserve inactive, activation
-refusée/autorisée, principal actif/état incertain, secours périmé/compromis,
-panne commune/migration/réapprovisionnement sans ancienne génération réactivée.
+Le secours PKIZT MUST être un membre identifié et habilité par autorité avec protection de déverrouillage individuelle, copie chiffrée synchronisée de la même clé et état d'émission cohérent. Une autorité MUST conserver un émetteur actif unique ; préparation et accès à la copie MUST NOT autoriser l'émission. L'activation MUST suivre A10i11–A10i13 et zt-pki sous mandat, preuve de l'exclusion, état courant et engagement admissible. La reprise MUST préserver révocations, identifiants et droits courants. Une panne commune, compromission suspectée ou état incohérent MUST empêcher une reprise présentée comme sûre. La même clé entre répliques d'une autorité MUST NOT devenir une clé commune à des autorités différentes ; la continuité et l’indépendance de panne MUST NOT être déduites du nombre de copies.
 
 #### Scenario: Conformité du traitement A10i10
 
-- **WHEN** un profil revendique le traitement A10i10 et ses garanties dans un rôle déclaré
-- **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
-- **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+- **WHEN** un secours détient la clé chiffrée mais aucun mandat actif d’émission
+- **THEN** il reste inactif comme émetteur.
+
+#### Scenario: Ancien signataire encore admissible
+
+- **WHEN** l’ancien signataire n’est pas effectivement exclu
+- **THEN** la prise d’autorité est refusée sans double émission.
 
 ### Requirement: Contrat A10i11 — Bascule CA automatisable sous mandat préalable — option A validée le 6 octobre 2026
 
@@ -5184,8 +4797,8 @@ services d'émission et extrémités PA Linux/Windows physiques/VM, Docker/LXC
 Proxmox. Provider matériel requis mais incompatible : activation bloquée,
 sans export de clé ni repli logiciel. La [RFC 8446, section 4.2.3](https://www.rfc-editor.org/rfc/rfc8446.html#section-4.2.3)
 distingue les signatures de certificats des signatures d'authentification TLS ;
-compatibilité réelle vérifiée des deux côtés. Protection A10i8, indépendance
-du secours, exclusion et autorité Django/A12 conservées. Durées CA, procédure
+compatibilité réelle vérifiée des deux côtés. Protection A10i8, secours PKIZT reprenant la même clé, exclusion
+et autorité Django/A12 conservées. Durées CA, procédure
 racine, révocation et remplacement d'ancrages restent ouverts ; renouvellement
 normal des clés intermédiaires validé en A10i15. Changer le profil exige une
 migration autorisée, sans changement de clé ou d'ancrage implicite. Aucun
@@ -5214,7 +4827,7 @@ Signature CA/validation complète des chaînes qualifiées sur services d'émiss
 et PA Linux/Windows physiques/VM, Docker/LXC Proxmox. Matériel requis incompatible
 bloquant, sans export/repli logiciel. RFC 8446 section 4.2.3 : signatures de
 certificats et authentification TLS distinctes, capacités réelles à vérifier
-des deux côtés. Protection A10i8, secours indépendant, exclusion et Django/A12
+des deux côtés. Protection A10i8, secours PKIZT avec même clé, exclusion et Django/A12
 maintenus. Durées CA/procédure racine/révocation/remplacement d'ancrages ouverts ;
 renouvellement normal des clés intermédiaires validé en A10i15. Évolution de
 profil sous migration autorisée, sans changement implicite de clé/ancrage.
@@ -5251,10 +4864,10 @@ Nouvelle paire CA indépendante ECDSA P-256 à chaque renouvellement normal,
 nouveau certificat intermédiaire signé sous procédure racine autorisée,
 nouvelle référence de clé/génération et provisionnement contrôlé des émetteurs
 admis. Pas de dérivation de l'ancienne clé ni recertification de cette même clé
-comme renouvellement normal. Une génération de réserve indépendante
-pré-certifiée A10i10 peut préparer la transition si son profil, sa validité
-et son mandat conviennent ; cette préparation n'autorise pas son activation.
-Le secours conserve sa clé indépendante, sans devenir une copie de la principale.
+comme renouvellement normal. Une nouvelle génération peut être préparée et certifiée sous procédure de
+rotation explicite si son profil, sa validité et son mandat conviennent. Les
+répliques PKIZT reprennent la même clé au sein d'une génération ; sa préparation
+n'autorise pas l'activation d'une nouvelle génération.
 
 Procédure racine explicite et autorisée, sans mise en ligne permanente de sa
 clé ni signature locale autonome du PA. Django/A07/A12 vérifient identité,
@@ -5295,9 +4908,9 @@ droits nouveaux ou réactivation d'un signataire retiré.
 Nouvelle paire CA indépendante ECDSA P-256 à chaque renouvellement normal,
 certificat sous procédure racine autorisée, référence clé/génération nouvelle
 et provisionnement contrôlé des émetteurs admis. Aucune dérivation ou
-recertification de l'ancienne clé comme renouvellement normal. Réserve
-pré-certifiée indépendante A10i10 utilisable pour préparation si profil/
-validité/mandat adaptés, sans activation implicite ou copie de clé principale.
+recertification de l'ancienne clé comme renouvellement normal. Une génération de renouvellement peut être préparée sous mandat avec profil/
+validité contrôlés sans activation implicite. Ses répliques partagent sa même
+clé chiffrée selon zt-pki et A10i10.
 
 Procédure racine explicite autorisée, sans clé racine en ligne permanente ou
 signature PA autonome. Django/A07/A12 : identité/périmètre/politique/état/
@@ -5890,9 +5503,9 @@ les contrats structurels et les exceptions applicatives restent applicables.
 
 ##### Contrat détaillé A10i21
 
-Choix limité à la clé privée racine A10i6/A10i14. A10i9 reste inchangé pour
-les intermédiaires : remplacement par clé indépendante, sans restauration de
-leur ancienne clé privée ; A12g, TLS terminal, WireGuard et TPM hors périmètre.
+Choix limité à la clé privée racine A10i6/A10i14. La reprise de même clé des
+autorités opérationnelles relève de zt-pki et A10i9/A10i10, sans placer la
+racine en PG. A12g, TLS terminal, WireGuard et TPM restent hors périmètre.
 La nouvelle paire de chaque succession normale A10i18 reste obligatoire.
 
 | Choix validé | Sauvegarde de la clé privée racine | Conséquence d'une perte sans compromission |
@@ -5959,8 +5572,8 @@ A10i21 A validé le 7 octobre 2026.
 
 ##### Application au PA — A10i21
 
-Clé privée racine A10i6/A10i14 seule concernée ; A10i9 sans restauration des
-clés privées intermédiaires conservé. A12g/TLS terminal/WireGuard/TPM exclus,
+Clé privée racine A10i6/A10i14 seule concernée ; la reprise de clés
+opérationnelles chiffrées suit zt-pki et A10i9/A10i10, sans racine en PG. A12g/TLS terminal/WireGuard/TPM exclus,
 succession normale à nouvelle paire A10i18 maintenue.
 
 | Choix validé | Sauvegarde de la clé privée racine | Conséquence d'une perte sans compromission |
@@ -8164,8 +7777,7 @@ les contrats structurels et les exceptions applicatives restent applicables.
 ##### Contrat détaillé A10i50
 
 Bornes qualifiées A10i49 A, cycle A10i48 A et contrôles A05/A12 maintenus.
-Adaptateurs système retenus pour autorités de validation, sans serveur, logiciel,
-protocole de synchronisation ou nouvelle source de temps concrète adoptés.
+Adaptateurs système retenus pour autorités de validation, avec service système géré par PA selon profil et besoin, sans nouveau démon ni protocole Pixs ; sans autre serveur, logiciel, protocole de synchronisation ou nouvelle source de temps concrète adoptés.
 
 | Choix validé | Provider | Qualification requise |
 | --- | --- | --- |
@@ -8191,8 +7803,7 @@ Une copie de l'état du collecteur sans fraîcheur retrouvée ne suffit pas.
 Docker/LXC Proxmox et Windows/Linux physiques/VM qualifiés séparément ; accès
 au temps ou métadonnées sans privilège système, montage ou changement de
 synchronisation implicitement accordés. Profil incapable de démontrer U<=1 seconde
-dans le premier jet refusé pour ce rôle ; PA ordinaire sans rôle de validation
-ne reçoit pas un service temporel supplémentaire par cette politique.
+dans le premier jet refusé pour ce rôle ; la présente politique MUST NOT accorder un service par PA, seul un service par horloge géré par PA lorsque le profil l’exige MAY être qualifié, sans préjuger sa qualification.
 
 Contrat explicite de confiance et qualité, fraîcheur/dérive/perte de
 source, cohérence des membres, correction/saut d'horloge et restauration testés.
@@ -8298,7 +7909,7 @@ borne d'erreur au plus 1 seconde A10i49 A et échéance immuable conservés.
 Premier jet configurable validé, à qualifier sans performance mesurée ou API installée.
 Interface API/IPC structurée validée A10i53 A.
 
-| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation |
+| Choix validé | Durée par acquisition | Acquisitions au maximum par décision | Budget global d'acquisition | Âge maximal de preuve de synchronisation en SYNCHRONISE |
 | --- | --- | --- | --- | --- |
 | A | 250 millisecondes | 2 | 1 seconde | 600 secondes |
 
@@ -8312,15 +7923,7 @@ sans crédit remis à zéro. Plafonds simultanés et budgets de sécurité plus 
 prioritaires, aucune acquisition commencée sans budget restant suffisant.
 Reprise sans preuve de temps restant : refus, D jamais repoussée.
 
-Âge maximal concerne la dernière preuve de référence/synchronisation admissible,
-pas la date à laquelle l'adaptateur a simplement lu une métrique ou un fichier.
-Calcul/identité de preuve, source et progression d'âge qualifiés, référence
-modifiée ou horloge reculante sans âge artificiellement réinitialisé.
-Âge nul/inconnu sans fraîcheur vraie présumée ; âge non vérifiable ou supérieur
-au plafond refuse création/admission. Âge inférieur au plafond n'autorise pas
-seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance
-A10i49/A10i50 toujours démontrées. Âge maximal 600 secondes sans permission de réemploi
-d'un ancien échantillon entre décisions, A10i51 A inchangé.
+Âge maximal concerne la dernière preuve de référence/synchronisation admissible, toujours réelle et vérifiable, pas la date à laquelle l’adaptateur a simplement lu une métrique ou un fichier. Calcul/identité de preuve, source et progression d’âge qualifiés, référence modifiée ou horloge reculante sans âge artificiellement réinitialisé. Âge non vérifiable MUST conduire au refus en tous modes. Âge invérifiable ou supérieur au plafond en mode SYNCHRONISE MUST conduire au refus de création/admission. Âge inférieur au plafond n’autorise pas seul la décision : borne actuelle totale U(t), dérive, cohérence et confiance A10i49/A10i50 toujours démontrées. En mode SYNCHRONISE, âge maximal 600 secondes sans permission de réemploi d’un ancien échantillon entre décisions, A10i51 A inchangé. En mode distinct HORS_LIGNE, un âge supérieur à 600 secondes MAY être admis seulement si le modèle, la provenance et la continuité sont qualifiés, si le profil demeure valide et si la borne totale U(t) au point d’usage demeure inférieure ou égale à une seconde, avec acquisition actuelle et sans réarmement de droits, de budget ou d’échéance ; une lecture récente MUST NOT rajeunir la preuve amont et une nouvelle acquisition MUST NOT remettre à zéro un droit ; aucune durée magique n’est admise.
 Borne d'erreur 1 seconde distincte du budget global de lecture 1 seconde et de l'âge
 de preuve ; aucune mesure temporelle plus ancienne réputée exacte par budget large.
 
@@ -8359,6 +7962,35 @@ A10i52 A validé le 8 octobre 2026.
 - **WHEN** un profil revendique le traitement A10i52 et ses garanties dans un rôle déclaré
 - **THEN** ses conditions, bornes et résultats applicables sont vérifiés selon le contrat ci-dessus
 - **AND** toute valeur non décidée, preuve indisponible ou qualification manquante est signalée sans garantie inventée
+
+#### Scenario: Perte d’Internet avec incertitude démontrée
+
+- **WHEN** Internet est perdu mais que le modèle, la provenance et la continuité demeurent qualifiés avec U au point d’usage démontrée
+- **THEN** les opérations dépendantes bornées peuvent continuer sans remise à zéro de droit
+
+#### Scenario: Valeur à la borne puis au-delà
+
+- **WHEN** la borne totale se situe juste à une seconde avec comparaison conservatrice établie
+- **THEN** l’admission bornée peut intervenir sans prolongation d’échéance
+- **WHEN** elle dépasse la borne d’une unité de précision qualifiée
+- **THEN** la création ou l’admission est refusée sans nouvelle admission
+
+#### Scenario: Mesure locale ancienne et modèle périmé
+
+- **WHEN** une mesure locale ancienne est lue récemment ou que le modèle est périmé
+- **THEN** elle ne doit pas être proposée comme preuve courante et une nouvelle acquisition bornée ou un refus doit intervenir
+
+#### Scenario: Suspension, restauration et retour incohérent
+
+- **WHEN** une suspension, une reprise ou une restauration est observée
+- **THEN** la continuité doit être requalifiée avant toute admission
+- **WHEN** le retour d’Internet apporte une correction incohérente avec l’intervalle maintenu
+- **THEN** le chemin doit être refusé sans réécriture de l’échéance
+
+#### Scenario: Plateformes conteneur et machines virtuelles
+
+- **WHEN** la cible est LXC avec horloge hôte, VM avec horloge propre ou Windows avec fournisseur à qualifier
+- **THEN** le profil exact doit être démontré et toute divergence hôte et invité doit bloquer l’admission concernée
 
 ### Requirement: Contrat A10i53 — API native ou IPC documentée pour lecture structurée du temps — option A validée le 8 octobre 2026
 
@@ -13318,3 +12950,176 @@ La qualification du profil MUST évaluer les clauses PZT selon leurs rôles et c
 
 - **WHEN** un contrat principalement exécutant contient une obligation applicable à la gestion PBO du profil
 - **THEN** cette obligation reste vérifiée et n’est pas exclue par le classement général du contrat
+
+### Requirement: Amorçage local PA PZT indépendant de PostgreSQL
+
+Le parcours PA/PZT MUST disposer d’un provisionnement opérateur et d’une politique technique protégée indépendants de la base Pixs à préparer. Le profil local mTLS MUST limiter les échanges à la préparation technique autorisée, refuser tout repli PBO–PA hors PZT et rapprocher les résultats avant transfert au contrôle applicatif PostgreSQL selon les garanties ci-dessous.
+
+#### Scenario: Garanties de l’amorçage local PZT
+
+- **WHEN** le profil sélectionne cette capacité pour le parcours de préparation PostgreSQL
+- **THEN** Avant le premier échange PBO–PA, une procédure opérateur locale explicite MUST provisionner PA et PZT avec leurs identités propres, ancrages de confiance, configuration minimale, références de secrets et politique technique versionnée protégée, sans dépendre de la base Pixs à préparer ni d'une session future. Cette procédure MUST vérifier l'origine et l'autorisation du provisionnement ; le premier PBO rencontré MUST NOT devenir une autorité de confiance. Elle MUST permettre un profil PZT local mTLS pour les seuls échanges de préparation, d'inspection et de résultats techniques PostgreSQL explicitement autorisés ; elle MUST NOT ouvrir le réseau distant, le management ordinaire, un tenant ou une mutation métier. Les mandats MUST avoir cibles, actions fermées, bornes et validité explicites, anti-rejeu, révocation vérifiable et audit durable indépendant de PostgreSQL. Une politique absente, expirée, révoquée ou dont la fraîcheur ne peut être vérifiée MUST fermer l'admission. Le contrôle applicatif ordinaire MUST attendre PostgreSQL et ses décisions courantes. La transition MUST rapprocher preuves et résultats vers leurs propriétaires persistants puis terminer les mandats temporaires avant admission ordinaire ; des politiques divergentes MUST NOT faire autorité simultanément. Panne ou absence de PZT MUST bloquer les échanges PBO–PA, sans socket, loopback ou fichier de secours hors PZT. Le provisionnement local opérateur MUST NOT devenir un canal continu PBO–PA.
+
+#### Scenario: PZT local avant la base
+
+- **WHEN** la base Pixs est absente mais le provisionnement opérateur et le mandat technique local sont vérifiés
+- **THEN** les seuls échanges techniques prévus sont admis via PZT local mTLS ; aucune autorisation métier ou ouverture réseau distante n’est déduite
+
+#### Scenario: Autorité d’amorçage périmée
+
+- **WHEN** un échange présente un mandat expiré ou une politique locale dont la fraîcheur ne peut être vérifiée
+- **THEN** PZT refuse l’échange sans consulter une base inexistante ni ouvrir un canal de substitution
+
+#### Scenario: Relais de contrôle incomplet
+
+- **WHEN** PostgreSQL devient disponible mais le rapprochement des résultats et la fin des mandats temporaires ne sont pas confirmés
+- **THEN** le management ordinaire reste non prêt sans déclarer deux autorités concurrentes
+
+### Requirement: Amorçage PKI PZT autonome de première installation avant PostgreSQL
+
+La première installation MAY établir une confiance technique PKI/PZT avant PostgreSQL par Z12 consommée par C08. Cette confiance MUST rester distincte de la PKI ZT normale, limitée et bornée aux opérations d'amorçage autorisées. Elle MUST être retirée après établissement et vérification de la PKI normale, selon les étapes ci-dessous, sans réouverture ultérieure par panne PostgreSQL.
+
+#### Scenario: Création initiale locale sous autorité technique vérifiée
+
+- **WHEN** une première installation admissible prépare les identités techniques PA système, PZT et PBO nécessaires à l'ouverture de PostgreSQL
+- **THEN** Z12 MUST vérifier origine native, opérateur, mandat explicite, installation, cible, exécutants, rôles fermés, opération/idempotence, plan/digest, politique/version courants, validité, révocation et fraîcheur ; une PKI opérationnelle déjà émise ailleurs MUST NOT être un prérequis
+- **AND** la racine technique hors ligne, les éventuels intermédiaires de secours et les terminaux MUST conserver leurs protections matérielles, usages et clés séparés selon le profil d'amorçage, sans les confondre avec les autorités opérationnelles PKIZT répliquées en PG
+- **AND** Z12 MUST conserver état durable protégé/versionné/fencé, ancrage anti-restauration qualifié et audit pré-base indépendant, sans secret publié ni autorité applicative déduite de la signature ou d'un DTO
+
+#### Scenario: Établissement de la PKI normale et retrait de la confiance initiale
+
+- **WHEN** PostgreSQL et les propriétaires courants sont disponibles pour préparer la confiance opérationnelle
+- **THEN** ils MUST rapprocher les références, effets et résultats d'amorçage avec leurs preuves courantes ; PKIZT MUST établir la PKI normale distincte selon zt-pki, avec ses clés opérationnelles chiffrées dans sa PG, habilitations et protections individualisées
+- **AND** les identités, autorisations, âges et retraits connus MUST être préservés par une transition explicite de certificats et d'ancrages ; les seuls justificatifs initiaux MUST NOT être reconnus automatiquement comme des justificatifs ordinaires
+- **AND** le transport et les usages normaux requis MUST être vérifiés avant retrait de la confiance, des canaux et mandats initiaux ; la coexistence MUST être bornée par un plan autorisé et MUST NOT devenir un accès normal durable
+- **AND** rapprochement, établissement PKIZT, bascule vérifiée, retrait irréversible de l'autorité initiale et admission ordinaire MUST rester des étapes distinctes prouvées sans atomicité local/PG présumée ; toute issue inconnue ou partielle MUST rester inspectable et non prête pour les usages dépendants
+- **AND** C08 MUST consommer les contrats propriétaires sans devenir émetteur ou registre concurrent ; après retrait attesté, une panne PG MUST NOT rouvrir l'amorçage ni restaurer ses anciens mandats
+
+### Requirement: Profil X.509 des terminaux de première installation Z12
+Pour la première installation PA/PZT/PBO avant PostgreSQL, Z12 MUST appliquer le profil terminal fermé ci-dessous avec des clés matérielles non exportables P-256 et des paires distinctes par usage TLS. Les liaisons de politique/plan/identité, durées A10i4 et chaîne D2 MUST rester vérifiées indépendamment de l'admission et du mandat PostgreSQL.
+
+#### Scenario: Émission initiale conforme sous autorité vérifiée
+- **WHEN** la cérémonie initiale D4 dispose du mandat courant, du plan protégé et des preuves réelles de clé matérielle et de possession pour les usages client et serveur sélectionnés
+- **THEN** les certificats émis respectent le profil terminal, les identités et endpoints explicitement liés au plan, avec des paires distinctes et une chaîne D2 vérifiée
+- **AND** conformité du profil, autorisation, engagement et effet observé restent distingués ; aucun mandat technique PostgreSQL n'est déduit des certificats
+- **AND** Pour la première installation PA/PZT/PBO avant PostgreSQL, Z12 MUST utiliser des clés ECDSA P-256 matérielles non exportables, sans repli logiciel, et des certificats terminaux X.509 v3 signés suivant le profil CA D2. Une paire et un certificat MUST être distincts pour chaque usage TLS client ou serveur ; une clé CA ou de signature opérateur MUST NOT être réutilisée comme clé terminale.
+- **AND** Le certificat terminal MUST contenir uniquement les six extensions BasicConstraints, KeyUsage, SubjectAlternativeName, ExtendedKeyUsage, SubjectKeyIdentifier et AuthorityKeyIdentifier. BasicConstraints MUST être critique, CA=false, sans pathLenConstraint ; KeyUsage MUST être critique avec digitalSignature seul ; ExtendedKeyUsage MUST être critique avec exactement clientAuth ou exactement serverAuth, sans anyExtendedKeyUsage. SKI et AKI MUST être non critiques et correspondre aux clés et à l'émetteur réellement vérifiés. La chaîne CA D2 reste distincte : elle n'admet que BasicConstraints, KeyUsage, SKI et AKI et MUST refuser NameConstraints et toute autre extension hors de ce profil fermé.
+- **AND** Le Subject MUST être vide. Le SAN MUST être critique et contenir exactement une URI urn:uuid:<UUIDv7 d'instance terminale sous forme canonique minuscule>. Pour un certificat serveur, il MUST aussi contenir exactement l'iPAddress IPv4 loopback explicitement liée à l'endpoint dans le plan protégé ; pour un certificat client, cet iPAddress serveur MUST être absent. Un autre nom, un CN/DNS de repli, une autre adresse ou un port par défaut MUST NOT être ajouté. Les contrôles de chaîne, d'usage, d'URI d'instance et d'IP attendue MUST être indépendants ; loopback ou UUIDv7 seuls MUST NOT prouver identité native, fraîcheur ou autorité.
+- **AND** Le propriétaire courant MUST lier installation, cible, identité native d'instance, rôle, usage, clé, génération et certificat à la politique protégée/versionnée et au mandat applicable. Les preuves matérielles, la possession et la correspondance clé/certificat MUST être réellement vérifiées. Le profil structural ou cryptographique seul MUST NOT valoir autorisation d'émettre, admission applicative ou mandat PostgreSQL. Les durées A10i4 sont conservées : 24 heures nominales, renouvellement aux deux tiers de la validité effective (16 heures seulement pour 24 heures effectives), chevauchement au plus cinq minutes selon A10i3, avec validités bornées par la politique et la chaîne et sans remise à zéro des âges.
+
+#### Scenario: Refus d'identité, d'usage ou de chaîne inadmissibles
+- **WHEN** un certificat ou une demande présente CA=true, un usage ou une extension étrangers, un EKU double, une paire mutualisée entre usages, un Subject non vide, un SAN non critique ou étranger, une URI non canonique, une IP absente ou étrangère au plan serveur, ou une contrainte de noms hors du profil CA D2
+- **THEN** l'émission ou le chargement concerné est refusé avant utilisation TLS, sans repli CN/DNS, logiciel ou autre profil
+- **AND** ni la proximité réseau ni une chaîne signée seule ne rétablissent une identité, une permission ou une confiance absentes
+
+### Requirement: Résolution locale du matériel TLS sous propriétaire courant Z12
+La composition native locale privée MUST résoudre le matériel TLS depuis le propriétaire réellement compétent pour l'étape, après vérification actuelle de politique, identité, état et ancrage. D4/D6, le même OSSL_LIB_CTX privé et les refus ci-dessous MUST être respectés ; aucune référence ou donnée cliente ne constitue une preuve d'autorité.
+
+#### Scenario: Résolution locale depuis le propriétaire compétent
+- **WHEN** la composition locale demande le matériel d'un terminal et que le propriétaire compétent pour l'étape réelle vérifie toutes les liaisons, protections, preuves et bornes courantes
+- **THEN** le matériel public et la référence locale terminale sont liés au contexte OpenSSL privé avec une durée de vie contrôlée
+- **AND** aucune clé privée, autorité déduite du certificat ou permission applicative n'est transmise par cette résolution
+- **AND** Le matériel TLS MUST être résolu par une composition native locale privée depuis le propriétaire courant compétent. Avant toute fourniture ou utilisation, ce propriétaire MUST vérifier la politique protégée/versionnée, l'installation et la cible, les liaisons d'identité/rôle/usage/génération, l'état et l'époque courants, la validité/fraîcheur, la révocation et l'ancrage anti-restauration requis. Un instantané restaurable, un DTO bien formé, une référence opaque ou un booléen client MUST NOT remplacer ces vérifications. Toute source absente, périmée, contradictoire ou invérifiable MUST fermer l'opération concernée.
+- **AND** Avant PostgreSQL, le propriétaire initial Z12 D4 MUST vérifier l'origine native et le mandat opérateur lié au plan ; UID 0 seul ou une preuve C01/R01 réutilisée pour un autre usage MUST NOT suffire. Après établissement de la PKI normale distincte, bascule vérifiée et retrait attesté D6, seul le propriétaire ordinaire Django/A07/A12 courant MUST autoriser la fourniture du matériel normal ; les références initiales MUST NOT être réutilisées comme autorité ordinaire. La traçabilité, les âges, validités et retraits connus MUST être conservés ; une panne PostgreSQL après ce passage MUST NOT rouvrir l'autorité initiale.
+- **AND** La résolution MUST fournir les seuls matériaux publics nécessaires et une référence opaque de clé terminale locale liée au même OSSL_LIB_CTX privé, avec possession et durée de vie réellement contrôlées. Les références de clés CA, les chemins ou ancres librement fournis par un appelant réseau, les clés privées ou blobs privés publics, les EVP_PKEY ou capsules Python publics et le repli logiciel MUST être refusés. Le contrôle de chaîne et la vérification du pair MUST rester nécessaires ; la résolution du matériel MUST NOT constituer l'autorisation applicative ni le mandat technique PostgreSQL, qui restent distincts.
+
+#### Scenario: Refus après restauration, retrait ou perte d'autorité
+- **WHEN** l'état ou la politique est restauré ancien, l'ancrage ou la fraîcheur est invérifiable, le propriétaire compétent est indisponible, une référence CA est proposée, ou une ancienne autorité initiale est sollicitée après clôture D6
+- **THEN** la fourniture ou l'utilisation concernée est refusée avant transport ou admission, et le matériel devenu inadmissible cesse d'être utilisable
+- **AND** une panne PostgreSQL après D6 ne rouvre pas la cérémonie initiale, ne remet pas les âges à zéro et ne rétablit aucun mandat retiré
+
+### Requirement: Fournisseur BIND 9 du DNS géré sur Debian et Docker Pixs
+
+Sur Debian et Docker Pixs, BIND 9 fourni par Debian MUST être le fournisseur DNS. PBO/pixs.dns MUST administrer via contrats publics ; PA MUST préparer/installer, maintenir le système et mettre à jour les logiciels ; PZT/DZT MUST configurer et maintenir le fonctionnement logiciel selon zt-dns-dhcp. Cette sélection MUST NOT activer le rôle dans C14 ni rendre un PA client serveur. Les états logiciel présent, souhaité, appliqué et disponible MUST rester distincts.
+
+#### Scenario: Gestion PBO et exécutants séparés
+
+- **WHEN** un DZT BIND 9 est sélectionné et admis
+- **THEN** PBO administre, PA prépare et DZT applique/vérifie sans écriture privée inter-modules.
+
+#### Scenario: Exécutant requis indisponible
+
+- **WHEN** une opération exige un PA ou DZT indisponible
+- **THEN** elle reste bloquée ou d’issue inconnue selon les faits sans canal ou résultat fabriqué.
+
+### Requirement: Transport PZT des enveloppes 1.1 et provenance A07
+
+Tous échanges PBO-PA MUST passer par PZT. Pour le profil PostgreSQL initial 1.1 E5 sélectionné, les enveloppes 1.1 fermées avec purposes OBSERVE, PREPARE_PLAN, PREPARE et READ_RESULT sont obligatoires, sans modifier les contrats 1.0 ni fallback. Les tableaux A07 MUST conserver ordre et doublons de leurs invocations réelles. Toute divergence MUST imposer refus ou replanification sans compensation destructive ni rejeu d'issue inconnue.
+
+#### Scenario: A07 complets par invocation réelle
+
+- **WHEN** un appel OBSERVE, PREPARE_PLAN, PREPARE ou READ_RESULT est transporté
+- **THEN** invocation, correlation_ids et causation_ids correspondent à l'invocation réelle avec ordre et doublons conservés
+
+#### Scenario: Divergence sans compensation destructive
+
+- **WHEN** une observation, un plan ou une réponse diverge ou est perdue
+- **THEN** le parcours ferme la résolution ou impose une nouvelle planification sans supprimer de base ni rejouer un mandat consommé
+### Requirement: Procédure exceptionnelle D18 avec UTC perdu
+
+MUST appliquer intégralement toutes les clauses, bornes et conditions du contrat détaillé ci-dessous, sans retrait ni réinterprétation.
+
+##### Contrat détaillé — D18 exceptionnelle
+
+La procédure exceptionnelle MUST intervenir seulement lorsque le repère universel ne peut pas être démontré par la voie normale. Elle MUST NOT devenir une routine à chaque lancement. Aucun poste extérieur, aucun opérateur particulier et aucun système mondial de navigation par satellite ne sont imposés. Une heure qualifiée existante MAY être utilisée lorsqu’elle est disponible. Toute réparation ultérieure du temps MUST NOT rouvrir l’autorité initiale. Les règles actuelles relatives à la signature personnelle, au défi à usage unique et à l’enveloppe demeurent conservées lorsque la cérémonie est effectivement nécessaire. Aucun contournement des dates des certificats n’est admis.
+
+#### Scenario: UTC perdu sans routine
+
+- **WHEN** le repère universel ne peut pas être démontré alors qu’une opération datée est demandée
+- **THEN** la procédure exceptionnelle s’applique sous autorité explicite ou l’opération est refusée sans contournement des dates
+
+### Requirement: Vérifications spécialisées des propriétaires au raccord PA PZT
+
+Le raccord PA/PZT MUST composer explicitement les interfaces spécialisées : Z12 pour la confiance cryptographique applicable ; PZT pour canal/relation/routage ; PA pour admission/gardes/préconditions ; C08 pour intention/confirmation opérateur ; Agent pour origine/confirmation de gestion ; producteur temporel sélectionné pour le temps au point d'usage. Il MUST NOT créer une autorité unique nouvelle ni transférer ces responsabilités au Kernel.
+
+#### Scenario: Composition des vérifications propriétaires
+
+- **WHEN** un raccord PA/PZT est préparé ou sélectionné
+- **THEN** chaque contrôle reste attribué à son fournisseur compétent et la présence d'une interface abstraite ne vaut pas livraison du fournisseur concret
+
+### Requirement: Autorité courante recontrôlée avant chaque effet PA PZT
+
+Les conditions d'autorité requises MUST être vérifiées au point d'usage avant chaque effet. Un fournisseur requis absent ou une preuve courante manquante MUST entraîner un refus. Une signature correcte MUST NOT remplacer les autres conditions d'admission. L'adoption de cette répartition MUST NOT être présentée comme un raccord ou une qualification déjà réalisés.
+
+#### Scenario: Signature valide et autre condition d'admission absente
+
+- **WHEN** une signature est correcte mais qu'un fournisseur requis ou une preuve courante d'autorité manque
+- **THEN** l'effet est refusé sans admission déduite de la seule signature
+
+#### Scenario: Autorité changée après un premier contrôle
+
+- **WHEN** l'autorité applicable change entre deux effets
+- **THEN** les conditions courantes sont recontrôlées avant l'effet suivant et une condition devenue invalide le bloque
+
+### Requirement: Admission PZT des remises du relais Agent
+
+PZT MUST conserver admission, relation, identité et routage vers PA pour les demandes du relais Agent R1. Le relais MUST NOT contourner PZT ni remplacer ses gardes ou celles de PA. Un reçu PZT MUST rester distinct du succès technique et de la confirmation Agent. La sélection F1 de l'adaptateur MUST NOT être présentée comme un transport livré ou qualifié.
+
+##### Contrat détaillé validé R1 F1 — frontière PZT
+
+| Élément | Règle validée |
+| --- | --- |
+| Entrée | Remise par le relais PBO de l'outbox privée Agent après commit local vérifié ; le contexte initial C08/PA reste séparé et sans génération Agent fictive. |
+| Autorités | Relation, identité, admission et routage PZT courants ; gardes PA avant chaque effet inchangées ; une liaison ACTIVE ou un contrôle du relais ne vaut pas autorité permanente. |
+| Transport retenu | Adaptateur PZT ; pour E3 local, Cython/OpenSSL 3 mTLS déjà adopté. Aucun canal direct PBO–PA ni nouveau broker externe. |
+| Retour | ACK limité à son contrat de réception ; succès technique, résultat durable, origine, postcondition et confirmation restent des preuves distinctes. |
+| Livraison et preuve | Client/serveur, admission, routage et fournisseurs courants restent à réaliser et qualifier ; aucun port, endpoint, compte ou budget supplémentaire choisi ici. |
+
+#### Scenario: Liaison valide et garde PZT devenue invalide
+
+- **WHEN** une demande issue d'une liaison Agent valide arrive par le relais mais qu'une condition courante PZT est invalide
+- **THEN** PZT refuse l'admission ou le routage protégé sans se fonder sur la seule liaison ou sur un ancien contrôle du relais
+
+#### Scenario: Reçu PZT sans résultat technique
+
+- **WHEN** PZT accuse réception sans résultat technique durable PA vérifié
+- **THEN** le reçu ne vaut ni effet réussi ni confirmation Agent et le parcours reste soumis à la lecture et à la réconciliation propriétaires
+
+### Requirement: Architecture ZT et rôles spécialisés consolidés
+
+PZT MUST appliquer zt-instances pour acteurs, admission, approbations et autorisations, zt-controller pour CZT et le socle réseau, zt-dns-dhcp pour DZT, zt-pki pour PKIZT et zt-network-services pour SZT/RZT/STZT/GZT/EZT/RPZT. Les bases et propriétaires MUST rester séparés selon pixs-instance/pixs-domains. La présence de ces spécifications MUST NOT prouver un exécutant actif, une qualification ou une nouvelle autorité métier PA/PZT.
+
+#### Scenario: Rôle absent du profil
+
+- **WHEN** un rôle facultatif EZT ou RPZT est décrit mais non sélectionné et admis
+- **THEN** il reste désactivé sans disponibilité déduite du référentiel

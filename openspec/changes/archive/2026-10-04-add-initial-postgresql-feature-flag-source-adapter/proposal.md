@@ -1,4 +1,6 @@
-# Adaptateur PostgreSQL initial de la source de fanions
+# O53 — Adaptateur PostgreSQL initial de la source de fanions
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -1,4 +1,6 @@
-# Proposition — Représentation déclarative des contrats d'événement
+# C58 — Proposition — Représentation déclarative des contrats d'événement
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

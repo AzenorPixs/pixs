@@ -1,67 +1,39 @@
-## MODIFIED Requirements
-
-### Requirement: Couche exécutable PA séparée
-
-Les trois binaires PA définis par pixs-agent et le binaire indépendant PZT
-défini par pzt MUST rester distincts du runtime applicatif. Ils MUST NOT
-remplacer Django, PostgreSQL ou TanStack ni devenir un backend métier
-alternatif. Les trois binaires PA et PZT MUST suivre Cython,
-avec chaînes et plateformes qualifiées avant construction.
-
-#### Scenario: Exécutants distincts du backend
-
-- **WHEN** une release décrit PA et PZT
-- **THEN** elle distingue trois binaires PA et un binaire PZT sans autorité métier alternative
-
 ## ADDED Requirements
 
-### Requirement: Binaire PBO commun et socle modulaire
+### Requirement: Admission indépendante de la sélection officielle Nuitka PBO
 
-PBO MUST être livré comme un binaire applicatif commun regroupant le Kernel, pixs.core, pixs.auth, pixs.agent et pixs.pzt dans une même application modulaire. Les modules MUST conserver contrats publics, données et permissions propres ; leur présence MUST NOT imposer un démon par module. Les profils de processus MUST suivre runtime sans remplacer Django ni embarquer les exécutants PA/PZT.
+La sélection Nuitka PBO MUST provenir d'une observation directe HTTPS vérifiée et datée en UTC, suivie d'une revue explicitement autorisée du dossier figé. L'admission MUST lier le manifeste exact et la campagne dans un registre protégé distinct du candidat, non modifiable par le constructeur ou son appelant. Un booléen, un relevé auto-déclaré ou son empreinte seule MUST NOT établir cette autorité. Le constructeur MUST vérifier l'admission hors ligne.
 
-#### Scenario: Socle partagé par plusieurs rôles
+#### Scenario: Observation et revue du manifeste exact
 
-- **WHEN** la même release démarre des processus PBO web et worker
-- **THEN** ils utilisent le même binaire et le même graphe de composition, avec une activation de rôle explicite
+- **WHEN** une nouvelle campagne dispose d'une observation officielle exploitable, d'une sélection de la dernière stable non retirée, d'entrées figées vérifiées et d'une revue explicitement autorisée
+- **THEN** une admission liée à l'identité de campagne et au manifeste exact est conservée dans le registre protégé, sans que cette décision seule autorise installation, compilation ou qualification
 
-#### Scenario: Contrats conservés dans un processus
+#### Scenario: Preuve auto-déclarée ou registre substitué
 
-- **WHEN** Auth ou un module de gestion consomme une primitive Core dans le même processus
-- **THEN** il utilise son contrat public sans accès aux données privées ni canal IPC imposé entre ces modules
+- **WHEN** le demandeur fournit un booléen de validation, une admission dans son candidat, une identité de responsable non autorisée ou un registre de remplacement
+- **THEN** ces éléments ne valent pas admission et le contrôle refuse avant outils avec PBO_CAMPAIGN_EVIDENCE_INVALID, sans repli implicite ni compilation
 
-### Requirement: Compilation PBO Nuitka standalone
+#### Scenario: Observation officielle impossible ou non concluante
 
-PBO MUST être compilé avec Nuitka en mode standalone. Les livraisons Debian/Docker MUST contenir l'exécutable PBO commun, ses bibliothèques, runtime et ressources déclarés, sans imposer un fichier autoextractible unique. Le mode onefile MUST NOT remplacer standalone sans évolution approuvée. Les versions, options, imports dynamiques Django et données de package MUST être qualifiés explicitement.
+- **WHEN** HTTPS ou la date n'est pas vérifiable, la source est indisponible ou différente, ou que les données ne permettent pas d'établir la dernière stable non retirée
+- **THEN** aucune sélection n'est admise, aucune preuve rétroactive n'est inventée et aucune ancienne version n'est choisie implicitement
 
-#### Scenario: Distribution autonome complète
+### Requirement: Conservation et rattachement des preuves de sélection PBO
 
-- **WHEN** une distribution du binaire PBO est qualifiée
-- **THEN** les rôles web, worker et scheduler, imports Django, migrations, catalogues et ressources nécessaires fonctionnent avec les dépendances livrées et la configuration externe déclarée
+Le dossier figé MUST conserver entrées, manifeste, autorisation et admission sans réécriture. Le registre MUST préserver retraits et état courant ; une admission absente, retirée ou invérifiable MUST bloquer la construction. Le rapport MUST lier `selection_admission_ref`, `selection_admission_sha256` et `selection_manifest_sha256` aux preuves vérifiées, sans cycle d'empreintes. La reproduction MUST conserver dates et entrées sans nouvelle sélection.
 
-#### Scenario: Mode onefile substitué
+#### Scenario: Altération ou échange après admission
 
-- **WHEN** un build utilise onefile à la place du mode standalone retenu sans évolution approuvée
-- **THEN** il ne satisfait pas le profil de construction PBO
+- **WHEN** un fichier ou le manifeste est altéré, ou qu'une admission est présentée pour une autre campagne ou d'autres octets
+- **THEN** les empreintes ou l'identité divergent, la construction est refusée avec PBO_CAMPAIGN_EVIDENCE_INVALID et les preuves d'origine restent conservées
 
-### Requirement: Cython ciblé et mesuré dans PBO
+#### Scenario: Retrait ou état courant non vérifiable
 
-Dans PBO, Cython MUST être réservé aux optimisations ciblées dont le profilage identifie le coût et dont des mesures comparables démontrent un gain selon des critères définis avant recette. La qualification MUST vérifier ressources, contrats, sécurité, maintenabilité et non-régression ; Cython MUST NOT remplacer la chaîne Nuitka du PBO complet. Les exécutants indépendants PA/PZT MUST suivre leurs chaînes Cython distinctes.
+- **WHEN** l'admission est absente, retirée, inaccessible ou que son état courant est ambigu, y compris après restauration
+- **THEN** la construction reste bloquée avec PBO_CAMPAIGN_EVIDENCE_INVALID, sans réactivation depuis une ancienne copie favorable
 
-#### Scenario: Optimisation sans preuve
+#### Scenario: Reproduction avec admission et rapport liés
 
-- **WHEN** un module Cython est proposé dans PBO sans profilage ni comparaison mesurée du périmètre optimisé
-- **THEN** il n'est pas admis dans une composition qualifiée sur cette seule proposition
-
-#### Scenario: Gain ciblé qualifié
-
-- **WHEN** une optimisation Cython est évaluée à code fonctionnel, données, environnement, configuration et charge comparables
-- **THEN** les mesures mémoire, CPU, latence ou débit pertinents et les contrôles de non-régression justifient son admission sans affaiblir les contrats ou la sécurité
-
-### Requirement: Qualification du binaire PBO
-
-La construction du binaire PBO MUST qualifier versions de Nuitka, Python, dépendances, compilateur C, ABI, plateformes et options du profil standalone avant distribution. Le nom du fichier et les options CLI MUST être documentés explicitement. Un binaire compilé MUST NOT prouver à lui seul une réduction mémoire, un gain de débit ou une exécution Python parallèle sur plusieurs cœurs.
-
-#### Scenario: Compilation sans mesure de performance
-
-- **WHEN** un binaire PBO est construit sans recette de charge ni de ressources
-- **THEN** aucun gain de performance ni support multicœur effectif n'est annoncé sur cette seule base
+- **WHEN** les entrées et l'admission de la campagne d'origine restent vérifiées et utilisables pour une reproduction
+- **THEN** dates et versions d'origine sont conservées, le rapport lie les références et empreintes vérifiées d'admission et de manifeste, et le constructeur ne consulte pas PyPI pour sélectionner une autre version

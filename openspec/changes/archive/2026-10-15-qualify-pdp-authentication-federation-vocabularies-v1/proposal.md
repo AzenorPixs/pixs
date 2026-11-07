@@ -1,4 +1,6 @@
-# Proposal — qualify-pdp-authentication-federation-vocabularies-v1
+# C82 — Proposal — qualify-pdp-authentication-federation-vocabularies-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 Les deux enums exactes `AuthenticationAssurance` et `FederationTrust` existent déjà dans `src/pixs/core/authz/policy.py` et sont normées par `authorization-engine` § Assurances et faits du profil PDP minimal fermé v1. Il manque une qualification dédiée de leur fermeture et de l'identité des classes entre consommateurs en processus frais.

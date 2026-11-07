@@ -12,7 +12,7 @@ PRÉPARATION_DOCUMENTAIRE, 19 octobre 2026. Le choix d’architecture et la réd
 | [secrets-providers](../../specs/secrets-providers/spec.md) | Identité de workload, durée de vie, révocation, échec fermé, C01 systemd | Mode combiné explicite, préconditions matérielles et preuves cryptographiques |
 | [reference-composition](../../specs/reference-composition/spec.md) | Profil Debian local et adoption C01 | Critères d’admission en production pour la protection et le secours |
 | [backup-disaster-recovery](../../specs/backup-disaster-recovery/spec.md) | Objectifs de reprise, périmètres séparés, tests isolés, restauration autorisée | Perte du TPM d’origine, secours indépendant et remplacement des liaisons |
-| [Archive C01](../archive/2026-10-19-add-pbo-runtime-secret-provider/STATISTIQUES.md) et [harnais existant](../../../tests/integration/test_c01_systemd_harness.py) | Transport et cycle de vie fonctionnels avec fixtures publiques | Aucune preuve `host+tpm2` ni récupération de production déduite |
+| [Archive C01](../archive/2026-10-19-add-pbo-runtime-secret-provider/STATISTICS.md) et [harnais existant](../../../tests/integration/test_c01_systemd_harness.py) | Transport et cycle de vie fonctionnels avec fixtures publiques | Aucune preuve `host+tpm2` ni récupération de production déduite |
 
 Les recherches dans les cadrages, le canon et les changes actifs n’ont pas trouvé de contrat explicite équivalent. Les profils TPM/attestation PA/PZT et le coffre des clients natifs ont d’autres finalités ; leurs clés et identités ne sont pas réutilisées pour les secrets PBO.
 

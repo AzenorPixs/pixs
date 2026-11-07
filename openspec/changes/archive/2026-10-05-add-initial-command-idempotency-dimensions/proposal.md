@@ -1,4 +1,6 @@
-# Proposal — add-initial-command-idempotency-dimensions
+# C59 — Proposal — add-initial-command-idempotency-dimensions
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -1,4 +1,6 @@
-# Proposition — add-initial-feature-flag-fallback
+# O50 — Proposition — add-initial-feature-flag-fallback
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -1,3 +1,7 @@
+# B23 — Persistance et baux du runtime Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 Le canon Bulk v1 et ses validateurs mémoire sont livrés. Les données d'exécution, checkpoints, liaisons Jobs et scheduling ne sont pas encore persistés avec CAS et baux.
 

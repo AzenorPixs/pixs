@@ -1,4 +1,6 @@
-# Proposal — add-initial-frontend-contribution-declaration-v1
+# C80 — Proposal — add-initial-frontend-contribution-declaration-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 ## Why
 Le canon frontend définit déjà FrontendContributionDeclaration v1 (quatre exigences, sept scénarios). Les trois primitives frontend et ComponentManifest ne fournissent pas le contrôle composite en mémoire de ses six champs. Ce change implémente cette seule norme validée, sans en ajouter.
 ## What Changes

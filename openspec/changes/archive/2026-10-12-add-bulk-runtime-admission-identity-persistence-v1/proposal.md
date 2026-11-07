@@ -1,3 +1,7 @@
+# B38 — Persistance de l’identité d’admission du runtime Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Le canon `interactions` B10 exige une déduplication durable par clé complète

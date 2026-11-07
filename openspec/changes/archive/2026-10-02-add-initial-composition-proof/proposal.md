@@ -1,4 +1,6 @@
-# Preuve partielle honnête initiale validate/resolve
+# C44 — Preuve partielle honnête initiale validate/resolve
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 `reference-composition Preuve reproductible` exige une preuve versionnée graphe/contrats/profils/contrôles sans secret. Le pipeline `discover/validate/resolve` pur existe et est déterministe en mémoire, `compose` sans attestations refuse, mais aucune preuve sérialisée/versionnée des contrôles réellement exécutés n'est distribuée. Il s'agit d'une absence implémentable, non d'une incohérence.

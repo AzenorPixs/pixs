@@ -70,3 +70,28 @@ Le présent lot conserve son périmètre de réalisation, sans code engagé ici.
 Les copies requirements.md et empreintes de préparation sont historiques et
 doivent être réconciliées avec le canon avant réalisation ; le réseau ne
 redevient pas une responsabilité PA du fait d'une formulation héritée.
+
+
+## Addendum RSMP — orientations adoptées et détails proposés
+
+Statut : orientations D1A, D2A, D3A adoptées par validation humaine du 2026-10-26. Schémas, wire et API détaillés restent PROPOSÉS à revoir avant code. Seuls les six documents PA02 listés ici sont autorisés maintenant, sans code ni effet runtime.
+
+Détails proposés dans [contracts.md](./contracts.md), [identity-bindings.md](./identity-bindings.md) et [authority-policy.md](./authority-policy.md). Canon de référence : [pixs-agent](../../specs/pixs-agent/spec.md), [pzt](../../specs/pzt/spec.md), [core](../../specs/core/spec.md). Références propriétaires distinctes : composition et bootstrap PA01 dans [contracts.md](../add-pa-native-build-and-component-composition/contracts.md), PKI Z12 dans [proposal.md](../add-pzt-ca-hierarchy-rotation-and-recovery/proposal.md), installation C08 dans [proposal.md](../add-installation-and-first-configuration/proposal.md) ; ces propriétaires gardent leurs contrats. PA02 n'adopte aucun algorithme, clé, indice NV ou durée inédit, mais les profils PA02 peuvent devoir fixer les bornes manquantes avant code.
+
+Résumé adopté lisible sans historique : D1 document JSON provisionnement, D2 références stables PA et relation, D3 propriétaire unique avec transfert explicite. Confiance préinstallée, propriétaire admissible unique par ressource et périmètre, transfert explicite sous exclusion, fencing, réconciliation et autorité compétente. Aucun digest ne devient ancrage de confiance. Aucune valeur, preuve ou révision candidate ne vaut approbation.
+
+
+## Fermeture technique du codec pur — addendum 2026-10-26
+
+Cet addendum ferme la technique de la première unité, sans modifier l'historique et sans qualifier le raccord futur.
+
+L'unité est pure et sans confiance, en bibliothèque standard seule, pour Python 3.12 et versions suivantes retenues par le projet. Elle n'emploie ni import du paquet pixs.agent ni classe privée de Core. Elle ne fait ni entrée-sortie, ni appel réseau, ni accès persistant, ni opération cryptographique, ni lecture d'horloge.
+
+Les deux fichiers proposés pour la première unité sont src/pixs/pa_native/provisioning_contracts.py et tests/unit/test_pa_provisioning_contracts.py. Les noms sont reconnus libres comme nouveaux fichiers de forme. Le raccord de construction, y compris Cython, est à fermer séparément avec l'autre périmètre, sans modifier ses fichiers existants et sans qualification anticipée.
+
+Le constat historique de levée de fenêtre de priorité sur tests/unit le 26 octobre à 11:12:15 UTC ne vaut pas accord permanent ; chaque écriture future exige coordination et révisions fraîches de ressources et de réservation avant effet.
+
+Les orientations B, retrait et INIT A sont adoptées. Les sources Context8, NV7 et Init12 sont écrites et non testées. Aucun port ni vérificateur PA ou PZT n'est livré à ce stade.
+
+## Addendum RSMP fournisseur durable PA02 — principes A ADOPTÉS le 2026-10-26
+Décision PROVIDER-LOCAL-DURABLE-PA02 : choix A ADOPTÉ par validation humaine du 2026-10-26 ; choix B SQLite non retenu dans cette phase. Principes ADOPTÉS : fichiers protégés, journal dédié, instantané versionné, flock, fsync fichier ET parent, rename atomique, réconciliation. Interface, code et qualification restant à réaliser sous revue Codex normale. D1A D2A D3A conservés. Architecture 3 binaires PA et modes existants conservée, sans 4e binaire ni nouveau mode. Procédure initiale PA02 locale native PA, distincte du contrôle PBO-PA, sans exiger la disponibilité préalable PG ou PZT ; pas de canal de commandes PBO direct hors PZT ; parcours C08 PBO via PZT avec PA exécutant et rôle métier R01 préservés. Interface initiale exacte à fermer par NFDOC conforme aux cadrages avant code, sans UID chemin permissions par défaut. États exactement non-provisionné en-cours prêt échoué. Inconnu diagnostic sous en-cours fermé, pas état. Prêt local borné à ses prérequis propres. Codec 17 clés et comparateur inchangés. Requirements.md inchangé.

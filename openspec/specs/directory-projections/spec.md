@@ -3,8 +3,8 @@
 ## Purpose
 
 La projection d'annuaire rend consultables les identités numériques, groupes et
-appartenances de Pixs depuis un annuaire LDAP optionnel sans créer de seconde
-autorité et avec un repli contrôlé vers PostgreSQL.
+appartenances depuis un annuaire LDAP publié, obligatoire par Domaine selon LZT,
+avec PG source Core, état Kerberos distinct et repli de consultation contrôlé.
 
 ## Requirements
 
@@ -30,38 +30,30 @@ révocation ou suppression MUST être décidée par une Command Pixs autorisée.
 
 ### Requirement: LDAP sans autorité ni écriture métier
 
-LDAP MUST NOT devenir une source d'autorité, accepter une écriture métier ni
-importer un changement vers les primitives Core.
+La projection LDAP MUST NOT devenir source Core ni importer une écriture LDAP comme vérité métier. L'état opérationnel Kerberos durable normal MUST être géré dans LDAP par ses mécanismes autorisés et rester distinct des données Core projetées. La publication PG MUST le préserver et sa présence MUST NOT constituer une divergence Core. La reconstruction critique MUST suivre auth-managed-kerberos.
 
 #### Scenario: Écriture LDAP refusée
 
-- **WHEN** une modification d'identité, de groupe ou d'appartenance est détectée dans LDAP
-- **THEN** elle n'est pas importée vers Pixs et un diagnostic auditable signale la divergence
+- **WHEN** une entrée Core projetée est modifiée directement hors Command
+- **THEN** elle n’est pas importée et la divergence est signalée.
 
 ### Requirement: Fonctions de sécurité exclues de la projection
 
-Les ACL, permissions, décisions d'autorisation, authentification et mécanismes
-de révocation MUST NOT être délégués à cette projection.
+La projection seule MUST NOT fournir authentification, décisions d'autorisation ou ACL applicatives. Le service LDAP MUST pouvoir fournir séparément les fonctions autorisées par auth-managed-directory et auth-managed-kerberos, avec habilitations et protection distinctes. Un repli de consultation MUST NOT activer une méthode d'authentification.
 
-#### Scenario: Fonction de sécurité déléguée à LDAP
+#### Scenario: Fonction non sélectionnée
 
-- **WHEN** un provider de projection LDAP déclare fournir une ACL, une permission, une décision d'autorisation, une authentification ou une révocation
-- **THEN** il n'est pas sélectionné pour cette fonction et la composition est refusée
+- **WHEN** la seule capacité de projection est invoquée pour vérifier un mot de passe
+- **THEN** la demande est refusée sans droit d’authentification déduit.
 
 ### Requirement: Provider et mapping de projection déclarés
 
-Un provider de projection LDAP MUST déclarer sa version de contrat, les
-ressources projetées, les tenants et scopes admissibles, les attributs
-autorisés, son mapping versionné et ses limites de fraîcheur. Les identifiants
-internes Pixs MUST rester stables et le DN LDAP ainsi que tout identifiant
-externe MUST rester des mappings du provider, jamais des identifiants
-canoniques. Une donnée sans profil de gouvernance ou hors périmètre MUST NOT
-être projetée.
+Le provider MUST déclarer version, ressources, Instance/Domaine/tenants/scopes admissibles, attributs, mapping et fraîcheur. Les UUID Core MUST rester stables ; DN et identifiants externes MUST rester des mappings. Données non classifiées et périmètres non autorisés MUST NOT être exportés. La disponibilité de LZT MUST suivre les minima Domaine sans rendre tout connecteur externe obligatoire.
 
 #### Scenario: Mapping incomplet bloqué
 
-- **WHEN** un provider LDAP déclare une ressource sans mapping versionné ou sans périmètre autorisé
-- **THEN** son activation est refusée avant toute synchronisation
+- **WHEN** une ressource ne possède pas son mapping ou périmètre autorisé
+- **THEN** sa projection est bloquée avant effet.
 
 ### Requirement: Projection sortante après mutation confirmée
 

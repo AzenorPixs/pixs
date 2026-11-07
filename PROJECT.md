@@ -2,6 +2,13 @@
 
 Ce document décrit le projet Pixs dans son ensemble.
 
+Le cadrage consolidé du 31 octobre 2026 est défini au §45 : Instance Pixs,
+modes Standalone / ZT / Domaine, domaines et tenants, acteurs, organigrammes,
+services et responsabilités PA/PZT. Il constitue la cible documentaire de
+l'étape 1. Les contrats OpenSpec et réalisations antérieurs gardent leurs
+preuves et versions ; leurs écarts avec cette cible doivent être traités lors
+des étapes documentaires suivantes avant toute réalisation correspondante.
+
 ## 1. Objet
 
 Pixs l'Application Universelle est un framework applicatif modulaire destiné à servir de socle commun pour construire plusieurs applications et services métiers.
@@ -10,7 +17,7 @@ Pixs repose principalement sur :
 
 ```text
 Backend             : Django
-Stockage par défaut : PostgreSQL ; option Core OpenLDAP interne réversible
+Stockage Core       : PostgreSQL Instance / Domaine ; publication vers OpenLDAP
 Frontend            : TanStack
 Réactivité / Sync   : Electric lorsque nécessaire
 Identité minimale   : utilisateurs et groupes via pixs.core
@@ -18,10 +25,10 @@ Autorisation        : ACL et permissions via pixs.core
 Authentification    : pixs.auth essentiel indépendant, autonome sur PostgreSQL
 Gestion PA          : pixs.agent obligatoire, opérations système/utilisateur hors PZT
 Gestion réseau      : pixs.pzt obligatoire, pilotage de l'exécutable indépendant PZT
-Construction PBO    : Nuitka standalone ; exploitation Standalone ou ZT
+Construction PBO    : Nuitka standalone ; modes d’Instance Standalone / ZT / Domaine
 ```
 
-PostgreSQL constitue la source de vérité applicative par défaut de Pixs. Le complément proposé au §19.1 permet de déplacer le stockage Core concerné vers l'OpenLDAP interne après installation, puis de revenir à PostgreSQL par migration vérifiée ; il ne déplace pas les autres données applicatives.
+PostgreSQL reste la source de vérité Core et applicative, avec Base Instance et Bases Domaine séparées. LDAP et Kerberos sont obligatoires en mode Domaine. PG garde la référence Pixs ; l'état Kerberos durable normal est dans LDAP. La reconstruction complète depuis PG relève d'une urgence critique avec restauration ou recréation/reprovisionnement selon profil. Le §45 précise cette séparation ; l'ancienne option de stockage Core de référence dans LDAP est remplacée.
 
 Django porte les règles métier, les commandes, les transactions, les API et l'orchestration applicative.
 
@@ -40,7 +47,7 @@ Ces modules sont essentiels au même titre et restent composés lorsque le rése
 
 Le cadrage cible du 19 octobre 2026 retient `pixs.auth` comme module essentiel indépendant de `pixs.core`, avec une authentification locale autonome s'appuyant par défaut sur PostgreSQL. Les trois deltas de [define-essential-autonomous-auth-module](openspec/changes/define-essential-autonomous-auth-module/proposal.md) sont adoptés au canon le 20 octobre 2026, sans implémentation. Les autres dossiers Auth restent proposés.
 
-Les annuaires, KDC et systèmes externes ne sont pas nécessaires à cette autonomie. `pixs.auth` peut fournir l'identité à d'autres applications et gérer ses propres services OpenLDAP, KDC et Active Directory (`pixs.auth.directory.ad`) par sous-modules optionnels. Les connecteurs vers des sources externes, notamment LDAP, Kerberos, OIDC et SAML, sont des sous-modules à installer explicitement, absents de l'installation standard. Les moteurs de stockage, recherche et autres intégrations conservent leurs contrats et providers optionnels.
+Avant le mode Domaine, Auth peut authentifier directement sur PG Instance. En mode Domaine, LZT/OpenLDAP et KZT/MIT Kerberos sont obligatoires par domaine ; leur exploitation système relève de PA, leur administration d'Auth/Core et de PBO. L'authentification sur PG Domaine est disponible sous profil explicite. Les connecteurs externes LDAP/Kerberos/OIDC/SAML restent sélectionnables séparément ; la jonction native Windows et les GPO sont un objectif V1 dont l'intégration reste à qualifier (§45).
 
 L'orientation adoptée le 21 octobre 2026 regroupe le Kernel et les quatre modules obligatoires dans une même application distribuée par un binaire PBO commun compilé avec Nuitka en mode standalone. Leurs contrats publics, données, migrations et permissions restent distincts ; aucun processus autonome par module n'est imposé. Le même binaire peut démarrer plusieurs processus `web`, `worker`, `scheduler` ou autres rôles explicitement spécifiés, selon la configuration PBO et le budget de ressources réellement accordé à son environnement.
 
@@ -72,6 +79,8 @@ Extensions
 Themes
 Intégrations externes
 ```
+
+Le service système d’horloge est géré par PA lorsque le profil retenu l’exige, tandis que pixs.agent administre PA hors responsabilités réseau PZT. Tous les échanges entre PBO et PA transitent par PZT. Kernel, Core, Auth, PA et PZT consomment l’interface commune du runtime, et le Kernel demeure agnostique du fournisseur. Un seul service est géré par horloge, non un service par module, avec réutilisation d’un composant conforme avant toute installation. Le fonctionnement hors ligne reste borné et qualifié, et les fonctions sans besoin d’UTC continuent selon leurs contrats ; les autres gardes de mandat, politique et révocation restent opposables.
 
 ## 2. Principes architecturaux fondamentaux
 
@@ -759,7 +768,7 @@ La persistance locale est limitée par la gouvernance des données. `PUBLIC` et 
 
 Un changement de tenant ou de scope, une déconnexion, une expiration, une révocation, une suppression ou un tombstone doit invalider ou purger les projections et Commands locales concernées selon la politique de cycle de vie. Les réservations de quota, entitlements et permissions ne sont pas acquises localement ; elles sont réévaluées et éventuellement réservées côté serveur lors de la soumission. Les imports, exports, opérations bulk, purges et actions sensibles restent désactivés hors ligne par défaut.
 
-Le socle stabilise les contrats et les points d'extension offline-first sans imposer Electric, une base navigateur, un service worker ou un provider local particulier. L'implémentation d'un provider de réplication, d'un stockage local sécurisé et des parcours UX reste conditionnelle à chaque capacité ; elle ne doit pas élargir le Kernel ni modifier les garanties du stockage de référence déclaré, PostgreSQL par défaut et OpenLDAP interne pour le seul périmètre Core explicitement migré.
+Le socle stabilise les contrats et les points d'extension offline-first sans imposer Electric, une base navigateur, un service worker ou un provider local particulier. L'implémentation d'un provider de réplication, d'un stockage local sécurisé et des parcours UX reste conditionnelle à chaque capacité ; elle ne doit pas élargir le Kernel ni modifier les garanties du stockage de référence déclaré, PostgreSQL pour les références Core et applicatives, avec publication LDAP distincte.
 
 La définition de ces contrats, versions et frontières de sécurité est prioritaire afin de ne pas fermer les possibilités futures des API et des modèles. L'activation fonctionnelle et le support offline d'une ressource restent une décision ultérieure, soumise à la conformité de la capacité, de sa gouvernance, de son provider local et de sa stratégie de conflit.
 
@@ -852,7 +861,7 @@ Pixs couvre notamment :
 * `pixs.auth` essentiel indépendant, authentification locale autonome PostgreSQL, MFA et sous-modules d'identité et d'annuaire ;
 * le provisionnement SCIM optionnel des identités et groupes ;
 * le backend Django ;
-* PostgreSQL comme stockage applicatif par défaut et la migration Core réversible vers l'OpenLDAP interne selon le §19.1 ;
+* PostgreSQL comme source Core/applicative, avec bases Instance et Domaine séparées et publication LDAP selon les §19 et §45 ;
 * le frontend TanStack ;
 * Electric pour les besoins de synchronisation et de réactivité ;
 * l'API-first ;
@@ -869,7 +878,7 @@ Pixs couvre notamment :
 * la testabilité et le déterminisme ;
 * l'optimisation transverse.
 
-Pixs ne doit imposer aucun provider concret d'annuaire, d'authentification, de stockage ou d'intégration externe.
+Le Kernel reste agnostique des providers ; les profils déclarent leurs implémentations requises. Le mode Domaine sélectionne notamment OpenLDAP/LZT et MIT Kerberos/KZT, sans ajouter ces implémentations au Kernel (§45).
 
 Pixs ne doit pas confondre identité minimale, autorisation, authentification et intégrations externes.
 
@@ -881,7 +890,7 @@ Architecture conceptuelle et exemples de déploiement :
 flowchart TB
     U["PFO / clients / intégrations"]
     subgraph H["Hôte local — PBO/PFO, PA et PZT"]
-        subgraph B["PBO — Nuitka standalone / Django, exploitation Standalone ou ZT"]
+        subgraph B["PBO — Nuitka standalone / Django, modes d’Instance Standalone / ZT / Domaine"]
             M["Modules fonctionnels"]
             AU["pixs.auth obligatoire — authentification locale autonome"]
             A["pixs.agent obligatoire — configuration, administration et supervision de PA hors PZT"]
@@ -914,7 +923,7 @@ flowchart TB
     end
     subgraph R2["Hôte distant B — avec PBO/PFO facultatifs"]
         F2["PFO distant B"]
-        B2["PBO distant B — même binaire Nuitka standalone, exploitation Standalone ou ZT"]
+        B2["PBO distant B — même binaire Nuitka standalone, modes d’Instance Standalone / ZT / Domaine"]
         D2[("PostgreSQL distant B")]
         T2["PZT distant B — Cython, ressources propres"]
         P2["PA distant B — Cython, ressources propres"]
@@ -985,11 +994,11 @@ PostgreSQL
 
 ## 6. PostgreSQL — stockage applicatif par défaut
 
-PostgreSQL constitue la source de vérité applicative par défaut de Pixs. Le choix postinstallation du §19.1 peut engager l'OpenLDAP interne comme stockage de référence du périmètre Core migré, sans déplacer les autres domaines applicatifs.
+PostgreSQL constitue la source de vérité Core et applicative. Les bases Instance, Domaine, CZT, DZT et PKIZT ont des périmètres et propriétaires distincts ; leurs répliques ne fusionnent pas leurs données (§45).
 
 Les états métier de référence de Pixs doivent être conservés dans PostgreSQL sauf spécification explicitement contraire d'une capacité spécialisée.
 
-Les primitives `User`, `Group`, `Membership`, `ACL` et `Permission` fournies par `pixs.core` sont initialement persistées dans PostgreSQL. Le provider Core sélectionné après une migration vérifiée porte les données et relations du périmètre engagé ; Core conserve leurs contrats, identifiants et invariants. Le retour OpenLDAP vers PostgreSQL reprend l'état courant, sans simple réactivation d'une ancienne copie.
+Les primitives Core sont persistées dans la PG propriétaire du périmètre Instance ou Domaine. Core conserve leurs contrats, identifiants et invariants ; LDAP reçoit les identités et groupes publiés, sans transfert de la vérité Core ou des ACL applicatives.
 
 Les entités persistées par Pixs utilisent des UUIDv7 comme identifiants internes stables. Un identifiant OIDC, SAML, LDAP ou fourni par une autre intégration ne peut pas devenir implicitement la clé interne de l'entité Pixs.
 
@@ -1246,7 +1255,7 @@ pixs.core
 
 Les utilisateurs, identités numériques, groupes, tenants, appartenances, scopes racines, rôles et ACL sont donc natifs dans Pixs dès la composition minimale, sans être intégrés au Kernel lui-même. La capacité de multi-tenancy peut fonctionner en mode mono-tenant, mais ses frontières et invariants restent disponibles dès la première version. Les types de scopes enfants restent apportés par les modules qui en possèdent le modèle métier.
 
-PostgreSQL constitue le stockage de référence initial de ces primitives. L'option du §19.1 permet de migrer un périmètre Core cohérent vers l'OpenLDAP interne puis de revenir à PostgreSQL, sans changer la propriété logique Core ni créer de références concurrentes. L'identité numérique reste le référentiel authentifiable ; les enrichissements de modules spécialisés utilisent ses contrats publics.
+PostgreSQL conserve la référence de ces primitives, répartie entre Instance et Domaines selon le §45. Les identités numériques sont authentifiables, distinctes de l'individu commun ; les enrichissements des modules utilisent les contrats publics Core.
 
 Le Core ne doit pas devenir un second Kernel : il contient des primitives fonctionnelles communes, tandis que le Kernel reste limité aux mécanismes du framework.
 
@@ -1361,7 +1370,7 @@ StorageProvider
 └── S3
 ```
 
-Aucun provider concret d'annuaire, d'authentification, de stockage, de recherche ou d'intégration externe ne fait partie du socle architectural obligatoire.
+Le socle générique n'intègre aucun provider concret au Kernel. Les profils et modes peuvent imposer des implémentations déclarées, notamment OpenLDAP et MIT Kerberos pour Domaine (§45).
 
 Un module consommateur doit dépendre du contrat lorsque cela est possible et non de l'implémentation concrète du provider.
 
@@ -1514,11 +1523,11 @@ Core Identity / Authorization Primitives
 └── Permission
 ```
 
-PostgreSQL constitue leur stockage de référence par défaut. Après migration Core autorisée et vérifiée selon le §19.1, l'OpenLDAP interne porte le périmètre engagé jusqu'à un retour PostgreSQL lui aussi vérifié. L'évaluation des droits reste assurée par Pixs, quel que soit ce stockage.
+PostgreSQL conserve la référence des individus, identités, groupes et ACL applicatifs. La Base Instance et chaque Base Domaine ont leurs périmètres ; LDAP consomme les références PG et porte l'état Kerberos durable normal ; la reconstruction complète est une procédure d'urgence critique. L'évaluation des droits reste dans Pixs.
 
 Les scopes racines sont fournis par `pixs.core`. Les scopes enfants (`Organization`, `Workspace`, `Project` ou autre type namespacé) sont apportés par les modules qui en possèdent le modèle métier ; ils restent rattachés à un tenant et à un parent unique.
 
-Un utilisateur peut appartenir à zéro, un ou plusieurs groupes. Un utilisateur peut être dépourvu d'identité numérique. Une identité numérique peut être liée à zéro ou un utilisateur, mais un utilisateur ne peut être lié qu'à zéro ou une identité numérique. Un compte de service est obligatoirement une identité numérique, mais une identité numérique n'est pas nécessairement un compte de service.
+Un individu Core peut appartenir à plusieurs domaines et disposer de plusieurs identités numériques par domaine. Chaque identité est liée explicitement à zéro ou un individu ; les identités techniques peuvent exister sans individu. Les profils et habilitations des identités restent distincts. Un compte de service est une identité numérique (§45.4).
 
 Un `Tenant` est la frontière technique d'isolation et de contexte d'autorisation. Une `Organization` peut représenter une entité métier, mais n'est pas nécessairement la frontière technique. Une identité numérique peut appartenir à plusieurs tenants au travers de `TenantMembership`, et une appartenance est explicitement activable, révocable et contextualisée.
 
@@ -1547,47 +1556,39 @@ Les rôles regroupent des permissions et simplifient l'administration. Les ACL p
 
 ## 19. Intégrations externes et annuaires
 
-Les annuaires et autres systèmes externes sont des capacités optionnelles apportées par des modules/providers. Aucun annuaire concret ne fait partie du cadrage central de Pixs.
+PG est la source de vérité des individus, identités numériques déclarées,
+groupes et ACL applicatifs. Le Domaine possède un OpenLDAP obligatoire,
+publié depuis les PG propriétaires et consultable par les applications selon
+leurs droits. Les écritures de référence passent par les contrats Core/Auth
+et les Commands propriétaires. Les ACL techniques LDAP protègent l'annuaire
+sans remplacer les autorisations applicatives.
 
-Architecture de principe :
+Les contrats de consultation Pixs contrôlent droits et fraîcheur ; une lecture
+LDAP indisponible ou non convergée peut revenir à PG avec état DEGRADED selon
+le profil. Ce repli de lecture n'active aucune authentification de secours.
+Toute synchronisation déclare flux, transformations, erreurs, conflits et
+opérations destructives ; aucune double autorité n'est implicite.
 
-```text
-PostgreSQL
-source de vérité Pixs
-      │
-      ▼
-pixs.core
-Users / DigitalIdentity / Tenants / Groups / ACL
-      │
-      │ contrat / projection / synchronisation éventuelle
-      ▼
-External Provider
-```
+La publication est sortante, idempotente et observable ; fraîcheur PG/LDAP,
+retards et indisponibilités sont distincts. L'authentification LDAP est une
+capacité explicitement autorisée et pilotée par Auth, avec vérification
+déléguée à qualifier. Le backend LDAP porte l'état Kerberos durable normal ;
+la reconstruction complète depuis PG relève d'une procédure critique, avec
+restauration ou recréation des clés et reprovisionnement selon le profil. Les connecteurs externes restent des
+capacités séparées sans synchronisation bidirectionnelle implicite (§45.9).
 
-Toute projection ou synchronisation vers un système externe doit préciser explicitement le sens des flux, les données autoritaires, les transformations, les conflits, les erreurs, l'idempotence et les opérations destructives éventuelles.
+<a id="191-choix-postinstallation-du-stockage-core--proposition-du-19-octobre-2026"></a>
 
-Aucune synchronisation bidirectionnelle implicite ne doit être supposée.
+### 19.1 Stockage Core et ancienne proposition réversible
 
-Une projection LDAP peut être sélectionnée comme capacité optionnelle de
-consultation des seules `DigitalIdentity`, `Group` et `Membership` de
-`pixs.core`. Dans ce rôle de projection, PostgreSQL demeure leur source de vérité : toutes les écritures
-passent par Django et une Command autorisée, puis sont projetées vers LDAP de
-manière sortante, idempotente et traçable. La consultation passe par le
-contrat Core, préfère LDAP lorsqu'il est disponible et suffisamment frais, et
-revient à PostgreSQL lorsqu'il est indisponible ou non convergé ; cet état est
-explicitement `DEGRADED` et diagnostiquable. LDAP ne porte ni ACL, ni
-permission, ni décision d'autorisation, ni mécanisme de révocation, ni
-authentification par cette capacité.
-
-### 19.1 Choix postinstallation du stockage Core — proposition du 19 octobre 2026
-
-Par défaut, les utilisateurs, groupes et ACL sont stockés dans PostgreSQL. Le [change de stockage réversible](openspec/changes/add-reversible-core-directory-storage/proposal.md) propose de sélectionner ensuite l'OpenLDAP interne géré par Pixs comme stockage de référence, avec migration dans les deux sens. Le retour vers PostgreSQL reprend les données LDAP courantes, y compris les modifications réalisées depuis l'aller ; il ne réactive pas simplement l'ancienne copie.
-
-Cette option est distincte de la projection de consultation du §19. Core demeure propriétaire logique des données et Django porte les Commands ; le provider sélectionné porte leur stockage physique. Le plan inclut les relations nécessaires aux invariants, identités, appartenances, permissions, versions et révocations applicables. Les ACL Pixs peuvent être stockées dans LDAP sans devenir les ACL techniques slapd : leur évaluation reste dans le moteur Pixs.
-
-Le plan doit préserver identifiants et sémantique des droits, vérifier la copie et les relations, maîtriser les écritures concurrentes et engager une génération unique de stockage avant reprise. L'aller et le retour ont les mêmes garanties de reprise, audit et conservation des retraits. Une panne LDAP ne déclenche pas de repli vers une copie PostgreSQL périmée. Les sessions et justificatifs Auth, les secrets et les autres données applicatives ne sont pas déplacés implicitement.
-
-Les contraintes et deltas canoniques existants restent inchangés tant que la proposition n'est pas adoptée. Les mentions de PostgreSQL comme source Core dans les cadrages et dossiers précédents décrivent le profil par défaut ; cette option explicite borne leur évolution. Elle ne sélectionne ni AD ni LDAP externe comme stockage Core. Les garanties transactionnelles et les interactions entre Core LDAP et données PostgreSQL doivent être qualifiées avant réalisation. Aucun code ni migration de données n'est produit.
+Le cadrage du 31 octobre conserve PG comme source Core et remplace l'ancienne
+orientation de migration du référentiel Core vers OpenLDAP. Le dossier
+[de proposition antérieure](openspec/changes/add-reversible-core-directory-storage/proposal.md)
+est conservé actif pour traçabilité après réconciliation documentaire E3.
+Son objectif est remplacé et non sélectionnable ; ses anciens deltas ne sont
+pas une cible à synchroniser. Son code, ses tâches et ses preuves restent
+conservés, sans clôture ni réouverture.
+PG garde la souveraineté Core. L'état Kerberos durable normal réside dans LDAP ; la reconstruction complète suit un parcours critique distinct.
 
 ## 20. Authentification
 
@@ -1605,7 +1606,7 @@ pixs.auth essentiel ── contrats publics ──► pixs.core
 ├── méthodes locales, MFA, sessions et récupération
 ├── forge/enrôlement ──► Commands Core
 ├── fournisseur d'identité ──► applications clientes OIDC/SAML
-├── services propres activables ──► OpenLDAP et/ou KDC Kerberos
+├── services Domaine requis ──► OpenLDAP/LZT et MIT Kerberos/KZT, exploitation PA
 └── sources externes ──► sous-modules à installer séparément
 ```
 
@@ -1615,13 +1616,13 @@ Le [catalogue et les dépendances](openspec/changes/define-essential-autonomous-
 
 Le rôle fournisseur d'identité permet à Pixs d'émettre vers des applications clientes approuvées, via sous-modules OIDC/SAML. Ce rôle est distinct de la consommation d'un fournisseur externe. L'émission sortante n'est pas activée par défaut.
 
-Le sous-module optionnel `pixs.auth.directory.ad` permet également de gérer un domaine Active Directory propre : provisionnement, configuration, démarrage, arrêt, santé et reprise. Il reste non requis et non activé par défaut. Son annuaire, Kerberos et DNS sont coordonnés avec les services sélectionnés ; il ne nécessite pas de connecteur vers un AD externe. PostgreSQL reste le stockage Auth par défaut et la référence Core initiale, sous réserve de l'option OpenLDAP interne du §19.1 ; le contrôleur conserve son stockage et son autorité techniques de domaine. Produit, plateforme et compatibilité sont à qualifier dans [add-auth-managed-active-directory](openspec/changes/add-auth-managed-active-directory/proposal.md).
+Les capacités de gestion OpenLDAP et KDC sont requises par le mode Domaine et exploitées par PA sous administration Core/Auth/PBO. Les profils pré-domaine conservent l'authentification locale sur PG. L'objectif de jonction native Windows/GPO dans le même Domaine Pixs doit être qualifié avec OpenLDAP et MIT KZT ; le dossier [Active Directory](openspec/changes/add-auth-managed-active-directory/proposal.md) reste une source à réconcilier, sans fournisseur sélectionné par déduction.
 
-`pixs.auth` peut provisionner et piloter son propre OpenLDAP et son propre KDC, ensemble ou séparément. Ces services ont un processus et un lifecycle distincts de Django ; ils restent non requis et non démarrés par défaut. Leur activation ne nécessite aucun connecteur vers une infrastructure externe et ne déclenche pas la migration Core du §19.1. PostgreSQL conserve son autorité par défaut et pour les données hors périmètre migré ; aucun backend PostgreSQL natif n'est supposé pour slapd ou le KDC.
+Auth administre les identités et politiques ; PA installe, configure et exploite LZT/KZT par les contrats Agent. Chaque Domaine a au moins un LZT et un KZT et son realm. La présence d'un composant dans un artefact ne démarre pas un service avant ses vérifications d'activation. Aucun backend PostgreSQL natif slapd/KDC n'est supposé.
 
 Les authentifications auprès de LDAP, Kerberos, OIDC, SAML ou autres sources externes passent par des sous-modules `pixs.auth.sources.*` absents de l'installation standard. Leur installation, configuration de confiance et activation sont distinctes. Une panne externe n'active pas automatiquement une connexion locale et ne réduit pas l'assurance exigée.
 
-La projection LDAP de consultation du §19 conserve son contrat sans authentification. Une capacité d'authentification portée par le propre OpenLDAP est déclarée séparément. Une carte à puce ou un certificat constitue un moyen extensible ; empreinte digitale et visage peuvent vérifier localement une passkey sans transmettre les données biométriques à Pixs. Aucun matériel ni annuaire n'est obligatoire pour le profil autonome.
+Publication LDAP, authentification LDAP autorisée et état Kerberos restent des fonctions distinctes. L'authentification LDAP est déléguée à Auth selon un profil qualifié ; passkeys, TOTP et moyens extensibles restent soumis aux politiques. La biométrie locale d'une passkey ne transmet pas ses données à Pixs.
 
 ### 20.3 Confiance, assurance et sessions
 
@@ -1638,7 +1639,7 @@ authentication_assurance SINGLE_FACTOR | MULTI_FACTOR | PHISHING_RESISTANT
 federation_trust         UNTRUSTED | TRUSTED | STRONGLY_BOUND
 ```
 
-Un provider peut mapper ses claims, méthodes, preuves ou contextes d'authentification vers ces niveaux. La présence d'un claim externe ne suffit pas à augmenter l'assurance sans politique de confiance explicite. Les opérations courantes peuvent utiliser `SINGLE_FACTOR` ; les opérations d'administration, de sécurité, d'export sensible ou de suppression exigent au minimum `MULTI_FACTOR`, avec step-up si le contexte courant est insuffisant. `PHISHING_RESISTANT` est une capacité renforcée optionnelle.
+Les mappings d'assurance reposent sur des preuves et politiques explicites. La MFA est configurable par profil, y compris pour l'administration, sans obligation générale Pixs. Un profil peut exiger MULTI_FACTOR ou PHISHING_RESISTANT ; le chemin doit être qualifié et impose alors step-up ou refus si les preuves sont insuffisantes (§45.9).
 
 Chaque authentification réussie produit un contexte d'authentification vérifié, limité dans le temps et rattaché à une `DigitalIdentity`, un provider, une session éventuelle et un `ScopeContext`. Les sessions et credentials peuvent être opaques ou autonomes selon le provider, mais la révocation, l'expiration, la fraîcheur et la réutilisation doivent rester contrôlables par le backend.
 
@@ -1660,8 +1661,8 @@ PIXS.CORE
       │
       ▼
  Stockage Core de référence
- PostgreSQL par défaut
- OpenLDAP interne après migration réversible
+ PostgreSQL Instance / Domaine
+ Publication LDAP ; état Kerberos normal LDAP, reprise critique depuis PG
 
 AUTHENTIFICATION
 └── pixs.auth essentiel, indépendant de Core
@@ -1681,7 +1682,7 @@ INTÉGRATIONS EXTERNES
 └── Modules / Providers optionnels
 ```
 
-Django reste l'autorité métier et les données sont lues depuis le stockage de référence déclaré : PostgreSQL par défaut, ou OpenLDAP interne pour le seul périmètre Core migré selon le §19.1. Les providers externes peuvent authentifier, projeter, synchroniser ou enrichir selon leurs contrats sans devenir implicitement la source de vérité applicative.
+Django conserve l'autorité métier et les références Core/applicatives sont dans PG Instance/Domaine. Les données Core publiées dans LDAP et l'état Kerberos durable normal ont des contrats distincts ; la reprise complète depuis PG est critique (§45). Les providers externes ne deviennent pas implicitement la source de vérité Core.
 
 ## 22. Internationalisation
 
@@ -1966,7 +1967,7 @@ Toute ressource tenant-scoped doit être évaluée dans un contexte tenant expli
 
 Les identités d'administration plateforme peuvent accéder à plusieurs tenants uniquement au travers d'une permission explicite, d'un contexte d'accès explicite et d'un audit obligatoire. Un accès inter-tenant ne constitue jamais un bypass implicite des ACL.
 
-Les cardinalités d'identité sont obligatoires : une identité numérique est liée à au plus un utilisateur et un utilisateur est lié à au plus une identité numérique. Un compte de service ne peut exister sans identité numérique. Une identité numérique peut appartenir à plusieurs tenants, mais chaque appartenance doit être explicitement représentée.
+Une identité numérique est liée à au plus un individu ; un individu peut posséder plusieurs identités par domaine, chacune avec ses profils et habilitations. Un compte de service a une identité numérique et chaque appartenance tenant reste explicite. Les contrats v1 antérieurs doivent être amendés avant réalisation du nouveau modèle.
 
 ## 28. Commands, Queries, événements et hooks
 
@@ -2132,13 +2133,13 @@ Le cap architectural de Pixs repose sur les principes de premier ordre suivants.
 18. **Explicit over implicit** — dépendances, providers, permissions, hooks, synchronisations et surcharges sont déclarés, inspectables et explicables.
 19. **Optimization is transverse** — les performances sont mesurées et optimisées transversalement sans sacrifier sécurité, cohérence, modularité ou déterminisme.
 
-Ces principes complètent les exigences de support multilingue natif, de Light/Dark, de PostgreSQL comme stockage par défaut et de Django comme autorité métier. L'option de stockage Core du §19.1 conserve ces principes et leurs garanties.
+Ces principes complètent le support multilingue, Light/Dark, PG comme source Core/applicative et Django comme autorité métier. La répartition Instance/Domaine et les services LDAP/Kerberos suivent le §45.
 
 ## 32. Invariants architecturaux
 
 Les invariants suivants constituent le cap architectural initial de Pixs :
 
-1. PostgreSQL est la source de vérité applicative par défaut ; le périmètre Core engagé selon `core-storage` peut utiliser l'OpenLDAP interne après migration réversible vérifiée. Les autres domaines gardent leur stockage déclaré ; aucune double autorité ni bascule implicite n'est admise.
+1. PostgreSQL conserve la source Core/applicative dans les bases Instance et Domaine ; LDAP publie les références Core et conserve l'état Kerberos durable normal ; une reconstruction complète depuis PG est une procédure critique (§45).
 2. Django est l'autorité pour les règles métier, commandes, transactions et contrôles d'autorisation.
 3. Le Kernel ne contient aucune logique métier et ne connaît aucun provider concret.
 4. `pixs.core`, `pixs.auth`, `pixs.agent` et `pixs.pzt` constituent le socle modulaire obligatoire de PBO au-dessus du Kernel. Core fournit les primitives communes consommées par les trois autres via contrats publics ; l'ordre de chargement dépend du graphe déclaré. La désactivation réseau ne retire aucun de ces modules ni le module DNS essentiel.
@@ -2148,7 +2149,7 @@ Les invariants suivants constituent le cap architectural initial de Pixs :
 8. Les dépendances entre composants sont explicites et les dépendances circulaires sont interdites.
 9. Les contrats sont préférés aux dépendances directes entre implémentations.
 10. Les sous-modules utilisent le système de composants commun et ne disposent pas d'un moteur architectural parallèle.
-11. Aucun provider concret d'annuaire, d'authentification, de stockage ou d'intégration externe n'est obligatoire ni privilégié.
+11. Le Kernel reste agnostique des providers ; chaque profil déclare ses providers requis, dont OpenLDAP et MIT Kerberos en mode Domaine (§45).
 12. L'authentification, les utilisateurs/groupes de référence et l'autorisation sont des responsabilités distinctes.
 13. Un `Tenant` constitue une frontière technique d'isolation et de contexte d'autorisation ; le mode mono-tenant reste compatible avec ce modèle.
 14. Une identité numérique peut appartenir à plusieurs tenants au travers d'appartenances explicites, activables et révocables.
@@ -2189,7 +2190,7 @@ Les invariants suivants constituent le cap architectural initial de Pixs :
 49. Toute opération susceptible d’être rejouée doit définir une stratégie d’idempotence ou garantir explicitement qu’elle ne peut pas être rejouée.
 50. Pixs doit préférer un échec explicite et diagnostiquable à une résolution implicite, ambiguë ou non déterministe lorsqu’une précondition architecturale n’est pas satisfaite.
 51. Toute évolution incompatible d’une interface publique, d’un contrat ou d’un identifiant inter-composants doit être explicitement versionnée et ne peut être introduite comme une modification transparente.
-52. `Tenant` est la racine technique d'un `ScopeContext` ; tout scope enfant appartient à un tenant et possède un parent unique.
+52. Le tenant reste la racine des scopes enfants ; en mode Domaine il appartient à un Domaine. Les propriétés Instance/Domaine/Tenant et leur évolution contractuelle suivent le §45, sans altérer implicitement ScopeContext v1.
 53. Toute ressource possède une propriété canonique unique ; `scope_id` ne peut être utilisé sans `tenant_id` cohérent et une ressource platform-scoped est explicitement hors tenant.
 54. Le contexte de scope est explicite, immuable pendant l'opération et propagé aux traitements et caches concernés ; aucun héritage ou élargissement d'accès n'est implicite.
 55. `DigitalIdentity` est la référence Pixs de l'authentification ; un provider ne devient jamais la source de vérité des utilisateurs, groupes, appartenances, ACL ou permissions.
@@ -2380,13 +2381,13 @@ Un module consommant un contrat doit pouvoir utiliser une autre implémentation 
 
 ### Authentification
 
-Un provider d'authentification ne modifie pas implicitement le stockage de référence des `User`, `DigitalIdentity`, `Group` ou `ACL`. Seule la migration Core postinstallation du §19.1 peut engager l'OpenLDAP interne à la place du PostgreSQL initial, avec retour vérifié ; l'évaluation des droits reste dans Pixs.
+Un provider d'authentification ne change ni le stockage de référence Core PG ni la propriété des identités/groupes/ACL. LDAP/Kerberos suivent leurs contrats normaux et leur reconstruction d'urgence critique (§45).
 
 La recette du cadrage Auth essentiel adopté et de ses compléments encore proposés devra vérifier la présence essentielle de `pixs.auth`, l'autonomie locale PostgreSQL, les méthodes locales et leur enrôlement, l'absence des connecteurs externes dans l'installation standard et l'absence de démarrage implicite d'OpenLDAP/KDC. Les capacités optionnelles ne sont revendiquées qu'après qualification de leurs propres scénarios ; aucune preuve existante ne les couvre par anticipation.
 
 ### Identité et assurance d'authentification
 
-Une authentification valide doit produire un contexte rattaché à une `DigitalIdentity`, à un provider explicitement approuvé, à une période de validité et au `ScopeContext` applicable. Le contexte doit exposer séparément l'assurance de l'identité, l'assurance de l'authentification et la confiance fédérée. Une opération sensible doit exiger `MULTI_FACTOR` au minimum et déclencher un step-up lorsque nécessaire. Les tests doivent également couvrir l'expiration, la révocation, la rotation, le rejeu, la liaison explicite de comptes et la récupération sans élévation implicite.
+Une authentification valide produit un contexte lié à l'identité numérique, au provider approuvé, à la validité et au périmètre applicable. L'assurance d'identité, d'authentification et la confiance fédérée sont distinctes. Le profil détermine la MFA requise et les contrôles de step-up, de fraîcheur et de refus (§45.9).
 
 ### Moteur d'autorisation
 
@@ -2618,11 +2619,78 @@ Une modification incompatible d’un contrat, d’une interface publique ou d’
 
 ## 34. OpenSpec
 
+Les inventaires et preuves datés de ce chapitre décrivent leurs versions
+historiques. Le cadrage consolidé du §45 remplace notamment l'orientation de
+stockage Core réversible, les anciens modes et cardinalités et la répartition
+DNS/PKI concernée. La préparation documentaire E3 et la réconciliation des
+propositions concernées sont réalisées selon ACL-PIXS-2026-10-31-E3-R1.
+O41 conserve son dossier actif mais son objectif est remplacé et non
+sélectionnable. Les relevés historiques restent datés ; aucun résultat
+produit n'est déduit de cette réconciliation.
+
+La [réconciliation C20 du 31 octobre 2026](openspec/changes/define-common-pbo-binary-and-resource-profiles/COUVERTURE_DELTAS_ACSM.md)
+conserve les choix déjà adoptés et les preuves historiques. Deux exigences de
+preuve officielle Nuitka, avec six scénarios, restent proposées dans le
+[delta actif](openspec/changes/define-common-pbo-binary-and-resource-profiles/specs/reference-runtime/spec.md),
+sans synchronisation au canon. Leur adoption et leur réalisation restent
+distinctes ; aucun binaire n'est qualifié et aucune performance n'est démontrée
+par cette synthèse.
+
 Pixs est spécifié par capacités. Cette section et la [synthèse du README](README.md#openspec) constituent le suivi documentaire à entretenir pendant toute la vie du logiciel ; les spécifications canoniques restent la source de vérité.
 
 ### Suivi des spécifications et des changes
 
-#### État courant au 21 octobre 2026
+#### Relevé courant au 1er novembre 2026
+
+Recomptage du 1er novembre 2026 pour le plan CGP-PIXS-2026-10-31-R1 :
+**117 changes actifs et 186 dossiers archivés**, soit **303 dossiers** et
+**61,39 % de dossiers archivés** (186 / 303). Le registre conserve
+**301 codes logiques**, dont **184 changes logiques archivés** ; les deux
+reprises historiques O55/C66 expliquent les emplacements supplémentaires.
+Le canon compte **91 capacités, 1 042 exigences et 1 295 scénarios**.
+Les cases restent à **37/1 111** pour les actifs et **1 534/1 534** pour les
+archives par emplacement. Ces compteurs documentaires ne mesurent ni
+qualification, ni livraison, ni activation.
+
+Sources : [canon](openspec/specs/), [registre des codes](openspec/BATCH_CODES.md)
+et [cartographie](DEVELOPMENT_MAP.md). Les dix ouvertures E3 augmentent le
+nombre de dossiers sans nouvel archivage ; la variation du ratio ne mesure
+pas une régression fonctionnelle. Les relevés historiques ci-dessous gardent
+leurs dates, leurs chiffres et la portée de leurs preuves.
+
+#### Découpage RFC 2119 en 21 lots — 26 octobre 2026
+
+La migration historique [adopt-rfc2119-keywords](openspec/changes/archive/2026-09-10-adopt-rfc2119-keywords/README.md) est répartie en 21 lots documentaires, dont le premier conserve le chemin d'origine. Les 56 fichiers normatifs sont conservés à octets identiques, soit 205 exigences et 206 scénarios sans duplication. Les propositions complètes et les deltas des 21 lots passent les contrôles stricts de revalidation historique ; les 21 archivages natifs utilisent --skip-specs et ne synchronisent pas le canon. Les 78 fichiers canoniques conservent leurs empreintes et passent leur validation stricte séparée. Le contrôle de resynchronisation contre le canon actuel conserve ses 8 écarts de scénarios ultérieurs ; ce découpage n'autorise aucune réapplication des anciens deltas. La tâche historique 2.1 reste NON VÉRIFIABLE.
+
+Recomptage observé le 2026-10-26T20:21:17.536242+00:00 : **186 archives et 107 changes actifs**, soit **293 dossiers et 63,48 % d'archives**. Ce découpage ajoute vingt dossiers d'archive par rapport à son périmètre d'un dossier ; il n'ajoute aucune capacité ou fonctionnalité. Les autres variations depuis les relevés antérieurs ne lui sont pas attribuées. Les anciens relevés et leurs dates sont conservés.
+
+#### Découpage documentaire au 26 octobre 2026
+
+Le change historique [bootstrap](openspec/changes/archive/2026-09-16-specify-initial-application-bootstrap/proposal.md) conserve
+4 exigences et 6 scénarios. Le lot compagnon
+[administration, maintenance et audit](openspec/changes/archive/2026-10-26-specify-initial-administration-and-maintenance/proposal.md) porte
+9 exigences et 15 scénarios transférés à l'identique. L'union conserve
+13 exigences et 21 scénarios, sans duplication. Les propositions complètes et
+les deltas des deux lots passent le mode strict. Les deux archivages natifs
+utilisent `--skip-specs` ; les 78 empreintes canoniques restent identiques au
+relevé initial de cette intervention. Aucun comportement historique n'est
+réappliqué au canon actuel et aucune fonctionnalité n'est qualifiée ici.
+
+Inventaire observé le 2026-10-26T19:32:32.084613+00:00 : **165 archives et 108 changes
+actifs**, soit **273 dossiers et 60,44 % d'archives**. Le découpage ajoute
+une archive documentaire par rapport à son périmètre initial d'un seul dossier ;
+il ne double pas le nombre d'exigences ou de scénarios et n'ajoute pas de capacité.
+Ces compteurs de fichiers ne mesurent pas l'avancement fonctionnel. Les relevés
+historiques ci-dessous conservent leurs dates et leurs chiffres.
+
+
+#### État courant au 22 octobre 2026 — adoption C08
+
+Le canon compte **78 capacités, 841 exigences et 1 021 scénarios** après adoption du parcours [C08 PA/PZT → PostgreSQL → PBO](openspec/changes/add-installation-and-first-configuration/proposal.md). Les huit deltas apportent six exigences nouvelles, six exigences modifiées et vingt-sept scénarios supplémentaires nets (dont quatre de présentation des garanties) ; les quatre ajouts C08 précédemment intégrés sont conservés sans double comptage. Les canons, les documents C08 et les cadrages PROJECT/TECHNICAL/BUILD sont alignés. Cette adoption ne livre ni exécutant, provider, image Docker, installation ou recette produit ; les tâches de réalisation restent non cochées.
+
+L'inventaire de cette session recense **160 archives et 110 changes actifs**, soit 270 dossiers et **59,26 % d'archives**. Les changes existants sont réutilisés sans archivage ni création de doublon. Ces compteurs documentaires ne mesurent pas la disponibilité fonctionnelle ; les relevés antérieurs conservent leurs dates.
+
+#### Relevé du 21 octobre 2026
 
 Le canon compte **78 capacités, 831 exigences et 986 scénarios**. Le [binaire PBO commun et les profils de ressources](openspec/changes/define-common-pbo-binary-and-resource-profiles/proposal.md), avec le complément Nuitka standalone, les modes d’exploitation et Cython ciblé dans PBO, ont ajouté 19 exigences et 35 scénarios au relevé précédent de 812 exigences et 948 scénarios, modifié six exigences et synchronisé sept capacités sans en créer. Les deltas de ce change tracent une adoption déjà intégrée, sans double comptage ni implémentation.
 
@@ -2676,7 +2744,7 @@ Le [complément de stockage Core réversible](openspec/changes/add-reversible-co
 
 Le change [add-initial-entitlement-subject-type-v1](openspec/changes/archive/2026-10-19-add-initial-entitlement-subject-type-v1/proposal.md), archivé le 19 octobre, livre le vocabulaire passif des quatre types de sujets d’entitlement. Ses huit tâches sont prouvées et cochées ; ses quatre exigences et quatre scénarios sont intégrés au canon. Les trois fichiers Python compilent et les 17 tests ciblés et de régression réussissent. Ce profil ne réalise pas le moteur d’entitlements ou de quotas O15.
 
-Le profil [C00](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/proposal.md) est adopté et archivé depuis le 18 octobre 2026. [C01](openspec/changes/archive/2026-10-19-add-pbo-runtime-secret-provider/STATISTIQUES.md), archivé le 19 octobre, fournit le transport systemd `LoadCredentialEncrypted`, la résolution runtime et l’audit d’amorçage INSTALLER. Ses preuves rapportent 1 945 tests unitaires réussis et une qualification fonctionnelle hôte bornée ; elles ne sont pas réexécutées par cette actualisation documentaire. Le mode de chiffrement nul du harnais ne qualifie pas la confidentialité ou l’authenticité en production. Le transfert propriétaire C05 du journal scellé est qualifié localement ci-dessus ; son orchestration C08 et la qualification du paquet/P0 restent à réaliser.
+Le profil [C00](openspec/changes/archive/2026-10-18-define-first-installable-pbo-profile/proposal.md) est adopté et archivé depuis le 18 octobre 2026. [C01](openspec/changes/archive/2026-10-19-add-pbo-runtime-secret-provider/STATISTICS.md), archivé le 19 octobre, fournit le transport systemd `LoadCredentialEncrypted`, la résolution runtime et l’audit d’amorçage INSTALLER. Ses preuves rapportent 1 945 tests unitaires réussis et une qualification fonctionnelle hôte bornée ; elles ne sont pas réexécutées par cette actualisation documentaire. Le mode de chiffrement nul du harnais ne qualifie pas la confidentialité ou l’authenticité en production. Le transfert propriétaire C05 du journal scellé est qualifié localement ci-dessus ; son orchestration C08 et la qualification du paquet/P0 restent à réaliser.
 
 Deux changes documentaires complètent cette livraison sans rouvrir C01 : [protection host+tpm2 et récupération sans ancien hôte](openspec/changes/qualify-pbo-bootstrap-secrets-host-tpm2/proposal.md), à relier à C08/C16/N05 et aux preuves C18/C17/C19 avant production ; [coffre indépendant pour les secrets d’exploitation distribués](openspec/changes/add-distributed-runtime-secret-vault/proposal.md), conditionnel à une composition distribuée sélectionnée. Leurs 15 exigences et 30 scénarios proposés ne sont pas intégrés au canon et leurs 20 tâches de réalisation restent non cochées.
 
@@ -3596,7 +3664,7 @@ flowchart TB
         K["Kernel — mécanismes génériques"] --> C["pixs.core obligatoire — primitives communes"]
         K -. "composition et services" .-> AU["pixs.auth obligatoire — local autonome"]
         AU -. "contrats publics d'identité" .-> C
-        C -. "stockage Core après migration réversible" .-> LD[("OpenLDAP interne — périmètre engagé")]
+        C -. "publication Core vers LDAP, état Kerberos normal distinct" .-> LD[("OpenLDAP / LZT — exploitation PA")]
         AU -. "gestion du service" .-> LD
         C --> M["Modules fonctionnels"]
         K -. "composition et services" .-> A["pixs.agent obligatoire — gestion PA hors PZT"]
@@ -3638,7 +3706,7 @@ La résidence et le placement régional complètent la gouvernance sans déplace
 
 La disponibilité des capacités relève de la composition, tandis que les feature flags pilotent uniquement des comportements runtime compatibles. Les deux mécanismes restent déterministes, auditables et indépendants des permissions et de l'autorité métier.
 
-Aucun provider concret d'annuaire ou d'intégration externe n'appartient au socle obligatoire.
+Les implémentations concrètes ne sont pas intégrées au Kernel ; les capacités obligatoires par profil, dont LZT/KZT pour Domaine, suivent le §45.
 
 ## 38. Chaîne de développement
 
@@ -3755,6 +3823,10 @@ sont déjà définies dans les capacités canoniques `reference-composition`,
 `reference-runtime`, `pixs-agent`, `pzt` et `authentication` ; elles ne
 démontrent pas une composition P0 implémentée ou qualifiée.
 
+Le parcours initial d'installation C08, adopté le 22 octobre 2026, sélectionne explicitement le PA système de l'hôte et PZT local pour préparer PostgreSQL avant les opérations applicatives PBO. Sur hôte physique ou VM, PA installe et configure le service si nécessaire et initie la première connexion technique ; dans Docker Pixs, le logiciel PostgreSQL est fourni dans l'image et PA initialise seulement les ressources persistantes et configurations manquantes. Les données existantes sont conservées. PBO reste seul propriétaire de ses migrations et de l'initialisation Core/Auth/Super Admin/premier tenant. Une composition sans ces exécutants ne peut pas revendiquer ce parcours révisé ; réseau distant désactivé et absence de transport PZT local sont deux situations distinctes.
+
+Le provisionnement opérateur de PA/PZT et la remise au workload PBO de ses seuls secrets de connexion utilisent la branche technique native protégée définie par `authorization`, indépendante de la base à ouvrir. Tout échange PBO–PA passe par PZT, y compris localement, avec références et métadonnées minimisées sans credential de management. La branche ne crée aucun droit métier ; les actes applicatifs conservent R01 Ed25519/600 secondes, gouvernance et transaction propriétaires. C01 INSTALLER reste distinct ; les autres décisions et le management ordinaire attendent PostgreSQL courant. Les versions, politiques, budgets, mécanismes Docker et recettes restent à qualifier.
+
 Les extensions déclarent l'un des niveaux de confiance `PLATFORM`, `TRUSTED`,
 `SANDBOXED` ou `DEVELOPMENT`. Le niveau autorise uniquement les frontières et
 permissions explicitement prévues par les contrats ; `DEVELOPMENT` est interdit
@@ -3772,7 +3844,7 @@ universel.
 
 Le binaire PBO commun contient le socle modulaire et les composants sélectionnés de la composition. Le Kernel demeure un mécanisme générique ; Core, Auth, Agent et le module PZT gardent leur propriété fonctionnelle. Les contrats internes peuvent être consommés dans le même processus sans IPC imposée. Un module présent dans le binaire ne lance ni service, ni exécutant, ni rôle supplémentaire implicitement. Les modules dans un même processus partagent sa mémoire, ses privilèges et ses défaillances ; la modularité ne constitue pas une isolation système.
 
-Le mode de compilation PBO est **Nuitka standalone**. Le paquet contient un exécutable PBO commun avec son runtime, ses bibliothèques et ressources déclarées ; il n'impose pas un fichier autoextractible onefile. Ses modes d'exploitation sont **Standalone**, instance autonome sans autorité Pixs extérieure, et **ZT**, participation autorisée au réseau gouverné via PZT. Le même binaire et le module essentiel pixs.pzt sont conservés dans les deux modes. L'activation du transport PZT est une dimension distincte : une instance Standalone peut l'utiliser pour joindre ses PA locaux ou distants autorisés ; si ce transport est absent ou invalide, l'échange reste bloqué sans substitution. Les trois binaires PA et l'exécutant réseau PZT restent indépendants et sont compilés avec Cython.
+Le mode de compilation PBO est **Nuitka standalone**. Le paquet contient un exécutable PBO commun avec son runtime, ses bibliothèques et ressources déclarées ; il n'impose pas un fichier autoextractible onefile. Les modes d'exploitation appartiennent à l'Instance Pixs : **Standalone / ZT / Domaine**, selon le §45. Le même binaire et le module essentiel pixs.pzt sont conservés dans les trois modes. L'activation du transport PZT est une dimension distincte : une instance Standalone peut l'utiliser pour joindre ses PA locaux ou distants autorisés ; si ce transport est absent ou invalide, l'échange reste bloqué sans substitution. Les trois binaires PA et l'exécutant réseau PZT restent indépendants et sont compilés avec Cython.
 
 Dans PBO, Cython est réservé aux optimisations ciblées justifiées par un profilage et des mesures comparables selon des critères établis avant recette. Leur admission exige gain pertinent, compatibilité des contrats, sécurité, maintenabilité et non-régression. Cython ne remplace pas Nuitka pour le PBO complet.
 
@@ -3839,6 +3911,10 @@ La distribution et la recette sont dans
 
 ### 43.1 Synthèse des décisions validées
 
+Le tableau conserve les décisions antérieures non remplacées ; les répartitions
+DNS/DHCP et PKIZT sont alignées sur le §45. Les valeurs et preuves historiques
+restent attachées à leurs profils, sans qualification nouvelle.
+
 Cette synthèse rassemble les décisions déjà reçues. Le détail, les dates,
 les limites et les recettes restent dans le registre A01–A12 et ses
 sous-sections du registre intégré commun à PA et PZT dans TECHNICAL.md §44.
@@ -3852,12 +3928,12 @@ PZT et ZTP désignent le même réseau Pixs.
 | Amorçage et contrôle local | Admission par TLS d'amorçage PZT avec ancrage préalable. PBO–PA passe toujours par PZT, même cohébergés ; TLS mutuel local admis sans WireGuard local obligatoire. VM et conteneurs conservent leurs frontières propres. | A02 ; A03 ; A11a–A11b |
 | Gestion du réseau | pzt-daemon possède les ressources PZT de son périmètre ; les autres modes lui adressent leurs demandes. Filtrage natif nftables Linux et Windows Filtering Platform, sans écraser les ressources de l'opérateur hors mandat. | A04 ; A04a–A04b |
 | Validité et panne | Modèle hybride : autorisations bornées, contrôles en ligne selon classe, retrait connu sans attendre l'expiration, protection indépendante de l’exécutant PZT. Objectifs initiaux : révocation en 5 s si joignable et fermeture après panne en 10 s, à démontrer par profil. | A05 ; A05b |
-| Adressage et DNS | IPv4/IPv6 implémentés ; IPv6 PZT simplement désactivable et désactivé par défaut sur les nouveaux périmètres sans choix explicite. DNS essentiel administré dans PBO, service exécuté sous pilotage PA désignés, autres PA clients ; DoT protégé, cache borné, noms stables et alias CNAME directs. | A06 ; A06b–A06k |
+| Adressage et DNS | IPv4/IPv6 prévus et à qualifier ; IPv6 PZT simplement désactivable et désactivé par défaut sur les nouveaux périmètres sans choix explicite. DNS/DHCP administrés dans PBO, configurés et maintenus en fonctionnement par PZT/DZT ; préparation, maintenance système et mises à jour par PA ; DoT protégé, cache borné, noms stables et alias CNAME directs. | A06 ; A06b–A06k |
 | Contrats et suivi | Commandes et lectures HTTP/JSON versionnées ; état complet et deltas métier ordonnés. WebSocket de référence et SSE complémentaire, sélection déterministe administrée et qualifiée, sans entretenir deux canaux permanents. | A07a–A07d ; A07c2 |
 | Chemins et passerelles | Direct prioritaire, découverte ICE/STUN ; relais QUIC DATAGRAM avec secours WSS. Profil passerelle ultérieur après le socle, sources conservées sans NAT automatique, principale et secours avec un seul actif par périmètre cohérent. | A08a–A08c ; A09a–A09c |
 | Identité et attestation | Identités de services distinctes sur transport partagé ; certificats X.509 et liaison WireGuard JWS. Profils TPM/mesures d'intégrité explicitement déclarés, preuves fraîches et références signées/versionnées ; hôte, invité et conteneur ne partagent pas implicitement leur confiance. | A10a–A10f |
 | TLS et choix de chiffrement | TLS 1.3, sans 0-RTT. PBO choisit explicitement AES-256-GCM ou ChaCha20-Poly1305 pour les canaux TLS concernés ; migration coordonnée, bornée et vérifiée. Le chiffrement natif WireGuard reste celui de WireGuard. | A10g–A10h9 |
-| Certificats et PKI | Certificats TLS 24 h, renouvellement à 16 h et chevauchement maximal 5 min ; nouvelle clé ECDSA P-256 à chaque renouvellement. PKI privée, émetteurs par autorité logique, clés et secours distincts, profils de protection déclarés. | A10i–A10i16 |
+| Certificats et PKI | Certificats TLS 24 h, renouvellement à 16 h et chevauchement maximal 5 min ; nouvelle clé ECDSA P-256 à chaque renouvellement. PKI propre au ZT, un émetteur actif par autorité, même clé opérationnelle chiffrée/synchronisée pour la reprise PKIZT (§45 et TECHNICAL §46). | A10i–A10i16 |
 | Racine et récupération | Racine hors ligne : 7300 jours, anticipation à 5840 jours et marge 1460 jours ; nouvelle paire à chaque succession normale. Coexistence normale des ancrages plafonnée à 30 jours. Deux sauvegardes chiffrées hors ligne séparées et deux moyens de récupération, opération par une personne habilitée. | A10i17–A10i38, dont A10i22 B et A10i36 B |
 | Exécution bornée et reprise | Budgets finis, capacité explicite, idempotence, état technique durable/protégé et fermeture vérifiable. Réconciliation autoritative après effet ou réponse inconnus ; aucun réessai aveugle, compteur remis à zéro ou droit réintroduit par restauration. | A10i39–A10i81 |
 | Télémétrie et intégrité | Pour les profils de collecte concernés : logs 7 jours, métriques 30 jours, traces 24 h ; purge par travaux bornés et manifestes vérifiés. Incident et réarmement explicites, dossier contrôlé à chaque usage, suivi par événements sur canal mutualisé, rejeu nominal 1 h, reprise par état courant. | A10i82–A10i126, dont A10i91 B et A10i113 B |
@@ -3999,32 +4075,23 @@ Aucun choix du produit ZeroTier n'est effectué.
 
 ### 44.2 Modes de fonctionnement
 
-| Mode | Fonctionnement |
-| --- | --- |
-| Standalone (autonome) | Une seule instance Pixs, indépendante des autres instances, assure sa propre gouvernance, son administration et ses opérations métier. |
-| ZT | Plusieurs instances participent au réseau gouverné via PZT, avec autorités hiérarchiques, délégations explicites et coopération autorisée entre pairs. |
+Les modes appartiennent à l'Instance Pixs : Standalone, ZT et Domaine.
+Standalone n'a pas de domaine et conserve une application PBO logique ; ZT
+n'a pas de domaine et initialise son ZT d'Instance ; Domaine comprend les
+domaines utilisant ZT. Le §45.2 fixe composition et transitions, dont le
+passage obligatoire par ZT complètement initialisé avant Domaine.
 
-Le mode Standalone conserve les règles de sécurité de Pixs. L'autonomie décrit
-l'absence de dépendance à une autorité Pixs extérieure ; les dépendances
-techniques nécessaires au service restent déclarées et exploitées dans son
-périmètre.
-
-Dans le mode ZT, chaque instance conserve ses responsabilités locales,
-ses contrôles applicatifs et l'autorité sur les ressources qui lui sont
-attribuées. Elle respecte les contraintes communes et les mandats reçus.
-
-Le passage d'un mode à l'autre est explicite. Une coupure, une révocation ou
-une perte de quorum ne déclenche pas un retour automatique au mode Standalone.
-La procédure d'adhésion ou de retrait reste à spécifier.
-
-Les noms des modes d'exploitation sont Standalone et ZT. PZT désigne le composant réseau, et ZTP son appellation historique dans ce cadrage ; ces sigles ne sont pas des options de compilation. L'autonomie de gouvernance ne désactive pas automatiquement le transport PZT : une instance Standalone peut en avoir besoin pour ses PA, même locaux. Sans transport PZT vérifiable, les échanges PBO–PA restent bloqués. Le profil initial sans réseau activé est un cas particulier distinct du seul nom Standalone.
+La compilation Nuitka standalone est distincte. Standalone peut utiliser
+PZT pour ses échanges PA, y compris locaux ; sans transport admissible ils
+restent bloqués. Panne ou révocation ne changent pas implicitement le mode.
 
 ### 44.3 Vocabulaire
 
 | Terme | Sens dans ce document |
 | --- | --- |
-| Mode Standalone | Exploitation autonome de PBO, sans autorité Pixs extérieure ; l'activation éventuelle du transport PZT reste distincte. |
-| Mode ZT | Exploitation de PBO comme participant autorisé au réseau gouverné via PZT. |
+| Mode Standalone | Instance Pixs sans domaine, une application PBO logique ; capacités PZT selon profil (§45). |
+| Mode ZT | Instance Pixs sans domaine, avec son instance ZT initialisée (§45). |
+| Mode Domaine | Instance Pixs comprenant des domaines utilisant ZT, dédié ou partagé sous condition DNS (§45). |
 | Zéro Trust Pixs (ZTP) | Le réseau sécurisé Pixs et ses mécanismes de communication et d'autorité. |
 | PZT | Sigle employé dans le cadrage du PA pour le même réseau ; ZTP reste le sigle de ce document. |
 | Pixs Agent (PA) | Le composant d’exécution système et utilisateur hors PZT, administré par `pixs.agent`. |
@@ -4369,3 +4436,403 @@ de cache et états de l'interface respectent l'identité, le tenant et le scope 
 un changement de contexte invalide les données dépendantes. L'état demandé,
 l'état appliqué et les opérations en cours sont présentés distinctement,
 sans afficher de clé privée ni de token brut.
+
+## 45. Instance Pixs, domaines et ZT — cadrage consolidé du 31 octobre 2026
+
+### 45.1 Portée, étapes et définitions
+
+L'intégration de l'étape 1 est validée. L'étape 2 a rédigé le référentiel
+Instance/Domaine/ZT/PA, avec les arbitrages de confiance d'amorçage distincte
+et de reconstruction LDAP/Kerberos réservée à l'urgence critique. L'étape 3
+est préparée documentairement selon ACL-PIXS-2026-10-31-E3-R1 : dix ouvertures
+résiduelles, 32 amendements de cible et quatre actualisations de références.
+O41 est remplacé et non sélectionnable ; aucune réalisation produit n'est déduite.
+
+Ce chapitre intègre le modèle Instance/Domaine/ZT et le périmètre complet de
+PA. Il remplace les orientations antérieures contradictoires, sans réécrire
+les relevés historiques ni attribuer de nouvelles preuves aux réalisations.
+L'étape 1 porte sur les cadrages. Sa validation précède l'étape 2 de préparation
+des spécifications sous les règles ACL résolues depuis DEVOPS.md. L'étape 3
+a ouvert les changes résiduels et réconcilié les propositions concernées,
+sans implémentation ni production de code. Leurs sources et limites sont
+tracées dans les dossiers propriétaires et la cartographie. Les propositions
+normatives restantes, dont les deux exigences C20, ne sont pas adoptées par
+cette synthèse.
+
+| Ensemble | Définition et responsabilité |
+| --- | --- |
+| Instance Pixs | Ensemble logique identifié, avec un référentiel commun d'individus Core, ses PBO, PA et capacités PZT. Son identité ne dépend pas du nombre de machines, processus ou répliques. |
+| Domaine Pixs | Périmètre identifié déclarant un FQDN DNS, ses identités numériques, organigrammes Core, habilitations et services de domaine. |
+| Instance ZT | Ensemble identifié d'acteurs et de relations explicites, gouverné selon des règles communes d'admission, d'autorité et de communication. La localisation est une propriété de déploiement. |
+| Tenant | Frontière d'isolation applicative appartenant à un seul Domaine en mode Domaine ; les scopes enfants restent rattachés au tenant. |
+| PBO/PFO | Autorité et orchestration applicatives Django/PostgreSQL, modules de gestion et interfaces ; PFO sollicite PBO. |
+| PA | Couche d'exécution locale système et utilisateur, sous gestion de pixs.agent et mandats explicites. |
+| PZT | Binaire indépendant exécutant le socle et les rôles réseau attribués, sous gestion de pixs.pzt. ZTP est son appellation historique de réseau. |
+
+Les dépendances publiques, la modularité, le Kernel agnostique et la propriété
+des données par composant restent applicables. NetBird sert de référence
+fonctionnelle pour la séparation des capacités réseau ; aucun de ses services
+ou protocoles internes n'est imposé comme dépendance Pixs.
+
+### 45.2 Modes et transition vers les domaines
+
+| Mode de l'Instance Pixs | Composition logique |
+| --- | --- |
+| Standalone | Aucun domaine déclaré ; une application PBO logique, éventuellement redondée ; capacités PZT conditionnelles selon le profil. |
+| ZT | Aucun domaine déclaré ; une instance ZT au niveau de l'Instance Pixs, avec plusieurs PBO fonctionnellement distincts possibles et redondables. |
+| Domaine | Un ou plusieurs Domaines Pixs utilisant obligatoirement ZT, avec plusieurs PBO possibles selon leurs habilitations. |
+
+Le mode d'exploitation est distinct de la compilation Nuitka standalone et
+de la présence ou de l'activation du transport PZT. Standalone peut utiliser
+PZT pour ses PA locaux ou distants. La présence d'un module ne prouve pas
+la présence d'un exécutant ni l'activation du réseau.
+
+Le passage au mode Domaine exige un mode ZT complètement initialisé avant
+la création du premier domaine : Standalone → ZT initialisé → Domaine.
+La transition est explicite et vérifiée. En V1, aucun retour du mode Domaine
+vers Standalone n'est prévu ; une panne ne réactive pas l'identité pré-domaine.
+Les autres transitions inverses ne sont pas autorisées implicitement et
+restent à cadrer avant leur éventuelle introduction.
+
+L'Instance conserve au moins un PBO et un PA ; leur déploiement dépend des
+environnements à administrer. Ils peuvent servir plusieurs domaines sous
+habilitations explicites. Les droits globaux de l'Instance et ceux des
+domaines restent distincts. Un contrôleur d'Instance et un contrôleur de
+Domaine sont des rôles PBO/Core/Auth regroupables ou séparables selon le
+profil, avec bases et autorisations distinctes ; ils ne sont pas le CZT.
+
+### 45.3 FQDN, ZT partagé et tenants
+
+Chaque ZT déclare un FQDN DNS à son initialisation. Chaque Domaine déclare
+également son FQDN, unique exactement au sein de l'Instance Pixs. Un domaine
+peut créer son ZT ou utiliser le ZT de l'Instance lorsque son FQDN est égal
+à celui du ZT ou en est un sous-domaine. Plusieurs domaines admissibles
+peuvent utiliser ce même ZT : par exemple association.pixs.fr et
+recherche.pixs.fr sous le ZT pixs.fr. La comparaison porte sur la hiérarchie
+des labels DNS, sans assimilation d'un simple suffixe de caractères.
+
+Chaque domaine utilise donc obligatoirement ZT, sans exiger un ZT distinct
+par domaine. Les minima des rôles réseau et la PKI propre portent sur
+l'instance ZT réelle. Les services LDAP et Kerberos restent propres à chaque
+domaine, même lorsque ZT est partagé.
+
+Dans un ZT partagé, des politiques restent propres aux domaines et d'autres
+sont partagées explicitement. Les communications entre domaines sont
+interdites par défaut. Partager le ZT ou une hiérarchie DNS ne crée aucune
+autorisation. L'administration DNS est centrale ou déléguée par zone selon
+les habilitations configurées.
+
+Un domaine accepte zéro, un ou plusieurs tenants. Un domaine sans tenant
+conserve ses services et son utilisation de ZT. Un individu peut participer
+à plusieurs tenants, y compris dans des domaines différents, avec des droits
+indépendants. Les ressources ont une propriété canonique Instance, Domaine
+ou Tenant ; aucun de ces niveaux n'accorde implicitement l'accès aux autres.
+Les tenants Standalone/ZT préexistants sont repris par le premier Domaine
+lors de la transition, en préservant leurs identités et relations.
+
+### 45.4 Individus, identités et organigrammes
+
+Tous les PBO d'une Instance partagent un référentiel unique d'individus Core.
+Un individu peut être affilié à plusieurs domaines et posséder plusieurs
+identités numériques par domaine, avec profils et habilitations distincts.
+Chaque identité humaine est liée explicitement à son individu ; les identités
+techniques peuvent exister sans individu. Aucun rapprochement par nom ou
+adresse électronique ne fusionne des identités.
+
+Avant le premier domaine, la Base Instance porte individus, identités
+numériques, organigrammes Core, groupes, ACL et données métier. Auth peut
+authentifier directement depuis cette PG. Lors de la première activation
+de Domaine, les identités numériques, organigrammes, groupes, ACL et données
+métier sont repris dans sa Base Domaine, avec maintien des identifiants et
+relations. La Base Instance conserve le référentiel des individus et les
+données communes, sans identité numérique d'Instance. L'administration
+globale utilise ensuite des identités de domaines explicitement habilitées.
+
+| Organigramme | Propriétaire |
+| --- | --- |
+| Organisationnel | Core, propre au Domaine après transition. |
+| Fonctionnel | Core, propre au Domaine après transition. |
+| Structurel ZT | CZT, propre à l'instance ZT et à ses périmètres de domaines lorsqu'elle est partagée. |
+
+PBO présente trois volets distincts, uniformisables par miroitage. Chaque
+périmètre de miroir choisit une source explicite parmi ces trois modèles.
+Le miroir porte sur la structure seule par défaut ; la reprise des affiliations
+est sélectionnable. Les contraintes de la cible sont conservées : une racine
+structurelle par ZT, au plus un parent structurel, absence de cycles et
+affiliations transversales multiples. La hiérarchie ZT reste indépendante de
+la PKI et d'Auth. Un miroir ne crée ni admission, ni identité numérique, ni
+copie des permissions ou des moyens d'authentification.
+
+### 45.5 Acteurs, participation et gouvernance ZT
+
+ZT V1 comprend les acteurs humains, matériels, logiciels et organisationnels.
+L'acteur technique est un déploiement identifié, distinct de ses rôles,
+processus et emplacement. Hôte matériel, PBO, PA et PZT ont des identités
+distinctes. Une réplique est un nouvel acteur ; copier des fichiers ne
+l'admet pas. Les rôles sont cumulables explicitement sous les incompatibilités
+et séparations de responsabilités applicables.
+
+Les acteurs non humains ont une appartenance ZT unique. Les individus peuvent
+participer à plusieurs ZT, avec admissions et droits indépendants. Chaque
+acteur technique possède une structure responsable de référence et peut
+avoir plusieurs affiliations. L'individu dispose d'un rattachement principal
+par ZT et d'affiliations complémentaires. Appartenance ZT, affiliation Core,
+responsabilité et autorisation restent distinctes.
+
+Une autorité de gouvernance commune, éventuellement collective, définit les
+compétences. Admission et gestion des approbations sont délégables par
+périmètre et mandat explicites. L'admission est administrative par défaut ;
+l'automatisation exige une politique. L'enrôlement préautorisé emploie un
+jeton individuel temporaire à usage unique.
+
+L'appartenance permanente est le défaut. Une participation temporaire ou
+éphémère peut être définie, avec échéance non repoussée par redémarrage ou
+restauration. Les autorisations d'exécution sont toujours bornées et ne
+dépassent pas l'admission. La fin de participation ne supprime pas implicitement
+la fiche Core, l'hôte ou ses données. Sortie planifiée et révocation sont
+distinctes ; l'adhésion est autorisée des deux côtés concernés.
+
+Participation directe et représentation sont possibles. Le représenté conserve
+son identité ; un mandat lie représentant, représenté, actions, ressources,+périmètre, durée, révocation et éventuelle redélégation. Un logiciel représente
+un individu avec ses propres moyens techniques, sans recevoir ses secrets
+personnels. Le mandat est lié à la session par défaut ; une indépendance de
+session exige une autorisation explicite et ne neutralise pas la révocation.
+
+### 45.6 Approbations, permissions et continuité
+
+Les approbations relient les ZT et les domaines d'une même Instance ou
+d'Instances différentes. Elles sont directionnelles, à périmètre explicite,
+réciproques seulement par deux décisions, transitives seulement sur
+autorisation et à profondeur maximale finie configurable. Chaque maillon
+respecte toutes les restrictions de la chaîne. Reconnaissance d'identité et
+droits sur une ressource restent distincts. Un individu externe garde sa
+référence d'origine ; la cible conserve sa référence et décide de ses droits.
+
+Les permissions individuelles et collectives ciblent des services déclarés,
+protocoles et ports, dans un sens explicite. L'initiation inverse demande
+une permission distincte ; les réponses restent encadrées. Refus par défaut,
+interdiction prioritaire et absence d'accès implicite s'appliquent selon les
+contrats d'autorisation, y compris leur exception Super Admin existante dans
+son seul périmètre. Le nouveau cadrage ne crée aucune exemption supplémentaire.
+
+Les politiques sont durables ; leurs autorisations d'exécution sont temporaires.
+Certificat, IP, affiliation ou position hiérarchique ne suffisent pas à autoriser.
+Les contrôles conjuguent permissions humaines et techniques lorsqu'un contexte
+humain est requis. Utilisation et administration restent séparées.
+
+Suspension Core, révocation d'une session et indisponibilité technique ont des
+effets distincts. Seuls les droits et mandats dépendants sont suspendus ou
+révoqués ; une panne suit la continuité bornée et n'accorde rien de nouveau.
+Les révocations connues sont appliquées. Une remise en activité réévalue les
+politiques courantes sans restaurer implicitement d'anciens droits.
+
+### 45.7 Socle et rôles réseau PZT
+
+Chaque ZT comprend au moins un PZT ; le premier porte tous les rôles essentiels
+PZT, ensuite répartissables et redondables. Le premier PZT complet V1 cible
+Debian/Linux ; les autres profils portent seulement les rôles qualifiés.
+
+| Rôle exécuté par PZT | Présence et stockage |
+| --- | --- |
+| Controller ZT — CZT | Au moins un par ZT ; PG indépendante, chiffrée localement ; acteurs, organisation, politiques, carte réseau, adressage des pairs et réconciliation. |
+| Signal ZT — SZT | Au moins un ; plusieurs actifs coopérants ; état temporaire RAM reconstruit au démarrage, sans PG propre. |
+| Relay ZT — RZT | Au moins un ; plusieurs actifs possibles ; relais du trafic chiffré, sessions RAM sans PG propre. |
+| STUN ZT — STZT | Au moins un ; plusieurs actifs indépendants ; découverte d'adresses/ports observés, état temporaire RAM sans PG propre. |
+| DNS ZT — DZT | Au moins un ; DNS et DHCPv4/v6 ; une PG commune à ces trois fonctions, indépendante de CZT et PBO. |
+| PKI ZT — PKIZT | Au moins un ; PG indépendante de PBO/CZT/DZT, chiffrée et synchronisée ; au moins une autorité opérationnelle à l'initialisation. |
+| Gateway ZT — GZT | Optionnel, désactivé par défaut ; ressources sans PZT, configuration CZT et état opérationnel RAM. |
+| Exit ZT — EZT | Optionnel, désactivé par défaut ; sorties autorisées, configuration CZT et RAM. |
+| Reverse Proxy ZT — RPZT | Optionnel, désactivé par défaut ; HTTP/HTTPS/WebSocket, configuration CZT et RAM ; aucune authentification utilisateur portée par RPZT. |
+
+Le socle coordonne interfaces, adressage, routage et pare-feu. Le gestionnaire
+commun centralise les besoins des rôles avec un propriétaire d'écriture par
+périmètre. Gestion du périmètre PZT par défaut, gestion globale de l'hôte sur
+choix explicite, configuration déclarative/versionnée/reconstruisible, état
+appliqué vérifié et détection des dérives sont retenus. La correction automatique
+est configurable et désactivée par défaut. Une protection indépendante obligatoire
+applique les échéances et limites même en cas de panne du processus principal.
+Le profil d'amorçage est limité et borné, distinct du contrôle normal. Les
+opérations multi-rôles ont un propriétaire unique, un suivi durable et une
+reprise sans double effet. Les détails de chaque rôle sont dans TECHNICAL.md §46.
+
+### 45.8 Périmètre complet de PA et frontière DNS/DHCP
+
+PA exécute les capacités locales autorisées de fonctionnement, paramétrage,
+contrôle, surveillance, collecte et suivi des dérives, dans le contexte système
+ou utilisateur. Les modules conservent leurs règles métier et le sollicitent
+par les contrats publics de pixs.agent. Une correction est une capacité distincte
+de la détection, avec politique et mandat propres. Le catalogue est déclaré,
+versionné et livré ; une instruction réseau n'autorise aucun code arbitraire.
+
+Les trois binaires PA et leurs six modes sont conservés : événements système
+system-start/system-stop, démon system-daemon et binaire utilisateur
+session-start/session-stop/session-daemon. Délais système/session indépendants,
+événements bornés, isolation des sessions réelles et absence d'élévation
+implicite restent applicables. pzt-daemon appartient exclusivement à PZT.
+
+PA prépare logiciels, comptes, répertoires et permissions ; il effectue les
+opérations système, politiques de poste/utilisateur, rattachements au domaine
+et redémarrages autorisés. Il prépare PostgreSQL dans les seuls profils prévus,
+préserve les données et laisse migrations/initialisations applicatives à PBO.
+Il gère le service système de temps sous politique et mandat de cible exacte,
+avec un propriétaire par horloge et les limites hôte/conteneur applicables.
+
+| DNS et DHCP | Propriétaire de l'intervention |
+| --- | --- |
+| Préparation, installation, maintenance système et mise à jour des logiciels BIND 9/ISC DHCP | PA. |
+| Configuration, maintenance logicielle du fonctionnement, validation, application et contrôle des services | PZT, rôle DZT. |
+| Administration des périmètres/politiques, orchestration et supervision | PBO. |
+
+La mise à jour des paquets/binaires appartient à PA. DZT maintient le
+fonctionnement et la cohérence de la configuration, y compris sa revalidation
+et sa réapplication après une intervention PA. Les opérations sont coordonnées
+et leurs résultats restent distincts. Cette frontière remplace l'ancien
+pilotage complet du DNS par PA.
+
+PA peut être installé sans PBO/PFO ni navigateur locaux. Tous les échanges
+PBO–PA passent par PZT, même localement, sans repli de contournement. PFO
+s'adresse à PBO. L'installation conjointe ne fusionne ni identités ni droits.
+PA conserve les états techniques durables nécessaires à la reprise, sans
+devenir une autorité métier ou un lecteur des tables métier.
+
+### 45.9 Services de Domaine et authentification
+
+Chaque Domaine possède au moins un LDAP ZT — LZT et un KDC ZT — KZT,
+installés, configurés et exploités sous pilotage PA. OpenLDAP et MIT Kerberos
+avec backend OpenLDAP sont retenus. Plusieurs LZT multi-maîtres et plusieurs
+KZT actifs sont possibles. Chaque domaine possède un realm unique dans
+l'Instance, partagé par ses KZT. Les approbations Kerberos sont optionnelles
+et explicites ; les collisions externes sont vérifiées.
+
+PG conserve la souveraineté des individus, identités déclarées, groupes, ACL
+et configurations Pixs. LDAP et Kerberos restent obligatoires en mode Domaine.
+En fonctionnement normal, l'état opérationnel Kerberos durable réside dans
+LDAP ; la publication Core depuis PG préserve ses principals, clés et états.
+Chaque écriture native KDC n'exige pas un engagement miroir PG préalable.
+
+La reconstruction complète depuis PG constitue une urgence en état critique,
+avec plan explicite : restaurer une sauvegarde LDAP/Kerberos protégée puis la
+réconcilier aux références PG courantes, ou recréer depuis PG les références,
+les clés et états nécessaires et reprovisionner les utilisateurs/services
+concernés. Le choix dépend du profil et des sauvegardes disponibles. PG seule
+ne restitue pas les mêmes clés si elle n'en contient pas les moyens récupérables ;
+la reconstruction ne promet pas la continuité des anciens tickets/justificatifs.
+L'état critique ne constitue pas un quatrième mode Standalone/ZT/Domaine. Il ne se confond pas non plus avec la classe réseau Critique d'A05.
+Le multi-maître LDAP ne change pas l'unicité PG et le verrouillage privilégie
+la cohérence lors d'une partition.
+
+Auth pilote l'authentification ; une vérification directe sur PG Domaine est
+possible sous profil explicite, sans recréer d'identité numérique d'Instance.
+L'authentification LDAP est possible sur autorisation, avec vérification
+déléguée à Auth et intégration à qualifier. Le verrouillage est commun par
+identité numérique pour les méthodes concernées, sans verrouiller les autres
+identités du même individu sauf décision globale.
+
+Un mot de passe commun par identité numérique est retenu pour les méthodes
+PG/LDAP/Kerberos qui l'utilisent. Son changement passe exclusivement par PBO,
+avec orchestration Auth ; le PBO peut être celui du contrôleur ou un autre
+PBO habilité. Changement individuel, réinitialisation administrative et
+récupération autonome sont possibles ; cette dernière est configurable, débrayable et désactivée par défaut. Les moyens sont choisis par profil.
+
+Les politiques de mot de passe se déclinent Instance/Domaine/profil. Les
+sessions sont traitées selon le contexte : changement authentifié conservant
+par défaut la session courante vérifiée et révoquant les autres ; récupération
+ou réinitialisation révoquant toutes les sessions de l'identité par défaut.
+Le profil peut ajuster ce comportement. Les tickets Kerberos suivent leurs
+propres contrôles et ne sont pas invalidés par simple déduction d'une session.
+
+MFA configurable par profil, y compris administratif, sans obligation générale
+Pixs ; TOTP et clés/passkeys sont prévus sur les chemins qualifiés. Individu
+et administrateur habilité peuvent gérer les facteurs selon le profil. Le
+profil choisit la confirmation par tous les contrôleurs ou par ceux maintenus
+en service après exclusion vérifiée des autres, sans défaut général fixé.
+Réadmission et rotation des secrets machine sont également choisies par profil.
+
+### 45.10 Postes et serveurs
+
+La V1 vise la jonction native des postes Windows et les politiques de type GPO,
+dans le même Domaine Pixs que les autres services, ainsi que l'adhésion et
+les politiques des postes et serveurs Linux. Windows Server n'est pas inclus
+comme membre natif du domaine V1 ; son éventuel profil PA/PZT est distinct.
+Debian stable et Windows 10/11 dans leurs éditions admissibles sont les cibles
+retenues, avec versions et profils à qualifier ; Windows Home n'est pas une
+cible de jonction native.
+
+Les postes administrés et serveurs Linux soumis aux politiques Pixs ont PA/PZT
+locaux. Intentions communes et règles propres aux plateformes, politiques
+de poste/utilisateur, priorités explicites et conflits à priorité égale sont
+déclarés. Jonction Windows et administration GPO passent par PBO via les
+exécutants habilités. La session hors ligne est possible sous profil explicite
+et borné. Les redémarrages sont choisis par profil, manuels par défaut, avec
+vérification après redémarrage avant conclusion.
+
+Un hôte peut être intégré à ZT et géré sans jonction au domaine pour
+l'authentification des utilisateurs. Cette jonction reste facultative, mais
+si elle est réalisée, l'intégration ZT préalable est obligatoire. Passer PA
+en mode Domaine ne joint pas automatiquement l'hôte au domaine d'authentification.
+
+### 45.11 Bases, reprise et cycle de vie
+
+| Stockage logique | Propriétaire et contenu |
+| --- | --- |
+| PG Instance | Individus communs et données d'Instance ; identités et données pré-domaine avant transition. |
+| PG de chaque Domaine | Identités numériques, organigrammes Core, groupes/ACL et métier ; références servant à la publication normale et à la reconstruction critique. |
+| PG CZT | Acteurs, organigramme structurel, politiques ZT et références réseau ; distincte des groupes applicatifs. |
+| PG DZT | Références DNS/DHCPv4/DHCPv6. |
+| PG PKIZT | Autorités, certificats et clés opérationnelles chiffrées. |
+| OpenLDAP de chaque Domaine | Publication des références Core et état Kerberos durable normal ; reconstruction d'urgence selon profil et sauvegardes. |
+
+Une même base peut être répliquée ; cette redondance ne fusionne pas les
+domaines. Les bases PG Instance, Domaine, CZT, DZT et PKIZT suivent les
+garanties de primaire unique, réplication synchrone, minimum configurable de
+répliques sans diminution automatique et bascule encadrée. Les répliques d'un
+rôle ne sont pas des sources de vérité divergentes.
+
+Une brique est remplacée en initialisant une seconde, en synchronisant son
+état puis en lui faisant prendre l'activité ou l'autorité avant de démanteler
+l'ancienne. Aucun déplacement direct de brique n'est prévu. Chaque famille
+définit son mode d'autorité/synchronisation par défaut ; les exceptions sont
+explicites, et toute dérogation au mode demande justification et traçabilité.
+La compatibilité entre versions est définie par famille.
+
+Chaque brique précise synchronisation requise, éventuel état partiel admissible,
+prise d'autorité, observation, statut de l'ancienne et démantèlement. Le maître
+unique est protégé contre la double autorité. Une reprise est automatique si
+la politique l'autorise, sinon confirmée par un administrateur. Une règle
+générale configurable ne réduit pas les garanties spécifiques déjà retenues.
+
+Les transferts fonctionnels d'identités numériques, données métier et tenants
+entre domaines d'une même Instance sont retenus pour la V1, avec réévaluation
+des habilitations. Ils ne déplacent pas un processus ou une brique. Le transfert
+de structures organisationnelles est hors V1. Le premier domaine peut être
+retiré si un autre est opérationnel et si ses dépendances sont traitées,
+sans retour Standalone.
+
+Sauvegardes automatiques et manuelles, toutes chiffrées, et restauration
+manuelle par acteur habilité sont retenues. La restauration peut cibler
+Instance, Domaine ou composant sous vérification des dépendances. La récupération
+des clés PKIZT est choisie par autorité et celle de la clé maîtresse Kerberos
+par domaine. Le lieu ou le nombre de copies n'est pas redéfini par cette
+consolidation ; les protections antérieures non remplacées restent applicables.
+
+La confiance technique PKI/PZT précédant PostgreSQL est distincte de la PKI
+ZT normale. Elle reste limitée et bornée aux opérations d'amorçage, avec ses
+protections propres ; après établissement et vérification de la PKI normale
+et des usages requis, la transition retire la confiance et les mandats initiaux.
+Les clés techniques initiales ne sont pas transférées vers PG pour devenir
+les clés opérationnelles PKIZT. Une panne ultérieure ne rouvre pas l'amorçage.
+
+### 45.12 Qualifications et limites avant spécification
+
+L'intégration PG/OpenLDAP/MIT Kerberos avec jonction native Windows et GPO
+reste à démontrer ; aucun fournisseur compatible AD n'est sélectionné par
+déduction. Délégation LDAP vers Auth, verrouillage commun, cohérence multi-maître,
+baux DHCP, état DNS dynamique/DNSSEC, expiration stricte Kerberos et orientation
+multi-RPZT demandent leurs contrats et qualifications. La gestion PA du temps
+déjà adoptée est conservée, sans imposer un nouveau serveur de temps par domaine.
+
+Les catalogues de familles, contrats physiques, schémas, migrations et étapes
+de transition détaillées restent à produire dans les étapes autorisées. Les
+organigrammes supplémentaires propres aux tenants et transitions inverses non
+retenues ne sont pas des fonctionnalités acquises. Les décisions de cadrage
+n'accordent aucune qualification de plateforme ni livraison fonctionnelle.

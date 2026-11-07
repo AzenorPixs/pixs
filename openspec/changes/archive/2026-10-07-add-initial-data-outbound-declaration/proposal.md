@@ -1,4 +1,6 @@
-# Proposition — Représentation déclarative interne d'une déclaration de flux sortant
+# C70 — Proposition — Représentation déclarative interne d'une déclaration de flux sortant
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

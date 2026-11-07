@@ -1,4 +1,6 @@
-# Proposition — add-initial-bulk-authorization-decision-v1
+# B57 — Proposition — add-initial-bulk-authorization-decision-v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 

@@ -1,3 +1,7 @@
+# B40 — Parseurs d’import en flux du runtime Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 
 Les contrats runtime Bulk, la composition serveur et les primitives SQL/CAS/baux sont livrés séparément. Le runtime IMPORT a maintenant besoin d'un parsing CSV/NDJSON incrémental borné et d'un mapping exact pour poursuivre B05/B13 sans convertir une validation de format en preuve de mutation ou de validation propriétaire.

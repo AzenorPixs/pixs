@@ -1,3 +1,7 @@
+# B24 — Validation des valeurs du runtime Bulk v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 Les clauses B02 et B09 du runtime Bulk v1 sont validées. Leur application nécessite de refuser les valeurs étrangères avant parsing ou I/O, sans changer les profils Kernel livrés.
 

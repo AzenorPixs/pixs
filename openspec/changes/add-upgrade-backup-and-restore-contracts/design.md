@@ -1,5 +1,30 @@
 # Conception — C16
 
+<!-- ACL-PIXS-2026-10-31-E3-R1:start -->
+## Cible consolidée du 31 octobre 2026 — ACL-PIXS-2026-10-31-E3-R1
+
+Bases et dépendances séparées ; restauration ciblée ; fonctionnement normal LDAP/Kerberos et reconstruction d’urgence critique distincts, sans retour Standalone.
+
+Les orientations du modèle validé remplacent précisément les formulations antérieures incompatibles avec ce périmètre. Les autres clauses restent applicables. Les sections antérieures et leurs références sont conservées pour traçabilité ; elles ne doivent pas être utilisées pour réintroduire une décision remplacée. Les preuves et cases cochées ne qualifient que leur version d'origine.
+
+### Sources et responsabilités courantes
+
+- [backup-disaster-recovery](../../specs/backup-disaster-recovery/spec.md).
+- [brick-redundancy](../../specs/brick-redundancy/spec.md).
+- [pixs-instance](../../specs/pixs-instance/spec.md).
+- [auth-managed-kerberos](../../specs/auth-managed-kerberos/spec.md).
+
+Le canon courant prévaut sur ses copies de préparation. Le périmètre présent est documentaire : aucun code, test produit, migration, service, secret, publication ou Git n'est exécuté. Les choix de fournisseurs manquants restent à qualifier avant réalisation.
+
+### Refus et critères de réalisation
+
+Les scénarios des sources et de requirements.md doivent être reliés à des résultats vérifiables par unité. Réception n'est pas application ; donnée ancienne n'est pas état courant. Une autorisation expirée/révoquée ou une dépendance requise non qualifiée bloque l'usage concerné. La validation documentaire ne fait pas réussir les recettes futures.
+
+### Préservation de l'historique et articulation des travaux
+
+Les titres, codes, identifiants de tâches et de sous-lots, libellés, cases, statistiques et preuves antérieurs sont conservés. Les compléments sont rattachés aux unités existantes sans renumérotation ni validation produit anticipée. Les ouvertures C95/C96/C97/N08/PA12/Z28/Z29/Z30/Z31/Z32 portent leurs seules parts résiduelles ; elles ne relancent pas les archives.
+<!-- ACL-PIXS-2026-10-31-E3-R1:end -->
+
 ## Statut et périmètre autorisé
 
 PRÉPARATION_DOCUMENTAIRE. L’inventaire et la création du dossier sont autorisés ; aucune implémentation ni décision technique encore absente n’est réputée validée. C00 a été adopté et archivé le 18 octobre 2026 ; ses précisions normatives sont intégrées au canon. Les arbitrages propres au présent change restent à lever avant réalisation.
@@ -36,7 +61,7 @@ Ce sont des barrières de conception explicites, pas des questions supposées r�
 Les dossiers suivants doivent fournir leurs contrats/conditions avant intégration :
 
 - [add-installation-and-first-configuration](../add-installation-and-first-configuration/proposal.md).
-- [add-reference-worker-scheduler-and-event-delivery](../add-reference-worker-scheduler-and-event-delivery/proposal.md).
+- [add-reference-worker-scheduler-and-event-delivery](../archive/2026-10-23-add-reference-worker-scheduler-and-event-delivery/proposal.md).
 - [enforce-core-data-governance-and-lifecycle](../enforce-core-data-governance-and-lifecycle/proposal.md).
 - [add-runtime-observability-and-operations](../add-runtime-observability-and-operations/proposal.md).
 
@@ -54,7 +79,14 @@ Aucune migration ni remise à zéro pendant cette préparation. Toute évolution
 
 ## Hors profil
 
-PA actif, réseau PZT actif, service DNS exécuté par PA, image Docker et capacités optionnelles restent hors sélection, sauf obligation applicable démontrée imposant de revoir C00 avant qualification.
+Le profil `pbo-p0-debian-local-v1` sélectionne PA système et PZT local pour
+préparer PostgreSQL, conformément au [canon de composition](../../specs/reference-composition/spec.md).
+Ce parcours local et ses exécutants doivent être qualifiés ; leur disponibilité
+ne se déduit pas de la seule présence des modules PBO. Le réseau PZT distant,
+les autres rôles PA, le service DNS exécuté par PA, l’image Docker et les
+capacités optionnelles restent hors sélection, sauf obligation du profil
+explicitement sélectionné. Cette délimitation ne vaut ni réalisation ni
+qualification du parcours local.
 
 
 ## Revue transversale P0 du 17 octobre 2026

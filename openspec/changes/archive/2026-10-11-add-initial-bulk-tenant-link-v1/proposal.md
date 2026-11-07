@@ -1,3 +1,7 @@
+# B29 — Lien de tenant des opérations en masse v1
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
+
 ## Why
 Le profil BulkTenantLink v1 est validé dans le canon mais ne dispose pas encore de représentation Python ni de validation pure.
 

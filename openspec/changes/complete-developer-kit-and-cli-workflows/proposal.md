@@ -28,7 +28,7 @@ La demande actuelle porte exclusivement sur les documents de préparation. Aucun
 
 ## Dépendances
 
-- [activate-reference-runtime-composition](../activate-reference-runtime-composition/proposal.md).
+- [activate-reference-runtime-composition](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md).
 - [qualify-first-pbo-composition](../qualify-first-pbo-composition/proposal.md).
 - [generate-typescript-python-public-sdks](../generate-typescript-python-public-sdks/proposal.md).
 
@@ -48,6 +48,6 @@ Parcours et surface CLI/kit sélectionnés, suites versionnées et exemples ; g�
 
 ## Dépendances après audit transversal P0
 
-[C07](../activate-reference-runtime-composition/proposal.md), [C17](../qualify-first-pbo-composition/proposal.md), [O21](../generate-typescript-python-public-sdks/proposal.md), [N06](../add-minimal-p0-contract-conformance-kit/proposal.md).
+[C07](../archive/2026-10-21-activate-reference-runtime-composition/proposal.md), [C17](../qualify-first-pbo-composition/proposal.md), [O21](../generate-typescript-python-public-sdks/proposal.md), [N06](../add-minimal-p0-contract-conformance-kit/proposal.md).
 
 Les conditions d’activation et la construction des résultats sont séparées de cet ordre de préparation ; aucun cycle inverse vers la recette finale.

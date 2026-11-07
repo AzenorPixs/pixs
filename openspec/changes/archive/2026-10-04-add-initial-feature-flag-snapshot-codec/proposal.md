@@ -1,4 +1,6 @@
-# Proposition — codec backend pur du snapshot source
+# O51 — Proposition — codec backend pur du snapshot source
+
+<!-- ACL-R2 : code de lot attribué rétrospectivement le 2026-10-28. -->
 
 ## Why
 Les normes canoniques R2 et R4 exigent une configuration serveur persistante, versionnée et auditable. Avant le branchement PostgreSQL, ce change fournit uniquement une conversion fidèle entre un `FeatureFlagSourceSnapshot` déjà injecté et un document JSON-compatible, afin d’isoler le formatage de la lecture persistante et de l’administration.
